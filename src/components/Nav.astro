@@ -85,7 +85,7 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
   }
   .nav::before {
-    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); /* Figma : flou 100 ≈ 50 px en CSS */
     -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
   }
