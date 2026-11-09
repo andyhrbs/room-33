@@ -78,7 +78,7 @@
   /* Tailles fluides : valeur « Mobile » à 375 px → valeur « Ordi » à 1440 px
      (générées par scripts/fluid.mjs) */
   --taille-geant: clamp(3.875rem, 1.6303rem + 9.5775vw, 10.25rem);
-  --taille-hero: clamp(2.75rem, 0.3732rem + 10.1408vw, 9.5rem);
+  --taille-hero: clamp(2.75rem, 0.6373rem + 9.0141vw, 8.75rem);
   --taille-display: clamp(2.75rem, 2.0458rem + 3.0047vw, 4.75rem);
   --taille-h1: clamp(2.25rem, 1.7218rem + 2.2535vw, 3.75rem);
   --taille-h2: clamp(1.875rem, 1.4789rem + 1.6901vw, 3rem);
