@@ -30,7 +30,7 @@ const tailleIcone = 20;
   aria-disabled={desactive ? 'true' : undefined}
   {...attrs}
 >
-  {iconeGauche && <Icone nom={iconeGauche} taille={tailleIcone} />}
+  {iconeGauche && <Icone nom={iconeGauche} taille={tailleIcone} class="icone-gauche" />}
   <span class="texte-bouton"><slot /></span>
   {iconeDroite && <Icone nom={iconeDroite} taille={tailleIcone} class="icone-droite" />}
 </Tag>
@@ -75,6 +75,8 @@ const tailleIcone = 20;
   .bouton--lien { padding: var(--espace-xs) 0; text-underline-offset: 0.3em; }
   .bouton--lien:hover .texte-bouton { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
   .bouton--lien:active { color: var(--couleur-texte-secondaire); }
+  /* Lien avec flèche à gauche (« Retour », « Précédent ») : flèche en ambre (Figma) */
+  .bouton--lien :global(.icone-gauche) { color: var(--couleur-accent-defaut); }
 
   /* Focus clavier : contour ivoire 2 px */
   .bouton:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 3px; }
