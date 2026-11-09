@@ -65,7 +65,6 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
                   <span class="texte-label texte-secondaire num">{rang(i)}</span>
                   <span class="photo" aria-hidden="true"></span>
                   <span class="texte-label nom">{a.nom}</span>
-                  <span class="texte-petit texte-secondaire genre"></span>
                 </li>
               ))}
             </ol>
@@ -74,7 +73,6 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
                 <span class="texte-label texte-secondaire num"></span>
                 <span class="photo" aria-hidden="true"></span>
                 <span class="texte-label nom"></span>
-                <span class="texte-petit texte-secondaire genre"></span>
               </li>
             </template>
           </div>
@@ -171,7 +169,6 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       const li = modeleArtiste.content.firstElementChild!.cloneNode(true) as HTMLElement;
       li.querySelector('.num')!.textContent = rang(i);
       li.querySelector('.nom')!.textContent = a.nom;
-      li.querySelector('.genre')!.textContent = a.genres[0] ?? '';
       if (a.image) (li.querySelector('.photo') as HTMLElement).style.backgroundImage = `url("${a.image}")`;
       return li;
     }));
