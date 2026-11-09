@@ -1,6 +1,6 @@
 // Étape 1 de la connexion (à faire une seule fois) : envoie Andyh sur Spotify
 // pour autoriser Room 33 à lire ses écoutes. Désactivée dès que le jeton existe.
-import { cles, page, PORTEES } from './_spotify.mjs';
+import { cles, page, PORTEES } from '../lib/spotify.mjs';
 
 export default async (req) => {
   const { id, secret, refresh } = cles();

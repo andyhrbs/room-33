@@ -1,6 +1,6 @@
 // « Ce que j'écoute » : lit le compte Spotify d'Andyh côté serveur et renvoie
 // seulement ce que la page Platine affiche. Réponse mise en cache 60 s sur le CDN Netlify.
-import { cles, demanderJeton } from './_spotify.mjs';
+import { cles, demanderJeton } from '../lib/spotify.mjs';
 
 const PERIODES = { '4-semaines': 'short_term', '6-mois': 'medium_term', '1-an': 'long_term' };
 const pochette = (images = []) => (images.find((i) => i.width === 300) || images[0])?.url ?? null;

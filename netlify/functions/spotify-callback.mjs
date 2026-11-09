@@ -1,6 +1,6 @@
 // Étape 2 : Spotify renvoie ici avec un code. On l'échange contre un « refresh token »
 // qu'Andyh copie UNE fois dans Netlify (SPOTIFY_REFRESH_TOKEN). Rien n'est enregistré ici.
-import { cles, demanderJeton, page } from './_spotify.mjs';
+import { cles, demanderJeton, page } from '../lib/spotify.mjs';
 
 export default async (req) => {
   if (cles().refresh) return page('Déjà connecté', '<p>Room 33 est déjà relié à Spotify. Cette page est désactivée.</p>', 410);
