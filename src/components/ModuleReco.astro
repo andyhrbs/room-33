@@ -1,0 +1,45 @@
+---
+// Module « Recommandez-moi un son » (accueil). L'envoi sera branché au Sprint 5.
+import Bouton from './Bouton.astro';
+import { reco, site } from '../data/textes';
+---
+<section class="reco section conteneur" id="recommander" aria-labelledby="reco-titre">
+  <div class="module">
+    <p class="texte-label">{reco.surtitre}</p>
+    <h2 id="reco-titre" class="titre-h1">{reco.titre}</h2>
+    <p class="texte-corps texte-secondaire intro"><span class="seulement-ordi">{reco.texte}</span><span class="seulement-mobile">{reco.texteMobile}</span></p>
+    <form class="formulaire" data-reco action="#recommander">
+      <label for="reco-son" class="visuellement-cache">{reco.titre}</label>
+      <input id="reco-son" name="son" class="texte-corps" placeholder={reco.champ} autocomplete="off" data-placeholder-mobile={reco.champMobile} />
+      <Bouton style="primaire" type="submit" class="envoyer">{reco.envoyer}</Bouton>
+    </form>
+    <Bouton style="lien" href={`https://ig.me/m/${site.instagram.replace('@', '')}`} target="_blank" rel="noopener">{reco.insta}</Bouton>
+  </div>
+</section>
+<script>
+  // Placeholder plus court sur mobile
+  const mq = window.matchMedia('(max-width: 40rem)');
+  document.querySelectorAll<HTMLInputElement>('[data-placeholder-mobile]').forEach((input) => {
+    const long = input.placeholder;
+    const maj = () => (input.placeholder = mq.matches ? input.dataset.placeholderMobile! : long);
+    maj(); mq.addEventListener('change', maj);
+  });
+</script>
+<style>
+  .module { max-width: 45rem; margin-inline: auto; display: grid; justify-items: center; gap: var(--espace-md); text-align: center; }
+  .intro { max-width: 33.75rem; }
+  .formulaire { width: 100%; display: flex; align-items: center; gap: var(--espace-xs); margin-top: var(--espace-xs); }
+  .formulaire input {
+    flex: 1; min-width: 0; background: none; border: 0;
+    padding: var(--espace-md) 0; border-bottom: 1.5px solid var(--couleur-bordure-defaut);
+    caret-color: var(--couleur-accent-defaut); letter-spacing: var(--interlettre-texte);
+    transition: border-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .formulaire input::placeholder { color: var(--couleur-texte-secondaire); opacity: 1; }
+  .formulaire input:focus-visible { outline: none; border-bottom-color: var(--couleur-accent-defaut); }
+  @media (max-width: 40rem) {
+    .module { justify-items: start; text-align: left; gap: var(--espace-lg); }
+    .formulaire { flex-direction: column; align-items: stretch; gap: var(--espace-md); }
+    .formulaire :global(.envoyer) { width: 100%; }
+  }
+</style>

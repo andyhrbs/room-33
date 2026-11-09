@@ -1,20 +1,187 @@
 ---
+// 01 · La pièce (accueil)
 import Base from '../layouts/Base.astro';
-import { accueilProvisoire } from '../data/textes';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import Bouton from '../components/Bouton.astro';
+import PointPiece from '../components/PointPiece.astro';
+import Pochette from '../components/Pochette.astro';
+import Ecoute from '../components/Ecoute.astro';
+import CarteDisque from '../components/CarteDisque.astro';
+import LigneTracklist from '../components/LigneTracklist.astro';
+import EnTeteSection from '../components/EnTeteSection.astro';
+import BandeauGenres from '../components/BandeauGenres.astro';
+import ModuleReco from '../components/ModuleReco.astro';
+import { accueil } from '../data/textes';
+import { bacs, top, morceauDuJour, platine, genres } from '../data/disques';
+import { images } from '../data/images';
+
+const m = morceauDuJour;
+const [premier, ...suivants] = top;
 ---
 <Base>
-  <main class="conteneur">
-    <h1 class="titre-hero">{accueilProvisoire.titre}</h1>
-    <p class="texte-corps-l texte-secondaire">{accueilProvisoire.phrase}</p>
+  <Nav />
+
+  <main class="ambiance">
+    <!-- Hero : la pièce, avec les points sur les objets -->
+    <section class="hero" aria-labelledby="titre-accueil"
+      style={[
+        images.pieceOrdi && `--image-ordi: url('${images.pieceOrdi}')`,
+        images.pieceMobile && `--image-mobile: url('${images.pieceMobile}')`,
+      ].filter(Boolean).join('; ') || undefined}>
+      <div class="points seulement-ordi" aria-label="Les objets de la pièce" role="group">
+        {accueil.objets.map((o) => (
+          <PointPiece nom={o.nom} explication={o.explication} href={o.href} x={o.x} y={o.y} cote={o.cote as 'droite' | 'gauche'} />
+        ))}
+      </div>
+      <div class="conteneur contenu">
+        <div class="accroche">
+          <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
+          <Bouton style="lien" href="/bacs">{accueil.entrer}</Bouton>
+          <p class="texte-legende texte-secondaire seulement-ordi">{accueil.indice}</p>
+        </div>
+        <h1 id="titre-accueil" class="titre-hero">{accueil.titre}</h1>
+      </div>
+    </section>
+
+    <!-- Mobile : la visite de la pièce, objet par objet -->
+    <section class="visite section conteneur seulement-mobile" aria-labelledby="titre-visite">
+      <EnTeteSection surtitre={accueil.visite.surtitre} titre={accueil.visite.titre} id="titre-visite" />
+      <ul role="list" class="objets">
+        {accueil.objets.map((o, i) => (
+          <li class="objet">
+            <div class="vignette" style={`--x: ${o.x}; --y: ${o.y}`} aria-hidden="true"></div>
+            <h3 class="titre-h3">{o.nom}</h3>
+            <p class="texte-corps texte-secondaire">{o.explication}</p>
+            <Bouton style="lien" href={o.href}>{o.lien}</Bouton>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Le morceau du jour -->
+    <section class="morceau section" aria-labelledby="titre-morceau">
+      <div class="conteneur grille-morceau">
+        <Pochette motif={m.disque.motif} src={m.disque.pochette} alt={`Pochette de ${m.disque.titre}`} class="pochette-morceau" />
+        <div class="texte-morceau">
+          <p class="texte-label">{accueil.morceau.surtitre} · {m.date}</p>
+          <h2 id="titre-morceau" class="titre-display">{m.titre}</h2>
+          <p class="texte-corps-l texte-secondaire">{m.disque.artiste} — {m.disque.titre} ({m.disque.annee})</p>
+          <p class="texte-avis"><span class="seulement-ordi">{m.avis}</span><span class="seulement-mobile">{m.avisCourt}</span></p>
+          <div class="actions">
+            <Ecoute titre={m.titre} artiste={m.disque.artiste} />
+            <Bouton style="lien" href={`/disques/${m.disque.slug}`}>{accueil.morceau.voirFiche}</Bouton>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ordi : bandeau des genres et aperçus des autres pièces -->
+    <div class="seulement-ordi">
+      <BandeauGenres genres={genres} />
+
+      <section class="section conteneur apercu" aria-labelledby="titre-bacs">
+        <EnTeteSection surtitre={accueil.bacs.surtitre} titre={accueil.bacs.titre} id="titre-bacs" lien={{ texte: accueil.bacs.lien, href: '/bacs' }} />
+        <div class="rangee-bacs">
+          {bacs.map((b) => <CarteDisque titre={b.nom} artiste={b.detail} motif={b.motif} href={`/bacs/${b.slug}`} />)}
+        </div>
+      </section>
+
+      <section class="platine section" aria-labelledby="titre-platine">
+        <div class="conteneur apercu">
+          <EnTeteSection surtitre={accueil.platine.surtitre} titre={accueil.platine.titre} id="titre-platine" lien={{ texte: accueil.platine.lien, href: '/platine' }} />
+          <dl class="afficheurs">
+            {platine.map((a) => (
+              <div class="afficheur">
+                <dt class="texte-petit texte-secondaire">{a.legende}</dt>
+                <dd class="titre-h1">{a.valeur}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <section class="section conteneur apercu" aria-labelledby="titre-top">
+        <EnTeteSection surtitre={accueil.top.surtitre} titre={accueil.top.titre} id="titre-top" lien={{ texte: accueil.top.lien, href: '/top' }} />
+        <div class="classement">
+          <a class="numero-un" href={`/disques/${premier.slug}`}>
+            <Pochette motif={premier.motif} src={premier.pochette} alt="" />
+            <span class="titre-h2">N° 1 · {premier.titre}</span>
+            <span class="texte-corps texte-secondaire">{premier.artiste}</span>
+          </a>
+          <ol role="list" class="suivants">
+            {suivants.map((d, i) => (
+              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} />
+            ))}
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <ModuleReco />
   </main>
+
+  <PiedDePage />
 </Base>
 
 <style>
-  main {
-    min-height: 100dvh;
-    display: grid;
-    place-content: center;
-    gap: var(--espace-lg);
-    text-align: center;
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; min-height: 100svh; display: flex; align-items: flex-end;
+    --voile: linear-gradient(180deg, rgb(18 10 8 / 0.55) 0%, rgb(18 10 8 / 0) 22%, rgb(18 10 8 / 0) 50%, rgb(18 10 8 / 0.95) 100%);
+    --provisoire:
+      radial-gradient(28% 34% at 50% 26%, rgb(240 122 34 / 0.28), transparent 70%),
+      radial-gradient(18% 22% at 30% 22%, rgb(245 160 96 / 0.35), transparent 70%),
+      radial-gradient(14% 18% at 68% 44%, rgb(245 160 96 / 0.30), transparent 70%),
+      radial-gradient(60% 30% at 50% 70%, rgb(90 46 22 / 0.6), transparent 80%),
+      linear-gradient(180deg, var(--noyer-500), var(--brun-950));
+    background: var(--voile), var(--image-ordi, var(--provisoire));
+    background-size: cover; background-position: center;
   }
+  @media (max-width: 63.99rem) {
+    .hero { min-height: 100svh; background: var(--voile), var(--image-mobile, var(--provisoire)); background-size: cover; background-position: center; }
+  }
+  .points { position: absolute; inset: 0; }
+  .contenu { position: relative; display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-3xl); pointer-events: none; }
+  .contenu > * { pointer-events: auto; }
+  .accroche { display: grid; justify-items: start; gap: var(--espace-sm); max-width: 25rem; }
+  .accroche .texte-legende { margin-top: calc(-1 * var(--espace-xs)); }
+  .titre-hero { white-space: nowrap; }
+  @media (max-width: 63.99rem) { .titre-hero { white-space: normal; } .contenu { gap: var(--espace-md); } }
+
+  /* ---------- Visite (mobile) ---------- */
+  .visite { display: grid; gap: var(--espace-lg); }
+  .objets { display: grid; gap: var(--espace-2xl); }
+  .objet { display: grid; justify-items: start; gap: var(--espace-xs); }
+  .vignette {
+    width: 100%; aspect-ratio: 350 / 220; border-radius: var(--rayon-bloc); margin-bottom: var(--espace-xs);
+    background:
+      radial-gradient(35% 45% at var(--x) var(--y), rgb(240 122 34 / 0.35), transparent 70%),
+      linear-gradient(160deg, var(--noyer-500), var(--brun-950));
+  }
+
+  /* ---------- Morceau du jour ---------- */
+  .morceau { background: var(--couleur-fond-bloc); }
+  .grille-morceau { display: grid; grid-template-columns: minmax(0, 30rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: center; }
+  .texte-morceau { display: grid; gap: var(--espace-md); justify-items: start; }
+  .texte-avis { max-width: 41rem; }
+  .actions { display: grid; gap: var(--espace-lg); justify-items: start; }
+  @media (max-width: 63.99rem) {
+    .grille-morceau { grid-template-columns: 1fr; gap: var(--espace-lg); }
+    .texte-morceau { gap: var(--espace-lg); }
+    .texte-morceau .titre-display { font-size: var(--taille-h1); }
+  }
+
+  /* ---------- Aperçus (ordi) ---------- */
+  .apercu { display: grid; gap: var(--espace-xl); }
+  .rangee-bacs { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
+  .rangee-bacs > :global(*) { flex: 0 0 12.5rem; scroll-snap-align: start; }
+  .platine { background: var(--couleur-fond-noyer); }
+  .afficheurs { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--espace-lg); margin: 0; }
+  .afficheur { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .afficheur dd { margin: 0; }
+  .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
+  .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
+  .numero-un :global(.pochette) { width: min(100%, 23.75rem); }
+  .numero-un:hover .titre-h2 { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 </style>

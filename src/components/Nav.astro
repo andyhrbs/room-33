@@ -28,7 +28,7 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     </nav>
 
     <div class="droite">
-      <Bouton style="lien" href="#recommander" class="cta" data-ouvrir-reco>{nav.cta}</Bouton>
+      <Bouton style="lien" href="/#recommander" class="cta" data-ouvrir-reco>{nav.cta}</Bouton>
       <button class="ouvrir-menu" type="button" aria-haspopup="dialog" aria-controls="menu-principal" data-ouvrir-menu>
         <Icone nom="menu" taille={28} />
         <span class="visuellement-cache">{nav.ouvrirMenu}</span>
@@ -101,13 +101,13 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   /* Ordi en haut de page : liens + CTA */
   @media (min-width: 64rem) {
     .barre { padding-block: var(--espace-lg); }
-    .defile .liens, .defile .cta { display: none; }
+    .defile .liens, .defile :global(.cta) { display: none; }
     .defile .ouvrir-menu { display: grid; }
     .defile .barre { padding-block: var(--espace-md); }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
-    .liens, .cta { display: none; }
+    .liens, .droite :global(.cta) { display: none; }
     .ouvrir-menu { display: grid; }
     .defile .barre { padding-block: var(--espace-sm); }
   }

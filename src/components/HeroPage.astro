@@ -1,0 +1,54 @@
+---
+// Hero des pages intérieures : gros plan de la pièce, retour, fil d'Ariane, titre avec lettrine.
+import Bouton from './Bouton.astro';
+interface Props { image?: string | null; position?: string; filAriane: string[]; surtitreMobile: string; titre: string; retour?: string }
+const { image, position = 'center', filAriane, surtitreMobile, titre, retour = 'Retour dans la pièce' } = Astro.props;
+const lettre = titre.charAt(0);
+const reste = titre.slice(1);
+---
+<header class="hero-page" style={image ? `--image: url('${image}'); --position: ${position}` : undefined}>
+  <div class="conteneur contenu">
+    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour">{retour}</Bouton>
+    <div class="titres">
+      <nav aria-label="Fil d’Ariane" class="seulement-ordi">
+        <ol role="list" class="ariane texte-petit">
+          {filAriane.map((e, i) => (
+            <li>{i < filAriane.length - 1 ? <a href="/">{e}</a> : <span aria-current="page">{e}</span>}</li>
+          ))}
+        </ol>
+      </nav>
+      <p class="texte-label seulement-mobile">{surtitreMobile}</p>
+      <h1 class="titre-avec-lettrine">
+        <span class="lettrine" aria-hidden="true">{lettre}</span><span class="titre-display" aria-hidden="true">{reste}</span>
+        <span class="visuellement-cache">{titre}</span>
+      </h1>
+    </div>
+  </div>
+</header>
+<style>
+  .hero-page {
+    position: relative; display: flex; align-items: flex-end;
+    min-height: clamp(45rem, 60vw, 53.75rem);
+    background:
+      linear-gradient(180deg, rgb(18 10 8 / 0.55) 0%, rgb(18 10 8 / 0) 22%, rgb(18 10 8 / 0) 50%, rgb(18 10 8 / 0.95) 100%),
+      var(--image, radial-gradient(60% 50% at 30% 30%, rgb(240 122 34 / 0.25), transparent), linear-gradient(160deg, var(--noyer-500), var(--brun-950)));
+    background-size: cover; background-position: var(--position, center);
+  }
+  .contenu { display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-2xl); }
+  .contenu :global(.retour) { justify-self: start; }
+  .retour :global(.icone) { color: var(--couleur-accent-defaut); }
+  .titres { display: grid; gap: var(--espace-md); }
+  .ariane { display: flex; gap: var(--espace-xs); }
+  .ariane li + li::before { content: '/'; margin-right: var(--espace-xs); color: var(--couleur-texte-secondaire); }
+  .ariane a { text-decoration: none; color: var(--couleur-texte-secondaire); }
+  .ariane a:hover { color: var(--couleur-texte-principal); }
+  .titre-avec-lettrine { display: flex; align-items: center; font-weight: 400; }
+  .titre-avec-lettrine .lettrine { margin-right: -0.02em; }
+  @media (max-width: 63.99rem) {
+    .hero-page { min-height: 45rem; }
+    .contenu { padding-bottom: var(--espace-xl); gap: var(--espace-md); }
+    .titres { gap: var(--espace-sm); }
+    .titre-avec-lettrine { align-items: flex-start; }
+    .titre-avec-lettrine .lettrine { margin-right: 0.04em; }
+  }
+</style>

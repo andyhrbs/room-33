@@ -1,0 +1,21 @@
+---
+// En-tête de section : surtitre (nom de la section) + titre (phrase descriptive) + lien optionnel
+import Bouton from './Bouton.astro';
+interface Props { surtitre: string; titre: string; lien?: { texte: string; href: string }; id?: string; centre?: boolean; niveau?: 'h1' | 'h2' }
+const { surtitre, titre, lien, id, centre = false, niveau = 'h2' } = Astro.props;
+const Titre = niveau;
+---
+<div class:list={['entete-section', { centre }]}>
+  <div class="textes">
+    <p class="texte-label surtitre">{surtitre}</p>
+    <Titre class="titre-h1" id={id}>{titre}</Titre>
+  </div>
+  {lien && <Bouton style="lien" href={lien.href} class="lien">{lien.texte}</Bouton>}
+</div>
+<style>
+  .entete-section { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--espace-md) var(--espace-xl); }
+  .textes { display: grid; gap: var(--espace-xs); flex: 1 1 30rem; max-width: 72rem; }
+  .centre { justify-content: center; text-align: center; }
+  .centre .textes { justify-items: center; }
+  .lien { flex: none; }
+</style>

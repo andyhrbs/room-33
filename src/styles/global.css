@@ -103,3 +103,23 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
 }
 
 .texte-secondaire { color: var(--couleur-texte-secondaire); }
+
+/* ---------- Mise en page commune ---------- */
+/* Afficher seulement sur ordi (≥ 1024 px) ou seulement sur mobile/tablette */
+@media (max-width: 63.99rem) { .seulement-ordi { display: none !important; } }
+@media (min-width: 64rem) { .seulement-mobile { display: none !important; } }
+
+/* Section : 120 px de marge haut/bas sur ordi, 64 px sur mobile */
+.section { padding-block: clamp(4rem, 2.59rem + 6.01vw, 7.5rem); }
+
+/* Lueurs chaudes derrière les pages (calque « Ambiance » de Figma) */
+.ambiance {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(45% 22% at 57% 24%, rgb(240 122 34 / 0.22), transparent 100%),
+    radial-gradient(48% 18% at 47% 6%, rgb(194 54 27 / 0.13), transparent 100%),
+    radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.10), transparent 100%),
+    radial-gradient(45% 16% at 40% 78%, rgb(239 230 210 / 0.05), transparent 100%),
+    var(--couleur-fond-page);
+}

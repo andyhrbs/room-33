@@ -1,0 +1,46 @@
+---
+// Bandeau qui fait défiler les genres en très grand.
+// Bouton pause obligatoire (règle d'accessibilité WCAG 2.2.2 : tout ce qui bouge plus de 5 s doit pouvoir s'arrêter).
+import Icone from './Icone.astro';
+import { accueil } from '../data/textes';
+interface Props { genres: string[] }
+const { genres } = Astro.props;
+const ligne = genres.join('  ·  ') + '  ·  ';
+---
+<section class="bandeau" aria-label="Mes genres">
+  <p class="visuellement-cache">{genres.join(', ')}</p>
+  <div class="piste" aria-hidden="true">
+    <span class="titre-geant">{ligne}</span><span class="titre-geant">{ligne}</span>
+  </div>
+  <button class="pause" type="button" aria-pressed="false" data-pause-bandeau aria-label={accueil.bandeauPause} data-label-pause={accueil.bandeauPause} data-label-lecture={accueil.bandeauLecture}>
+    <span class="i-pause"><Icone nom="pause" taille={20} /></span>
+    <span class="i-lecture"><Icone nom="lecture" taille={20} /></span>
+  </button>
+</section>
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-pause-bandeau]').forEach((btn) => {
+    const bandeau = btn.closest('.bandeau')!;
+    btn.addEventListener('click', () => {
+      const enPause = bandeau.classList.toggle('en-pause');
+      btn.setAttribute('aria-pressed', String(enPause));
+      btn.setAttribute('aria-label', enPause ? btn.dataset.labelLecture! : btn.dataset.labelPause!);
+    });
+  });
+</script>
+<style>
+  .bandeau { position: relative; background: var(--couleur-fond-ombre); overflow: hidden; padding-block: var(--espace-xl); }
+  .piste { display: flex; width: max-content; animation: defile 40s linear infinite; }
+  .piste span { white-space: pre; padding-right: 0; }
+  .en-pause .piste { animation-play-state: paused; }
+  @keyframes defile { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .piste { animation: none; } }
+  .pause {
+    position: absolute; right: var(--grille-marge); top: var(--espace-xl);
+    width: 44px; height: 44px; display: grid; place-items: center;
+    border: 0; border-radius: 50%; background: var(--couleur-fond-ombre); color: var(--couleur-texte-principal);
+  }
+  .pause:hover { background: var(--couleur-fond-bloc); }
+  .i-lecture, .en-pause .i-pause { display: none; }
+  .en-pause .i-lecture { display: block; }
+  .i-pause, .i-lecture { line-height: 0; }
+</style>

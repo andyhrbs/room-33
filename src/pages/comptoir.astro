@@ -1,0 +1,87 @@
+---
+// 08 · Le comptoir : qui je suis
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import Bouton from '../components/Bouton.astro';
+import HeroPage from '../components/HeroPage.astro';
+import { comptoir as t, site } from '../data/textes';
+import { images } from '../data/images';
+---
+<Base title="Le comptoir" description={t.presentation}>
+  <Nav />
+
+  <main class="ambiance">
+    <HeroPage image={images.pianoGrosPlan} filAriane={t.filAriane} surtitreMobile={t.surtitreMobile} titre={t.titre} retour={t.retour} />
+
+    <section class="intro section conteneur" aria-label="Présentation">
+      <div class="texte">
+        <p class="titre-h3">{t.presentation}</p>
+        <p class="texte-corps-l texte-secondaire">{t.intro}</p>
+        <p class="signature" aria-label={`Signé ${t.signature}`}>{t.signature}</p>
+      </div>
+      <figure class="photo">
+        {images.andyhPiano
+          ? <img src={images.andyhPiano} alt={t.photoAlt} width="560" height="700" loading="lazy" decoding="async" />
+          : <div class="attente texte-petit texte-secondaire" role="img" aria-label={t.photoAlt}><span>{t.photoAttente}</span></div>}
+        <figcaption class="texte-legende texte-secondaire">{t.legende}</figcaption>
+      </figure>
+    </section>
+
+    <section class="pourquoi section" aria-labelledby="titre-pourquoi">
+      <div class="conteneur grille-pourquoi">
+        <div class="titre-pourquoi">
+          <p class="texte-label">{t.pourquoi.surtitre}</p>
+          <h2 id="titre-pourquoi" class="titre-h2">{t.pourquoi.titre}</h2>
+        </div>
+        <div class="texte-pourquoi">
+          <p class="texte-corps-l">{t.pourquoi.p1}</p>
+          <p class="texte-corps-l">{t.pourquoi.p2}</p>
+          <blockquote class="titre-h2">{t.pourquoi.citation}</blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact section" aria-labelledby="titre-contact">
+      <div class="conteneur contenu-contact">
+        <h2 id="titre-contact" class="titre-h2">{t.contact.titre}</h2>
+        <p class="texte-corps-l texte-secondaire">{t.contact.texte}</p>
+        <div class="actions">
+          <Bouton style="primaire" href="/#recommander" data-ouvrir-reco>{t.contact.cta}</Bouton>
+          <Bouton style="lien" href={`https://ig.me/m/${site.instagram.replace('@', '')}`} target="_blank" rel="noopener">{t.contact.insta}</Bouton>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <PiedDePage />
+</Base>
+
+<style>
+  /* Présentation + photo */
+  .intro { display: grid; grid-template-columns: minmax(0, 34rem) minmax(0, 35rem); justify-content: space-between; align-items: center; gap: var(--espace-4xl); }
+  .texte { display: grid; gap: var(--espace-md); }
+  .signature { font-family: var(--police-lettrine); font-size: clamp(2.25rem, 1.8rem + 1.9vw, 3.25rem); line-height: 1.15; letter-spacing: 0; margin-top: var(--espace-xs); }
+  .photo { display: grid; gap: var(--espace-sm); margin: 0; }
+  .photo img, .attente { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--rayon-bloc); }
+  .attente { display: grid; place-items: center; padding: var(--espace-lg); text-align: center; background: var(--couleur-fond-image); }
+
+  /* Pourquoi Room 33 */
+  .pourquoi { background: var(--couleur-fond-bloc); }
+  .grille-pourquoi { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 47rem); justify-content: space-between; gap: var(--espace-lg) var(--espace-3xl); }
+  .titre-pourquoi { display: grid; gap: var(--espace-sm); align-content: start; }
+  .texte-pourquoi { display: grid; gap: var(--espace-xl); }
+  blockquote { margin: 0; }
+
+  /* On se retrouve ? */
+  .contact { background: var(--couleur-fond-ombre); }
+  .contenu-contact { display: grid; justify-items: center; gap: var(--espace-md); text-align: center; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--espace-md) var(--espace-xl); margin-top: var(--espace-md); }
+
+  @media (max-width: 63.99rem) {
+    .intro { grid-template-columns: 1fr; gap: var(--espace-lg); }
+    .grille-pourquoi { grid-template-columns: 1fr; gap: var(--espace-md); }
+    .texte-pourquoi { gap: var(--espace-lg); }
+    .actions { flex-direction: column; gap: var(--espace-md); }
+  }
+</style>
