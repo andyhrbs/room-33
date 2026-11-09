@@ -80,7 +80,7 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
 .titre-geant   { font-size: var(--taille-geant);   line-height: 0.9; }
 .titre-hero    { font-size: var(--taille-hero);    line-height: 0.9; }
 .titre-display { font-size: var(--taille-display); line-height: 1; }
-.titre-h1      { font-size: var(--taille-h1);      line-height: 1.04; }
+.titre-h1      { font-size: var(--taille-h1);      line-height: normal; } /* « Auto » dans Figma */
 .titre-h2      { font-size: var(--taille-h2);      line-height: 1.1; }
 .titre-h3      { font-size: var(--taille-h3);      line-height: 1.2; }
 .logo          { font-size: var(--taille-logo);    line-height: 1; letter-spacing: var(--interlettre-logo); }
