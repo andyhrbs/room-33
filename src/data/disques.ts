@@ -5,6 +5,7 @@
 // disques (ajoutés depuis /admin, pochettes et infos via Spotify).
 // ==========================================================================
 import type { Motif } from '../components/types';
+import { infosAlbums, type Piste } from '../lib/catalogue';
 
 export interface Disque {
   slug: string;
@@ -13,19 +14,31 @@ export interface Disque {
   annee: number;
   genre: string;
   motif: Motif;        // pochette de démo en attendant les vraies (Sprint 4)
-  pochette?: string;   // URL de la vraie pochette
+  pochette?: string;   // URL de la vraie pochette (Spotify, au build)
+  spotifyId?: string;  // identifiant Spotify de l'album (sinon retrouvé par titre + artiste)
+  label?: string;
+  lienSpotify?: string;
+  pistes?: Piste[];
 }
 
 export const disques: Disque[] = [
-  { slug: 'dijon-absolutely', titre: 'Absolutely', artiste: 'Dijon', annee: 2021, genre: 'Soul & R&B', motif: 'bandes' },
-  { slug: 'daniel-caesar-freudian', titre: 'Freudian', artiste: 'Daniel Caesar', annee: 2017, genre: 'Soul & R&B', motif: 'lune' },
-  { slug: 'tom-misch-geography', titre: 'Geography', artiste: 'Tom Misch', annee: 2018, genre: 'Indie', motif: 'arc' },
-  { slug: 'yussef-dayes-black-classical-music', titre: 'Black Classical Music', artiste: 'Yussef Dayes', annee: 2023, genre: 'Jazz', motif: 'points' },
+  { slug: 'dijon-absolutely', spotifyId: '4E691gbRgo2Zb6ToII2DWO', titre: 'Absolutely', artiste: 'Dijon', annee: 2021, genre: 'Soul & R&B', motif: 'bandes' },
+  { slug: 'daniel-caesar-freudian', spotifyId: '4E1XUBMTpLO7GpBzUo65Jp', titre: 'Freudian', artiste: 'Daniel Caesar', annee: 2017, genre: 'Soul & R&B', motif: 'lune' },
+  { slug: 'tom-misch-geography', spotifyId: '0hDnsNkxpMDZrpBlGjldtW', titre: 'Geography', artiste: 'Tom Misch', annee: 2018, genre: 'Indie', motif: 'arc' },
+  { slug: 'yussef-dayes-black-classical-music', spotifyId: '2A5yzYdLTVTLQaCp4CTKwG', titre: 'Black Classical Music', artiste: 'Yussef Dayes', annee: 2023, genre: 'Jazz', motif: 'points' },
   { slug: 'mk-gee-two-star', titre: 'Two Star & the Dream Police', artiste: 'Mk.gee', annee: 2024, genre: 'Indie', motif: 'croix' },
   { slug: 'jordan-ward-forward', titre: 'FORWARD', artiste: 'Jordan Ward', annee: 2023, genre: 'Soul & R&B', motif: 'cercles' },
-  { slug: 'khamari-a-brief-nirvana', titre: 'A Brief Nirvana', artiste: 'Khamari', annee: 2022, genre: 'Soul & R&B', motif: 'arc' },
+  { slug: 'khamari-a-brief-nirvana', spotifyId: '01bSLjnn8QGscvuDqccWFd', titre: 'A Brief Nirvana', artiste: 'Khamari', annee: 2022, genre: 'Soul & R&B', motif: 'arc' },
   { slug: 'luidji-tristesse-business', titre: 'Tristesse Business : Saison 1', artiste: 'Luidji', annee: 2022, genre: 'Rap', motif: 'lune' },
 ];
+
+// Au build : on complète chaque disque avec Spotify (pochette, année, label, pistes)
+const infos = await infosAlbums(disques.map((d) => ({ cle: d.slug, titre: d.titre, artiste: d.artiste, spotifyId: d.spotifyId })));
+for (const d of disques) {
+  const i = infos.get(d.slug);
+  if (!i) continue;
+  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify });
+}
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
 

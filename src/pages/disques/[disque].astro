@@ -36,7 +36,7 @@ const bac = bacDuDisque(d);
         <p class="texte-label">{f.reference} · {bac.nom}</p>
         <h1 id="titre-disque" class="titre-display">{d.titre}</h1>
         <p class="titre-h3 artiste seulement-ordi">{d.artiste}</p>
-        <p class="texte-petit texte-secondaire seulement-ordi">{d.annee} · {d.genre}</p>
+        <p class="texte-petit texte-secondaire seulement-ordi">{[d.annee, d.genre, d.label].filter(Boolean).join(" · ")}</p>
         <p class="texte-corps seulement-mobile">{d.artiste} · {d.annee} · {d.genre}</p>
         <Ecoute titre={d.titre} artiste={d.artiste} />
         <dl class="credits seulement-ordi">

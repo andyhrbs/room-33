@@ -14,10 +14,16 @@ const motifs: Record<Motif, { fond: string; formes: string }> = {
   croix: { fond: 'var(--noyer-500)', formes: '<rect x="112" width="52" height="200" fill="var(--sunset-600)"/><rect y="60" width="200" height="40" fill="var(--ivoire-100)"/>' },
 };
 const m = motifs[motif];
+// Images Spotify : même image en 3 tailles (64, 300, 640 px) → le navigateur charge la plus légère qui suffit
+const SPOT = 'ab67616d0000b273';
+const srcset = src?.includes(SPOT)
+  ? [['ab67616d00004851', 64], ['ab67616d00001e02', 300], [SPOT, 640]].map(([k, w]) => `${src.replace(SPOT, k as string)} ${w}w`).join(', ')
+  : undefined;
+const sizes = srcset ? (taille.endsWith('px') ? taille : '(max-width: 64rem) 90vw, 40vw') : undefined;
 ---
 <div class:list={['pochette', cls]} style={`--taille: ${taille}; background: ${src ? 'var(--couleur-fond-image)' : m.fond}`}>
   {src
-    ? <img src={src} alt={alt} loading="lazy" decoding="async" width="300" height="300" />
+    ? <img src={src} srcset={srcset} sizes={sizes} alt={alt} loading="lazy" decoding="async" width="300" height="300" />
     : <svg viewBox="0 0 200 200" aria-hidden="true" set:html={m.formes} />}
 </div>
 <style>

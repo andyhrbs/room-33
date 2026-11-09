@@ -45,14 +45,14 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         <dl class="afficheurs">
           <div class="afficheur"><dt class="texte-label">Heures d’écoute</dt><dd class="titre-display">{p.heures}</dd></div>
           <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><Pochette motif="lune" taille="48px" /><span class="titre-h1">{p.artisteUn}</span></dd></div>
-          <div class="afficheur seulement-ordi"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
+          <div class="afficheur seulement-ordi"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
         </dl>
 
         <div class="classements">
           <div class="liste">
             <h3 class="titre-h3">Top titres</h3>
             <ol role="list">
-              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} href={`/disques/${t.disque.slug}`} />)}
+              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} />)}
             </ol>
           </div>
           <div class="liste">
