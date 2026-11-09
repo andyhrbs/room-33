@@ -116,6 +116,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .afficheurs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-lg); margin: 0; }
   .afficheur { display: grid; gap: var(--espace-xs); align-content: start; padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dd { margin: 0; }
+  /* Ordi : les trois valeurs sur la même hauteur (celle de « 126 h »), centrées (Figma) */
+  @media (min-width: 64rem) { .afficheur dd { min-height: var(--taille-display); display: flex; align-items: center; } }
   .avec-pochette { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
   .avec-pochette .titre-h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .classements { display: grid; grid-template-columns: 1fr 1fr; gap: var(--espace-3xl); }
