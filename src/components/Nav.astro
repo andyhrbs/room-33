@@ -78,7 +78,7 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     padding: var(--espace-md) var(--grille-marge);
     transition: padding var(--duree-normal) var(--courbe-standard);
   }
-  /* Au défilement : flou progressif sans fond (Figma : flou 100 en haut → 0 en bas).
+  /* Au défilement, sur mobile : flou progressif sans fond (Figma : flou 100 en haut → 0 en bas) ; sur ordi : fond plein (voir plus bas).
      Deux couches de flou masquées en dégradé pour un fondu doux ; apparition en fondu 400 ms. */
   .nav::before, .nav::after {
     content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
@@ -114,6 +114,9 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
      Au défilement, la barre reste transparente (seules les marges se resserrent sur mobile). */
   @media (min-width: 64rem) {
     .barre, .defile .barre { min-height: 72px; padding-block: 0; }
+    /* Ordi : au défilement, fond plein fond/ombre (pas de flou) — Figma */
+    .nav::before { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; background: var(--couleur-fond-ombre); }
+    .nav::after { display: none; }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
