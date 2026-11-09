@@ -111,7 +111,6 @@ export const pourquoiNumeroUn = {
 // La platine (démo : les vraies stats Spotify arrivent au Sprint 4)
 export const platineDetail = {
   enCours: topTitres[0],
-  heures: '126 h',
   artisteUn: 'Dijon',
   titreUn: topTitres[1],
   topArtistes: [
@@ -142,7 +141,6 @@ export const morceauDuJour = {
 
 // La platine (chiffres Spotify au Sprint 4)
 export const platine = [
-  { valeur: '126 h', legende: 'écoutées ces 4 dernières semaines' },
   { valeur: 'Artiste n° 1', legende: 'le plus écouté du mois' },
   { valeur: 'Titre n° 1', legende: 'en boucle ce mois-ci' },
 ];

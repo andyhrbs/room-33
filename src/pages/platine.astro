@@ -43,9 +43,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         </div>
 
         <dl class="afficheurs">
-          <div class="afficheur"><dt class="texte-label">Heures d’écoute</dt><dd class="titre-display">{p.heures}</dd></div>
           <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><Pochette motif="lune" taille="48px" /><span class="titre-h1">{p.artisteUn}</span></dd></div>
-          <div class="afficheur seulement-ordi"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
+          <div class="afficheur"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
         </dl>
 
         <div class="classements">
@@ -113,10 +112,10 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .periode button { border: 0; background: none; padding: var(--espace-xs) var(--espace-md); border-radius: var(--rayon-pilule); min-height: 38px; transition: background-color var(--duree-rapide) var(--courbe-standard); }
   .periode button:hover { background: var(--couleur-fond-tonal); }
   .periode button[aria-pressed='true'] { background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal); }
-  .afficheurs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-lg); margin: 0; }
+  .afficheurs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-lg); margin: 0; }
   .afficheur { display: grid; gap: var(--espace-xs); align-content: start; padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dd { margin: 0; }
-  /* Ordi : les trois valeurs sur la même hauteur (celle de « 126 h »), centrées (Figma) */
+  /* Ordi : les deux valeurs sur la même hauteur, centrées (Figma) */
   @media (min-width: 64rem) { .afficheur dd { min-height: var(--taille-display); display: flex; align-items: center; } }
   .avec-pochette { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
   .avec-pochette .titre-h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
