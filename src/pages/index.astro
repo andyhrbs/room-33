@@ -82,8 +82,8 @@ const suivants = reste.slice(0, 4);
       <BandeauGenres genres={genres} />
 
       <section class="section conteneur apercu" aria-labelledby="titre-bacs">
-        <EnTeteSection surtitre={accueil.bacs.surtitre} titre={accueil.bacs.titre} id="titre-bacs" lien={{ texte: accueil.bacs.lien, href: '/bacs' }} />
-        <div class="rangee-bacs">
+        <EnTeteSection surtitre={accueil.bacs.surtitre} titre={accueil.bacs.titre} id="titre-bacs" lien={{ texte: accueil.bacs.lien, href: '/bacs' }} fleches="rangee-bacs" />
+        <div class="rangee-bacs" id="rangee-bacs">
           {bacs.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b)} motif={b.motif} href={`/bacs/${b.slug}`} />)}
         </div>
       </section>
@@ -175,7 +175,9 @@ const suivants = reste.slice(0, 4);
 
   /* ---------- Aperçus (ordi) ---------- */
   .apercu { display: grid; gap: var(--espace-xl); }
-  .rangee-bacs { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
+  /* Rangée de bacs : défile avec les flèches sur ordi, au doigt sur mobile ; pas de barre de défilement */
+  .rangee-bacs { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-md); scrollbar-width: none; }
+  .rangee-bacs::-webkit-scrollbar { display: none; }
   .rangee-bacs > :global(*) { flex: 0 0 15.625rem; scroll-snap-align: start; }
   .platine { background: var(--couleur-fond-noyer); }
   .afficheurs { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--espace-lg); margin: 0; }

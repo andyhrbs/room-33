@@ -1,8 +1,9 @@
 ---
 // En-tête de section : surtitre (nom de la section) + titre (phrase descriptive) + lien optionnel
 import Bouton from './Bouton.astro';
-interface Props { surtitre: string; titre: string; lien?: { texte: string; href: string }; id?: string; centre?: boolean; niveau?: 'h1' | 'h2' }
-const { surtitre, titre, lien, id, centre = false, niveau = 'h2' } = Astro.props;
+import Icone from './Icone.astro';
+interface Props { surtitre: string; titre: string; lien?: { texte: string; href: string }; id?: string; centre?: boolean; niveau?: 'h1' | 'h2'; fleches?: string }
+const { surtitre, titre, lien, id, centre = false, niveau = 'h2', fleches } = Astro.props;
 const Titre = niveau;
 ---
 <div class:list={['entete-section', { centre }]}>
@@ -10,12 +11,58 @@ const Titre = niveau;
     <p class="texte-label surtitre">{surtitre}</p>
     <Titre class="titre-h1" id={id}>{titre}</Titre>
   </div>
-  {lien && <Bouton style="lien" href={lien.href} class="lien">{lien.texte}</Bouton>}
+  {(lien || fleches) && (
+    <div class="actions">
+      {lien && <Bouton style="lien" href={lien.href} class="lien">{lien.texte}</Bouton>}
+      {fleches && (
+        <div class="fleches seulement-ordi" data-fleches={fleches}>
+          <button type="button" class="fleche" data-sens="-1" aria-label="Voir les précédents" aria-controls={fleches}><Icone nom="fleche-gauche" taille={22} /></button>
+          <button type="button" class="fleche" data-sens="1" aria-label="Voir les suivants" aria-controls={fleches}><Icone nom="fleche-droite" taille={22} /></button>
+        </div>
+      )}
+    </div>
+  )}
 </div>
+
+<script>
+  // Flèches : font défiler la rangée d'une carte à la fois ; grisées au début et à la fin
+  document.querySelectorAll<HTMLElement>('[data-fleches]').forEach((groupe) => {
+    const rangee = document.getElementById(groupe.dataset.fleches!);
+    if (!rangee) return;
+    const [prec, suiv] = groupe.querySelectorAll<HTMLButtonElement>('button');
+    const pas = () => {
+      const carte = rangee.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(rangee).columnGap) || 0;
+      return carte ? carte.offsetWidth + gap : rangee.clientWidth;
+    };
+    const maj = () => {
+      const max = rangee.scrollWidth - rangee.clientWidth - 2;
+      prec.disabled = rangee.scrollLeft <= 2;
+      suiv.disabled = rangee.scrollLeft >= max;
+      groupe.hidden = max <= 0;
+    };
+    groupe.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+      b.addEventListener('click', () => rangee.scrollBy({ left: Number(b.dataset.sens) * pas(), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })),
+    );
+    rangee.addEventListener('scroll', maj, { passive: true });
+    window.addEventListener('resize', maj);
+    maj();
+  });
+</script>
 <style>
   .entete-section { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--espace-md) var(--espace-xl); }
   .textes { display: grid; gap: var(--espace-xs); flex: 1 1 30rem; max-width: 72rem; }
   .centre { justify-content: center; text-align: center; }
   .centre .textes { justify-items: center; }
-  .lien { flex: none; }
+  .actions { display: flex; align-items: center; gap: var(--espace-lg); flex: none; }
+  .fleches { display: flex; gap: var(--espace-xs); }
+  .fleches[hidden] { display: none; }
+  .fleche {
+    width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0;
+    border-radius: var(--rayon-pilule); background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), opacity var(--duree-rapide) var(--courbe-standard);
+  }
+  .fleche:hover:not(:disabled) { background: var(--couleur-fond-tonal-survol); }
+  .fleche:active:not(:disabled) { background: var(--couleur-fond-tonal-presse); }
+  .fleche:disabled { opacity: 0.4; cursor: default; }
 </style>
