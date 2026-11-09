@@ -78,7 +78,23 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     padding: var(--espace-md) var(--grille-marge);
     transition: padding var(--duree-normal) var(--courbe-standard);
   }
-  /* Au défilement : pas de fond ni de flou (choix Figma d'Andyh) — la nav reste transparente */
+  /* Au défilement : flou progressif sans fond (Figma : flou 100 en haut → 0 en bas).
+     Deux couches de flou masquées en dégradé pour un fondu doux ; apparition en fondu 400 ms. */
+  .nav::before, .nav::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
+  }
+  .nav::before {
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+  }
+  .nav::after {
+    -webkit-backdrop-filter: blur(40px); backdrop-filter: blur(40px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 60%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 60%);
+  }
+  .defile::before, .defile::after { opacity: 1; }
   .nav:not(.fixe) { position: relative; }
   .defile .barre { padding-block: var(--espace-sm); }
 
