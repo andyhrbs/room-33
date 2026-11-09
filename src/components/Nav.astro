@@ -80,11 +80,18 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
   .nav::before {
     content: ''; position: absolute; inset: 0; z-index: -1;
+    /* Verre dépoli : fond/bloc à 72 % + flou de 16 px (Figma) ; fond plein si le flou n'est pas géré */
     background: var(--couleur-fond-bloc);
     opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
   }
   .nav:not(.fixe) { position: relative; }
   .defile::before { opacity: 1; }
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .nav::before {
+      background: color-mix(in srgb, var(--couleur-fond-bloc) 72%, transparent);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    }
+  }
   .defile .barre { padding-block: var(--espace-sm); }
 
   .gauche, .droite { flex: 1; display: flex; align-items: center; }
@@ -100,7 +107,7 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
 
   /* Ordi : liens + CTA tout le temps (pas de menu burger).
-     Au défilement (ordi et mobile), le fond couleur/fond/bloc apparaît en fondu (durée « normal », 400 ms). */
+     Au défilement (ordi et mobile), le verre dépoli (fond/bloc 72 % + flou) apparaît en fondu (durée « normal », 400 ms). */
   @media (min-width: 64rem) {
     .barre, .defile .barre { min-height: 72px; padding-block: 0; }
   }
