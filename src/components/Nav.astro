@@ -90,7 +90,8 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   .gauche, .droite { flex: 1; display: flex; align-items: center; }
   .droite { justify-content: flex-end; }
   .liens ul { display: flex; gap: var(--espace-xl); }
-  .liens a { text-decoration: none; padding-block: var(--espace-xs); text-underline-offset: 0.35em; }
+  /* Lien actif : souligné, trait 1 px, décalé de 6 px (Figma) */
+  .liens a { text-decoration: none; padding-block: var(--espace-xs); text-underline-offset: 6px; }
   .liens a:hover, .liens a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
 
   .ouvrir-menu {
@@ -100,10 +101,15 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
 
   /* Ordi en haut de page : liens + CTA */
   @media (min-width: 64rem) {
-    .barre { padding-block: var(--espace-lg); }
+    /* Même hauteur (84 px) en haut de page et au défilement */
+    .barre, .defile .barre { min-height: 84px; padding-block: 0; }
     .defile .liens, .defile :global(.cta) { display: none; }
     .defile .ouvrir-menu { display: grid; }
-    .defile .barre { padding-block: var(--espace-md); }
+    /* Défilé : dégradé brun 950 → transparent + flou d'arrière-plan */
+    .nav::before {
+      background: linear-gradient(180deg, var(--brun-950) 0%, rgb(18 11 7 / 0) 100%);
+      -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px);
+    }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
