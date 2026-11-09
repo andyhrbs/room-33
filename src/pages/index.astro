@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base>
+  <main>
+    <h1>Room 33</h1>
+    <p>Bienvenue chez moi. La pièce se prépare.</p>
+  </main>
+</Base>
+
+<style>
+  main {
+    min-height: 100dvh;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { font-size: clamp(2.75rem, 10.5vw, 9.5rem); font-weight: 400; margin: 0; letter-spacing: -0.04em; }
+  p { opacity: 0.62; }
+</style>

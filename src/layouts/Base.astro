@@ -1,0 +1,29 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Room 33',
+  description = 'Bienvenue chez moi. Installez-vous, fouillez dans mes bacs et glissez-moi vos sons.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1F150E" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; background: #1F150E; color: #EFE6D2; }
+  body { font-family: system-ui, sans-serif; }
+</style>
