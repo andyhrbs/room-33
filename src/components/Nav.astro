@@ -78,21 +78,13 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     padding: var(--espace-md) var(--grille-marge);
     transition: padding var(--duree-normal) var(--courbe-standard);
   }
-  /* Au défilement (ordi et mobile, Figma) : dégradé fond/ombre 80 % → 0 % de haut en bas,
-     + flou d'arrière-plan progressif (fort en haut, nul en bas). Apparition en fondu 400 ms. */
-  .nav::before, .nav::after {
+  /* Au défilement (ordi et mobile, Figma) : fond plein couleur/fond/ombre, sans flou. Apparition en fondu 400 ms. */
+  .nav::before {
     content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: var(--couleur-fond-ombre);
     opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
   }
-  .nav::before {
-    -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); /* Figma : flou 100 ≈ 50 px en CSS */
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
-  }
-  .nav::after {
-    background: linear-gradient(to bottom, color-mix(in srgb, var(--couleur-fond-ombre) 80%, transparent), color-mix(in srgb, var(--couleur-fond-ombre) 0%, transparent));
-  }
-  .defile::before, .defile::after { opacity: 1; }
+  .defile::before { opacity: 1; }
   .nav:not(.fixe) { position: relative; }
   .defile .barre { padding-block: var(--espace-sm); }
 
