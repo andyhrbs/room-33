@@ -4,7 +4,7 @@
   "description": "Room 33 — le site perso d'Andyh pour partager ses goûts musicaux",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/garde-fou.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
