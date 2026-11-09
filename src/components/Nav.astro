@@ -99,14 +99,10 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     place-items: center; border: 0; background: none; padding: 0; color: inherit;
   }
 
-  /* Ordi en haut de page : liens + CTA */
+  /* Ordi : liens + CTA tout le temps (pas de menu burger).
+     Au défilement, le fond brun foncé apparaît en fondu (durée « normal », 400 ms). */
   @media (min-width: 64rem) {
-    /* Même hauteur (84 px) en haut de page et au défilement */
     .barre, .defile .barre { min-height: 84px; padding-block: 0; }
-    .defile .liens, .defile :global(.cta) { display: none; }
-    .defile .ouvrir-menu { display: grid; }
-    /* Défilé : dégradé brun 950 → transparent (sans flou, comme Figma) */
-    .nav::before { background: linear-gradient(180deg, var(--brun-950) 0%, rgb(18 11 7 / 0) 100%); }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
