@@ -1,0 +1,84 @@
+---
+// Menu plein écran, ouvert par l'icône menu. Liens en Gilda (H2), numérotés, avec une explication.
+// Fermeture : croix, touche Échap, ou clic sur un lien.
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import Bouton from './Bouton.astro';
+import { nav, pages, site } from '../data/textes';
+interface Props { chemin: string; ouvertPourDemo?: boolean }
+const { chemin, ouvertPourDemo = false } = Astro.props;
+const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.startsWith(href));
+---
+<dialog id={ouvertPourDemo ? undefined : 'menu-principal'} class:list={['menu', { demo: ouvertPourDemo }]} aria-label="Menu" open={ouvertPourDemo}>
+  <div class="entete">
+    <Logo />
+    <button class="fermer" type="button" data-fermer-menu autofocus={!ouvertPourDemo}>
+      <Icone nom="fermer" taille={28} />
+      <span class="visuellement-cache">{nav.fermerMenu}</span>
+    </button>
+  </div>
+
+  <nav aria-label="Toutes les pages">
+    <ol role="list" class="liens">
+      {pages.map((p) => (
+        <li>
+          <a href={p.href} aria-current={estActif(p.href) ? 'page' : undefined}>
+            <span class="numero texte-legende texte-secondaire" aria-hidden="true">{p.numero}</span>
+            <span class="texte">
+              <span class="titre-h2 libelle">{p.long}</span>
+              <span class="texte-petit texte-secondaire">{p.explication}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <div class="bas">
+    <Bouton style="primaire" href="#recommander" pleineLargeur data-ouvrir-reco>{nav.cta}</Bouton>
+    <a class="instagram texte-petit texte-secondaire" href={site.instagramUrl} rel="noopener" target="_blank">
+      <Icone nom="instagram" />{site.instagram}<span class="visuellement-cache"> (Instagram, nouvel onglet)</span>
+    </a>
+  </div>
+</dialog>
+
+<style>
+  .menu {
+    width: 100%; max-width: none; height: 100dvh; max-height: none;
+    margin: 0; padding: 0; border: 0;
+    background: var(--couleur-fond-page); color: var(--couleur-texte-principal);
+    display: none; flex-direction: column;
+  }
+  .menu[open] { display: flex; animation: apparait var(--duree-normal) var(--courbe-sortie); }
+  .menu.demo { position: relative; height: 52.75rem; inset: auto; }
+  .menu::backdrop { background: var(--couleur-fond-page); }
+  @keyframes apparait { from { opacity: 0; transform: translateY(-8px); } }
+
+  .entete {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--espace-md) var(--grille-marge);
+  }
+  .fermer { width: 44px; height: 44px; margin-right: -8px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: inherit; }
+
+  .liens { display: grid; gap: var(--espace-lg); padding: var(--espace-3xl) var(--grille-marge) var(--espace-xl); }
+  .liens a { display: flex; gap: var(--espace-sm); text-decoration: none; }
+  .numero { padding-top: 0.6em; min-width: 1.4rem; }
+  .texte { display: grid; gap: 2px; }
+  .libelle { text-underline-offset: 0.15em; text-decoration-thickness: var(--trait-filet); }
+  .liens a:hover .libelle, .liens a[aria-current='page'] .libelle { text-decoration: underline; }
+
+  .bas { margin-top: auto; display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge) var(--espace-2xl); }
+  .instagram { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; }
+  .instagram:hover { color: var(--couleur-texte-principal); }
+
+  /* Sur grand écran : liens sur deux colonnes, bas aligné à gauche */
+  @media (min-width: 64rem) {
+    .liens { grid-template-columns: 1fr 1fr; column-gap: var(--grille-gouttiere); row-gap: var(--espace-2xl); max-width: var(--grille-largeur-max); }
+    .bas { grid-template-columns: auto auto; justify-content: start; align-items: center; column-gap: var(--espace-xl); }
+    .bas :global(.bouton--plein) { width: auto; }
+  }
+</style>
+
+<style is:global>
+  html.menu-ouvert { overflow: hidden; }
+</style>

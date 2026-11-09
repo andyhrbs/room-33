@@ -22,7 +22,7 @@ npm run build    # génère le site dans dist/
 |---|---|---|
 | 0 | Installation (Astro, GitHub, Netlify) | fait — https://room-33.netlify.app |
 | 1 | Fondations (tokens, polices, textes) | fait — /specimen |
-| 2 | Composants | à faire |
+| 2 | Composants | fait — /composants |
 | 3 | Pages | à faire |
 | 4 | Données (disques, Spotify, Deezer, Odesli) | à faire |
 | 5 | Recos (formulaire) | à faire |

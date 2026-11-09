@@ -1,0 +1,30 @@
+---
+// Écoute : extrait de 30 s sur le site + « Ouvrir l'app » (Spotify, Apple Music, Deezer, YouTube Music).
+// Le son et le choix de l'app seront branchés au Sprint 4 (Deezer + Odesli).
+import Icone from './Icone.astro';
+import Bouton from './Bouton.astro';
+interface Props { titre: string; artiste: string; extrait?: string }
+const { titre, artiste, extrait } = Astro.props;
+---
+<div class="ecoute" data-ecoute data-extrait={extrait} data-titre={titre} data-artiste={artiste}>
+  <button class="lecture" type="button" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
+    <Icone nom="lecture" taille={40} />
+  </button>
+  <div class="infos">
+    <span class="texte-label">Écouter un extrait</span>
+    <span class="texte-legende texte-secondaire">30 s · aperçu Deezer</span>
+  </div>
+  <Bouton style="secondaire" class="app">Ouvrir l’app</Bouton>
+</div>
+<style>
+  .ecoute { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-sm) var(--espace-md); }
+  .lecture {
+    width: 48px; height: 48px; flex: none; border: 0; padding: 0;
+    display: grid; place-items: center; border-radius: var(--rayon-pilule);
+    background: var(--couleur-accent-defaut); color: var(--couleur-accent-texte-dessus);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
+  }
+  .lecture:hover { background: var(--couleur-accent-survol); }
+  .lecture:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
+  .infos { display: grid; margin-right: var(--espace-xs); }
+</style>

@@ -1,0 +1,114 @@
+---
+// Barre de navigation.
+// Haut de page : transparente (ordi : logo, liens, CTA ; mobile : logo + menu).
+// Au défilement : barre sombre compacte, logo + menu.
+// Le menu s'ouvre en plein écran (élément <dialog> : Échap, focus piégé, fond inerte).
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import Bouton from './Bouton.astro';
+import MenuMobile from './MenuMobile.astro';
+import { nav, pages } from '../data/textes';
+
+interface Props { fixe?: boolean; etatForce?: 'haut' | 'defile'; avecMenu?: boolean }
+const { fixe = true, etatForce, avecMenu = true } = Astro.props;
+const chemin = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const liens = nav.liens.map((court) => pages.find((p) => p.court === court)!);
+const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.startsWith(href));
+---
+<header class:list={['nav', { fixe, defile: etatForce === 'defile' }]} data-nav data-etat-force={etatForce}>
+  <div class="barre">
+    <div class="gauche"><Logo /></div>
+
+    <nav class="liens" aria-label="Navigation principale">
+      <ul role="list">
+        {liens.map((p) => (
+          <li><a href={p.href} class="texte-corps" aria-current={estActif(p.href) ? 'page' : undefined}>{p.court}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="droite">
+      <Bouton style="lien" href="#recommander" class="cta" data-ouvrir-reco>{nav.cta}</Bouton>
+      <button class="ouvrir-menu" type="button" aria-haspopup="dialog" aria-controls="menu-principal" data-ouvrir-menu>
+        <Icone nom="menu" taille={28} />
+        <span class="visuellement-cache">{nav.ouvrirMenu}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{avecMenu && <MenuMobile chemin={chemin} />}
+
+<script>
+  const SEUIL = 80; // px de défilement avant de passer en barre sombre
+  document.querySelectorAll<HTMLElement>('[data-nav]').forEach((header) => {
+    if (header.dataset.etatForce) return;
+    const maj = () => header.classList.toggle('defile', window.scrollY > SEUIL);
+    maj();
+    window.addEventListener('scroll', maj, { passive: true });
+  });
+
+  const menu = document.getElementById('menu-principal') as HTMLDialogElement | null;
+  let declencheur: HTMLElement | null = null;
+  document.querySelectorAll<HTMLButtonElement>('[data-ouvrir-menu]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      if (!menu) return;
+      declencheur = btn;
+      menu.showModal();
+      btn.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('menu-ouvert');
+    }),
+  );
+  menu?.addEventListener('close', () => {
+    document.documentElement.classList.remove('menu-ouvert');
+    declencheur?.setAttribute('aria-expanded', 'false');
+    declencheur?.focus();
+  });
+  menu?.querySelectorAll('[data-fermer-menu], a').forEach((el) =>
+    el.addEventListener('click', () => menu.close()),
+  );
+</script>
+
+<style>
+  .nav { width: 100%; z-index: 50; color: var(--couleur-texte-principal); }
+  .nav.fixe { position: fixed; inset: 0 0 auto 0; }
+  .barre {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: var(--grille-largeur-max); margin-inline: auto;
+    padding: var(--espace-md) var(--grille-marge);
+    transition: padding var(--duree-normal) var(--courbe-standard);
+  }
+  .nav::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: var(--couleur-fond-ombre);
+    opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
+  }
+  .nav:not(.fixe) { position: relative; }
+  .defile::before { opacity: 1; }
+  .defile .barre { padding-block: var(--espace-sm); }
+
+  .gauche, .droite { flex: 1; display: flex; align-items: center; }
+  .droite { justify-content: flex-end; }
+  .liens ul { display: flex; gap: var(--espace-xl); }
+  .liens a { text-decoration: none; padding-block: var(--espace-xs); text-underline-offset: 0.35em; }
+  .liens a:hover, .liens a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
+
+  .ouvrir-menu {
+    display: none; width: 44px; height: 44px; margin-right: -8px;
+    place-items: center; border: 0; background: none; padding: 0; color: inherit;
+  }
+
+  /* Ordi en haut de page : liens + CTA */
+  @media (min-width: 64rem) {
+    .barre { padding-block: var(--espace-lg); }
+    .defile .liens, .defile .cta { display: none; }
+    .defile .ouvrir-menu { display: grid; }
+    .defile .barre { padding-block: var(--espace-md); }
+  }
+  /* Mobile et tablette : logo + menu */
+  @media (max-width: 63.99rem) {
+    .liens, .cta { display: none; }
+    .ouvrir-menu { display: grid; }
+    .defile .barre { padding-block: var(--espace-sm); }
+  }
+</style>

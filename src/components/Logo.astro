@@ -1,0 +1,12 @@
+---
+// Logo « Room 33 » : le R en Pinyon Script, le reste en Gilda Display (comme dans Figma)
+interface Props { href?: string; class?: string }
+const { href = '/', class: cls } = Astro.props;
+---
+<a href={href} class:list={['logo-lien', cls]} aria-label="Room 33, retour à l’accueil">
+  <span class="logo" aria-hidden="true"><span class="r">R</span>oom 33</span>
+</a>
+<style>
+  .logo-lien { text-decoration: none; display: inline-flex; }
+  .r { font-family: var(--police-lettrine); }
+</style>

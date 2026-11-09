@@ -1,0 +1,63 @@
+---
+// Champ souligné (pas de cadre). États : Défaut, Focus (trait ambre), Rempli, Erreur.
+import Icone from './Icone.astro';
+interface Props {
+  id: string;
+  name?: string;
+  label: string;           // lu par les lecteurs d'écran (et visible si labelVisible)
+  placeholder?: string;
+  type?: string;
+  value?: string;
+  erreur?: string;         // message d'erreur : passe le champ en état Erreur
+  icone?: boolean;         // loupe à gauche
+  labelVisible?: boolean;
+  requis?: boolean;
+  autocomplete?: string;
+  class?: string;
+}
+const {
+  id, name = id, label, placeholder, type = 'text', value, erreur, icone = false,
+  labelVisible = false, requis = false, autocomplete = 'off', class: cls,
+} = Astro.props;
+const idMessage = `${id}-message`;
+---
+<div class:list={['champ', { 'champ--erreur': !!erreur }, cls]}>
+  <label for={id} class:list={['texte-legende texte-secondaire', { 'visuellement-cache': !labelVisible }]}>{label}</label>
+  <div class="ligne">
+    {icone && <Icone nom="recherche" class="loupe" />}
+    <input
+      id={id} name={name} type={type} value={value}
+      placeholder={placeholder}
+      class="texte-corps"
+      required={requis}
+      autocomplete={autocomplete}
+      aria-invalid={erreur ? 'true' : undefined}
+      aria-describedby={erreur ? idMessage : undefined}
+    />
+  </div>
+  <p id={idMessage} class="message texte-legende" role={erreur ? 'alert' : undefined} hidden={!erreur}>{erreur}</p>
+</div>
+
+<style>
+  .champ { display: grid; gap: var(--espace-xs); }
+  .ligne {
+    display: flex; align-items: center; gap: var(--espace-xs);
+    padding-block: var(--espace-md);
+    border-bottom: 1.5px solid var(--couleur-bordure-defaut);
+    transition: border-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .ligne:focus-within { border-bottom-color: var(--couleur-accent-defaut); }
+  .champ--erreur .ligne { border-bottom-color: var(--couleur-erreur); }
+  .loupe { color: var(--couleur-texte-secondaire); }
+  input {
+    flex: 1; min-width: 0;
+    background: none; border: 0; padding: 0;
+    color: var(--couleur-texte-principal);
+    caret-color: var(--couleur-accent-defaut);
+    letter-spacing: var(--interlettre-texte);
+  }
+  input::placeholder { color: var(--couleur-texte-secondaire); opacity: 1; }
+  /* Le trait ambre suffit à montrer le focus : pas de contour en plus */
+  input:focus-visible { outline: none; }
+  .message { color: var(--couleur-erreur); }
+</style>

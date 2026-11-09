@@ -1,0 +1,88 @@
+---
+// Bouton du Kit UI : Primaire (ambre), Secondaire (fond tonal), Lien.
+// États gérés en CSS : survol, pressé, focus clavier, désactivé.
+import Icone from './Icone.astro';
+import type { NomIcone } from './types';
+
+interface Props {
+  style?: 'primaire' | 'secondaire' | 'lien';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  iconeGauche?: NomIcone;
+  iconeDroite?: NomIcone | null;
+  desactive?: boolean;
+  pleineLargeur?: boolean;
+  class?: string;
+  [attr: string]: unknown;
+}
+const {
+  style = 'primaire', href, type = 'button', iconeGauche, iconeDroite = 'fleche-droite',
+  desactive = false, pleineLargeur = false, class: cls, ...attrs
+} = Astro.props;
+const Tag = href && !desactive ? 'a' : 'button';
+const tailleIcone = 20;
+---
+<Tag
+  class:list={['bouton', `bouton--${style}`, { 'bouton--plein': pleineLargeur }, cls]}
+  href={Tag === 'a' ? href : undefined}
+  type={Tag === 'button' ? type : undefined}
+  disabled={Tag === 'button' && desactive ? true : undefined}
+  aria-disabled={desactive ? 'true' : undefined}
+  {...attrs}
+>
+  {iconeGauche && <Icone nom={iconeGauche} taille={tailleIcone} />}
+  <span class="texte-bouton"><slot /></span>
+  {iconeDroite && <Icone nom={iconeDroite} taille={tailleIcone} class="icone-droite" />}
+</Tag>
+
+<style>
+  .bouton {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: var(--espace-xs);
+    min-height: 44px; /* zone tactile minimale */
+    border: 0; background: none; color: var(--couleur-texte-principal);
+    text-decoration: none; white-space: nowrap;
+    transition:
+      background-color var(--duree-rapide) var(--courbe-standard),
+      color var(--duree-rapide) var(--courbe-standard),
+      transform var(--duree-rapide) var(--courbe-standard);
+  }
+  .bouton .icone-droite { transition: transform var(--duree-rapide) var(--courbe-standard); }
+  .bouton:hover:not(:disabled) .icone-droite { transform: translateX(3px); }
+
+  /* Primaire */
+  .bouton--primaire {
+    padding: var(--espace-md) var(--espace-lg);
+    border-radius: var(--rayon-pilule);
+    background: var(--couleur-accent-defaut);
+    color: var(--couleur-accent-texte-dessus);
+  }
+  .bouton--primaire:hover { background: var(--couleur-accent-survol); }
+  .bouton--primaire:active { background: var(--couleur-accent-presse); transform: scale(0.98); }
+
+  /* Secondaire */
+  .bouton--secondaire {
+    padding: var(--espace-md) var(--espace-lg);
+    border-radius: var(--rayon-pochette);
+    background: var(--couleur-fond-tonal);
+  }
+  .bouton--secondaire:hover { background: var(--couleur-fond-tonal-survol); }
+  .bouton--secondaire:active { background: var(--couleur-fond-tonal-presse); transform: scale(0.98); }
+
+  /* Lien */
+  .bouton--lien { padding: var(--espace-xs) 0; text-underline-offset: 0.3em; }
+  .bouton--lien:hover .texte-bouton { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
+  .bouton--lien:active { color: var(--couleur-texte-secondaire); }
+
+  /* Focus clavier : contour ivoire 2 px */
+  .bouton:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 3px; }
+  .bouton--primaire:focus-visible { border-radius: var(--rayon-pilule); }
+
+  /* Désactivé */
+  .bouton:disabled, .bouton[aria-disabled='true'] { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .bouton--primaire:disabled:hover { background: var(--couleur-accent-defaut); }
+  .bouton--secondaire:disabled:hover { background: var(--couleur-fond-tonal); }
+  .bouton--lien:disabled:hover .texte-bouton { text-decoration: none; }
+
+  .bouton--plein { width: 100%; }
+</style>

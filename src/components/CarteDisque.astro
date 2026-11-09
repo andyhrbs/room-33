@@ -1,0 +1,30 @@
+---
+// Disque dans une grille (bac, Top, bac des visiteurs). Mène à la fiche disque.
+import Pochette from './Pochette.astro';
+import type { Motif } from './types';
+interface Props { titre: string; artiste: string; annee?: string | number; href?: string; src?: string; motif?: Motif; rang?: number }
+const { titre, artiste, annee, href = '#', src, motif, rang } = Astro.props;
+---
+<article class="carte">
+  <a href={href} class="lien">
+    <div class="visuel">
+      <Pochette src={src} motif={motif} alt="" />
+      {rang && <span class="rang titre-h3" aria-hidden="true">{rang}</span>}
+    </div>
+    <h3 class="texte-label titre">{rang && <span class="visuellement-cache">N° {rang} : </span>}{titre}</h3>
+  </a>
+  <p class="texte-petit texte-secondaire">{artiste}{annee && ` · ${annee}`}</p>
+</article>
+<style>
+  .carte { display: grid; gap: var(--espace-xs); align-content: start; }
+  .lien { display: grid; gap: var(--espace-sm); text-decoration: none; }
+  .visuel { position: relative; transition: transform var(--duree-normal) var(--courbe-sortie); }
+  .lien:hover .visuel { transform: translateY(-4px); }
+  .lien:hover .titre { text-decoration: underline; text-underline-offset: 0.2em; }
+  .lien:focus-visible { outline-offset: 6px; }
+  .rang {
+    position: absolute; left: var(--espace-xs); bottom: var(--espace-xs);
+    min-width: 2.5rem; padding: 0 var(--espace-xs);
+    background: var(--couleur-fond-ombre); border-radius: var(--rayon-pochette); text-align: center;
+  }
+</style>

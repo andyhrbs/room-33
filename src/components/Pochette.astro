@@ -1,0 +1,30 @@
+---
+// Pochette : vraie image (src) ou motif de démonstration (façon Reid Miles).
+// Cadre commun : coins 4 px, ombre portée.
+import type { Motif } from './types';
+interface Props { src?: string; alt?: string; motif?: Motif; taille?: string; class?: string }
+const { src, alt = '', motif = 'cercles', taille = '100%', class: cls } = Astro.props;
+
+const motifs: Record<Motif, { fond: string; formes: string }> = {
+  cercles: { fond: 'var(--sunset-600)', formes: '<circle cx="100" cy="100" r="80" fill="var(--brun-950)"/><circle cx="100" cy="100" r="55" fill="var(--ambre-500)"/><circle cx="100" cy="100" r="20" fill="var(--ivoire-100)"/>' },
+  bandes: { fond: 'var(--ivoire-100)', formes: '<rect y="40" width="200" height="28" fill="var(--ambre-500)"/><rect y="84" width="200" height="28" fill="var(--sunset-600)"/><rect y="128" width="200" height="28" fill="var(--noyer-500)"/><rect y="172" width="200" height="28" fill="var(--brun-950)"/>' },
+  arc: { fond: 'var(--noyer-500)', formes: '<circle cx="60" cy="200" r="130" fill="var(--ambre-500)"/><circle cx="156" cy="44" r="16" fill="var(--ivoire-100)"/>' },
+  lune: { fond: 'var(--brun-950)', formes: '<circle cx="90" cy="84" r="60" fill="var(--ambre-500)"/><rect y="134" width="200" height="66" fill="var(--sunset-600)"/>' },
+  points: { fond: 'var(--ambre-500)', formes: [44, 100, 156].flatMap((x) => [44, 100, 156].map((y) => `<circle cx="${x}" cy="${y}" r="16" fill="var(--brun-950)"/>`)).join('') },
+  croix: { fond: 'var(--noyer-500)', formes: '<rect x="112" width="52" height="200" fill="var(--sunset-600)"/><rect y="60" width="200" height="40" fill="var(--ivoire-100)"/>' },
+};
+const m = motifs[motif];
+---
+<div class:list={['pochette', cls]} style={`--taille: ${taille}; background: ${src ? 'var(--couleur-fond-image)' : m.fond}`}>
+  {src
+    ? <img src={src} alt={alt} loading="lazy" decoding="async" width="300" height="300" />
+    : <svg viewBox="0 0 200 200" aria-hidden="true" set:html={m.formes} />}
+</div>
+<style>
+  .pochette {
+    width: var(--taille); aspect-ratio: 1; flex: none;
+    border-radius: var(--rayon-pochette); overflow: hidden;
+    box-shadow: 0 14px 30px rgb(18 10 8 / 0.55);
+  }
+  .pochette svg, .pochette img { width: 100%; height: 100%; object-fit: cover; display: block; }
+</style>

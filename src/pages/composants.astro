@@ -1,0 +1,191 @@
+---
+// Page de contrôle du Sprint 2 : chaque composant du Kit UI, avec ses états.
+// Non indexée. Sera retirée (ou cachée) à la mise en ligne finale.
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import MenuMobile from '../components/MenuMobile.astro';
+import Bouton from '../components/Bouton.astro';
+import Icone from '../components/Icone.astro';
+import Champ from '../components/Champ.astro';
+import Pochette from '../components/Pochette.astro';
+import CarteDisque from '../components/CarteDisque.astro';
+import LigneTracklist from '../components/LigneTracklist.astro';
+import Ecoute from '../components/Ecoute.astro';
+import MiniPlatine from '../components/MiniPlatine.astro';
+import PointPiece from '../components/PointPiece.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+
+const etats = ['Défaut', 'Survol', 'Pressé', 'Focus', 'Désactivé'];
+const styles = ['primaire', 'secondaire', 'lien'] as const;
+const icones = ['lecture', 'pause', 'recherche', 'fermer', 'fleche-droite', 'fleche-gauche', 'valider', 'instagram', 'menu', 'chevron'] as const;
+const motifs = ['cercles', 'bandes', 'arc', 'lune', 'points', 'croix'] as const;
+---
+<Base title="Composants" noindex>
+  <Nav />
+
+  <main class="conteneur page">
+    <header class="entete">
+      <p class="texte-petit texte-secondaire">Sprint 2 · Composants</p>
+      <h1 class="titre-display">Composants</h1>
+      <p class="texte-corps-l texte-secondaire">Le Kit UI Figma, recréé en code. Les composants « en vrai » réagissent à la souris et au clavier (touche Tab). Faites défiler : la barre du haut passe en version sombre. Réduisez la fenêtre pour voir la version mobile.</p>
+    </header>
+
+    <section aria-labelledby="t-boutons">
+      <h2 id="t-boutons" class="titre-h3">Bouton</h2>
+      <p class="texte-petit texte-secondaire">En vrai (survolez, cliquez, tabulez) :</p>
+      <div class="rangee">
+        <Bouton style="primaire">Recommandez-moi un son</Bouton>
+        <Bouton style="secondaire">Ouvrir l’app</Bouton>
+        <Bouton style="lien">Voir tout le bac</Bouton>
+        <Bouton style="secondaire" iconeGauche="fleche-gauche" iconeDroite={null}>Retour aux bacs</Bouton>
+      </div>
+      <p class="texte-petit texte-secondaire">Tous les états, figés pour comparer avec Figma :</p>
+      <div class="tableau-etats" role="table" aria-label="États des boutons">
+        <div role="row" class="ligne-etats">
+          <span role="columnheader"></span>
+          {etats.map((e) => <span role="columnheader" class="texte-legende texte-secondaire">{e}</span>)}
+        </div>
+        {styles.map((s) => (
+          <div role="row" class="ligne-etats">
+            <span role="rowheader" class="texte-legende texte-secondaire">{s}</span>
+            {etats.map((e) => (
+              <span role="cell">
+                <Bouton style={s} desactive={e === 'Désactivé'} class={`force-${e.toLowerCase()}`} tabindex="-1" aria-hidden="true">Envoyer</Bouton>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="t-icones">
+      <h2 id="t-icones" class="titre-h3">Icônes</h2>
+      <ul role="list" class="grille-icones">
+        {icones.map((n) => <li><Icone nom={n} /><span class="texte-legende texte-secondaire">{n}</span></li>)}
+      </ul>
+    </section>
+
+    <section aria-labelledby="t-champ">
+      <h2 id="t-champ" class="titre-h3">Champ</h2>
+      <div class="grille-champs">
+        <div><p class="texte-legende texte-secondaire">Défaut (cliquez pour le focus)</p><Champ id="c1" label="Votre prénom" placeholder="Votre prénom" /></div>
+        <div><p class="texte-legende texte-secondaire">Rempli</p><Champ id="c2" label="Votre prénom" value="Andyh" /></div>
+        <div><p class="texte-legende texte-secondaire">Erreur</p><Champ id="c3" label="Votre son" placeholder="Titre, artiste ou lien" erreur="Choisissez un son avant d’envoyer." /></div>
+        <div><p class="texte-legende texte-secondaire">Avec icône</p><Champ id="c4" label="Chercher un disque" placeholder="Chercher un disque" icone type="search" /></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-pochettes">
+      <h2 id="t-pochettes" class="titre-h3">Pochette (motifs de démonstration)</h2>
+      <ul role="list" class="grille-pochettes">
+        {motifs.map((m) => <li><Pochette motif={m} /><span class="texte-legende texte-secondaire">{m}</span></li>)}
+      </ul>
+    </section>
+
+    <section aria-labelledby="t-cartes">
+      <h2 id="t-cartes" class="titre-h3">Carte disque</h2>
+      <div class="grille-cartes">
+        <CarteDisque titre="Titre de l’album" artiste="Artiste" annee="1972" motif="cercles" />
+        <CarteDisque titre="Un autre album" artiste="Artiste" annee="1975" motif="lune" />
+        <CarteDisque titre="Classé n° 1" artiste="Artiste" annee="1969" motif="arc" rang={1} />
+        <CarteDisque titre="Classé n° 2" artiste="Artiste" annee="1977" motif="bandes" rang={2} />
+      </div>
+    </section>
+
+    <section aria-labelledby="t-tracklist">
+      <h2 id="t-tracklist" class="titre-h3">Ligne tracklist</h2>
+      <ol role="list" class="tracklist">
+        <LigneTracklist face="A1" titre="Titre du morceau" artiste="Artiste" duree="3:42" motif="cercles" href="#" />
+        <LigneTracklist face="A2" titre="Un titre un peu plus long pour voir la coupure" artiste="Artiste" duree="5:07" motif="points" href="#" />
+        <LigneTracklist face="B1" titre="Titre du morceau" artiste="Artiste" duree="4:18" motif="croix" href="#" />
+      </ol>
+    </section>
+
+    <section aria-labelledby="t-ecoute">
+      <h2 id="t-ecoute" class="titre-h3">Écoute (extrait + app)</h2>
+      <Ecoute titre="Titre du morceau" artiste="Artiste" />
+      <p class="texte-petit texte-secondaire">Le son et le choix de l’app arrivent au Sprint 4.</p>
+    </section>
+
+    <section aria-labelledby="t-point">
+      <h2 id="t-point" class="titre-h3">Point de la pièce</h2>
+      <div class="scene">
+        <PointPiece nom="La platine" explication="Ce que j’écoute en ce moment." href="#" x="22%" y="45%" />
+        <PointPiece nom="Les bacs" explication="Mes disques, par genre et par humeur." href="#" x="55%" y="62%" />
+        <PointPiece nom="Le piano" explication="Qui je suis." href="#" x="85%" y="40%" cote="gauche" />
+        <p class="texte-legende texte-secondaire legende-scene">Fond provisoire : l’image de la pièce arrive au Sprint 3.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-mini">
+      <h2 id="t-mini" class="titre-h3">Mini-platine</h2>
+      <MiniPlatine visible fixe={false} />
+      <p class="texte-petit texte-secondaire">Sur le site, elle sera fixée en bas de l’écran et n’apparaîtra qu’au lancement d’un extrait.</p>
+    </section>
+
+    <section aria-labelledby="t-nav">
+      <h2 id="t-nav" class="titre-h3">Nav</h2>
+      <p class="texte-legende texte-secondaire">Haut de page (transparente)</p>
+      <div class="cadre-nav fond-photo"><Nav fixe={false} etatForce="haut" avecMenu={false} /></div>
+      <p class="texte-legende texte-secondaire">Défilé (barre sombre)</p>
+      <div class="cadre-nav"><Nav fixe={false} etatForce="defile" avecMenu={false} /></div>
+    </section>
+
+    <section aria-labelledby="t-menu">
+      <h2 id="t-menu" class="titre-h3">Menu mobile</h2>
+      <p class="texte-petit texte-secondaire">Aperçu figé. Pour le vrai : réduisez la fenêtre et touchez l’icône menu en haut à droite (fermeture : croix ou touche Échap).</p>
+      <div class="cadre-menu"><MenuMobile chemin="/bacs" ouvertPourDemo /></div>
+    </section>
+  </main>
+
+  <PiedDePage />
+</Base>
+
+<style>
+  .page { padding-block: calc(var(--espace-5xl) + var(--espace-xl)) var(--espace-4xl); display: grid; gap: var(--espace-4xl); }
+  .entete { display: grid; gap: var(--espace-md); max-width: 46rem; }
+  section { display: grid; gap: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); padding-top: var(--espace-2xl); min-width: 0; }
+  .rangee { display: flex; flex-wrap: wrap; gap: var(--espace-md); align-items: center; }
+
+  .tableau-etats { display: grid; gap: var(--espace-md); overflow-x: auto; padding: var(--espace-xs); }
+  .ligne-etats { display: grid; grid-template-columns: 6rem repeat(5, minmax(9rem, 1fr)); gap: var(--espace-md); align-items: center; }
+
+  /* États figés (copie des règles du composant, pour la démo uniquement) */
+  .tableau-etats :global(.bouton--primaire.force-survol) { background: var(--couleur-accent-survol); }
+  .tableau-etats :global(.bouton--primaire.force-pressé) { background: var(--couleur-accent-presse); transform: scale(0.98); }
+  .tableau-etats :global(.bouton--secondaire.force-survol) { background: var(--couleur-fond-tonal-survol); }
+  .tableau-etats :global(.bouton--secondaire.force-pressé) { background: var(--couleur-fond-tonal-presse); }
+  .tableau-etats :global(.bouton--lien.force-survol .texte-bouton) { text-decoration: underline; }
+  .tableau-etats :global(.bouton--lien.force-pressé) { color: var(--couleur-texte-secondaire); }
+  .tableau-etats :global(.bouton--lien.force-pressé .texte-bouton) { text-decoration: underline; }
+  .tableau-etats :global(.bouton.force-focus) { outline: 2px solid var(--couleur-focus); outline-offset: 3px; }
+  .tableau-etats :global(.bouton) { pointer-events: none; }
+
+  .grille-icones { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: var(--espace-md); }
+  .grille-icones li { display: grid; justify-items: start; gap: var(--espace-xs); padding: var(--espace-md); background: var(--couleur-fond-bloc); border-radius: var(--rayon-bloc); }
+
+  .grille-champs { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--espace-xl) var(--grille-gouttiere); align-items: start; }
+  .grille-champs > div { display: grid; gap: var(--espace-xs); }
+
+  .grille-pochettes { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: var(--espace-lg) var(--grille-gouttiere); }
+  .grille-pochettes li { display: grid; gap: var(--espace-sm); }
+  .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 12.5rem)); gap: var(--espace-xl) var(--grille-gouttiere); }
+  .tracklist { max-width: 37.5rem; }
+
+  .scene {
+    position: relative; height: 22rem; border-radius: var(--rayon-bloc); overflow: hidden;
+    background:
+      radial-gradient(40% 50% at 22% 45%, rgb(240 122 34 / 0.18), transparent 70%),
+      radial-gradient(35% 45% at 85% 40%, rgb(240 122 34 / 0.12), transparent 70%),
+      linear-gradient(180deg, var(--brun-950), var(--noyer-500) 140%);
+  }
+  .legende-scene { position: absolute; left: var(--espace-md); bottom: var(--espace-md); }
+
+  .cadre-nav { position: relative; border: var(--trait-filet) solid var(--couleur-bordure-discrete); border-radius: var(--rayon-bloc); overflow: hidden; }
+  .fond-photo { background: linear-gradient(90deg, var(--noyer-500), var(--brun-800)); }
+  .cadre-menu { max-width: 24.375rem; border: var(--trait-filet) solid var(--couleur-bordure-discrete); border-radius: var(--rayon-bloc); overflow: hidden; }
+  .cadre-menu :global(.entete), .cadre-menu :global(.liens), .cadre-menu :global(.bas) { padding-inline: var(--espace-lg) !important; }
+  .cadre-menu :global(.liens) { grid-template-columns: 1fr !important; row-gap: var(--espace-lg) !important; }
+  .cadre-menu :global(.bas) { grid-template-columns: 1fr !important; }
+  .cadre-menu :global(.bouton--plein) { width: 100% !important; }
+</style>

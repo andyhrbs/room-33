@@ -1,0 +1,84 @@
+---
+// Pied de page : reco express (champ souligné), colonnes de liens, signature géante, mentions.
+import Bouton from './Bouton.astro';
+import { piedDePage, pages, site } from '../data/textes';
+const href = (court: string) => pages.find((p) => p.court === court)?.href ?? '/';
+const colonne1 = ['La pièce', 'Les bacs', 'Le Top', 'La platine'];
+const colonne2 = ['Le bac des visiteurs', 'Le comptoir'];
+---
+<footer class="pied">
+  <div class="conteneur interieur">
+    <div class="haut">
+      <form class="reco" action="#recommander" data-reco-express>
+        <h2 class="titre-h2" id="pied-reco">{piedDePage.question}</h2>
+        <div class="ligne">
+          <label class="visuellement-cache" for="pied-son">{piedDePage.question}</label>
+          <input id="pied-son" name="son" class="texte-petit" placeholder={piedDePage.champ} autocomplete="off" />
+          <Bouton style="lien" type="submit">{piedDePage.envoyer}</Bouton>
+        </div>
+      </form>
+
+      <nav class="colonnes" aria-label="Plan du site">
+        <ul role="list">
+          {colonne1.map((c) => <li><a href={href(c)}>{c}</a></li>)}
+        </ul>
+        <ul role="list">
+          {colonne2.map((c) => <li><a href={href(c)}>{c}</a></li>)}
+          <li><a href="#recommander" data-ouvrir-reco>{piedDePage.cta}</a></li>
+        </ul>
+        <ul role="list">
+          <li><a href={site.instagramUrl} target="_blank" rel="noopener">{piedDePage.reseaux.instagram}<span class="visuellement-cache"> (nouvel onglet)</span></a></li>
+          <li><a href="#" data-lien-spotify>{piedDePage.reseaux.spotify}</a></li>
+          <li><a href={`https://ig.me/m/${site.instagram.replace('@', '')}`} target="_blank" rel="noopener">{piedDePage.reseaux.dm}<span class="visuellement-cache"> (nouvel onglet)</span></a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="signature">
+      <p class="titre-marque" aria-hidden="true"><span class="r">R</span>oom 33</p>
+      <div class="mentions texte-legende texte-secondaire">
+        <p>{piedDePage.copyright}</p>
+        <p>{piedDePage.donnees}</p>
+        <p>{piedDePage.signature}</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pied { background: var(--couleur-fond-ombre); overflow: hidden; }
+  .interieur { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-4xl); padding-block: var(--espace-4xl); }
+  .haut { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--espace-2xl) var(--espace-xl); }
+  .reco { display: grid; gap: var(--espace-md); flex: 1 1 28rem; max-width: 33.5rem; }
+  .ligne { display: flex; align-items: center; gap: var(--espace-lg); }
+  .ligne input {
+    flex: 1; min-width: 0; max-width: 16.25rem;
+    background: none; border: 0; padding: var(--espace-xs) 0;
+    border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    caret-color: var(--couleur-accent-defaut); letter-spacing: var(--interlettre-texte);
+    transition: border-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .ligne input::placeholder { color: var(--couleur-texte-secondaire); opacity: 1; }
+  .ligne input:focus-visible { outline: none; border-bottom-color: var(--couleur-accent-defaut); }
+
+  .colonnes { display: flex; flex-wrap: wrap; gap: var(--espace-lg) var(--espace-3xl); }
+  .colonnes ul { display: grid; gap: var(--espace-xs); align-content: start; }
+  .colonnes a { text-decoration: none; font-size: var(--taille-corps); }
+  .colonnes a:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+
+  .signature { display: grid; gap: var(--espace-3xl); }
+  /* La signature remplit toute la largeur du contenu (même rapport que dans Figma) */
+  .titre-marque { white-space: nowrap; font-size: min(var(--taille-marque), (min(100vw, var(--grille-largeur-max)) - 2 * var(--grille-marge)) / 3.9); }
+  .r { font-family: var(--police-lettrine); letter-spacing: 0; }
+  .mentions {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--espace-xs) var(--espace-lg);
+    padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
+  }
+
+  @media (max-width: 40rem) {
+    .interieur { gap: var(--espace-2xl); padding-block: var(--espace-3xl) var(--espace-4xl); }
+    .colonnes { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--espace-xl); }
+    .colonnes a { font-size: var(--taille-petit); }
+    .mentions { flex-direction: column; }
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+// Lecteur d'extraits fixé en bas, persistant d'une page à l'autre.
+// Apparaît dès qu'on lance un extrait. Sprint 2 : apparence et états ; le son arrive au Sprint 4.
+import Icone from './Icone.astro';
+import Bouton from './Bouton.astro';
+interface Props { titre?: string; artiste?: string; temps?: string; progression?: number; visible?: boolean; fixe?: boolean }
+const { titre = 'Titre du morceau', artiste = 'Artiste', temps = '0:12 / 0:30', progression = 40, visible = false, fixe = true } = Astro.props;
+---
+<aside class:list={['mini-platine', { fixe }]} aria-label="Lecteur d’extraits" data-mini-platine hidden={!visible}>
+  <div class="en-cours">
+    <span class="vinyle" aria-hidden="true"><span></span></span>
+    <div class="infos">
+      <span class="texte-legende texte-secondaire">Extrait · <span data-temps>{temps}</span></span>
+      <span class="texte-label titre"><span data-titre>{titre}</span> — <span data-artiste>{artiste}</span></span>
+      <span class="progression" role="progressbar" aria-label="Avancement de l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progression}>
+        <span style={`width: ${progression}%`}></span>
+      </span>
+    </div>
+  </div>
+  <div class="actions">
+    <Bouton style="secondaire" class="app app-ordi">Ouvrir l’app</Bouton>
+    <Bouton style="lien" class="app app-mobile" iconeDroite={null}>Ouvrir l’app</Bouton>
+    <button class="lecture-pause" type="button" aria-label="Mettre en pause" data-lecture-pause>
+      <Icone nom="pause" taille={22} />
+    </button>
+  </div>
+</aside>
+<style>
+  .mini-platine {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm);
+    padding: var(--espace-xs);
+    background: var(--couleur-fond-ombre); border-radius: var(--rayon-bloc);
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.45);
+    width: min(75rem, 100% - 2 * var(--espace-md));
+  }
+  .mini-platine[hidden] { display: none; }
+  .fixe { position: fixed; left: 50%; bottom: var(--espace-md); transform: translateX(-50%); z-index: 40; }
+  .en-cours { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
+  .vinyle {
+    width: 44px; height: 44px; flex: none; border-radius: 50%;
+    display: grid; place-items: center; background: var(--couleur-fond-image);
+    animation: tourne 2.4s linear infinite;
+  }
+  .vinyle span { width: 15px; height: 15px; border-radius: 50%; background: var(--couleur-accent-defaut); }
+  @keyframes tourne { to { transform: rotate(1turn); } }
+  @media (prefers-reduced-motion: reduce) { .vinyle { animation: none; } }
+  .infos { display: grid; gap: var(--espace-2xs); min-width: 0; width: 13.75rem; }
+  .titre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progression { display: block; height: 3px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
+  .progression span { display: block; height: 100%; background: var(--couleur-accent-defaut); }
+  .actions { display: flex; align-items: center; gap: var(--espace-sm); flex: none; }
+  .lecture-pause {
+    width: 44px; height: 44px; border: 0; padding: 0; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--couleur-accent-defaut); color: var(--couleur-accent-texte-dessus);
+  }
+  .lecture-pause:hover { background: var(--couleur-accent-survol); }
+  .app-mobile { display: none; }
+  @media (max-width: 40rem) {
+    .app-ordi { display: none; }
+    .app-mobile { display: inline-flex; }
+    .infos { width: auto; }
+  }
+</style>
