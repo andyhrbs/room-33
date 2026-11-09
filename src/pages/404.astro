@@ -1,0 +1,32 @@
+---
+// Page introuvable
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import Bouton from '../components/Bouton.astro';
+import Pochette from '../components/Pochette.astro';
+---
+<Base title="Page introuvable" noindex>
+  <Nav />
+  <main class="ambiance">
+    <section class="introuvable conteneur">
+      <Pochette motif="lune" taille="min(18rem, 60vw)" />
+      <div class="texte">
+        <p class="texte-label">Erreur 404</p>
+        <h1 class="titre-display">Ce disque n’est pas dans les bacs.</h1>
+        <p class="texte-corps-l texte-secondaire">La page que vous cherchez a peut-être changé d’adresse, ou n’a jamais existé.</p>
+        <div class="actions">
+          <Bouton style="primaire" href="/">Retour dans la pièce</Bouton>
+          <Bouton style="lien" href="/bacs">Fouiller dans les bacs</Bouton>
+        </div>
+      </div>
+    </section>
+  </main>
+  <PiedDePage />
+</Base>
+<style>
+  .introuvable { min-height: 100svh; display: grid; grid-template-columns: auto minmax(0, 40rem); align-items: center; gap: var(--espace-3xl); padding-block: calc(72px + var(--espace-3xl)) var(--espace-4xl); }
+  .texte { display: grid; gap: var(--espace-md); justify-items: start; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-md) var(--espace-xl); margin-top: var(--espace-xs); }
+  @media (max-width: 63.99rem) { .introuvable { grid-template-columns: 1fr; gap: var(--espace-xl); } }
+</style>

@@ -17,7 +17,8 @@ import { bacs, top, morceauDuJour, platine, genres, detailBac } from '../data/di
 import { images } from '../data/images';
 
 const m = morceauDuJour;
-const [premier, ...suivants] = top;
+const [premier, ...reste] = top;
+const suivants = reste.slice(0, 4);
 ---
 <Base>
   <Nav />

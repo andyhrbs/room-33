@@ -1,0 +1,47 @@
+---
+// Mentions légales (texte à relire par Andyh avant la mise en ligne finale)
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import { site } from '../data/textes';
+---
+<Base title="Mentions légales" noindex>
+  <Nav />
+  <main class="ambiance">
+    <article class="mentions conteneur">
+      <header class="entete">
+        <p class="texte-label">Room 33</p>
+        <h1 class="titre-display">Mentions légales</h1>
+      </header>
+
+      <section>
+        <h2 class="titre-h3">Éditeur du site</h2>
+        <p class="texte-corps">Room 33 est un site personnel et non commercial, édité par Andyh Robinson, à titre privé.</p>
+        <p class="texte-corps">Contact : <a href={site.instagramUrl} target="_blank" rel="noopener">{site.instagram} sur Instagram</a>.</p>
+      </section>
+
+      <section>
+        <h2 class="titre-h3">Hébergement</h2>
+        <p class="texte-corps">Netlify, Inc., 512 2nd Street, Suite 200, San Francisco, CA 94107, États-Unis — netlify.com.</p>
+      </section>
+
+      <section>
+        <h2 class="titre-h3">Données personnelles</h2>
+        <p class="texte-corps">Le site ne dépose pas de cookie publicitaire ni de traceur.</p>
+        <p class="texte-corps">Quand vous recommandez un son, le formulaire transmet le titre choisi et, si vous les donnez, votre prénom et votre message. Ils servent uniquement à écouter votre reco et, si je la valide, à l’afficher dans le bac des visiteurs avec votre prénom. Vous pouvez demander leur suppression à tout moment en m’écrivant sur Instagram.</p>
+      </section>
+
+      <section>
+        <h2 class="titre-h3">Musique et images</h2>
+        <p class="texte-corps">Les pochettes, titres et informations des disques viennent de Spotify ; les extraits de 30 secondes, de Deezer. Ils restent la propriété de leurs auteurs et de leurs labels. Les textes et avis sont les miens.</p>
+      </section>
+    </article>
+  </main>
+  <PiedDePage />
+</Base>
+<style>
+  .mentions { display: grid; gap: var(--espace-2xl); max-width: calc(48rem + 2 * var(--grille-marge)); padding-block: calc(72px + var(--espace-3xl)) var(--espace-4xl); }
+  .entete { display: grid; gap: var(--espace-sm); }
+  section { display: grid; gap: var(--espace-sm); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  section .texte-corps { color: var(--couleur-texte-secondaire); max-width: 42rem; }
+</style>

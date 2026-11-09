@@ -1,0 +1,140 @@
+---
+// 05 · La platine
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import HeroPage from '../components/HeroPage.astro';
+import Pochette from '../components/Pochette.astro';
+import Ecoute from '../components/Ecoute.astro';
+import LigneTracklist from '../components/LigneTracklist.astro';
+import { platineDetail as p, topTitres } from '../data/disques';
+const enCours = p.enCours;
+const rang = (i: number) => String(i + 1).padStart(2, '0');
+---
+<Base title="La platine" description="Ce que j’écoute vraiment, en direct de Spotify.">
+  <Nav />
+  <main class="ambiance">
+    <HeroPage filAriane={['La pièce', 'La platine']} surtitreMobile="La platine" titre="Ce qui tourne en ce moment.">
+      <p class="texte-corps-l intro"><span class="seulement-ordi">Ce que j’écoute vraiment, en direct de Spotify. Pas de tri, pas de filtre.</span><span class="seulement-mobile">Ce que j’écoute vraiment, en direct de Spotify.</span></p>
+    </HeroPage>
+
+    <section class="en-cours section conteneur" aria-labelledby="titre-en-cours">
+      <div class="platine" aria-hidden="true">
+        <div class="vinyle"><div class="macaron" style={`--motif: var(--ambre-500)`}></div></div>
+        <span class="bras"></span>
+      </div>
+      <div class="morceau">
+        <p class="texte-label direct"><span class="point"></span><span class="seulement-ordi">En ce moment sur la platine</span><span class="seulement-mobile">En ce moment</span></p>
+        <h2 id="titre-en-cours" class="titre-display">{enCours.titre}</h2>
+        <p class="texte-corps-l texte-secondaire">{enCours.disque.artiste} — {enCours.disque.titre} ({enCours.disque.annee})</p>
+        <Ecoute titre={enCours.titre} artiste={enCours.disque.artiste} />
+      </div>
+    </section>
+
+    <section class="ecoutes section" aria-labelledby="titre-ecoutes">
+      <div class="conteneur grille-ecoutes">
+        <div class="entete">
+          <h2 id="titre-ecoutes" class="titre-h1">Mes écoutes</h2>
+          <div class="periode" role="group" aria-label="Période">
+            <button type="button" class="texte-label" aria-pressed="true" data-periode>4 semaines</button>
+            <button type="button" class="texte-label" aria-pressed="false" data-periode>6 mois</button>
+            <button type="button" class="texte-label" aria-pressed="false" data-periode>1 an</button>
+          </div>
+        </div>
+
+        <dl class="afficheurs">
+          <div class="afficheur"><dt class="texte-label">Heures d’écoute</dt><dd class="titre-display">{p.heures}</dd></div>
+          <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><Pochette motif="lune" taille="48px" /><span class="titre-h1">{p.artisteUn}</span></dd></div>
+          <div class="afficheur seulement-ordi"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
+        </dl>
+
+        <div class="classements">
+          <div class="liste">
+            <h3 class="titre-h3">Top titres</h3>
+            <ol role="list">
+              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} href={`/disques/${t.disque.slug}`} />)}
+            </ol>
+          </div>
+          <div class="liste">
+            <h3 class="titre-h3">Top artistes</h3>
+            <ol role="list">
+              {p.topArtistes.map((a, i) => (
+                <li class="artiste">
+                  <span class="texte-label texte-secondaire num">{rang(i)}</span>
+                  <span class="photo" aria-hidden="true"></span>
+                  <span class="texte-label nom">{a.nom}</span>
+                  <span class="texte-petit texte-secondaire">{a.ecoutes} écoutes</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mot section" aria-labelledby="titre-mot">
+      <div class="conteneur deux-colonnes">
+        <h2 id="titre-mot" class="titre-h1">Mon mot sur le mois</h2>
+        <div class="texte">
+          <blockquote class="titre-h3 seulement-ordi">{p.mot}</blockquote>
+          <blockquote class="texte-corps-l seulement-mobile">{p.motCourt}</blockquote>
+          <p class="texte-petit texte-secondaire">— Andyh, le disquaire</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <PiedDePage />
+</Base>
+
+<script>
+  // Sélecteur de période : l'état visuel seulement (les vraies données Spotify arrivent au Sprint 4)
+  const boutons = document.querySelectorAll<HTMLButtonElement>('[data-periode]');
+  boutons.forEach((b) => b.addEventListener('click', () => boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)))));
+</script>
+
+<style>
+  .intro { max-width: 35rem; }
+  .en-cours { display: grid; grid-template-columns: minmax(0, 27.3rem) minmax(0, 41.7rem); justify-content: space-between; gap: var(--espace-4xl); align-items: center; }
+  .platine { position: relative; aspect-ratio: 1; border-radius: var(--rayon-bloc); background: linear-gradient(145deg, var(--noyer-500), #3d1f0f); display: grid; place-items: center; box-shadow: 0 20px 40px rgb(0 0 0 / 0.35); }
+  .vinyle { width: 75%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: repeating-radial-gradient(circle, var(--brun-950) 0 2px, #1a110b 2px 4px); animation: tourne 3.6s linear infinite; }
+  .macaron { width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--motif); box-shadow: inset 0 0 0 6px rgb(0 0 0 / 0.15); }
+  .macaron::after { content: ''; display: block; width: 8%; aspect-ratio: 1; margin: 46% auto 0; border-radius: 50%; background: var(--brun-950); }
+  .bras { position: absolute; right: 12%; top: 8%; width: 6px; height: 54%; border-radius: var(--rayon-pilule); background: var(--couleur-texte-secondaire); transform: rotate(18deg); transform-origin: top center; }
+  @keyframes tourne { to { transform: rotate(1turn); } }
+  @media (prefers-reduced-motion: reduce) { .vinyle { animation: none; } }
+  .morceau { display: grid; gap: var(--espace-md); justify-items: start; }
+  .direct { display: inline-flex; align-items: center; gap: var(--espace-xs); }
+  .point { width: 8px; height: 8px; border-radius: 50%; background: var(--couleur-deco-sunset); }
+
+  .ecoutes { background: var(--couleur-fond-ombre); }
+  .grille-ecoutes { display: grid; gap: var(--espace-xl); }
+  .entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espace-lg); }
+  .periode { display: inline-flex; gap: var(--espace-2xs); padding: var(--espace-2xs); border: var(--trait-filet) solid var(--couleur-bordure-defaut); border-radius: var(--rayon-pilule); }
+  .periode button { border: 0; background: none; padding: var(--espace-xs) var(--espace-md); border-radius: var(--rayon-pilule); min-height: 38px; transition: background-color var(--duree-rapide) var(--courbe-standard); }
+  .periode button:hover { background: var(--couleur-fond-tonal); }
+  .periode button[aria-pressed='true'] { background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal); }
+  .afficheurs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-lg); margin: 0; }
+  .afficheur { display: grid; gap: var(--espace-xs); align-content: start; padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .afficheur dd { margin: 0; }
+  .avec-pochette { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
+  .avec-pochette .titre-h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .classements { display: grid; grid-template-columns: 1fr 1fr; gap: var(--espace-3xl); }
+  .liste { display: grid; gap: var(--espace-xs); align-content: start; }
+  .artiste { display: flex; align-items: center; gap: var(--espace-md); padding-block: var(--espace-sm); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .num { width: 1.5rem; }
+  .photo { width: 48px; height: 48px; border-radius: 50%; flex: none; background: var(--couleur-fond-image); }
+  .nom { flex: 1; }
+
+  .mot { background: var(--couleur-fond-noyer); }
+  .deux-colonnes { display: grid; grid-template-columns: minmax(0, 17.625rem) minmax(0, 53.375rem); justify-content: space-between; gap: var(--espace-sm) var(--espace-3xl); }
+  .texte { display: grid; gap: var(--espace-sm); }
+  blockquote { margin: 0; }
+
+  @media (max-width: 63.99rem) {
+    .en-cours { grid-template-columns: 1fr; gap: var(--espace-lg); padding-top: var(--espace-md); }
+    .morceau .titre-display { font-size: var(--taille-h1); }
+    .afficheurs { grid-template-columns: 1fr; }
+    .classements { grid-template-columns: 1fr; gap: var(--espace-xl); }
+    .deux-colonnes { grid-template-columns: 1fr; }
+  }
+</style>

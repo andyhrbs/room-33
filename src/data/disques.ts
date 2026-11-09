@@ -74,7 +74,49 @@ export const top = [
   'tom-misch-geography',
   'yussef-dayes-black-classical-music',
   'mk-gee-two-star',
+  'jordan-ward-forward',
+  'khamari-a-brief-nirvana',
+  'luidji-tristesse-business',
 ].map(parSlug);
+
+// Top titres (bascule « Titres » du Top, et classements de la platine)
+export interface Titre { titre: string; disque: Disque; duree: string }
+export const topTitres: Titre[] = [
+  { titre: 'Best Part', disque: parSlug('daniel-caesar-freudian'), duree: '3:29' },
+  { titre: 'Many Times', disque: parSlug('dijon-absolutely'), duree: '3:41' },
+  { titre: 'It Runs Through Me', disque: parSlug('tom-misch-geography'), duree: '4:21' },
+  { titre: 'Are You Looking Up', disque: parSlug('mk-gee-two-star'), duree: '3:13' },
+  { titre: 'FAMJAM4000', disque: parSlug('jordan-ward-forward'), duree: '3:18' },
+  { titre: 'Get You', disque: parSlug('daniel-caesar-freudian'), duree: '4:38' },
+  { titre: 'Disco Yes', disque: parSlug('tom-misch-geography'), duree: '4:51' },
+];
+export const pourquoiNumeroUn = {
+  long: '« Pourquoi il est tout en haut : deux ou trois phrases, le morceau à écouter en premier. »',
+  court: '« Pourquoi il est tout en haut. »',
+};
+
+// La platine (démo : les vraies stats Spotify arrivent au Sprint 4)
+export const platineDetail = {
+  enCours: topTitres[0],
+  heures: '126 h',
+  artisteUn: 'Dijon',
+  titreUn: topTitres[1],
+  topArtistes: [
+    { nom: 'Dijon', ecoutes: 42 },
+    { nom: 'Daniel Caesar', ecoutes: 36 },
+    { nom: 'Tom Misch', ecoutes: 30 },
+    { nom: 'Mk.gee', ecoutes: 24 },
+    { nom: 'Yussef Dayes', ecoutes: 18 },
+  ],
+  mot: '« Un mois très soul, beaucoup de basses rondes. J’ai retourné cet album en boucle pendant les trajets… »',
+  motCourt: '« Un mois très soul, beaucoup de basses rondes. »',
+};
+
+// Le bac des visiteurs (démo de la maquette : les vraies recos arrivent au Sprint 5)
+const motifsRecos: Motif[] = ['cercles', 'lune', 'points', 'croix', 'bandes', 'arc', 'lune', 'points'];
+export const recos = ['Inès', 'Malik', 'Jade', 'Yanis', 'Léa', 'Sami', 'Chloé', 'Noah'].map((prenom, i) => ({
+  prenom, titre: 'Titre du morceau', artiste: 'Artiste', annee: 1970 + i * 3, motif: motifsRecos[i],
+}));
 
 // Le morceau du jour
 export const morceauDuJour = {
