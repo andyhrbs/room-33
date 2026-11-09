@@ -20,7 +20,7 @@ npm run build    # génère le site dans dist/
 
 | Sprint | Contenu | État |
 |---|---|---|
-| 0 | Installation (Astro, GitHub, Netlify) | en cours |
+| 0 | Installation (Astro, GitHub, Netlify) | fait — https://room-33.netlify.app |
 | 1 | Fondations (tokens, polices, textes) | à faire |
 | 2 | Composants | à faire |
 | 3 | Pages | à faire |
