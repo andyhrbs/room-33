@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Room 33 — Tokens (traduits des variables Figma, Kit UI)
+   Ne pas modifier une valeur ici sans la modifier aussi dans Figma.
+   ========================================================================== */
+
+:root {
+  /* ---------- Primitives (collection « Primitives ») ---------- */
+  --brun-950: #120B07;
+  --brun-900: #1F150E;
+  --brun-800: #2B1E15;
+  --brun-700: #3A2A1E;
+  --brun-600: #4A3626;
+  --noyer-500: #5A2E16;
+  --ambre-600: #CF6418;
+  --ambre-500: #F07A22;
+  --ambre-300: #F5A060;
+  --sunset-600: #C2361B;
+  --sunset-400: #EC6A50;
+  --ivoire-100: #EFE6D2;
+  --ivoire-100-62: rgb(239 230 210 / 0.62);
+  --ivoire-100-20: rgb(239 230 210 / 0.20);
+  --ivoire-100-14: rgb(239 230 210 / 0.14);
+  --ivoire-100-08: rgb(239 230 210 / 0.08);
+  --sable-400: #B9AC94;
+
+  /* ---------- Thème « Disquaire » (rôles des couleurs) ---------- */
+  --couleur-fond-page: var(--brun-900);
+  --couleur-fond-bloc: var(--brun-800);
+  --couleur-fond-ombre: var(--brun-950);
+  --couleur-fond-image: var(--noyer-500);
+  --couleur-fond-noyer: var(--noyer-500);
+  --couleur-fond-tonal: var(--ivoire-100-08);
+  --couleur-fond-tonal-survol: var(--ivoire-100-14);
+  --couleur-fond-tonal-presse: var(--ivoire-100-20);
+  --couleur-bordure-defaut: var(--brun-600);
+  --couleur-bordure-discrete: var(--brun-700);
+  --couleur-texte-principal: var(--ivoire-100);
+  --couleur-texte-secondaire: var(--ivoire-100-62);
+  --couleur-accent-defaut: var(--ambre-500);
+  --couleur-accent-survol: var(--ambre-300);
+  --couleur-accent-presse: var(--ambre-600);
+  --couleur-accent-texte-dessus: var(--brun-950);
+  --couleur-deco-sunset: var(--sunset-600);
+  --couleur-focus: var(--ivoire-100);
+  --couleur-erreur: var(--sunset-400);
+
+  /* ---------- Espacements ---------- */
+  --espace-2xs: 0.25rem;  /*   4 */
+  --espace-xs: 0.5rem;    /*   8 */
+  --espace-sm: 0.75rem;   /*  12 */
+  --espace-md: 1rem;      /*  16 */
+  --espace-lg: 1.5rem;    /*  24 */
+  --espace-xl: 2rem;      /*  32 */
+  --espace-2xl: 3rem;     /*  48 */
+  --espace-3xl: 4rem;     /*  64 */
+  --espace-4xl: 6rem;     /*  96 */
+  --espace-5xl: 7.5rem;   /* 120 */
+
+  /* Grille : marge 20 px (mobile) → 120 px (ordi), gouttière 16 → 24 px */
+  --grille-marge: clamp(1.25rem, -0.9507rem + 9.3897vw, 7.5rem);
+  --grille-gouttiere: clamp(1rem, 0.8239rem + 0.7512vw, 1.5rem);
+  --grille-largeur-max: 90rem; /* 1440 */
+
+  /* ---------- Rayons ---------- */
+  --rayon-pochette: 4px;
+  --rayon-bloc: 8px;
+  --rayon-pilule: 999px;
+
+  /* ---------- Traits ---------- */
+  --trait-icone: 1.5px;
+  --trait-filet: 1px;
+
+  /* ---------- Typographie ---------- */
+  --police-titre: 'Gilda Display', Georgia, 'Times New Roman', serif;
+  --police-texte: 'Mona Sans Variable', 'Mona Sans', system-ui, sans-serif;
+  --police-lettrine: 'Pinyon Script', cursive;
+
+  /* Tailles fluides : valeur « Mobile » à 375 px → valeur « Ordi » à 1440 px
+     (générées par scripts/fluid.mjs) */
+  --taille-geant: clamp(3.875rem, 1.6303rem + 9.5775vw, 10.25rem);
+  --taille-hero: clamp(2.75rem, 0.3732rem + 10.1408vw, 9.5rem);
+  --taille-display: clamp(2.75rem, 2.0458rem + 3.0047vw, 4.75rem);
+  --taille-h1: clamp(2.25rem, 1.7218rem + 2.2535vw, 3.75rem);
+  --taille-h2: clamp(1.875rem, 1.4789rem + 1.6901vw, 3rem);
+  --taille-h3: clamp(1.5rem, 1.3239rem + 0.7512vw, 2rem);
+  --taille-corps-l: clamp(1.125rem, 1.081rem + 0.1878vw, 1.25rem);
+  --taille-corps: 1rem;
+  --taille-petit: clamp(0.8125rem, 0.7905rem + 0.0939vw, 0.875rem);
+  --taille-legende: clamp(0.75rem, 0.728rem + 0.0939vw, 0.8125rem);
+  --taille-lettrine: clamp(3.875rem, 2.9067rem + 4.1315vw, 6.625rem);
+  --taille-marque: clamp(5.875rem, 0.8354rem + 21.5023vw, 20.1875rem);
+  --taille-logo: clamp(1.375rem, 1.287rem + 0.3756vw, 1.625rem);
+
+  --interlettre-titre: -0.08em;
+  --interlettre-texte: -0.05em;
+  --interlettre-logo: -0.02em;
+
+  /* ---------- Motion ---------- */
+  --duree-rapide: 200ms;
+  --duree-normal: 400ms;
+  --duree-lent: 700ms;
+  --duree-zoom: 900ms;
+  --decalage-cascade: 60ms;
+  --courbe-sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  --courbe-entree-sortie: cubic-bezier(0.65, 0, 0.35, 1);
+  --courbe-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Accessibilité : si le visiteur a réduit les animations dans son système */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duree-rapide: 0ms;
+    --duree-normal: 0ms;
+    --duree-lent: 0ms;
+    --duree-zoom: 0ms;
+    --decalage-cascade: 0ms;
+  }
+}

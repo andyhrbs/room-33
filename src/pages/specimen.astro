@@ -1,0 +1,136 @@
+---
+// Page de contrôle : vérifie que les fondations du code = le Kit UI Figma.
+// Non indexée par Google. Elle sera retirée (ou cachée) à la mise en ligne finale.
+import Base from '../layouts/Base.astro';
+
+const couleursTheme = [
+  ['fond/page', '--couleur-fond-page', 'brun/900'],
+  ['fond/bloc', '--couleur-fond-bloc', 'brun/800'],
+  ['fond/ombre', '--couleur-fond-ombre', 'brun/950'],
+  ['fond/noyer', '--couleur-fond-noyer', 'noyer/500'],
+  ['fond/tonal', '--couleur-fond-tonal', 'ivoire 8 %'],
+  ['bordure/defaut', '--couleur-bordure-defaut', 'brun/600'],
+  ['bordure/discrete', '--couleur-bordure-discrete', 'brun/700'],
+  ['texte/principal', '--couleur-texte-principal', 'ivoire/100'],
+  ['texte/secondaire', '--couleur-texte-secondaire', 'ivoire 62 %'],
+  ['accent/defaut', '--couleur-accent-defaut', 'ambre/500'],
+  ['accent/survol', '--couleur-accent-survol', 'ambre/300'],
+  ['accent/presse', '--couleur-accent-presse', 'ambre/600'],
+  ['deco/sunset', '--couleur-deco-sunset', 'sunset/600'],
+  ['erreur', '--couleur-erreur', 'sunset/400'],
+];
+
+const styles = [
+  ['Titre/Hero', 'titre-hero', 'Room 33', '152 / 44'],
+  ['Titre/Géant', 'titre-geant', 'Les bacs', '164 / 62'],
+  ['Titre/Display', 'titre-display', 'Le Top de la Room', '76 / 44'],
+  ['Titre/H1', 'titre-h1', 'Ce que j’écoute en ce moment', '60 / 36'],
+  ['Titre/H2', 'titre-h2', 'Le moment à écouter', '48 / 30'],
+  ['Titre/H3', 'titre-h3', 'Mes goûts, pas tous les goûts.', '32 / 24'],
+  ['Texte/Corps L', 'texte-corps-l', 'Moi, c’est Andyh. Pianiste, passionné avant tout, et un peu trop bavard dès qu’on parle musique.', '20 / 18'],
+  ['Texte/Avis', 'texte-avis', '« Le disque que je remets quand la pièce est calme. »', '20 / 18'],
+  ['Texte/Corps', 'texte-corps', 'Fouillez dans mes bacs, rangés par genre et par humeur. Chaque pochette cache une petite histoire.', '16'],
+  ['Texte/Label', 'texte-label', 'Titre, artiste ou lien', '16'],
+  ['Texte/Bouton', 'texte-bouton', 'Recommandez-moi un son', '16'],
+  ['Texte/Petit', 'texte-petit', 'Données : Spotify · Extraits : Deezer', '14 / 13'],
+  ['Texte/Légende', 'texte-legende', 'Fait main par Andyh', '13 / 12'],
+  ['Logo', 'logo', 'Room 33', '26 / 22'],
+];
+
+const espaces = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'];
+const espacesPx = [4, 8, 12, 16, 24, 32, 48, 64, 96, 120];
+---
+<Base title="Spécimen" noindex>
+  <main class="conteneur specimen">
+    <header class="entete">
+      <p class="texte-petit texte-secondaire">Sprint 1 · Fondations</p>
+      <h1 class="titre-display">Spécimen</h1>
+      <p class="texte-corps-l texte-secondaire">Les fondations du Kit UI Figma, traduites en code. Comparez avec Figma : tout doit correspondre. Réduisez la fenêtre pour voir les tailles passer du format ordi au format mobile.</p>
+    </header>
+
+    <section aria-labelledby="t-couleurs">
+      <h2 id="t-couleurs" class="titre-h3">Couleurs (thème Disquaire)</h2>
+      <ul role="list" class="grille-couleurs">
+        {couleursTheme.map(([nom, v, prim]) => (
+          <li class="pastille">
+            <span class="echantillon" style={`background: var(${v})`}></span>
+            <span class="texte-label">{nom}</span>
+            <span class="texte-legende texte-secondaire">{prim}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="t-typo">
+      <h2 id="t-typo" class="titre-h3">Styles de texte</h2>
+      <p class="texte-petit texte-secondaire">Gilda Display (titres) · Mona Sans (texte) · Pinyon Script (lettrine). Tailles en px : ordi / mobile.</p>
+      <ul role="list" class="liste-styles">
+        {styles.map(([nom, cls, ex, px]) => (
+          <li>
+            <span class="texte-legende texte-secondaire meta">{nom} — {px}</span>
+            <span class={cls}>{ex}</span>
+          </li>
+        ))}
+        <li>
+          <span class="texte-legende texte-secondaire meta">Lettrine — 106 / 62</span>
+          <p class="exemple-lettrine"><span class="lettrine">M</span><span class="texte-corps-l">oi, c’est Andyh. Le reste se raconte au comptoir.</span></p>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="t-espaces">
+      <h2 id="t-espaces" class="titre-h3">Espacements</h2>
+      <ul role="list" class="liste-espaces">
+        {espaces.map((e, i) => (
+          <li>
+            <span class="texte-legende texte-secondaire">{e} · {espacesPx[i]}</span>
+            <span class="barre" style={`width: var(--espace-${e})`}></span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="t-formes">
+      <h2 id="t-formes" class="titre-h3">Rayons, focus et mouvement</h2>
+      <div class="formes">
+        <div class="forme" style="border-radius: var(--rayon-pochette)"><span class="texte-legende">pochette · 4</span></div>
+        <div class="forme" style="border-radius: var(--rayon-bloc)"><span class="texte-legende">bloc · 8</span></div>
+        <div class="forme pilule"><span class="texte-legende">pilule</span></div>
+        <button class="essai texte-bouton" type="button">Survolez ou tabulez-moi</button>
+      </div>
+      <p class="texte-petit texte-secondaire">Le bouton d’essai utilise la durée « rapide » (200 ms) et la courbe « standard ». Au clavier (touche Tab), le contour de focus ivoire apparaît.</p>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .specimen { padding-block: var(--espace-4xl); display: grid; gap: var(--espace-4xl); }
+  .entete { display: grid; gap: var(--espace-md); max-width: 46rem; }
+  section { display: grid; gap: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); padding-top: var(--espace-2xl); }
+
+  .grille-couleurs { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: var(--grille-gouttiere); }
+  .pastille { display: grid; gap: var(--espace-2xs); }
+  .echantillon { aspect-ratio: 1; border-radius: var(--rayon-bloc); border: var(--trait-filet) solid var(--couleur-bordure-discrete); margin-bottom: var(--espace-xs); }
+
+  .liste-styles { display: grid; gap: var(--espace-xl); }
+  .liste-styles li { display: grid; gap: var(--espace-xs); }
+  .liste-styles .meta { font-family: var(--police-texte); }
+  .exemple-lettrine { display: flex; align-items: flex-end; gap: var(--espace-2xs); }
+  .exemple-lettrine .lettrine { color: var(--couleur-accent-defaut); }
+
+  .liste-espaces { display: grid; gap: var(--espace-sm); }
+  .liste-espaces li { display: grid; grid-template-columns: 6rem 1fr; align-items: center; }
+  .barre { height: var(--espace-sm); background: var(--couleur-accent-defaut); border-radius: 2px; }
+
+  .formes { display: flex; flex-wrap: wrap; gap: var(--espace-md); align-items: center; }
+  .forme { width: 7rem; height: 7rem; display: grid; place-items: center; background: var(--couleur-fond-bloc); border: var(--trait-filet) solid var(--couleur-bordure-defaut); }
+  .forme.pilule { width: 9rem; height: 3rem; border-radius: var(--rayon-pilule); }
+  .essai {
+    border: 0; border-radius: var(--rayon-pilule);
+    padding: var(--espace-md) var(--espace-lg);
+    background: var(--couleur-accent-defaut); color: var(--couleur-accent-texte-dessus);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
+  }
+  .essai:hover { background: var(--couleur-accent-survol); }
+  .essai:active { background: var(--couleur-accent-presse); transform: scale(0.98); }
+</style>

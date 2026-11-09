@@ -1,12 +1,14 @@
 ---
+import '../styles/global.css';
+import { site } from '../data/textes';
+
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
-const {
-  title = 'Room 33',
-  description = 'Bienvenue chez moi. Installez-vous, fouillez dans mes bacs et glissez-moi vos sons.',
-} = Astro.props;
+const { title, description = site.descriptionParDefaut, noindex = false } = Astro.props;
+const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
 ---
 <!doctype html>
 <html lang="fr">
@@ -15,15 +17,10 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#1F150E" />
-    <title>{title}</title>
+    {noindex && <meta name="robots" content="noindex" />}
+    <title>{fullTitle}</title>
   </head>
   <body>
     <slot />
   </body>
 </html>
-
-<style is:global>
-  :root { color-scheme: dark; }
-  html, body { margin: 0; background: #1F150E; color: #EFE6D2; }
-  body { font-family: system-ui, sans-serif; }
-</style>
