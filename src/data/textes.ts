@@ -95,7 +95,6 @@ export const comptoir = {
   signature: 'Andyh',
   photoAlt: 'Andyh au piano, chez lui, le soir.',
   photoAttente: 'Photo — Andyh au piano, le soir (vraie photo · 4:5)',
-  legende: 'Au piano, chez moi.',
   pourquoi: {
     surtitre: 'Pourquoi Room 33',
     titre: 'Des sons qui restent.',
