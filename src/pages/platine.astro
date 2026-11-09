@@ -20,13 +20,13 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
 
     <section class="en-cours section conteneur" aria-labelledby="titre-en-cours">
       <div class="platine" aria-hidden="true">
-        <div class="vinyle"><div class="macaron" style={`--motif: var(--ambre-500)`}></div></div>
+        <div class="vinyle" data-vinyle><div class="macaron" data-macaron style={`--motif: var(--ambre-500)`}></div></div>
         <span class="bras"></span>
       </div>
-      <div class="morceau">
-        <p class="texte-label direct"><span class="point"></span><span class="seulement-ordi">En ce moment sur la platine</span><span class="seulement-mobile">En ce moment</span></p>
-        <h2 id="titre-en-cours" class="titre-display">{enCours.titre}</h2>
-        <p class="texte-corps-l texte-secondaire">{enCours.disque.artiste} — {enCours.disque.titre} ({enCours.disque.annee})</p>
+      <div class="morceau" data-zone aria-busy="true">
+        <p class="texte-label direct" data-etat><span class="point"></span><span class="seulement-ordi">En ce moment sur la platine</span><span class="seulement-mobile">En ce moment</span></p>
+        <h2 id="titre-en-cours" class="titre-display" data-titre>{enCours.titre}</h2>
+        <p class="texte-corps-l texte-secondaire" data-detail>{enCours.disque.artiste} — {enCours.disque.titre} ({enCours.disque.annee})</p>
         <Ecoute titre={enCours.titre} artiste={enCours.disque.artiste} />
       </div>
     </section>
@@ -36,36 +36,47 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         <div class="entete">
           <h2 id="titre-ecoutes" class="titre-h1">Mes écoutes</h2>
           <div class="periode" role="group" aria-label="Période">
-            <button type="button" class="texte-label" aria-pressed="true" data-periode>4 semaines</button>
-            <button type="button" class="texte-label" aria-pressed="false" data-periode>6 mois</button>
-            <button type="button" class="texte-label" aria-pressed="false" data-periode>1 an</button>
+            <button type="button" class="texte-label" aria-pressed="true" data-periode="4-semaines">4 semaines</button>
+            <button type="button" class="texte-label" aria-pressed="false" data-periode="6-mois">6 mois</button>
+            <button type="button" class="texte-label" aria-pressed="false" data-periode="1-an">1 an</button>
           </div>
         </div>
 
-        <dl class="afficheurs">
-          <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><Pochette motif="lune" taille="48px" /><span class="titre-h1">{p.artisteUn}</span></dd></div>
-          <div class="afficheur"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /><span class="titre-h1">{p.titreUn.titre}</span></dd></div>
+        <p class="texte-corps texte-secondaire indispo" data-indispo hidden>Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.</p>
+
+        <dl class="afficheurs" data-zone aria-live="polite" aria-busy="true">
+          <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><span class="photo" data-artiste-photo aria-hidden="true"></span><span class="titre-h1" data-artiste-un>{p.artisteUn}</span></dd></div>
+          <div class="afficheur"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><span data-titre-pochette><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /></span><span class="titre-h1" data-titre-un>{p.titreUn.titre}</span></dd></div>
         </dl>
 
-        <div class="classements">
+        <div class="classements" data-zone aria-busy="true">
           <div class="liste">
             <h3 class="titre-h3">Top titres</h3>
-            <ol role="list">
+            <ol role="list" data-top-titres>
               {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} />)}
             </ol>
+            <template data-modele-titre><LigneTracklist face="" titre="" artiste="" duree="0:00" src="data:," href="#" /></template>
           </div>
           <div class="liste">
             <h3 class="titre-h3">Top artistes</h3>
-            <ol role="list">
+            <ol role="list" data-top-artistes>
               {p.topArtistes.map((a, i) => (
                 <li class="artiste">
                   <span class="texte-label texte-secondaire num">{rang(i)}</span>
                   <span class="photo" aria-hidden="true"></span>
                   <span class="texte-label nom">{a.nom}</span>
-                  <span class="texte-petit texte-secondaire">{a.ecoutes} écoutes</span>
+                  <span class="texte-petit texte-secondaire genre"></span>
                 </li>
               ))}
             </ol>
+            <template data-modele-artiste>
+              <li class="artiste">
+                <span class="texte-label texte-secondaire num"></span>
+                <span class="photo" aria-hidden="true"></span>
+                <span class="texte-label nom"></span>
+                <span class="texte-petit texte-secondaire genre"></span>
+              </li>
+            </template>
           </div>
         </div>
       </div>
@@ -86,9 +97,114 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
 </Base>
 
 <script>
-  // Sélecteur de période : l'état visuel seulement (les vraies données Spotify arrivent au Sprint 4)
+  // ==========================================================================
+  // Données en direct : la Function Netlify /api/spotify/ecoute lit le compte
+  // Spotify d'Andyh côté serveur et ne renvoie que ce qui s'affiche ici.
+  // Tant que la réponse n'est pas arrivée, la page montre les valeurs de démo, atténuées.
+  // ==========================================================================
+  type Morceau = { titre: string; artiste: string; album?: string; annee?: number | null; pochette?: string | null; duree?: string; lien?: string; le?: string };
+  type Reponse = { enCours: Morceau | null; derniere: Morceau | null; topTitres: Morceau[]; topArtistes: { nom: string; image?: string | null; genres: string[]; lien?: string }[]; erreur?: string };
+
+  const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const zones = document.querySelectorAll<HTMLElement>('[data-zone]');
   const boutons = document.querySelectorAll<HTMLButtonElement>('[data-periode]');
-  boutons.forEach((b) => b.addEventListener('click', () => boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)))));
+  const rang = (i: number) => String(i + 1).padStart(2, '0');
+  const ilYa = (date: string) => {
+    const min = Math.round((Date.now() - new Date(date).getTime()) / 60000);
+    const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' });
+    if (min < 60) return rtf.format(-Math.max(min, 1), 'minute');
+    if (min < 60 * 24) return rtf.format(-Math.round(min / 60), 'hour');
+    return rtf.format(-Math.round(min / 1440), 'day');
+  };
+  const detail = (m: Morceau) => [m.artiste, m.album && `${m.album}${m.annee ? ` (${m.annee})` : ''}`].filter(Boolean).join(' — ');
+
+  function afficherEnCours(d: Reponse) {
+    const m = d.enCours ?? d.derniere;
+    if (!m) return;
+    const etat = $('[data-etat]');
+    const libelle = d.enCours ? null : `Dernière écoute ${m.le ? ilYa(m.le) : ''}`.trim();
+    // on garde le point (stylé par la page) et on change seulement les textes ordi / mobile
+    if (libelle) etat.querySelectorAll('span:not(.point)').forEach((x) => (x.textContent = libelle));
+    etat.classList.toggle('a-larret', !d.enCours);
+    $('[data-titre]').textContent = m.titre;
+    $('[data-detail]').textContent = detail(m);
+    const macaron = $('[data-macaron]');
+    if (m.pochette) macaron.style.backgroundImage = `url("${m.pochette}")`;
+    $('[data-vinyle]').classList.toggle('a-larret', !d.enCours);
+    const ecoute = document.querySelector<HTMLElement>('.morceau [data-ecoute]');
+    if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.querySelector('.lecture')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
+  }
+
+  function afficherClassements(d: Reponse) {
+    const [a1] = d.topArtistes; const [t1] = d.topTitres;
+    if (a1) {
+      $('[data-artiste-un]').textContent = a1.nom;
+      const photo = $('[data-artiste-photo]');
+      photo.style.backgroundImage = a1.image ? `url("${a1.image}")` : '';
+    }
+    if (t1) {
+      $('[data-titre-un]').textContent = t1.titre;
+      const img = document.querySelector<HTMLImageElement>('[data-titre-pochette] img');
+      const conteneur = $('[data-titre-pochette] .pochette');
+      if (t1.pochette) {
+        if (img) { img.src = t1.pochette; img.removeAttribute('srcset'); }
+        else { conteneur.innerHTML = ''; const i = new Image(48, 48); i.src = t1.pochette; i.alt = ''; conteneur.append(i); conteneur.style.background = 'var(--couleur-fond-image)'; }
+      }
+    }
+    const listeTitres = $('[data-top-titres]');
+    const modeleTitre = $<HTMLTemplateElement>('[data-modele-titre]');
+    listeTitres.replaceChildren(...d.topTitres.map((t, i) => {
+      const li = modeleTitre.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const a = li.querySelector('a')!;
+      if (t.lien) { a.href = t.lien; a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('aria-label', `${t.titre}, ${t.artiste} (ouvre Spotify)`); } else a.removeAttribute('href');
+      li.querySelector('.face')!.textContent = rang(i);
+      const [titre, artiste] = li.querySelectorAll('.infos > span');
+      titre.textContent = t.titre; artiste.textContent = t.artiste;
+      li.querySelector('.duree')!.textContent = t.duree ?? '';
+      const img = li.querySelector('img')!;
+      img.removeAttribute('srcset'); img.src = t.pochette ?? ''; img.alt = '';
+      return li;
+    }));
+    const listeArtistes = $('[data-top-artistes]');
+    const modeleArtiste = $<HTMLTemplateElement>('[data-modele-artiste]');
+    listeArtistes.replaceChildren(...d.topArtistes.map((a, i) => {
+      const li = modeleArtiste.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      li.querySelector('.num')!.textContent = rang(i);
+      li.querySelector('.nom')!.textContent = a.nom;
+      li.querySelector('.genre')!.textContent = a.genres[0] ?? '';
+      if (a.image) (li.querySelector('.photo') as HTMLElement).style.backgroundImage = `url("${a.image}")`;
+      return li;
+    }));
+  }
+
+  let demande = 0;
+  async function charger(periode: string, premiere = false) {
+    const n = ++demande;
+    zones.forEach((z) => z.setAttribute('aria-busy', 'true'));
+    try {
+      const rep = await fetch(`/api/spotify/ecoute?periode=${periode}`);
+      const d: Reponse = await rep.json();
+      if (n !== demande) return; // une autre période a été demandée entre-temps
+      if (!rep.ok || d.erreur) throw new Error(d.erreur);
+      if (premiere) afficherEnCours(d);
+      afficherClassements(d);
+      $('[data-indispo]').hidden = true;
+      zones.forEach((z) => z.classList.remove('demo'));
+    } catch {
+      if (n !== demande) return;
+      $('[data-indispo]').hidden = false;
+      zones.forEach((z) => z.classList.add('demo'));
+      $('[data-vinyle]').classList.add('a-larret');
+    } finally {
+      if (n === demande) zones.forEach((z) => z.setAttribute('aria-busy', 'false'));
+    }
+  }
+
+  boutons.forEach((b) => b.addEventListener('click', () => {
+    boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    charger(b.dataset.periode!);
+  }));
+  charger('4-semaines', true);
 </script>
 
 <style>
@@ -125,6 +241,15 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .num { width: 1.5rem; }
   .photo { width: 48px; height: 48px; border-radius: 50%; flex: none; background: var(--couleur-fond-image); }
   .nom { flex: 1; }
+  .photo { background-size: cover; background-position: center; }
+  .macaron { background-size: cover; background-position: center; }
+  /* Chargement : valeurs de démo atténuées jusqu'à l'arrivée des vraies données */
+  [data-zone] { transition: opacity var(--duree-normal) var(--courbe-standard); }
+  [data-zone][aria-busy='true'], [data-zone].demo { opacity: 0.45; }
+  .indispo { margin: 0; }
+  /* Rien ne joue : le vinyle s'arrête, le point ne clignote plus */
+  .vinyle.a-larret { animation-play-state: paused; }
+  .direct.a-larret .point { background: var(--couleur-texte-secondaire); }
 
   .mot { background: var(--couleur-fond-noyer); }
   .deux-colonnes { display: grid; grid-template-columns: minmax(0, 17.625rem) minmax(0, 53.375rem); justify-content: space-between; gap: var(--espace-sm) var(--espace-3xl); }
