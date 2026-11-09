@@ -2,10 +2,10 @@
 // Hero des pages intérieures : gros plan de la pièce, retour, fil d'Ariane, titre avec lettrine.
 import Bouton from './Bouton.astro';
 type Etape = string | { texte: string; href?: string };
-interface Props { image?: string | null; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; retour?: string }
-const { image, position = 'center', filAriane, surtitreMobile, titre, retour = 'Retour dans la pièce' } = Astro.props;
-const lettre = titre.charAt(0);
-const reste = titre.slice(1);
+interface Props { image?: string | null; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string }
+const { image, position = 'center', filAriane, surtitreMobile, titre, titreMobile, retour = 'Retour dans la pièce' } = Astro.props;
+// Titre court sur mobile (maquette Figma) ; un seul H1 lu par les lecteurs d'écran et Google : le titre complet
+const decoupe = (t: string) => [t.charAt(0), t.slice(1)];
 ---
 <header class="hero-page" style={image ? `--image: url('${image}'); --position: ${position}` : undefined}>
   <div class="conteneur contenu">
@@ -22,7 +22,14 @@ const reste = titre.slice(1);
       </nav>
       <p class="texte-label seulement-mobile">{surtitreMobile}</p>
       <h1 class="titre-avec-lettrine">
-        <span class="lettrine" aria-hidden="true">{lettre}</span><span class="titre-display" aria-hidden="true">{reste}</span>
+        {titreMobile ? (
+          <>
+            <span class="variante seulement-ordi" aria-hidden="true"><span class="lettrine">{decoupe(titre)[0]}</span><span class="titre-display">{decoupe(titre)[1]}</span></span>
+            <span class="variante seulement-mobile" aria-hidden="true"><span class="lettrine">{decoupe(titreMobile)[0]}</span><span class="titre-display">{decoupe(titreMobile)[1]}</span></span>
+          </>
+        ) : (
+          <span class="variante" aria-hidden="true"><span class="lettrine">{decoupe(titre)[0]}</span><span class="titre-display">{decoupe(titre)[1]}</span></span>
+        )}
         <span class="visuellement-cache">{titre}</span>
       </h1>
     </div>
@@ -48,6 +55,7 @@ const reste = titre.slice(1);
   .ariane a:hover { color: var(--couleur-texte-principal); }
   .titre-avec-lettrine { display: flex; align-items: center; font-weight: 400; }
   .titre-avec-lettrine .lettrine { margin-right: -0.02em; }
+  .variante { display: flex; align-items: inherit; }
   @media (max-width: 63.99rem) {
     .hero-page { min-height: 45rem; }
     .contenu { padding-bottom: var(--espace-xl); gap: var(--espace-md); }

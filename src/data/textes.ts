@@ -90,6 +90,7 @@ export const comptoir = {
   filAriane: ['La pièce', 'Le comptoir'],
   surtitreMobile: 'Le comptoir',
   titre: 'Venez, on parle musique.',
+  titreMobile: 'On parle musique.',
   presentation: 'Moi, c’est Andyh. Pianiste, passionné avant tout, et un peu trop bavard dès qu’on parle musique.',
   intro: 'Ici, c’est ma pièce : mes disques, ce que j’écoute en vrai, et une caisse où vous pouvez glisser vos sons.',
   photoAlt: 'Andyh au piano, chez lui, le soir.',
