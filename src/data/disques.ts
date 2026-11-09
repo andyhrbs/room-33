@@ -42,8 +42,6 @@ export const bacs: Bac[] = [
   { slug: 'afro', nom: 'Afro', type: 'genre', motif: 'points', description: 'Afrobeat, highlife, et tout ce qui fait bouger.', disques: parGenre('Afro'), maj: MAJ },
   { slug: 'classique', nom: 'Classique', type: 'genre', motif: 'cercles', description: 'Le piano d’abord, et le reste.', disques: parGenre('Classique'), maj: MAJ },
   { slug: 'bac-de-nuit', nom: 'Bac de nuit', type: 'humeur', motif: 'points', description: 'Pour les fins de soirée : des sons lents et chauds, qui laissent de la place à la basse.', disques: choix('daniel-caesar-freudian', 'khamari-a-brief-nirvana', 'dijon-absolutely', 'yussef-dayes-black-classical-music'), maj: MAJ },
-  { slug: 'dimanche-matin', nom: 'Dimanche matin', type: 'humeur', motif: 'croix', description: 'Café, fenêtre ouverte, rien de prévu.', disques: choix('tom-misch-geography', 'jordan-ward-forward', 'mk-gee-two-star'), maj: MAJ },
-  { slug: 'les-basses', nom: 'Les basses', type: 'humeur', motif: 'cercles', description: 'Des lignes de basse qui portent tout le morceau.', disques: choix('yussef-dayes-black-classical-music', 'tom-misch-geography', 'luidji-tristesse-business', 'dijon-absolutely'), maj: MAJ },
 ];
 export const bacParSlug = (slug: string) => bacs.find((b) => b.slug === slug)!;
 export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}${b.type === 'humeur' ? ' · humeur' : ''}`;
