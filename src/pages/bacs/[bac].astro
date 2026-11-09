@@ -1,0 +1,9 @@
+---
+import PageBac from '../../components/PageBac.astro';
+import { bacs } from '../../data/disques';
+export function getStaticPaths() {
+  return bacs.map((bac) => ({ params: { bac: bac.slug }, props: { bac } }));
+}
+const { bac } = Astro.props;
+---
+<PageBac bac={bac} />

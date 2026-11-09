@@ -1,0 +1,89 @@
+---
+// Pile de pochettes d'un bac : la pochette du dessus est le disque en cours.
+// Précédent / Suivant (souris, clavier, flèches du clavier). L'effet 3D arrive au Sprint 6.
+import Pochette from './Pochette.astro';
+import Bouton from './Bouton.astro';
+import type { Disque } from '../data/disques';
+interface Props { disques: Disque[] }
+const { disques } = Astro.props;
+const total = disques.length;
+---
+<div class="pile" data-pile data-total={total}>
+  <div class="feuilles" aria-live="polite">
+    {disques.map((d, i) => (
+      <div class="feuille" data-index={i} style={`--i: ${i}`} aria-hidden={i === 0 ? 'false' : 'true'}>
+        <Pochette motif={d.motif} src={d.pochette} alt={`Pochette de ${d.titre}, ${d.artiste}`} />
+        <p class="visuellement-cache">{d.titre}, {d.artiste} ({d.annee})</p>
+      </div>
+    ))}
+  </div>
+  <div class="controles">
+    <Bouton style="secondaire" iconeGauche="fleche-gauche" iconeDroite={null} data-precedent class="seulement-ordi">Précédent</Bouton>
+    <button class="rond seulement-mobile" type="button" data-precedent aria-label="Disque précédent"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H4"/><path d="M10 6L4 12L10 18"/></svg></button>
+    <span class="texte-label" data-compteur><span class="seulement-ordi">Disque </span><span data-position>1</span> / {total}</span>
+    <Bouton style="secondaire" data-suivant class="seulement-ordi">Suivant</Bouton>
+    <button class="rond seulement-mobile" type="button" data-suivant aria-label="Disque suivant"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg></button>
+  </div>
+  <a class="sortir" href={`/disques/${disques[0].slug}`} data-sortir data-slugs={disques.map((d) => d.slug).join(',')}>
+    <span class="texte-bouton seulement-ordi">Sortir ce disque (ouvrir la fiche)</span>
+    <span class="texte-bouton seulement-mobile">Sortir ce disque</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg>
+  </a>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-pile]').forEach((pile) => {
+    const total = Number(pile.dataset.total);
+    const feuilles = [...pile.querySelectorAll<HTMLElement>('.feuille')];
+    const position = pile.querySelector('[data-position]')!;
+    const sortir = pile.querySelector<HTMLAnchorElement>('[data-sortir]')!;
+    const slugs = sortir.dataset.slugs!.split(',');
+    let actuel = 0;
+    const maj = () => {
+      feuilles.forEach((f, i) => {
+        const rang = (i - actuel + total) % total; // 0 = dessus
+        f.style.setProperty('--rang', String(rang));
+        f.setAttribute('aria-hidden', rang === 0 ? 'false' : 'true');
+      });
+      position.textContent = String(actuel + 1);
+      sortir.href = `/disques/${slugs[actuel]}`;
+    };
+    const aller = (pas: number) => { actuel = (actuel + pas + total) % total; maj(); };
+    pile.querySelectorAll('[data-precedent]').forEach((b) => b.addEventListener('click', () => aller(-1)));
+    pile.querySelectorAll('[data-suivant]').forEach((b) => b.addEventListener('click', () => aller(1)));
+    pile.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') aller(-1);
+      if (e.key === 'ArrowRight') aller(1);
+    });
+    maj();
+  });
+</script>
+
+<style>
+  .pile { display: grid; gap: var(--espace-lg); }
+  .feuilles { position: relative; height: clamp(21.875rem, 22rem + 10vw, 32.5rem); display: grid; place-items: center; }
+  .feuille {
+    --rang: var(--i);
+    position: absolute; width: min(26rem, 80%);
+    transform: translateX(calc(var(--rang) * -1.6rem)) rotate(calc(var(--rang) * -4deg)) scale(calc(1 - var(--rang) * 0.03));
+    z-index: calc(20 - var(--rang));
+    opacity: calc(1 - min(var(--rang), 4) * 0.2 + 0.2);
+    transition: transform var(--duree-normal) var(--courbe-sortie), opacity var(--duree-normal) var(--courbe-sortie);
+  }
+  .feuille[aria-hidden='true'] { pointer-events: none; }
+  .controles { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
+  .rond {
+    width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0;
+    border-radius: var(--rayon-pilule); background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal);
+  }
+  .rond:hover { background: var(--couleur-fond-tonal-survol); }
+  .sortir { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; justify-self: start; }
+  .sortir:hover .texte-bouton { text-decoration: underline; text-underline-offset: 0.3em; }
+  @media (max-width: 63.99rem) {
+    .sortir {
+      justify-self: stretch; justify-content: center; padding: var(--espace-md) var(--espace-lg);
+      border-radius: var(--rayon-pochette); background: var(--couleur-fond-tonal);
+    }
+    .sortir svg { display: none; }
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+// 03 · Fiche disque
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import PiedDePage from '../../components/PiedDePage.astro';
+import Pochette from '../../components/Pochette.astro';
+import Ecoute from '../../components/Ecoute.astro';
+import Bouton from '../../components/Bouton.astro';
+import CarteDisque from '../../components/CarteDisque.astro';
+import { disques, fiche, bacDuDisque } from '../../data/disques';
+
+export function getStaticPaths() {
+  return disques.map((disque) => ({ params: { disque: disque.slug }, props: { disque } }));
+}
+const { disque: d } = Astro.props;
+const f = fiche(d);
+const bac = bacDuDisque(d);
+---
+<Base title={`${d.titre} — ${d.artiste}`} description={`${d.titre} de ${d.artiste} (${d.annee}), dans le bac ${bac.nom} de Room 33.`}>
+  <Nav />
+  <main class="ambiance">
+    <nav class="conteneur ariane-zone" aria-label="Fil d’Ariane">
+      <ol role="list" class="ariane texte-petit">
+        <li class="seulement-ordi"><a href="/bacs">Les bacs</a></li>
+        <li><a href={`/bacs/${bac.slug}`}>{bac.nom}</a></li>
+        <li><span aria-current="page">{d.titre}</span></li>
+      </ol>
+    </nav>
+
+    <section class="disque conteneur" aria-labelledby="titre-disque">
+      <div class="visuel">
+        <div class="vinyle" aria-hidden="true"><span class="macaron"></span></div>
+        <Pochette motif={d.motif} src={d.pochette} alt={`Pochette de ${d.titre} par ${d.artiste}`} class="pochette-fiche" />
+      </div>
+      <div class="infos">
+        <p class="texte-label">{f.reference} · {bac.nom}</p>
+        <h1 id="titre-disque" class="titre-display">{d.titre}</h1>
+        <p class="titre-h3 artiste seulement-ordi">{d.artiste}</p>
+        <p class="texte-petit texte-secondaire seulement-ordi">{d.annee} · {d.genre}</p>
+        <p class="texte-corps seulement-mobile">{d.artiste} · {d.annee} · {d.genre}</p>
+        <Ecoute titre={d.titre} artiste={d.artiste} />
+        <dl class="credits seulement-ordi">
+          {f.credits.slice(1).map(([role, nom]) => (
+            <div><dt class="texte-avis">{role}</dt><dd class="texte-petit texte-secondaire">— {nom}</dd></div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="bande avis" aria-labelledby="titre-avis">
+      <div class="conteneur deux-colonnes">
+        <h2 id="titre-avis" class="titre-h1">Mon avis</h2>
+        <div class="texte">
+          <blockquote class="titre-h3 seulement-ordi">{f.avis}</blockquote>
+          <blockquote class="texte-corps-l seulement-mobile">{f.avisCourt}</blockquote>
+          <p class="texte-petit texte-secondaire">— Andyh, le disquaire</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bande moment" aria-labelledby="titre-moment">
+      <div class="conteneur deux-colonnes">
+        <div class="titre-moment">
+          <p class="texte-label">Le moment à écouter</p>
+          <h2 id="titre-moment" class="titre-h1">Écoutez à {f.moment.temps}.</h2>
+        </div>
+        <div class="texte">
+          <p class="texte-corps-l seulement-ordi">{f.moment.texte}</p>
+          <p class="texte-corps seulement-mobile">{f.moment.texteCourt}</p>
+          <p class="texte-petit texte-secondaire">L’extrait ne va pas jusque-là : écoutez le morceau en entier pour l’entendre.</p>
+          <dl class="credits seulement-mobile">
+            {f.credits.map(([role, nom]) => (
+              <div><dt class="texte-avis">{role}</dt><dd class="texte-petit texte-secondaire">— {nom}</dd></div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="bande artiste-bande" aria-labelledby="titre-artiste">
+      <div class="conteneur artiste-grille">
+        <div class="photo-artiste" role="img" aria-label={`Photo de ${d.artiste} (à venir)`}></div>
+        <div class="texte">
+          <p class="texte-label">Découvrir l’artiste</p>
+          <h2 id="titre-artiste" class="titre-h1">{d.artiste}</h2>
+          <p class="texte-corps"><span class="seulement-ordi">{f.artiste.bio}</span><span class="seulement-mobile">{f.artiste.bioCourte}</span></p>
+          <div class="liens">
+            <Bouton style="lien" href="#">Sa discographie</Bouton>
+            <Bouton style="lien" desactive class="seulement-ordi">Ses lives (bientôt)</Bouton>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section conteneur veine" aria-labelledby="titre-veine">
+      <h2 id="titre-veine" class="titre-h1">Dans la même veine</h2>
+      <div class="rangee">
+        {f.memeVeine.map((x) => <CarteDisque titre={x.titre} artiste={x.artiste} annee={x.annee} motif={x.motif} src={x.pochette} href={`/disques/${x.slug}`} />)}
+      </div>
+      <nav class="voisins" aria-label="Disques voisins">
+        <Bouton style="secondaire" href={`/disques/${f.precedent.slug}`} iconeGauche="fleche-gauche" iconeDroite={null} class="seulement-ordi">Disque précédent</Bouton>
+        <Bouton style="secondaire" href={`/disques/${f.suivant.slug}`} class="seulement-ordi">Disque suivant</Bouton>
+        <Bouton style="lien" href={`/disques/${f.precedent.slug}`} iconeGauche="fleche-gauche" iconeDroite={null} class="seulement-mobile">Précédent</Bouton>
+        <Bouton style="lien" href={`/disques/${f.suivant.slug}`} class="seulement-mobile">Suivant</Bouton>
+      </nav>
+    </section>
+  </main>
+  <PiedDePage />
+</Base>
+
+<style>
+  .ariane-zone { padding-top: calc(72px + var(--espace-xl)); padding-bottom: var(--espace-lg); }
+  .ariane { display: flex; gap: var(--espace-xs); flex-wrap: wrap; }
+  .ariane li + li::before { content: '/'; margin-right: var(--espace-xs); color: var(--couleur-texte-secondaire); }
+  .ariane a { color: var(--couleur-texte-secondaire); text-decoration: none; }
+  .ariane a:hover { color: var(--couleur-texte-principal); }
+
+  /* Le disque : pochette + vinyle qui sort */
+  .disque { display: grid; grid-template-columns: minmax(0, 37.5rem) minmax(0, 31.5rem); gap: var(--espace-4xl); align-items: center; padding-bottom: var(--espace-5xl); }
+  .visuel { position: relative; width: 100%; max-width: 37.5rem; aspect-ratio: 600 / 480; }
+  .visuel :global(.pochette-fiche) { position: absolute; left: 0; top: 0; width: 80%; z-index: 1; }
+  .vinyle {
+    position: absolute; left: 26.3%; top: 3.96%; width: 73.7%; aspect-ratio: 1; border-radius: 50%;
+    background: repeating-radial-gradient(circle, var(--brun-950) 0 2px, #1a110b 2px 4px);
+    border: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    display: grid; place-items: center;
+  }
+  .macaron { width: 30%; aspect-ratio: 1; border-radius: 50%; background: var(--couleur-accent-defaut); }
+  .infos { display: grid; gap: var(--espace-md); justify-items: start; }
+  .credits { display: grid; gap: var(--espace-2xs); margin: 0; }
+  .credits div { display: flex; align-items: baseline; gap: var(--espace-xs); }
+  .credits dd { margin: 0; }
+
+  /* Bandes éditoriales : titre à gauche, texte à droite */
+  .bande { padding-block: clamp(4rem, 2.59rem + 6.01vw, 7.5rem); }
+  .avis { background: var(--couleur-fond-bloc); }
+  .moment { background: var(--couleur-fond-ombre); }
+  .artiste-bande { background: var(--couleur-fond-noyer); }
+  .deux-colonnes { display: grid; grid-template-columns: minmax(0, 17.625rem) minmax(0, 53.375rem); justify-content: space-between; gap: var(--espace-md) var(--espace-3xl); align-items: start; }
+  .texte { display: grid; gap: var(--espace-md); justify-items: start; }
+  blockquote { margin: 0; }
+  .artiste-grille { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: var(--espace-xl); align-items: center; }
+  .photo-artiste { aspect-ratio: 1; border-radius: var(--rayon-bloc); background: radial-gradient(40% 50% at 50% 30%, rgb(240 122 34 / 0.35), transparent 70%), linear-gradient(160deg, var(--brun-800), var(--brun-950)); }
+  .liens { display: flex; flex-wrap: wrap; gap: 0 var(--espace-lg); }
+
+  .veine { display: grid; gap: var(--espace-xl); }
+  .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); }
+  .rangee > :global(*) { flex: 0 0 12.5rem; scroll-snap-align: start; }
+  .voisins { display: flex; gap: var(--espace-xl); margin-top: var(--espace-xl); }
+
+  @media (max-width: 63.99rem) {
+    .ariane-zone { padding-top: calc(60px + var(--espace-xl)); padding-bottom: var(--espace-md); }
+    .ariane li.seulement-ordi + li::before { content: none; }
+    .disque { grid-template-columns: 1fr; gap: var(--espace-lg); padding-bottom: var(--espace-3xl); }
+    .visuel { aspect-ratio: 350 / 280; }
+    .infos .titre-display { font-size: var(--taille-display); }
+    .deux-colonnes, .artiste-grille { grid-template-columns: 1fr; gap: var(--espace-sm); }
+    .photo-artiste { aspect-ratio: 350 / 200; }
+    .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
+    .voisins { justify-content: space-between; margin-top: 0; }
+  }
+</style>

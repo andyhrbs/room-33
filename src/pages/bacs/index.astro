@@ -1,0 +1,6 @@
+---
+// /bacs : ouvre le premier bac (les filtres permettent de passer aux autres)
+import PageBac from '../../components/PageBac.astro';
+import { bacs } from '../../data/disques';
+---
+<PageBac bac={bacs[0]} />

@@ -29,15 +29,45 @@ export const disques: Disque[] = [
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
 
-// Bacs (repris de la maquette)
-export const bacs = [
-  { slug: 'soul-rnb', nom: 'Soul & R&B', detail: '18 disques', type: 'genre', motif: 'bandes' },
-  { slug: 'jazz', nom: 'Jazz', detail: '14 disques', type: 'genre', motif: 'arc' },
-  { slug: 'rap', nom: 'Rap', detail: '22 disques', type: 'genre', motif: 'lune' },
-  { slug: 'bac-de-nuit', nom: 'Bac de nuit', detail: '12 disques · humeur', type: 'humeur', motif: 'points' },
-  { slug: 'dimanche-matin', nom: 'Dimanche matin', detail: '9 disques · humeur', type: 'humeur', motif: 'croix' },
-  { slug: 'les-basses', nom: 'Les basses', detail: '11 disques · humeur', type: 'humeur', motif: 'cercles' },
-] satisfies { slug: string; nom: string; detail: string; type: string; motif: Motif }[];
+// Bacs : par genre (rempli automatiquement) et par humeur (choisis à la main)
+export interface Bac { slug: string; nom: string; type: 'genre' | 'humeur'; motif: Motif; description: string; disques: Disque[]; maj: string }
+const parGenre = (g: string) => disques.filter((d) => d.genre === g);
+const choix = (...slugs: string[]) => slugs.map(parSlug);
+const MAJ = '28 octobre 2026';
+export const bacs: Bac[] = [
+  { slug: 'soul-rnb', nom: 'Soul & R&B', type: 'genre', motif: 'bandes', description: 'Des voix, du groove, et de la chaleur.', disques: parGenre('Soul & R&B'), maj: MAJ },
+  { slug: 'jazz', nom: 'Jazz', type: 'genre', motif: 'arc', description: 'Le jazz d’hier et celui d’aujourd’hui.', disques: parGenre('Jazz'), maj: MAJ },
+  { slug: 'rap', nom: 'Rap', type: 'genre', motif: 'lune', description: 'Des textes et des prods qui restent.', disques: parGenre('Rap'), maj: MAJ },
+  { slug: 'indie', nom: 'Indie', type: 'genre', motif: 'croix', description: 'Des sons faits à la maison, qui ne ressemblent à rien d’autre.', disques: parGenre('Indie'), maj: MAJ },
+  { slug: 'afro', nom: 'Afro', type: 'genre', motif: 'points', description: 'Afrobeat, highlife, et tout ce qui fait bouger.', disques: parGenre('Afro'), maj: MAJ },
+  { slug: 'classique', nom: 'Classique', type: 'genre', motif: 'cercles', description: 'Le piano d’abord, et le reste.', disques: parGenre('Classique'), maj: MAJ },
+  { slug: 'bac-de-nuit', nom: 'Bac de nuit', type: 'humeur', motif: 'points', description: 'Pour les fins de soirée : des sons lents et chauds, qui laissent de la place à la basse.', disques: choix('daniel-caesar-freudian', 'khamari-a-brief-nirvana', 'dijon-absolutely', 'yussef-dayes-black-classical-music'), maj: MAJ },
+  { slug: 'dimanche-matin', nom: 'Dimanche matin', type: 'humeur', motif: 'croix', description: 'Café, fenêtre ouverte, rien de prévu.', disques: choix('tom-misch-geography', 'jordan-ward-forward', 'mk-gee-two-star'), maj: MAJ },
+  { slug: 'les-basses', nom: 'Les basses', type: 'humeur', motif: 'cercles', description: 'Des lignes de basse qui portent tout le morceau.', disques: choix('yussef-dayes-black-classical-music', 'tom-misch-geography', 'luidji-tristesse-business', 'dijon-absolutely'), maj: MAJ },
+];
+export const bacParSlug = (slug: string) => bacs.find((b) => b.slug === slug)!;
+export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}${b.type === 'humeur' ? ' · humeur' : ''}`;
+// Le bac d'un disque : son bac de genre
+export const bacDuDisque = (d: Disque) => bacs.find((b) => b.type === 'genre' && b.nom === d.genre)!;
+// Numérotation façon vinyle : A1, A2, A3, B1…
+export const face = (i: number, parFace = 3) => `${String.fromCharCode(65 + Math.floor(i / parFace))}${(i % parFace) + 1}`;
+
+// Fiche disque : textes provisoires de la maquette (les tiens arrivent au Sprint 4)
+export const fiche = (d: Disque) => {
+  const i = disques.indexOf(d);
+  const memeVeine = [...disques.filter((x) => x !== d && x.genre === d.genre), ...disques.filter((x) => x !== d && x.genre !== d.genre)].slice(0, 4);
+  return {
+    reference: `DSQ-${String(i + 1).padStart(3, '0')}`,
+    avis: '« Ici, ton avis en 3 à 5 phrases, comme une note de pochette. Ce que ce disque te fait, quand tu l’écoutes, le morceau à écouter en premier si on ne connaît pas. »',
+    avisCourt: '« Ton avis en 3 à 5 phrases, comme une note de pochette. »',
+    moment: { temps: '1:24', texte: 'À 1:24, la voix décroche et tout le morceau s’envole. Le passage qui m’accroche, en deux ou trois phrases.', texteCourt: 'À 1:24, la voix décroche et tout le morceau s’envole.' },
+    credits: [['Claviers', 'Nom du pianiste'], ['Basse', 'Nom du bassiste'], ['Batterie', 'Nom du batteur'], ['Production', 'Nom du producteur']],
+    artiste: { bio: 'Deux lignes pour situer l’artiste : d’où il vient, ce qu’il a changé, par quel disque commencer.', bioCourte: 'Deux lignes pour situer l’artiste.' },
+    memeVeine,
+    precedent: disques[(i - 1 + disques.length) % disques.length],
+    suivant: disques[(i + 1) % disques.length],
+  };
+};
 
 // Le Top de la Room (ordre = classement)
 export const top = [

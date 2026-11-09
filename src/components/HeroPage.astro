@@ -1,7 +1,8 @@
 ---
 // Hero des pages intérieures : gros plan de la pièce, retour, fil d'Ariane, titre avec lettrine.
 import Bouton from './Bouton.astro';
-interface Props { image?: string | null; position?: string; filAriane: string[]; surtitreMobile: string; titre: string; retour?: string }
+type Etape = string | { texte: string; href?: string };
+interface Props { image?: string | null; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; retour?: string }
 const { image, position = 'center', filAriane, surtitreMobile, titre, retour = 'Retour dans la pièce' } = Astro.props;
 const lettre = titre.charAt(0);
 const reste = titre.slice(1);
@@ -12,9 +13,11 @@ const reste = titre.slice(1);
     <div class="titres">
       <nav aria-label="Fil d’Ariane" class="seulement-ordi">
         <ol role="list" class="ariane texte-petit">
-          {filAriane.map((e, i) => (
-            <li>{i < filAriane.length - 1 ? <a href="/">{e}</a> : <span aria-current="page">{e}</span>}</li>
-          ))}
+          {filAriane.map((e, i) => {
+            const texte = typeof e === 'string' ? e : e.texte;
+            const href = typeof e === 'string' ? '/' : e.href ?? '/';
+            return <li>{i < filAriane.length - 1 ? <a href={href}>{texte}</a> : <span aria-current="page">{texte}</span>}</li>;
+          })}
         </ol>
       </nav>
       <p class="texte-label seulement-mobile">{surtitreMobile}</p>
@@ -23,6 +26,7 @@ const reste = titre.slice(1);
         <span class="visuellement-cache">{titre}</span>
       </h1>
     </div>
+    <slot />
   </div>
 </header>
 <style>
@@ -34,7 +38,7 @@ const reste = titre.slice(1);
       var(--image, radial-gradient(60% 50% at 30% 30%, rgb(240 122 34 / 0.25), transparent), linear-gradient(160deg, var(--noyer-500), var(--brun-950)));
     background-size: cover; background-position: var(--position, center);
   }
-  .contenu { display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-2xl); }
+  .contenu { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-lg); padding-bottom: var(--espace-2xl); }
   .contenu :global(.retour) { justify-self: start; }
   .retour :global(.icone) { color: var(--couleur-accent-defaut); }
   .titres { display: grid; gap: var(--espace-md); }

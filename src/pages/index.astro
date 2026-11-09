@@ -13,7 +13,7 @@ import EnTeteSection from '../components/EnTeteSection.astro';
 import BandeauGenres from '../components/BandeauGenres.astro';
 import ModuleReco from '../components/ModuleReco.astro';
 import { accueil } from '../data/textes';
-import { bacs, top, morceauDuJour, platine, genres } from '../data/disques';
+import { bacs, top, morceauDuJour, platine, genres, detailBac } from '../data/disques';
 import { images } from '../data/images';
 
 const m = morceauDuJour;
@@ -83,7 +83,7 @@ const [premier, ...suivants] = top;
       <section class="section conteneur apercu" aria-labelledby="titre-bacs">
         <EnTeteSection surtitre={accueil.bacs.surtitre} titre={accueil.bacs.titre} id="titre-bacs" lien={{ texte: accueil.bacs.lien, href: '/bacs' }} />
         <div class="rangee-bacs">
-          {bacs.map((b) => <CarteDisque titre={b.nom} artiste={b.detail} motif={b.motif} href={`/bacs/${b.slug}`} />)}
+          {bacs.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b)} motif={b.motif} href={`/bacs/${b.slug}`} />)}
         </div>
       </section>
 
