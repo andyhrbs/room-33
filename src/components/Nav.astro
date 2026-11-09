@@ -78,21 +78,19 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     padding: var(--espace-md) var(--grille-marge);
     transition: padding var(--duree-normal) var(--courbe-standard);
   }
-  /* Au défilement, sur mobile : flou progressif sans fond (Figma : flou 100 en haut → 0 en bas) ; sur ordi : fond plein (voir plus bas).
-     Deux couches de flou masquées en dégradé pour un fondu doux ; apparition en fondu 400 ms. */
+  /* Au défilement (ordi et mobile, Figma) : dégradé fond/ombre 80 % → 0 % de haut en bas,
+     + flou d'arrière-plan progressif (fort en haut, nul en bas). Apparition en fondu 400 ms. */
   .nav::before, .nav::after {
     content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
     opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
   }
   .nav::before {
-    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
   }
   .nav::after {
-    -webkit-backdrop-filter: blur(40px); backdrop-filter: blur(40px);
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 60%);
-    mask-image: linear-gradient(to bottom, #000 0%, transparent 60%);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--couleur-fond-ombre) 80%, transparent), color-mix(in srgb, var(--couleur-fond-ombre) 0%, transparent));
   }
   .defile::before, .defile::after { opacity: 1; }
   .nav:not(.fixe) { position: relative; }
@@ -114,9 +112,6 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
      Au défilement, la barre reste transparente (seules les marges se resserrent sur mobile). */
   @media (min-width: 64rem) {
     .barre, .defile .barre { min-height: 72px; padding-block: 0; }
-    /* Ordi : au défilement, fond plein fond/ombre (pas de flou) — Figma */
-    .nav::before { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; background: var(--couleur-fond-ombre); }
-    .nav::after { display: none; }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
