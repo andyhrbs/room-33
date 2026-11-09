@@ -76,7 +76,7 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
   letter-spacing: var(--interlettre-titre);
   text-wrap: balance;
 }
-.titre-marque  { font-size: var(--taille-marque);  line-height: 0.9; }
+.titre-marque  { font-size: var(--taille-marque);  line-height: 0.9; letter-spacing: var(--interlettre-marque); }
 .titre-geant   { font-size: var(--taille-geant);   line-height: 0.9; }
 .titre-hero    { font-size: var(--taille-hero);    line-height: 0.9; }
 .titre-display { font-size: var(--taille-display); line-height: 1; }

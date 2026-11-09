@@ -105,20 +105,8 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
     .barre, .defile .barre { min-height: 84px; padding-block: 0; }
     .defile .liens, .defile :global(.cta) { display: none; }
     .defile .ouvrir-menu { display: grid; }
-    /* Défilé : dégradé brun 950 → transparent (::after)
-       + flou progressif, fort en haut et nul en bas (::before masqué) : pas de bord visible */
-    .nav::before {
-      background: none;
-      -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px);
-      -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 35%, transparent 100%);
-      mask-image: linear-gradient(180deg, #000 0%, #000 35%, transparent 100%);
-    }
-    .nav::after {
-      content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      background: linear-gradient(180deg, var(--brun-950) 0%, rgb(18 11 7 / 0) 100%);
-      opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
-    }
-    .defile::after { opacity: 1; }
+    /* Défilé : dégradé brun 950 → transparent (sans flou, comme Figma) */
+    .nav::before { background: linear-gradient(180deg, var(--brun-950) 0%, rgb(18 11 7 / 0) 100%); }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {

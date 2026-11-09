@@ -92,6 +92,7 @@
   --taille-logo: clamp(1.375rem, 1.287rem + 0.3756vw, 1.625rem);
 
   --interlettre-titre: -0.04em;
+  --interlettre-marque: -0.08em; /* Titre/Marque (signature géante du pied de page) */
   --interlettre-texte: -0.05em;
   --interlettre-logo: -0.02em;
 
