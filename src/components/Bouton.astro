@@ -55,9 +55,11 @@ const tailleIcone = 20;
     padding: var(--espace-md) var(--espace-lg);
     border-radius: var(--rayon-pilule);
     background: var(--couleur-accent-defaut);
-    color: var(--couleur-accent-texte-dessus);
+    color: var(--couleur-texte-principal);
   }
-  .bouton--primaire:hover { background: var(--couleur-accent-survol); }
+  /* Survol : ambre clair, texte foncé (choix Figma d'Andyh) */
+  .bouton--primaire:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
+  .bouton--primaire:disabled:hover { color: var(--couleur-texte-principal); }
   .bouton--primaire:active { background: var(--couleur-accent-presse); transform: scale(0.98); }
 
   /* Secondaire */

@@ -151,7 +151,7 @@ const motifs = ['cercles', 'bandes', 'arc', 'lune', 'points', 'croix'] as const;
   .ligne-etats { display: grid; grid-template-columns: 6rem repeat(5, minmax(9rem, 1fr)); gap: var(--espace-md); align-items: center; }
 
   /* États figés (copie des règles du composant, pour la démo uniquement) */
-  .tableau-etats :global(.bouton--primaire.force-survol) { background: var(--couleur-accent-survol); }
+  .tableau-etats :global(.bouton--primaire.force-survol) { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
   .tableau-etats :global(.bouton--primaire.force-pressé) { background: var(--couleur-accent-presse); transform: scale(0.98); }
   .tableau-etats :global(.bouton--secondaire.force-survol) { background: var(--couleur-fond-tonal-survol); }
   .tableau-etats :global(.bouton--secondaire.force-pressé) { background: var(--couleur-fond-tonal-presse); }

@@ -52,9 +52,9 @@ const { titre = 'Titre du morceau', artiste = 'Artiste', temps = '0:12 / 0:30', 
   .lecture-pause {
     width: 44px; height: 44px; border: 0; padding: 0; border-radius: 50%;
     display: grid; place-items: center;
-    background: var(--couleur-accent-defaut); color: var(--couleur-accent-texte-dessus);
+    background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
   }
-  .lecture-pause:hover { background: var(--couleur-accent-survol); }
+  .lecture-pause:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
   .app-mobile { display: none; }
   @media (max-width: 40rem) {
     .app-ordi { display: none; }

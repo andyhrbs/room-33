@@ -21,10 +21,10 @@ const { titre, artiste, extrait } = Astro.props;
   .lecture {
     width: 48px; height: 48px; flex: none; border: 0; padding: 0;
     display: grid; place-items: center; border-radius: var(--rayon-pilule);
-    background: var(--couleur-accent-defaut); color: var(--couleur-accent-texte-dessus);
+    background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
     transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
   }
-  .lecture:hover { background: var(--couleur-accent-survol); }
+  .lecture:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
   .lecture:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
   .infos { display: grid; margin-right: var(--espace-xs); }
 </style>
