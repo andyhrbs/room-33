@@ -80,7 +80,7 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
   .nav::before {
     content: ''; position: absolute; inset: 0; z-index: -1;
-    background: var(--couleur-fond-ombre);
+    background: var(--couleur-fond-bloc);
     opacity: 0; transition: opacity var(--duree-normal) var(--courbe-standard);
   }
   .nav:not(.fixe) { position: relative; }
@@ -100,10 +100,9 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
 
   /* Ordi : liens + CTA tout le temps (pas de menu burger).
-     Au défilement, le fond (couleur/fond/bloc) apparaît en fondu (durée « normal », 400 ms). */
+     Au défilement (ordi et mobile), le fond couleur/fond/bloc apparaît en fondu (durée « normal », 400 ms). */
   @media (min-width: 64rem) {
     .barre, .defile .barre { min-height: 72px; padding-block: 0; }
-    .nav::before { background: var(--couleur-fond-bloc); }
   }
   /* Mobile et tablette : logo + menu */
   @media (max-width: 63.99rem) {
