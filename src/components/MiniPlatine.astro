@@ -17,23 +17,32 @@ const apps = [
 ].map((a) => ({ ...a, logo: existsSync(`public/logos/${a.id}.svg`) ? `/logos/${a.id}.svg` : null }));
 ---
 <aside class:list={['mini-platine', { fixe }]} aria-label="Lecteur d’extraits" data-mini-platine data-ecoute-courante hidden={!visible}>
-  <div class="en-cours">
+  <!-- Gauche : le disque qui tourne, le titre, l'artiste (comme Spotify : deux lignes, rien de tassé) -->
+  <div class="gauche">
     <span class="vinyle" aria-hidden="true"><span></span></span>
     <div class="infos">
-      <span class="texte-legende texte-secondaire"><span data-mini-statut>Extrait</span> · <span data-temps>{temps}</span></span>
-      <span class="texte-label titre"><span data-titre>{titre}</span> — <span data-artiste>{artiste}</span></span>
+      <span class="texte-label titre" data-titre>{titre}</span>
+      <span class="texte-petit texte-secondaire artiste" data-artiste>{artiste}</span>
+    </div>
+  </div>
+  <!-- Centre : lecture/pause, puis la barre d'avancement entre les deux temps -->
+  <div class="centre">
+    <button class="lecture-pause" type="button" aria-label="Mettre en pause" data-lecture-pause>
+      <Icone nom="pause" taille={20} class="i-pause" />
+      <Icone nom="lecture" taille={26} class="i-lecture" />
+    </button>
+    <div class="ligne-temps texte-legende texte-secondaire">
+      <span class="temps" data-temps-courant>{temps.split(' / ')[0]}</span>
       <span class="progression" role="progressbar" aria-label="Avancement de l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progression} data-progression>
         <span style={`width: ${progression}%`}></span>
       </span>
+      <span class="temps" data-temps-total>{temps.split(' / ')[1] ?? '0:30'}</span>
     </div>
   </div>
-  <div class="actions">
-    <Bouton style="secondaire" class="app app-ordi" data-ouvrir-app>Ouvrir l’app</Bouton>
-    <Bouton style="lien" class="app app-mobile" iconeDroite={null} data-ouvrir-app>Ouvrir l’app</Bouton>
-    <button class="lecture-pause" type="button" aria-label="Mettre en pause" data-lecture-pause>
-      <Icone nom="pause" taille={22} class="i-pause" />
-      <Icone nom="lecture" taille={30} class="i-lecture" />
-    </button>
+  <!-- Droite : ce que c'est, et où l'écouter en entier -->
+  <div class="droite">
+    <span class="texte-legende texte-secondaire statut" data-mini-statut>Extrait</span>
+    <Bouton style="lien" class="app" data-ouvrir-app>Ouvrir l’app</Bouton>
   </div>
   <p class="visuellement-cache" aria-live="polite" data-annonce></p>
 </aside>
@@ -56,41 +65,51 @@ const apps = [
 </dialog>
 
 <style>
+  /* Barre d'écoute façon Spotify, en version minimaliste : 3 colonnes (morceau · lecture · app) */
   .mini-platine {
-    display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm);
-    padding: var(--espace-xs);
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 32rem) minmax(0, 1fr);
+    align-items: center; gap: var(--espace-lg);
+    padding: var(--espace-sm) var(--espace-md);
     background: var(--couleur-fond-ombre); border-radius: var(--rayon-bloc);
     box-shadow: 0 10px 40px rgb(0 0 0 / 0.45);
-    width: min(75rem, 100% - 2 * var(--espace-md));
   }
+  .mini-platine { position: relative; }
   .mini-platine[hidden] { display: none; }
-  /* Sur le site : une barre fixée en bas sur toute la largeur, comme Spotify ; le contenu reste aligné sur la grille.
+  /* Sur le site : une barre fixée en bas sur toute la largeur ; le contenu reste aligné sur la grille.
      La page garde une place équivalente en bas (pied de page rallongé, global.css) : rien n'est jamais caché. */
   .fixe {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-    width: auto; border-radius: 0;
+    border-radius: 0;
     border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
     box-shadow: 0 -12px 32px rgb(0 0 0 / 0.35);
     padding-block: var(--espace-sm) max(var(--espace-sm), env(safe-area-inset-bottom));
     padding-inline: max(var(--grille-marge), calc((100% - var(--grille-largeur-max)) / 2 + var(--grille-marge)));
   }
-  .en-cours { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
+  /* Gauche */
+  .gauche { display: flex; align-items: center; gap: var(--espace-md); min-width: 0; }
   .vinyle {
-    width: 44px; height: 44px; flex: none; border-radius: 50%;
+    width: 52px; height: 52px; flex: none; border-radius: 50%;
     display: grid; place-items: center; background: var(--couleur-fond-image) center / cover;
     animation: tourne 2.4s linear infinite; animation-play-state: paused;
   }
   [data-etat='lecture'] .vinyle { animation-play-state: running; }
-  .vinyle span { width: 15px; height: 15px; border-radius: 50%; background: var(--couleur-accent-defaut); box-shadow: 0 0 0 3px var(--couleur-fond-ombre); }
+  .vinyle span { width: 16px; height: 16px; border-radius: 50%; background: var(--couleur-accent-defaut); box-shadow: 0 0 0 3px var(--couleur-fond-ombre); }
   @keyframes tourne { to { transform: rotate(1turn); } }
   @media (prefers-reduced-motion: reduce) { .vinyle { animation: none; } }
-  .infos { display: grid; gap: var(--espace-2xs); min-width: 0; width: 13.75rem; }
-  .titre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .progression { display: block; height: 3px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
+  .infos { display: grid; gap: 2px; min-width: 0; }
+  .titre, .artiste { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Centre */
+  .centre { display: grid; justify-items: center; gap: var(--espace-xs); }
+  .ligne-temps { width: 100%; display: grid; grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem; align-items: center; gap: var(--espace-sm); }
+  .temps { font-variant-numeric: tabular-nums; }
+  .temps:first-child { text-align: right; }
+  .progression { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
   .progression span { display: block; height: 100%; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
-  .actions { display: flex; align-items: center; gap: var(--espace-sm); flex: none; }
+  /* Droite */
+  .droite { display: flex; align-items: center; justify-content: flex-end; gap: var(--espace-md); min-width: 0; }
+  .statut { white-space: nowrap; }
   .lecture-pause {
-    width: 44px; height: 44px; border: 0; padding: 0; border-radius: 50%;
+    width: 40px; height: 40px; border: 0; padding: 0; border-radius: 50%;
     display: grid; place-items: center;
     background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
     transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
@@ -100,11 +119,16 @@ const apps = [
   .lecture-pause :global(.i-lecture) { display: none; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-lecture) { display: block; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-pause) { display: none; }
-  .actions :global(.app-mobile) { display: none; }
-  @media (max-width: 40rem) {
-    .actions :global(.app-ordi) { display: none; }
-    .actions :global(.app-mobile) { display: inline-flex; }
-    .infos { width: auto; }
+  /* Mobile : comme le mini-lecteur de Spotify : disque · titre/artiste · app · lecture, et un filet d'avancement en haut */
+  @media (max-width: 63.99rem) {
+    .mini-platine { grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--espace-sm); }
+    .gauche { gap: var(--espace-sm); }
+    .vinyle { width: 44px; height: 44px; }
+    .centre { order: 3; }
+    .droite { order: 2; }
+    .statut, .temps { display: none; }
+    .ligne-temps { position: absolute; left: 0; right: 0; top: 0; display: block; }
+    .progression { height: 2px; border-radius: 0; }
   }
 
   /* Fenêtre « Écouter en entier sur… » */

@@ -60,7 +60,9 @@ function progression() {
   if (!mini) return;
   const total = audio.duration || 30;
   const pct = Math.min(100, (audio.currentTime / total) * 100);
-  mini.querySelector('[data-temps]')!.textContent = `${mmss(audio.currentTime)} / ${mmss(total)}`;
+  const courant = mini.querySelector('[data-temps-courant]'), fin = mini.querySelector('[data-temps-total]');
+  if (courant) courant.textContent = mmss(audio.currentTime);
+  if (fin) fin.textContent = mmss(total);
   const barre = mini.querySelector<HTMLElement>('[data-progression]')!;
   barre.setAttribute('aria-valuenow', String(Math.round(pct)));
   (barre.firstElementChild as HTMLElement).style.width = `${pct}%`;
