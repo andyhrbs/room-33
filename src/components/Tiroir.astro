@@ -219,10 +219,23 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   }
 
   // ---------- Écouteurs (délégués : marchent sur toutes les pages, même après navigation) ----------
+  // Boutons « Recommandez-moi un son » : écoutés en phase de capture, AVANT la navigation fluide d'Astro,
+  // pour ouvrir le tiroir sur place (sans changer de page ni descendre jusqu'à la section du bas).
+  // Le lien /#recommander reste en secours si le JavaScript ne charge pas.
+  document.addEventListener('click', (e) => {
+    const ouvreur = (e.target as Element).closest<HTMLElement>('[data-ouvrir-reco], a[href$="#recommander"]');
+    if (!ouvreur || ouvreur.closest('[data-tiroir]')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    // menu mobile ouvert : on le ferme d'abord, puis le tiroir s'ouvre
+    const depuisMenu = !!ouvreur.closest('#menu-principal');
+    document.dispatchEvent(new CustomEvent('room33:fermer-menu'));
+    // à la fermeture du tiroir, le focus revient sur le bouton qui l'a ouvert (le burger si c'était le menu)
+    ouvrir(depuisMenu ? document.querySelector<HTMLElement>('[data-ouvrir-menu]') : ouvreur);
+  }, true);
+
   document.addEventListener('click', (e) => {
     const c = e.target as Element;
-    const ouvreur = c.closest<HTMLElement>('[data-ouvrir-reco], a[href$="#recommander"]');
-    if (ouvreur && !ouvreur.closest('[data-tiroir]')) { e.preventDefault(); ouvrir(ouvreur); return; }
     if (c.closest('[data-fermer-tiroir]')) return fermer();
     if (c instanceof HTMLDialogElement && c.matches('[data-tiroir]')) return fermer(); // clic sur le fond
     const r = c.closest<HTMLButtonElement>('[data-tiroir] .resultat');

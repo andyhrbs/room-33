@@ -45,6 +45,12 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   const majNav = () => document.querySelectorAll<HTMLElement>('[data-nav]:not([data-etat-force])').forEach((h) => h.classList.toggle('defile', window.scrollY > SEUIL));
   window.addEventListener('scroll', majNav, { passive: true });
 
+  // Le tiroir « Recommandez-moi un son » ouvert depuis le menu mobile demande de fermer le menu d'abord
+  document.addEventListener('room33:fermer-menu', () => {
+    const m = document.getElementById('menu-principal') as HTMLDialogElement | null;
+    if (m?.open) m.close();
+  });
+
   // Relancé à chaque page (navigation fluide du ClientRouter)
   document.addEventListener('astro:page-load', () => {
     majNav();
