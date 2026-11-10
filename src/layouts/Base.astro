@@ -23,11 +23,15 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <title>{fullTitle}</title>
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
-    <!-- Entrée « Allumez la lampe » : déjà vue (ou animations réduites) → on ne l'affiche pas, sans flash -->
+    <!-- Entrée « Allumez la lampe » : déjà vue → on ne l'affiche pas, sans flash.
+         Test : ajouter ?entree à l'adresse pour la revoir à chaque fois. -->
     <script is:inline>
       (function () {
         var marquer = function () {
-          try { if (localStorage.getItem('room33-entree') || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('entree-vue'); } catch (e) { document.documentElement.classList.add('entree-vue'); }
+          try {
+            if (/[?&]entree\b/.test(location.search)) { localStorage.removeItem('room33-entree'); document.documentElement.classList.remove('entree-vue'); return; }
+            if (localStorage.getItem('room33-entree')) document.documentElement.classList.add('entree-vue');
+          } catch (e) { document.documentElement.classList.add('entree-vue'); }
         };
         marquer();
         document.addEventListener('astro:after-swap', marquer);

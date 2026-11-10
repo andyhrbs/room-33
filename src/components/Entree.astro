@@ -2,7 +2,8 @@
 // 00 · L'entrée : « Allumez la lampe ». Écran noir, sans texte visible : l'abat-jour de la lampe à arc
 // est suspendu au centre de l'écran, la tige chromée descend tout droit (on ne voit pas le pied). Au clic,
 // la lampe s'allume puis la pièce s'éclaire en cercle depuis son ouverture. Échap = entrer directement.
-// Une seule fois par visiteur (mémorisé), sautée si le visiteur a demandé de réduire les animations.
+// Une seule fois par visiteur (mémorisé ; ?entree dans l'adresse pour la revoir). Animations réduites :
+// pas de pulsation ni de cercle, la lampe s'allume puis la pièce apparaît.
 // Maquette Figma « 00 · L'entrée » + composant « Lampe d'entrée — lampe à arc » (Éteinte / Allumée).
 // abat-jour : dôme bombé à flancs presque droits, lèvre arrondie (même tracé que Figma, centré sur x = 160)
 const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 356 302 360 292 360 L 28 360 C 18 360 10 356 10 344 Z';
@@ -78,6 +79,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       e.style.setProperty('--cx', `${r.left + r.width / 2}px`);
       e.style.setProperty('--cy', `${r.top + r.height / 2}px`);
       e.classList.add('allumee');
+      // animations réduites : la lampe s'allume, puis on entre sans le grand cercle
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 700); return; }
       setTimeout(() => e.classList.add('allumage'), 350); // le temps de voir la lampe s'allumer
       e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
       setTimeout(finir, 2200); // filet de sécurité
