@@ -32,11 +32,18 @@ function preparer() {
     for (const el of choisis) {
       const r = el.getBoundingClientRect();
       if (r.top < innerHeight && r.bottom > 0 && r.height > 0) continue; // déjà visible au chargement
-      // dans une rangée qui défile à l'horizontale, un bloc décalé vers le bas ferait apparaître une barre
-      // de défilement verticale : là, simple fondu, sans déplacement
+      // dans une rangée qui défile à l'horizontale (bacs de l'accueil, « Les autres bacs », fiche disque),
+      // les pochettes montent aussi : on donne à la rangée la place de la montée en bas (padding compensé
+      // par une marge négative, la mise en page ne bouge pas), sinon une barre de défilement verticale apparaît
       const parent = el.parentElement;
-      const defile = parent && /auto|scroll/.test(getComputedStyle(parent).overflowX);
-      el.dataset.apparition = defile ? 'fondu' : '';
+      if (parent && !parent.dataset.placeMontee && /auto|scroll/.test(getComputedStyle(parent).overflowX)) {
+        const cs = getComputedStyle(parent);
+        const place = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--distance-apparition')) || 0;
+        parent.style.paddingBottom = `${parseFloat(cs.paddingBottom) + place + 8}px`;
+        parent.style.marginBottom = `${parseFloat(cs.marginBottom) - place - 8}px`;
+        parent.dataset.placeMontee = '';
+      }
+      el.dataset.apparition = '';
       aSurveiller.push(el);
     }
   }
