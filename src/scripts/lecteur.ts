@@ -196,7 +196,7 @@ document.addEventListener('click', async (e) => {
   const cible = e.target as Element;
   const ecouter = cible.closest('[data-ecouter]');
   if (ecouter) { e.preventDefault(); const m = lireMorceau(ecouter); if (m) { construireFile(ecouter); basculer(m); } return; }
-  if (cible.closest('[data-ouvrir-plein]')) { const d = document.querySelector<HTMLDialogElement>('[data-lecteur-plein]'); if (d && !d.open) { afficher(); progression(); d.showModal(); } return; }
+  if (cible.closest('[data-ouvrir-plein]')) { const d = document.querySelector<HTMLDialogElement>('[data-lecteur-plein]'); if (d && !d.open) { afficher(); progression(); d.showModal(); d.focus({ preventScroll: true }); } return; } // focus sur le lecteur, pas sur la croix (sinon contour au toucher)
   if (cible.closest('[data-fermer-plein]')) { fermerPlein(); return; }
   if (cible.closest('[data-precedent]')) { sauter(-1); return; }
   if (cible.closest('[data-suivant]')) { sauter(1); return; }

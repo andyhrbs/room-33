@@ -53,7 +53,7 @@ const apps = [
   <p class="visuellement-cache" aria-live="polite" data-annonce></p>
 
   <!-- Lecteur plein écran (mobile) : grande pochette, titre, avancement, précédent / lecture / suivant, Ouvrir l'app -->
-  <dialog class="lecteur-plein" aria-labelledby="titre-plein" data-lecteur-plein>
+  <dialog class="lecteur-plein" aria-labelledby="titre-plein" data-lecteur-plein tabindex="-1">
     <div class="plein-visuel" aria-hidden="true">
       <img alt="" data-plein-pochette hidden />
       <span class="plein-motif"></span>
@@ -172,6 +172,9 @@ const apps = [
     user-select: none; -webkit-user-select: none;
   }
   .lecteur-plein.glisse { animation: none; will-change: transform; }
+  /* à l'ouverture, le focus va sur le lecteur lui-même (pas sur la croix) : aucun contour au toucher */
+  .lecteur-plein:focus, .lecteur-plein:focus-visible { outline: none; }
+  .plein-fermer:focus-visible { border-radius: 50%; } /* au clavier : contour rond, la croix reste ronde */
   .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.5s var(--courbe-douce); }
   .lecteur-plein.ferme { animation: plein-descend 0.3s var(--courbe-entree-sortie) forwards; }
   .lecteur-plein::backdrop { background: rgb(18 11 7 / 0.6); }
