@@ -27,10 +27,14 @@ const apps = [
   </div>
   <!-- Centre : lecture/pause, puis la barre d'avancement entre les deux temps -->
   <div class="centre">
-    <button class="lecture-pause" type="button" aria-label="Mettre en pause" data-lecture-pause>
-      <Icone nom="pause" taille={20} class="i-pause" />
-      <Icone nom="lecture" taille={26} class="i-lecture" />
-    </button>
+    <div class="commandes">
+      <button class="saut precedent" type="button" aria-label="Morceau précédent" data-precedent disabled><Icone nom="precedent" taille={22} /></button>
+      <button class="lecture-pause" type="button" aria-label="Mettre en pause" data-lecture-pause>
+        <Icone nom="pause" taille={20} class="i-pause" />
+        <Icone nom="lecture" taille={26} class="i-lecture" />
+      </button>
+      <button class="saut suivant" type="button" aria-label="Morceau suivant" data-suivant disabled><Icone nom="suivant" taille={22} /></button>
+    </div>
     <div class="ligne-temps texte-legende texte-secondaire">
       <span class="temps" data-temps-courant>{temps.split(' / ')[0]}</span>
       <span class="progression" role="progressbar" aria-label="Avancement de l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progression} data-progression>
@@ -108,6 +112,15 @@ const apps = [
   /* Droite */
   .droite { display: flex; align-items: center; justify-content: flex-end; gap: var(--espace-md); min-width: 0; }
   .statut { white-space: nowrap; }
+  .commandes { display: flex; align-items: center; gap: var(--espace-sm); }
+  .saut {
+    width: 40px; height: 40px; border: 0; padding: 0; border-radius: 50%; display: grid; place-items: center;
+    background: none; color: var(--couleur-texte-secondaire);
+    transition: color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
+  }
+  .saut:hover:not(:disabled) { color: var(--couleur-texte-principal); }
+  .saut:active:not(:disabled) { transform: scale(0.96); }
+  .saut:disabled { opacity: 0.35; cursor: default; }
   .lecture-pause {
     width: 40px; height: 40px; border: 0; padding: 0; border-radius: 50%;
     display: grid; place-items: center;
@@ -126,7 +139,8 @@ const apps = [
     .vinyle { width: 44px; height: 44px; }
     .centre { order: 3; }
     .droite { order: 2; }
-    .statut, .temps { display: none; }
+    .statut, .temps, .precedent { display: none; }
+    .commandes { gap: 0; }
     .ligne-temps { position: absolute; left: 0; right: 0; top: 0; display: block; }
     .progression { height: 2px; border-radius: 0; }
   }

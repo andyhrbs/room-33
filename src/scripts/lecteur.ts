@@ -15,6 +15,9 @@ const audio = new Audio();
 audio.preload = 'none';
 
 let courant: (Morceau & { cle: string }) | null = null;
+// File d'écoute : la liste d'où vient l'extrait lancé (ex. le top de la platine), pour précédent / suivant
+let file: Morceau[] = [];
+let position = -1;
 let etat: Etat = '';
 let demande = 0;
 
@@ -51,6 +54,9 @@ function afficher() {
     mini.querySelector('[data-artiste]')!.textContent = courant.artiste;
     mini.querySelector('[data-mini-statut]')!.textContent = etat === 'erreur' ? 'Extrait indisponible' : 'Extrait';
     mini.querySelector('[data-lecture-pause]')!.setAttribute('aria-label', etat === 'lecture' ? 'Mettre en pause' : 'Reprendre l’extrait');
+    const prec = mini.querySelector<HTMLButtonElement>('[data-precedent]'), suiv = mini.querySelector<HTMLButtonElement>('[data-suivant]');
+    if (prec) prec.disabled = !courant; // toujours actif : revient au début, puis au morceau d'avant
+    if (suiv) suiv.disabled = position < 0 || position >= file.length - 1;
     document.body.classList.add('avec-lecteur');
   }
 }
@@ -71,6 +77,26 @@ function progression() {
 function annoncer(texte: string) {
   const a = document.querySelector('[data-annonce]');
   if (a) a.textContent = texte;
+}
+
+// ---------- File d'écoute ----------
+// La liste qui contient le morceau cliqué (ol, ul… avec au moins 2 extraits), sinon tous les extraits de la page.
+function construireFile(depuis: Element) {
+  const conteneur = depuis.closest<HTMLElement>('[data-ecoute]');
+  let liste: Element | null = conteneur?.parentElement ?? null;
+  while (liste && liste !== document.body && liste.querySelectorAll('[data-ecoute]').length < 2) liste = liste.parentElement;
+  const elements = [...(liste && liste !== document.body ? liste : document).querySelectorAll('[data-ecoute]')];
+  const vus = new Set<string>();
+  file = elements.map((e) => lireMorceau(e)).filter((m): m is Morceau => !!m && !vus.has(cle(m)) && !!vus.add(cle(m)));
+  const m = lireMorceau(depuis);
+  position = m ? file.findIndex((x) => cle(x) === cle(m)) : -1;
+}
+function sauter(sens: 1 | -1) {
+  if (sens === -1 && audio.currentTime > 3) { audio.currentTime = 0; afficher(); return; } // comme Spotify : d'abord le début du morceau
+  const i = position + sens;
+  if (i < 0 || i >= file.length) return;
+  position = i;
+  basculer(file[i]);
 }
 
 // ---------- Lecture ----------
@@ -110,7 +136,11 @@ async function jouer() {
 
 audio.addEventListener('play', () => { etat = 'lecture'; afficher(); });
 audio.addEventListener('pause', () => { if (etat === 'lecture') { etat = 'pause'; afficher(); } });
-audio.addEventListener('ended', () => { etat = 'pause'; audio.currentTime = 0; afficher(); progression(); });
+audio.addEventListener('ended', () => {
+  // extrait fini : le suivant de la liste démarre, sinon on s'arrête au début
+  if (position >= 0 && position < file.length - 1) { sauter(1); return; }
+  etat = 'pause'; audio.currentTime = 0; afficher(); progression();
+});
 audio.addEventListener('timeupdate', progression);
 audio.addEventListener('error', () => { if (courant && audio.src) { etat = 'erreur'; afficher(); } });
 
@@ -144,7 +174,9 @@ async function choisirApp(m: Morceau) {
 document.addEventListener('click', async (e) => {
   const cible = e.target as Element;
   const ecouter = cible.closest('[data-ecouter]');
-  if (ecouter) { e.preventDefault(); const m = lireMorceau(ecouter); if (m) basculer(m); return; }
+  if (ecouter) { e.preventDefault(); const m = lireMorceau(ecouter); if (m) { construireFile(ecouter); basculer(m); } return; }
+  if (cible.closest('[data-precedent]')) { sauter(-1); return; }
+  if (cible.closest('[data-suivant]')) { sauter(1); return; }
 
   if (cible.closest('[data-lecture-pause]')) { if (!courant) return; if (etat === 'erreur') basculer({ ...courant }); else if (audio.paused) jouer(); else audio.pause(); return; }
 
