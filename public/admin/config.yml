@@ -249,7 +249,7 @@ collections:
                 widget: string
                 required: false
                 pattern: ['^$|open\.spotify\.com/(intl-[a-z]{2}/)?track/', 'Colle un lien de morceau Spotify (open.spotify.com/track/…)']
-                hint: Si l'e-mail de la reco a un lien Spotify (champ « lien »), colle-le ici. Sinon, laisse vide : Spotify cherche le morceau par titre et artiste.
+                hint: "Si l'e-mail de la reco a un lien Spotify (champ « lien »), colle-le ici. Sinon, laisse vide : Spotify cherche le morceau par titre et artiste."
               - { name: ajoute, label: Ajouté le, widget: datetime, default: '{{now}}', hint: Sert à l'ordre (la plus récente en premier). }
 
   - name: reglages
