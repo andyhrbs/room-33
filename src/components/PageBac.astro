@@ -26,7 +26,7 @@ const nb = bac.disques.length;
     >
       <div class="infos-bac">
         <p class="texte-corps-l description">{bac.description}</p>
-        <p class="texte-petit texte-secondaire">{detailBac(bac).replace(' · humeur', '')} · mis à jour le {bac.maj}</p>
+        <p class="texte-petit texte-secondaire">{detailBac(bac)} · mis à jour le {bac.maj}</p>
         <nav aria-label="Les autres bacs" class="filtres">
           <ul role="list">
             {bacs.map((b) => (
@@ -64,7 +64,7 @@ const nb = bac.disques.length;
       <div class="conteneur">
         <h2 id="titre-autres" class="titre-h1">Les autres bacs</h2>
         <div class="rangee">
-          {autres.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b).replace(' · humeur', '')} motif={b.motif} mosaique={b.disques.map((d) => ({ src: d.pochette, motif: d.motif }))} href={`/bacs/${b.slug}`} />)}
+          {autres.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b)} motif={b.motif} mosaique={b.disques.map((d) => ({ src: d.pochette, motif: d.motif }))} href={`/bacs/${b.slug}`} />)}
         </div>
       </div>
     </section>

@@ -26,7 +26,6 @@ export interface Disque {
   lienSpotify?: string;
   lienArtiste?: string; // page de l'artiste sur Spotify (« Sa discographie »)
   pistes?: Piste[];
-  humeurs: string[];   // bacs d'humeur où ranger aussi le disque (ex. « Bac de nuit »)
   ajoute: string;      // date d'ajout (ordre des disques, « mis à jour le » des bacs)
   textes: TextesDisque; // ce qu'Andyh écrit dans l'admin (peut être vide)
 }
@@ -37,7 +36,7 @@ export interface TextesDisque {
   bio?: string; bioCourte?: string;
 }
 
-type EntreeDisque = TextesDisque & { titre: string; artiste: string; genre: string; humeurs?: string[]; spotify?: string; annee?: number; ajoute?: string; motif?: Motif };
+type EntreeDisque = TextesDisque & { titre: string; artiste: string; genre: string; spotify?: string; annee?: number; ajoute?: string; motif?: Motif };
 const motifs: Motif[] = ['bandes', 'lune', 'arc', 'points', 'croix', 'cercles'];
 const fichiers = import.meta.glob<EntreeDisque>('./cms/disques/*.json', { eager: true, import: 'default' });
 
@@ -49,7 +48,6 @@ export const disques: Disque[] = Object.entries(fichiers)
     motif: e.motif && motifs.includes(e.motif) ? e.motif : motifs[i % motifs.length],
     // lien d'album Spotify collé dans l'admin → identifiant (sinon Spotify le retrouve par titre + artiste)
     spotifyId: e.spotify?.match(/album\/([A-Za-z0-9]{22})/)?.[1],
-    humeurs: e.humeurs ?? [],
     ajoute: e.ajoute ?? '1970-01-01',
     textes: { avis: e.avis, avisCourt: e.avisCourt, moment: e.moment, credits: e.credits, bio: e.bio, bioCourte: e.bioCourte },
   }))
@@ -65,25 +63,24 @@ for (const d of disques) {
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
 
-// Bacs : par genre (rempli automatiquement avec le genre de chaque disque) et par humeur (disques qui le cochent)
-export interface Bac { slug: string; nom: string; type: 'genre' | 'humeur'; motif: Motif; description: string; disques: Disque[]; maj: string }
+// Bacs : un bac par genre, rempli automatiquement avec les disques de ce genre
+export interface Bac { slug: string; nom: string; motif: Motif; description: string; disques: Disque[]; maj: string }
 const versSlug = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, 'n').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const dateMaj = (liste: Disque[]) => {
   const plusRecent = liste.map((d) => d.ajoute).sort().pop();
   const d = plusRecent ? new Date(plusRecent) : null;
   return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
 };
-type EntreeBac = { nom: string; type?: string; motif?: Motif; description?: string; slug?: string };
+type EntreeBac = { nom: string; motif?: Motif; description?: string; slug?: string };
 export const bacs: Bac[] = (donneesBacs.bacs as EntreeBac[]).map((b, i) => {
-  const type = b.type === 'humeur' ? 'humeur' : 'genre';
-  const liste = type === 'genre' ? disques.filter((d) => d.genre === b.nom) : disques.filter((d) => d.humeurs.includes(b.nom));
-  return { slug: b.slug || versSlug(b.nom), nom: b.nom, type, motif: b.motif && motifs.includes(b.motif) ? b.motif : motifs[i % motifs.length], description: b.description ?? '', disques: liste, maj: dateMaj(liste.length ? liste : disques) }; // bac vide : date du dernier disque ajouté
+  const liste = disques.filter((d) => d.genre === b.nom);
+  return { slug: b.slug || versSlug(b.nom), nom: b.nom, motif: b.motif && motifs.includes(b.motif) ? b.motif : motifs[i % motifs.length], description: b.description ?? '', disques: liste, maj: dateMaj(liste.length ? liste : disques) }; // bac vide : date du dernier disque ajouté
 });
 export const bacParSlug = (slug: string) => bacs.find((b) => b.slug === slug)!;
-export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}${b.type === 'humeur' ? ' · humeur' : ''}`;
+export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}`;
 // Le bac d'un disque : son bac de genre
 // (si son bac de genre a été supprimé dans l'admin : lien vers le premier bac, sans casser la page)
-export const bacDuDisque = (d: Disque) => bacs.find((b) => b.type === 'genre' && b.nom === d.genre) ?? { ...bacs[0], nom: d.genre || bacs[0].nom };
+export const bacDuDisque = (d: Disque) => bacs.find((b) => b.nom === d.genre) ?? { ...bacs[0], nom: d.genre || bacs[0].nom };
 // Numérotation façon vinyle : A1, A2, A3, B1…
 export const face = (i: number, parFace = 3) => `${String.fromCharCode(65 + Math.floor(i / parFace))}${(i % parFace) + 1}`;
 

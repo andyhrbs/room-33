@@ -19,7 +19,7 @@ export const site = {
 // Les pages, dans l'ordre du menu mobile
 export const pages = [
   { numero: '01', court: 'La pièce', long: 'La pièce', explication: 'L’accueil, la vue d’ensemble.', href: '/' },
-  { numero: '02', court: 'Les bacs', long: 'Les bacs', explication: 'Mes disques, par genre et par humeur.', href: '/bacs' },
+  { numero: '02', court: 'Les bacs', long: 'Les bacs', explication: 'Mes disques, rangés par genre.', href: '/bacs' },
   { numero: '03', court: 'Le Top', long: 'Le Top de la Room', explication: 'Mes disques préférés, classés.', href: '/top' },
   { numero: '04', court: 'La platine', long: 'La platine', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
   { numero: '05', court: 'Les lives', long: 'Les lives', explication: 'Les concerts que je repasse en boucle.', href: '/lives' },

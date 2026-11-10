@@ -41,20 +41,13 @@ collections:
       - { name: artiste, label: Artiste, widget: string, hint: "Classique : le compositeur, puis l'interprète (ex. Chopin · Martha Argerich)." }
       - name: genre
         label: Bac (genre)
-        widget: select
-        options: ['Soul & R&B', 'Jazz', 'Rap', 'Indie', 'Afro', 'Classique']
-        hint: Le disque est rangé automatiquement dans ce bac.
-      - name: humeurs
-        label: Bacs d'humeur (facultatif)
         widget: relation
         collection: bacs
         file: liste
         search_fields: ['bacs.*.nom']
         display_fields: ['bacs.*.nom']
         value_field: 'bacs.*.nom'
-        multiple: true
-        required: false
-        hint: Pour ranger aussi le disque dans un bac d'humeur, comme le Bac de nuit.
+        hint: Le disque est rangé automatiquement dans ce bac. Pour un nouveau genre, crée d'abord le bac dans « Les bacs ».
       - name: spotify
         label: Lien de l'album sur Spotify (conseillé)
         widget: string
@@ -88,7 +81,7 @@ collections:
 
   - name: bacs
     label: Les bacs
-    description: Les bacs de genre se remplissent tout seuls ; les bacs d'humeur avec les disques qui les cochent.
+    description: Un bac par genre ; il se remplit tout seul avec les disques de ce genre.
     files:
       - name: liste
         label: Mes bacs
@@ -99,14 +92,9 @@ collections:
             label: Bacs
             label_singular: bac
             widget: list
-            summary: '{{fields.nom}} ({{fields.type}})'
+            summary: '{{fields.nom}}'
             fields:
-              - { name: nom, label: Nom du bac, widget: string, hint: "Pour un bac de genre, le même nom que dans « Bac (genre) » d'un disque." }
-              - name: type
-                label: Type
-                widget: select
-                options: [{ label: Genre, value: genre }, { label: Humeur, value: humeur }]
-                default: humeur
+              - { name: nom, label: Nom du bac (le genre), widget: string, hint: "Ex. Soul & R&B. Renommer un bac ne déplace pas ses disques : change aussi leur « Bac (genre) »." }
               - { name: description, label: Description, widget: text, hint: Une phrase sous le titre du bac. }
               - name: motif
                 label: Motif de la pochette du bac
