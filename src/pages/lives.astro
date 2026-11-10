@@ -10,10 +10,14 @@ import ModuleReco from '../components/ModuleReco.astro';
 import { recadrages } from '../data/images';
 import { livesTextes as t } from '../data/textes';
 import { lives } from '../data/lives';
+import { infosVideo, dateFr } from '../lib/youtube';
 // « Voir sur YouTube » : ouvre la vidéo sur YouTube (pour l'enregistrer, la partager, s'abonner)
 const surYoutube = (l: { youtube: string }) => `https://www.youtube.com/watch?v=${l.youtube}`;
-const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
-const [une, ...autres] = lives;
+// comme sur l'accueil : nom de la chaîne YouTube + date de publication, lus sur YouTube au build
+// (sans réponse de YouTube : le lieu et l'année saisis dans l'admin)
+const avecYt = await Promise.all(lives.map(async (l) => ({ ...l, yt: await infosVideo(l.youtube) })));
+const chaine = (l: (typeof avecYt)[number]) => ({ nom: l.yt.chaine ?? l.lieu, sous: dateFr(l.yt.date) ?? String(l.annee) });
+const [une, ...autres] = avecYt;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
 ---
 <Base title="Les lives" description={t.intro}>
@@ -32,7 +36,10 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
         <div class="texte-une">
           <p class="texte-label">{t.une}</p>
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
-          <p class="texte-petit texte-secondaire">{infos(une)}</p>
+          <div class="chaine">
+            <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" loading="lazy" /></span>
+            <span class="qui"><span class="texte-label">{chaine(une).nom}</span><span class="texte-legende texte-secondaire">{chaine(une).sous}</span></span>
+          </div>
           <p class="texte-avis">{une.mot}</p>
           <Bouton style="lien" href={surYoutube(une)} target="_blank" rel="noopener">{t.voirYoutube}<span class="visuellement-cache"> : {nom(une)} (nouvel onglet)</span></Bouton>
         </div>
@@ -49,7 +56,10 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
               <VideoLive youtube={l.youtube} titre={nom(l)} />
               <div class="texte-carte">
                 <h3 class="texte-label">{nom(l)}</h3>
-                <p class="texte-petit texte-secondaire">{infos(l)}</p>
+                <div class="chaine petite">
+                  <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${l.youtube}.jpg`} alt="" width="28" height="28" loading="lazy" /></span>
+                  <span class="texte-petit texte-secondaire">{[chaine(l).nom, chaine(l).sous].filter(Boolean).join(' · ')}</span>
+                </div>
                 <p class="texte-petit">{l.mot}</p>
                 <a class="texte-petit lien-youtube" href={surYoutube(l)} target="_blank" rel="noopener">{t.voirYoutube}<span class="visuellement-cache"> : {nom(l)} (nouvel onglet)</span></a>
               </div>
@@ -77,6 +87,17 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   .carte { display: grid; gap: var(--espace-sm); align-content: start; }
   .texte-carte { display: grid; gap: var(--espace-2xs); }
   .texte-carte h3 { margin: 0; }
+  /* ligne « chaîne » (comme l'accueil) : photo de la chaîne YouTube, nom, date de publication */
+  .chaine { display: flex; align-items: center; gap: var(--espace-sm); padding-block: var(--espace-2xs); }
+  .avatar {
+    flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
+    background: var(--couleur-fond-image); font-family: var(--police-lettrine); font-size: 1.75rem; line-height: 1; padding-top: 4px;
+    position: relative; overflow: hidden;
+  }
+  .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } /* la lettrine R reste si la photo manque */
+  .qui { min-width: 0; display: grid; gap: 2px; }
+  .chaine.petite { gap: var(--espace-xs); padding-block: 0; }
+  .chaine.petite .avatar { width: 28px; height: 28px; font-size: 1.125rem; padding-top: 2px; }
   .lien-youtube { justify-self: start; color: var(--couleur-texte-principal); padding-block: var(--espace-xs); }
   @media (max-width: 63.99rem) {
     .lives { gap: var(--espace-2xl); }
