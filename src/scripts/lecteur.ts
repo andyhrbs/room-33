@@ -17,6 +17,7 @@ audio.preload = 'none';
 let courant: (Morceau & { cle: string }) | null = null;
 // File d'écoute : la liste d'où vient l'extrait lancé (ex. le top de la platine), pour précédent / suivant
 let file: Morceau[] = [];
+let pochetteCourante = '';
 let position = -1;
 let etat: Etat = '';
 let demande = 0;
@@ -57,6 +58,18 @@ function afficher() {
     const prec = mini.querySelector<HTMLButtonElement>('[data-precedent]'), suiv = mini.querySelector<HTMLButtonElement>('[data-suivant]');
     if (prec) prec.disabled = !courant; // toujours actif : revient au début, puis au morceau d'avant
     if (suiv) suiv.disabled = position < 0 || position >= file.length - 1;
+    // lecteur plein écran (mobile)
+    const plein = mini.querySelector<HTMLElement>('[data-lecteur-plein]');
+    if (plein) {
+      plein.querySelector('[data-plein-titre]')!.textContent = courant.titre;
+      plein.querySelector('[data-plein-artiste]')!.textContent = courant.artiste;
+      plein.querySelector('[data-plein-statut]')!.textContent = etat === 'erreur' ? 'Extrait indisponible' : etat === 'chargement' ? 'Chargement…' : 'Extrait · 30 s';
+      plein.querySelector('[data-plein-lecture]')!.setAttribute('aria-label', etat === 'lecture' ? 'Mettre en pause' : 'Reprendre l’extrait');
+      plein.querySelector<HTMLButtonElement>('[data-plein-precedent]')!.disabled = !courant;
+      plein.querySelector<HTMLButtonElement>('[data-plein-suivant]')!.disabled = position < 0 || position >= file.length - 1;
+      const img = plein.querySelector<HTMLImageElement>('[data-plein-pochette]')!;
+      if (pochetteCourante) { if (img.src !== pochetteCourante) img.src = pochetteCourante; img.hidden = false; } else img.hidden = true;
+    }
     document.body.classList.add('avec-lecteur');
   }
 }
@@ -72,6 +85,12 @@ function progression() {
   const barre = mini.querySelector<HTMLElement>('[data-progression]')!;
   barre.setAttribute('aria-valuenow', String(Math.round(pct)));
   (barre.firstElementChild as HTMLElement).style.width = `${pct}%`;
+  const plein = mini.querySelector<HTMLElement>('[data-lecteur-plein]');
+  if (plein) {
+    plein.querySelector<HTMLElement>('[data-plein-progression]')!.style.width = `${pct}%`;
+    plein.querySelector('[data-plein-courant]')!.textContent = mmss(audio.currentTime);
+    plein.querySelector('[data-plein-total]')!.textContent = mmss(total);
+  }
 }
 
 function annoncer(texte: string) {
@@ -119,6 +138,8 @@ async function basculer(m: Morceau) {
     // pochette Deezer sur le petit vinyle de la mini-platine
     const vinyle = document.querySelector<HTMLElement>('[data-mini-platine] .vinyle');
     if (vinyle) vinyle.style.backgroundImage = d.pochette ? `url("${d.pochette}")` : '';
+    // grande pochette du lecteur plein écran (Deezer la donne aussi en grand : cover_xl)
+    pochetteCourante = (d.pochetteGrande || d.pochette || '') as string;
     audio.src = d.extrait;
     await jouer();
     annoncer(`Lecture de l’extrait : ${m.titre}, ${m.artiste}`);
@@ -175,6 +196,8 @@ document.addEventListener('click', async (e) => {
   const cible = e.target as Element;
   const ecouter = cible.closest('[data-ecouter]');
   if (ecouter) { e.preventDefault(); const m = lireMorceau(ecouter); if (m) { construireFile(ecouter); basculer(m); } return; }
+  if (cible.closest('[data-ouvrir-plein]')) { const d = document.querySelector<HTMLDialogElement>('[data-lecteur-plein]'); if (d && !d.open) { afficher(); progression(); d.showModal(); } return; }
+  if (cible.closest('[data-fermer-plein]')) { fermerPlein(); return; }
   if (cible.closest('[data-precedent]')) { sauter(-1); return; }
   if (cible.closest('[data-suivant]')) { sauter(1); return; }
 
@@ -193,6 +216,16 @@ document.addEventListener('click', async (e) => {
   }
   if (cible.closest('[data-fermer-choix]')) document.querySelector<HTMLDialogElement>('[data-choix-app]')?.close();
 });
+
+// Lecteur plein écran : se referme en glissant vers le bas
+function fermerPlein() {
+  const d = document.querySelector<HTMLDialogElement>('[data-lecteur-plein]');
+  if (!d?.open) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { d.close(); return; }
+  d.classList.add('ferme');
+  d.addEventListener('animationend', () => { d.classList.remove('ferme'); d.close(); }, { once: true });
+}
+document.addEventListener('cancel', (e) => { if ((e.target as Element).matches?.('[data-lecteur-plein]')) { e.preventDefault(); fermerPlein(); } }, true);
 
 // Clic sur le fond de la fenêtre = fermer
 document.addEventListener('click', (e) => {

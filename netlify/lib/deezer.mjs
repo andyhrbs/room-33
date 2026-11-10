@@ -27,7 +27,7 @@ export async function trouverMorceau({ titre, artiste, type = 'titre' }) {
   }
   const t = resultats[0];
   if (!t) return null;
-  return { titre: t.title_short || t.title, artiste: t.artist.name, extrait: t.preview, lien: t.link, pochette: t.album?.cover_medium || null };
+  return { titre: t.title_short || t.title, artiste: t.artist.name, extrait: t.preview, lien: t.link, pochette: t.album?.cover_medium || null, pochetteGrande: t.album?.cover_xl || t.album?.cover_big || null };
 }
 
 export const reponse = (donnees, statut = 200, cache = 600) =>

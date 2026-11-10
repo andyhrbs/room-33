@@ -48,7 +48,38 @@ const apps = [
     <span class="texte-legende texte-secondaire statut" data-mini-statut>Extrait</span>
     <Bouton style="lien" class="app" data-ouvrir-app>Ouvrir l’app</Bouton>
   </div>
+  <!-- Mobile : toucher la barre ouvre le lecteur en plein écran (façon Shazam) -->
+  <button class="ouvrir-plein" type="button" aria-label="Ouvrir le lecteur en plein écran" aria-haspopup="dialog" data-ouvrir-plein></button>
   <p class="visuellement-cache" aria-live="polite" data-annonce></p>
+
+  <!-- Lecteur plein écran (mobile) : grande pochette, titre, avancement, précédent / lecture / suivant, Ouvrir l'app -->
+  <dialog class="lecteur-plein" aria-labelledby="titre-plein" data-lecteur-plein>
+    <div class="plein-visuel" aria-hidden="true">
+      <img alt="" data-plein-pochette hidden />
+      <span class="plein-motif"></span>
+    </div>
+    <button class="plein-fermer" type="button" aria-label="Fermer le lecteur" data-fermer-plein><Icone nom="fermer" taille={24} /></button>
+    <div class="plein-bas">
+      <div class="plein-textes">
+        <p class="texte-legende texte-secondaire plein-statut" data-plein-statut>Extrait · 30 s</p>
+        <h2 id="titre-plein" class="titre-h2 plein-titre" data-plein-titre>{titre}</h2>
+        <p class="texte-corps-l texte-secondaire" data-plein-artiste>{artiste}</p>
+      </div>
+      <div class="plein-avancement">
+        <span class="plein-barre" aria-hidden="true"><span data-plein-progression></span></span>
+        <span class="plein-temps texte-legende texte-secondaire"><span data-plein-courant>0:00</span><span data-plein-total>0:30</span></span>
+      </div>
+      <div class="plein-commandes">
+        <button class="plein-saut" type="button" aria-label="Morceau précédent" data-precedent data-plein-precedent><Icone nom="precedent" taille={36} /></button>
+        <button class="plein-lecture" type="button" aria-label="Mettre en pause" data-lecture-pause data-plein-lecture>
+          <Icone nom="pause" taille={30} class="i-pause" />
+          <Icone nom="lecture" taille={40} class="i-lecture" />
+        </button>
+        <button class="plein-saut" type="button" aria-label="Morceau suivant" data-suivant data-plein-suivant><Icone nom="suivant" taille={36} /></button>
+      </div>
+      <Bouton style="secondaire" class="plein-app" data-ouvrir-app>Ouvrir l’app</Bouton>
+    </div>
+  </dialog>
 </aside>
 
 <dialog class="choix-app" data-choix-app aria-labelledby="titre-choix-app">
@@ -132,6 +163,53 @@ const apps = [
   .lecture-pause :global(.i-lecture) { display: none; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-lecture) { display: block; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-pause) { display: none; }
+  /* Lecteur plein écran (mobile, façon Shazam) */
+  .ouvrir-plein { display: none; }
+  .lecteur-plein {
+    width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0;
+    background: var(--couleur-fond-page); color: var(--couleur-texte-principal); overflow: hidden;
+  }
+  .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.5s var(--courbe-douce); }
+  .lecteur-plein.ferme { animation: plein-descend 0.3s var(--courbe-entree-sortie) forwards; }
+  .lecteur-plein::backdrop { background: rgb(18 11 7 / 0.6); }
+  @keyframes plein-monte { from { transform: translateY(100%); } }
+  @keyframes plein-descend { to { transform: translateY(100%); } }
+  @media (prefers-reduced-motion: reduce) { .lecteur-plein[open], .lecteur-plein.ferme { animation-name: none; } }
+  .plein-visuel { position: relative; grid-row: 1; overflow: hidden; background: var(--couleur-fond-image); }
+  .plein-visuel img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .plein-motif { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, var(--couleur-accent-defaut) 0 12%, var(--brun-950) 12.5% 15%, transparent 15.5%), repeating-radial-gradient(circle at 50% 45%, var(--brun-950) 0 2px, #1a110b 2px 4px); }
+  .plein-visuel:has(img:not([hidden])) .plein-motif { display: none; }
+  /* la pochette se fond dans la page vers le bas */
+  .plein-visuel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(31 21 14 / 0) 45%, var(--couleur-fond-page) 100%); }
+  .plein-fermer {
+    position: absolute; top: max(var(--espace-md), env(safe-area-inset-top)); left: var(--grille-marge); z-index: 2;
+    width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; padding: 0;
+    border: var(--trait-filet) solid rgb(239 230 210 / 0.25); background: rgb(18 11 7 / 0.45); color: var(--couleur-texte-principal);
+    backdrop-filter: blur(8px);
+  }
+  .plein-bas { grid-row: 2; display: grid; gap: var(--espace-lg); justify-items: center; text-align: center; padding: 0 var(--grille-marge) max(var(--espace-xl), env(safe-area-inset-bottom)); margin-top: calc(-1 * var(--espace-2xl)); position: relative; }
+  .plein-textes { display: grid; gap: var(--espace-2xs); max-width: 100%; }
+  .plein-titre { margin: 0; overflow-wrap: anywhere; }
+  .plein-textes p { margin: 0; }
+  .plein-avancement { width: 100%; display: grid; gap: var(--espace-xs); }
+  .plein-barre { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
+  .plein-barre span { display: block; height: 100%; width: 0; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
+  .plein-temps { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+  .plein-commandes { display: flex; align-items: center; justify-content: center; gap: var(--espace-xl); }
+  .plein-saut { width: 56px; height: 56px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); border-radius: 50%; transition: transform var(--duree-rapide) var(--courbe-standard); }
+  .plein-saut:active:not(:disabled) { transform: scale(0.96); }
+  .plein-saut:disabled { opacity: 0.35; }
+  .plein-lecture {
+    width: 80px; height: 80px; display: grid; place-items: center; border: 0; padding: 0; border-radius: 50%;
+    background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
+  }
+  .plein-lecture:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
+  .plein-lecture :global(.i-lecture) { display: none; }
+  .mini-platine:not([data-etat='lecture']) .plein-lecture :global(.i-lecture) { display: block; }
+  .mini-platine:not([data-etat='lecture']) .plein-lecture :global(.i-pause) { display: none; }
+  .plein-bas :global(.plein-app) { border-radius: var(--rayon-pilule); min-width: 15rem; }
+
   /* Mobile : comme le mini-lecteur de Spotify : disque · titre/artiste · app · lecture, et un filet d'avancement en haut */
   @media (max-width: 63.99rem) {
     .mini-platine { grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--espace-sm); }
@@ -139,8 +217,13 @@ const apps = [
     .vinyle { width: 44px; height: 44px; }
     .centre { order: 3; }
     .droite { order: 2; }
-    .statut, .temps, .precedent { display: none; }
+    .statut, .temps, .precedent, .suivant, .droite { display: none; }
     .commandes { gap: 0; }
+    /* barre allégée : disque · titre/artiste · lecture ; le reste dans le lecteur plein écran */
+    .mini-platine { grid-template-columns: minmax(0, 1fr) auto; }
+    .ouvrir-plein { display: block; position: absolute; inset: 0; z-index: 0; border: 0; padding: 0; background: none; }
+    .centre { position: static; z-index: 1; }
+    .centre .commandes { position: relative; z-index: 1; }
     .ligne-temps { position: absolute; left: 0; right: 0; top: 0; display: block; }
     .progression { height: 2px; border-radius: 0; }
   }
