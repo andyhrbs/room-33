@@ -126,3 +126,34 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
 
 /* Place pour la mini-platine en bas quand un extrait a été lancé */
 body.avec-lecteur { padding-bottom: 5.5rem; }
+
+/* ==========================================================================
+   Mouvement — socle (charte du mouvement, Claude Design « Room 33 — Charte du mouvement »)
+   ========================================================================== */
+/* A · Apparitions au défilement (posées par src/scripts/apparitions.ts) */
+[data-apparition] {
+  opacity: 0;
+  transform: translateY(var(--distance-apparition));
+  /* !important : passe devant les transitions propres aux composants le temps de l'apparition */
+  transition:
+    opacity var(--duree-lent) var(--courbe-sortie),
+    transform var(--duree-lent) var(--courbe-sortie) !important;
+  transition-delay: calc(var(--rang, 0) * var(--decalage-cascade)) !important;
+}
+[data-apparition].apparu { opacity: 1; transform: none; }
+
+/* B · Transition entre les pages : l'ancienne s'efface sous un voile brun, la nouvelle se pose.
+   Le menu et la mini-platine restent en place (noms de transition à part). */
+::view-transition { background: var(--couleur-fond-page); }
+::view-transition-old(root) { animation: r33-page-sort 300ms var(--courbe-entree-sortie) both; }
+::view-transition-new(root) { animation: r33-page-pose var(--duree-zoom) var(--courbe-sortie) 120ms both; }
+@keyframes r33-page-sort { to { opacity: 0; } }
+@keyframes r33-page-pose { from { opacity: 0; transform: translateY(12px); } }
+
+/* Version calme : fondus courts, sans déplacement ni cascade */
+@media (prefers-reduced-motion: reduce) {
+  [data-apparition] { transform: none; transition: opacity 300ms linear !important; transition-delay: 0ms !important; }
+  ::view-transition-old(root) { animation: r33-page-sort 200ms linear both; }
+  ::view-transition-new(root) { animation: r33-fondu 250ms linear both; }
+  @keyframes r33-fondu { from { opacity: 0; } }
+}

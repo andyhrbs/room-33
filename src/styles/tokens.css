@@ -100,7 +100,8 @@
   --duree-normal: 400ms;
   --duree-lent: 700ms;
   --duree-zoom: 900ms;
-  --decalage-cascade: 60ms;
+  --decalage-cascade: 80ms; /* écart entre éléments frères qui apparaissent (charte du mouvement) */
+  --distance-apparition: 20px;
   --courbe-sortie: cubic-bezier(0.22, 1, 0.36, 1);
   --courbe-entree-sortie: cubic-bezier(0.65, 0, 0.35, 1);
   --courbe-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -114,5 +115,6 @@
     --duree-lent: 0ms;
     --duree-zoom: 0ms;
     --decalage-cascade: 0ms;
+    --distance-apparition: 0px;
   }
 }

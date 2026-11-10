@@ -15,7 +15,7 @@ const chemin = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '
 const liens = nav.liens.map((court) => pages.find((p) => p.court === court)!);
 const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.startsWith(href));
 ---
-<header class:list={['nav', { fixe, defile: etatForce === 'defile' }]} data-nav data-etat-force={etatForce}>
+<header class:list={['nav', { fixe, defile: etatForce === 'defile' }]} data-nav data-etat-force={etatForce} transition:name="nav">
   <div class="barre">
     <div class="gauche"><Logo /></div>
 
