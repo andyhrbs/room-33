@@ -106,12 +106,16 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       var(--brun-950);
     /* trou circulaire qui grandit depuis la lampe = la pièce s'éclaire */
     --r: 0px;
-    -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent calc(var(--r) - 1px), #000 var(--r));
-    mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent calc(var(--r) - 1px), #000 var(--r));
     transition: --r 1.4s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
     /* lampe suspendue, abat-jour centré sur l'écran dans les deux sens (centre du verre : y = 284 dans le dessin) ;
        échelle : ordi 1, mobile 0,75 */
     --k: 1; --haut: calc(50dvh - 284px * var(--k));
+  }
+  /* le masque n'existe qu'après le clic : avant, l'écran reste plein (Safari/iOS rendait tout l'écran
+     transparent avec un masque de rayon nul : on voyait la page, sans lampe, mais on ne pouvait pas cliquer) */
+  .entree.allumee {
+    -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
+    mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
   }
   .entree.allumage { --r: 150vmax; }
   .entree.fondu { opacity: 0; }
