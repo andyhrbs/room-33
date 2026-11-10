@@ -42,7 +42,7 @@ const nb = bac.disques.length;
           <h2 class="titre-h3">Dans ce bac</h2>
           <ol role="list">
             {bac.disques.slice(0, 6).map((d, i) => (
-              <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} />
+              <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" />
             ))}
           </ol>
           {nb > 6 && <Bouton style="lien" href="#">Voir les {nb} disques</Bouton>}

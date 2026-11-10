@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { site } from '../data/textes';
+import MiniPlatine from '../components/MiniPlatine.astro';
 
 interface Props {
   title?: string;
@@ -19,8 +21,14 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <meta name="theme-color" content="#1F150E" />
     {noindex && <meta name="robots" content="noindex" />}
     <title>{fullTitle}</title>
+    <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
+    <ClientRouter />
   </head>
   <body>
     <slot />
+    <div transition:persist="lecteur">
+      <MiniPlatine />
+    </div>
+    <script>import '../scripts/lecteur';</script>
   </body>
 </html>

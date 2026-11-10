@@ -35,7 +35,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="texte-corps-l texte-secondaire">{un.artiste} · {un.annee}</p>
           <p class="texte-avis"><span class="seulement-ordi">{pourquoiNumeroUn.long}</span><span class="seulement-mobile">{pourquoiNumeroUn.court}</span></p>
           <div class="actions">
-            <Ecoute titre={un.titre} artiste={un.artiste} />
+            <Ecoute titre={un.titre} artiste={un.artiste} type="album" />
             <Bouton style="lien" href={`/disques/${un.slug}`}>Voir la fiche</Bouton>
           </div>
         </div>
@@ -95,11 +95,14 @@ const rang = (i: number) => String(i).padStart(2, '0');
 </Base>
 
 <script>
-  const boutons = document.querySelectorAll<HTMLButtonElement>('[data-vue]');
-  boutons.forEach((b) => b.addEventListener('click', () => {
-    boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    document.querySelectorAll<HTMLElement>('[data-panneau]').forEach((p) => (p.hidden = p.dataset.panneau !== b.dataset.vue));
-  }));
+  // Relancé à chaque arrivée sur la page (navigation fluide du ClientRouter)
+  document.addEventListener('astro:page-load', () => {
+    const boutons = document.querySelectorAll<HTMLButtonElement>('[data-vue]');
+    boutons.forEach((b) => b.addEventListener('click', () => {
+      boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      document.querySelectorAll<HTMLElement>('[data-panneau]').forEach((p) => (p.hidden = p.dataset.panneau !== b.dataset.vue));
+    }));
+  });
 </script>
 
 <style>

@@ -18,12 +18,15 @@ const ligne = genres.join('  ·  ') + '  ·  ';
   </button>
 </section>
 <script>
-  document.querySelectorAll<HTMLButtonElement>('[data-pause-bandeau]').forEach((btn) => {
-    const bandeau = btn.closest('.bandeau')!;
-    btn.addEventListener('click', () => {
-      const enPause = bandeau.classList.toggle('en-pause');
-      btn.setAttribute('aria-pressed', String(enPause));
-      btn.setAttribute('aria-label', enPause ? btn.dataset.labelLecture! : btn.dataset.labelPause!);
+  // Relancé à chaque page (navigation fluide du ClientRouter)
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-pause-bandeau]').forEach((btn) => {
+      const bandeau = btn.closest('.bandeau')!;
+      btn.addEventListener('click', () => {
+        const enPause = bandeau.classList.toggle('en-pause');
+        btn.setAttribute('aria-pressed', String(enPause));
+        btn.setAttribute('aria-label', enPause ? btn.dataset.labelLecture! : btn.dataset.labelPause!);
+      });
     });
   });
 </script>

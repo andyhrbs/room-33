@@ -32,7 +32,8 @@ const total = disques.length;
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-pile]').forEach((pile) => {
+  // Relancé à chaque page (navigation fluide du ClientRouter)
+  document.addEventListener('astro:page-load', () => document.querySelectorAll<HTMLElement>('[data-pile]').forEach((pile) => {
     const total = Number(pile.dataset.total);
     const feuilles = [...pile.querySelectorAll<HTMLElement>('.feuille')];
     const position = pile.querySelector('[data-position]')!;
@@ -56,7 +57,7 @@ const total = disques.length;
       if (e.key === 'ArrowRight') aller(1);
     });
     maj();
-  });
+  }));
 </script>
 
 <style>

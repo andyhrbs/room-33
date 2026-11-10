@@ -41,32 +41,31 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
 
 <script>
   const SEUIL = 80; // px de défilement avant de passer en barre sombre
-  document.querySelectorAll<HTMLElement>('[data-nav]').forEach((header) => {
-    if (header.dataset.etatForce) return;
-    const maj = () => header.classList.toggle('defile', window.scrollY > SEUIL);
-    maj();
-    window.addEventListener('scroll', maj, { passive: true });
-  });
+  // Un seul écouteur de défilement pour tout le site ; il vise la nav de la page affichée
+  const majNav = () => document.querySelectorAll<HTMLElement>('[data-nav]:not([data-etat-force])').forEach((h) => h.classList.toggle('defile', window.scrollY > SEUIL));
+  window.addEventListener('scroll', majNav, { passive: true });
 
-  const menu = document.getElementById('menu-principal') as HTMLDialogElement | null;
-  let declencheur: HTMLElement | null = null;
-  document.querySelectorAll<HTMLButtonElement>('[data-ouvrir-menu]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      if (!menu) return;
-      declencheur = btn;
-      menu.showModal();
-      btn.setAttribute('aria-expanded', 'true');
-      document.documentElement.classList.add('menu-ouvert');
-    }),
-  );
-  menu?.addEventListener('close', () => {
-    document.documentElement.classList.remove('menu-ouvert');
-    declencheur?.setAttribute('aria-expanded', 'false');
-    declencheur?.focus();
+  // Relancé à chaque page (navigation fluide du ClientRouter)
+  document.addEventListener('astro:page-load', () => {
+    majNav();
+    const menu = document.getElementById('menu-principal') as HTMLDialogElement | null;
+    let declencheur: HTMLElement | null = null;
+    document.querySelectorAll<HTMLButtonElement>('[data-ouvrir-menu]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        if (!menu) return;
+        declencheur = btn;
+        menu.showModal();
+        btn.setAttribute('aria-expanded', 'true');
+        document.documentElement.classList.add('menu-ouvert');
+      }),
+    );
+    menu?.addEventListener('close', () => {
+      document.documentElement.classList.remove('menu-ouvert');
+      declencheur?.setAttribute('aria-expanded', 'false');
+      declencheur?.focus();
+    });
+    menu?.querySelectorAll('[data-fermer-menu], a').forEach((el) => el.addEventListener('click', () => menu.close()));
   });
-  menu?.querySelectorAll('[data-fermer-menu], a').forEach((el) =>
-    el.addEventListener('click', () => menu.close()),
-  );
 </script>
 
 <style>

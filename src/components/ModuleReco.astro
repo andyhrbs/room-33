@@ -17,13 +17,14 @@ import { reco, site } from '../data/textes';
   </div></div>
 </section>
 <script>
-  // Placeholder plus court sur mobile
+  // Placeholder plus court sur mobile (relancé à chaque page)
   const mq = window.matchMedia('(max-width: 40rem)');
-  document.querySelectorAll<HTMLInputElement>('[data-placeholder-mobile]').forEach((input) => {
-    const long = input.placeholder;
-    const maj = () => (input.placeholder = mq.matches ? input.dataset.placeholderMobile! : long);
-    maj(); mq.addEventListener('change', maj);
+  const maj = () => document.querySelectorAll<HTMLInputElement>('[data-placeholder-mobile]').forEach((input) => {
+    input.dataset.placeholderLong ??= input.placeholder;
+    input.placeholder = mq.matches ? input.dataset.placeholderMobile! : input.dataset.placeholderLong;
   });
+  mq.addEventListener('change', maj);
+  document.addEventListener('astro:page-load', maj);
 </script>
 <style>
   .reco { background: var(--couleur-fond-bloc); }

@@ -123,3 +123,6 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
     radial-gradient(45% 16% at 40% 78%, rgb(239 230 210 / 0.05), transparent 100%),
     var(--couleur-fond-page);
 }
+
+/* Place pour la mini-platine en bas quand un extrait a été lancé */
+body.avec-lecteur { padding-bottom: 5.5rem; }

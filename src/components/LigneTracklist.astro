@@ -1,32 +1,56 @@
 ---
 // Ligne de liste (tracklist d'un bac, top titres, platine). Numérotation façon vinyle : A1, B2…
+// Bouton ▶ d'extrait avant la durée (zone 44 px) ; état « En lecture » : rond ambre + pause, titre en ambre.
 import Pochette from './Pochette.astro';
+import Icone from './Icone.astro';
 import type { Motif } from './types';
-interface Props { face: string; titre: string; artiste: string; duree?: string; src?: string; motif?: Motif; href?: string }
-const { face, titre, artiste, duree, src, motif, href } = Astro.props;
+interface Props { face: string; titre: string; artiste: string; duree?: string; src?: string; motif?: Motif; href?: string; ecoute?: 'titre' | 'album' }
+const { face, titre, artiste, duree, src, motif, href, ecoute } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
-<li class="ligne-piste">
+<li class="ligne-piste" data-ecoute={ecoute ? '' : undefined} data-titre={ecoute ? titre : undefined} data-artiste={ecoute ? artiste : undefined} data-type={ecoute}>
   <Tag class="contenu" href={href}>
     <span class="face texte-label texte-secondaire">{face}</span>
     <Pochette src={src} motif={motif} taille="48px" />
     <span class="infos">
-      <span class="texte-label">{titre}</span>
+      <span class="texte-label nom">{titre}</span>
       <span class="texte-petit texte-secondaire">{artiste}</span>
     </span>
-    {duree && <span class="texte-petit texte-secondaire duree">{duree}</span>}
   </Tag>
+  {ecoute && (
+    <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
+      <span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span>
+    </button>
+  )}
+  {duree && <span class="texte-petit texte-secondaire duree">{duree}</span>}
 </li>
 <style>
-  .ligne-piste { list-style: none; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
-  .contenu {
-    display: flex; align-items: center; gap: var(--espace-md);
-    padding-block: var(--espace-sm); text-decoration: none;
+  .ligne-piste {
+    list-style: none; display: flex; align-items: center; gap: var(--espace-md);
+    border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete);
     transition: background-color var(--duree-rapide) var(--courbe-standard);
   }
-  a.contenu:hover { background: var(--couleur-fond-tonal); }
+  .ligne-piste:has(a.contenu:hover) { background: var(--couleur-fond-tonal); }
+  .contenu {
+    display: flex; align-items: center; gap: var(--espace-md); flex: 1; min-width: 0;
+    padding-block: var(--espace-sm); text-decoration: none;
+  }
   .face { width: 2rem; flex: none; font-variant-numeric: tabular-nums; }
   .infos { display: grid; gap: 2px; flex: 1; min-width: 0; }
   .infos > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .duree { font-variant-numeric: tabular-nums; }
+  .duree { flex: none; font-variant-numeric: tabular-nums; }
+  /* Bouton ▶ : zone 44 px, rond 32 px avec filet (Figma « Ligne tracklist ») */
+  .lecture { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); }
+  .rond {
+    width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
+    border: var(--trait-filet) solid var(--couleur-bordure-defaut);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .lecture:hover .rond { background: var(--couleur-fond-tonal); }
+  .lecture :global(.i-pause) { display: none; }
+  [data-etat='lecture'] .rond { background: var(--couleur-accent-defaut); border-color: var(--couleur-accent-defaut); }
+  [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
+  [data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
+  [data-etat='lecture'] .nom { color: var(--couleur-accent-defaut); }
+  [data-etat='chargement'] .rond { border-color: var(--couleur-accent-defaut); }
 </style>

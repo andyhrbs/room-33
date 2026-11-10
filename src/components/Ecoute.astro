@@ -1,20 +1,25 @@
 ---
-// Écoute : extrait de 30 s sur le site + « Ouvrir l'app » (Spotify, Apple Music, Deezer, YouTube Music).
-// Le son et le choix de l'app seront branchés au Sprint 4 (Deezer + Odesli).
+// Écoute : extrait de 30 s joué sur le site (Deezer) + « Ouvrir l'app » (Spotify, Apple Music,
+// Deezer ou YouTube Music, choix mémorisé). Le son est géré par le lecteur global (src/scripts/lecteur.ts).
+// type « titre » = ce morceau ; type « album » = le morceau le plus écouté de l'album.
 import Icone from './Icone.astro';
 import Bouton from './Bouton.astro';
-interface Props { titre: string; artiste: string; extrait?: string }
-const { titre, artiste, extrait } = Astro.props;
+interface Props { titre: string; artiste: string; type?: 'titre' | 'album' }
+const { titre, artiste, type = 'titre' } = Astro.props;
 ---
-<div class="ecoute" data-ecoute data-extrait={extrait} data-titre={titre} data-artiste={artiste}>
-  <button class="lecture" type="button" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
-    <Icone nom="lecture" taille={40} />
+<div class="ecoute" data-ecoute data-titre={titre} data-artiste={artiste} data-type={type}>
+  <button class="lecture" type="button" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
+    <Icone nom="lecture" taille={40} class="i-lecture" />
+    <Icone nom="pause" taille={22} class="i-pause" />
   </button>
   <div class="infos">
     <span class="texte-label">Écouter un extrait</span>
-    <span class="texte-legende texte-secondaire">30 s · aperçu Deezer</span>
+    <span class="texte-legende texte-secondaire" data-statut>30 s · aperçu Deezer</span>
   </div>
-  <Bouton style="secondaire" class="app">Ouvrir l’app</Bouton>
+  <div class="app">
+    <Bouton style="secondaire" data-ouvrir-app>Ouvrir l’app</Bouton>
+    <button type="button" class="changer texte-legende texte-secondaire" data-changer-app hidden>Changer d’app</button>
+  </div>
 </div>
 <style>
   .ecoute { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-sm) var(--espace-md); }
@@ -26,5 +31,15 @@ const { titre, artiste, extrait } = Astro.props;
   }
   .lecture:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
   .lecture:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
+  .lecture :global(.i-pause) { display: none; }
+  [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
+  [data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
+  [data-etat='chargement'] .lecture { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.6; } }
+  @media (prefers-reduced-motion: reduce) { [data-etat='chargement'] .lecture { animation: none; } }
   .infos { display: grid; margin-right: var(--espace-xs); }
+  .app { display: flex; align-items: center; gap: var(--espace-sm); }
+  .changer { border: 0; background: none; padding: var(--espace-xs) 0; text-decoration: underline; text-underline-offset: 0.2em; min-height: 44px; }
+  .changer:hover { color: var(--couleur-texte-principal); }
+  .changer[hidden] { display: none; }
 </style>

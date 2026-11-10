@@ -38,7 +38,7 @@ const bac = bacDuDisque(d);
         <p class="titre-h3 artiste seulement-ordi">{d.artiste}</p>
         <p class="texte-petit texte-secondaire seulement-ordi">{[d.annee, d.genre, d.label].filter(Boolean).join(" · ")}</p>
         <p class="texte-corps seulement-mobile">{d.artiste} · {d.annee} · {d.genre}</p>
-        <Ecoute titre={d.titre} artiste={d.artiste} />
+        <Ecoute titre={d.titre} artiste={d.artiste} type="album" />
         <dl class="credits seulement-ordi">
           {f.credits.slice(1).map(([role, nom]) => (
             <div><dt class="texte-avis">{role}</dt><dd class="texte-petit texte-secondaire">— {nom}</dd></div>

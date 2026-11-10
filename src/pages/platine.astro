@@ -53,9 +53,9 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
           <div class="liste">
             <h3 class="titre-h3">Top titres</h3>
             <ol role="list" data-top-titres>
-              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} />)}
+              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} ecoute="titre" />)}
             </ol>
-            <template data-modele-titre><LigneTracklist face="" titre="" artiste="" duree="0:00" src="data:," href="#" /></template>
+            <template data-modele-titre><LigneTracklist face="" titre="-" artiste="-" duree="0:00" src="data:," href="#" ecoute="titre" /></template>
           </div>
           <div class="liste">
             <h3 class="titre-h3">Top artistes</h3>
@@ -104,8 +104,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   type Reponse = { enCours: Morceau | null; derniere: Morceau | null; topTitres: Morceau[]; topArtistes: { nom: string; image?: string | null; genres: string[]; lien?: string }[]; erreur?: string };
 
   const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
-  const zones = document.querySelectorAll<HTMLElement>('[data-zone]');
-  const boutons = document.querySelectorAll<HTMLButtonElement>('[data-periode]');
+  let zones = document.querySelectorAll<HTMLElement>('[data-zone]');
+  let boutons = document.querySelectorAll<HTMLButtonElement>('[data-periode]');
   const rang = (i: number) => String(i + 1).padStart(2, '0');
   const ilYa = (date: string) => {
     const min = Math.round((Date.now() - new Date(date).getTime()) / 60000);
@@ -130,7 +130,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     if (m.pochette) macaron.style.backgroundImage = `url("${m.pochette}")`;
     $('[data-vinyle]').classList.toggle('a-larret', !d.enCours);
     const ecoute = document.querySelector<HTMLElement>('.morceau [data-ecoute]');
-    if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.querySelector('.lecture')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
+    if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.dataset.type = 'titre'; ecoute.querySelector('[data-ecouter]')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
   }
 
   function afficherClassements(d: Reponse) {
@@ -158,11 +158,13 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       li.querySelector('.face')!.textContent = rang(i);
       const [titre, artiste] = li.querySelectorAll('.infos > span');
       titre.textContent = t.titre; artiste.textContent = t.artiste;
+      li.dataset.titre = t.titre; li.dataset.artiste = t.artiste; li.dataset.type = 'titre';
       li.querySelector('.duree')!.textContent = t.duree ?? '';
       const img = li.querySelector('img')!;
       img.removeAttribute('srcset'); img.src = t.pochette ?? ''; img.alt = '';
       return li;
     }));
+    document.dispatchEvent(new Event('room33:ecoutes')); // le lecteur remet l'état « en lecture » sur les nouvelles lignes
     const listeArtistes = $('[data-top-artistes]');
     const modeleArtiste = $<HTMLTemplateElement>('[data-modele-artiste]');
     listeArtistes.replaceChildren(...d.topArtistes.map((a, i) => {
@@ -197,11 +199,17 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     }
   }
 
-  boutons.forEach((b) => b.addEventListener('click', () => {
-    boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    charger(b.dataset.periode!);
-  }));
-  charger('4-semaines', true);
+  // Relancé à chaque arrivée sur la page (navigation fluide du ClientRouter)
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('[data-top-titres]')) return;
+    zones = document.querySelectorAll<HTMLElement>('[data-zone]');
+    boutons = document.querySelectorAll<HTMLButtonElement>('[data-periode]');
+    boutons.forEach((b) => b.addEventListener('click', () => {
+      boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      charger(b.dataset.periode!);
+    }));
+    charger('4-semaines', true);
+  });
 </script>
 
 <style>
