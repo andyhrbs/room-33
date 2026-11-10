@@ -1,14 +1,22 @@
 ---
 // Disque dans une grille (bac, Top, bac des visiteurs). Mène à la fiche disque.
+// Carte de bac : « mosaique » = les disques du bac → 4 pochettes en 2 × 2, comme une playlist Spotify ;
+// moins de 4 disques → la pochette du premier en grand ; aucun disque → le motif du bac.
 import Pochette from './Pochette.astro';
 import type { Motif } from './types';
-interface Props { titre: string; artiste: string; annee?: string | number; href?: string; src?: string; motif?: Motif; rang?: number }
-const { titre, artiste, annee, href = '#', src, motif, rang } = Astro.props;
+type PochetteMini = { src?: string; motif?: Motif };
+interface Props { titre: string; artiste: string; annee?: string | number; href?: string; src?: string; motif?: Motif; rang?: number; mosaique?: PochetteMini[] }
+const { titre, artiste, annee, href = '#', rang, mosaique } = Astro.props;
+let { src, motif } = Astro.props;
+const quatre = mosaique && mosaique.length >= 4 ? mosaique.slice(0, 4) : null;
+if (mosaique && !quatre && mosaique.length) ({ src, motif } = { src: mosaique[0].src, motif: mosaique[0].motif ?? motif });
 ---
 <article class="carte">
   <a href={href} class="lien">
     <div class="visuel">
-      <Pochette src={src} motif={motif} alt="" />
+      {quatre
+        ? <div class="mosaique">{quatre.map((p) => <Pochette src={p.src} motif={p.motif} alt="" taille="100%" class="case" />)}</div>
+        : <Pochette src={src} motif={motif} alt="" />}
       {rang && <span class="rang titre-h3" aria-hidden="true">{rang}</span>}
     </div>
     <h3 class="texte-label titre">{rang && <span class="visuellement-cache">N° {rang} : </span>}{titre}</h3>
@@ -22,6 +30,12 @@ const { titre, artiste, annee, href = '#', src, motif, rang } = Astro.props;
   .lien:hover .visuel { transform: translateY(-4px); }
   .lien:hover .titre { text-decoration: underline; text-underline-offset: 0.2em; }
   .lien:focus-visible { outline-offset: 6px; }
+  /* mosaïque 2 × 2 : un seul cadre (coins + ombre), les 4 pochettes collées dedans */
+  .mosaique {
+    display: grid; grid-template-columns: 1fr 1fr; aspect-ratio: 1; overflow: hidden;
+    border-radius: var(--rayon-pochette); box-shadow: 0 10px 24px rgb(0 0 0 / 0.35); background: var(--couleur-fond-image);
+  }
+  .mosaique :global(.case) { border-radius: 0; box-shadow: none; }
   .rang {
     position: absolute; left: var(--espace-xs); bottom: var(--espace-xs);
     min-width: 2.5rem; padding: 0 var(--espace-xs);

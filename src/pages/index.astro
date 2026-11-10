@@ -65,7 +65,7 @@ const suivants = reste.slice(0, 4);
       <section class="section conteneur apercu" aria-labelledby="titre-bacs">
         <EnTeteSection surtitre={accueil.bacs.surtitre} titre={accueil.bacs.titre} id="titre-bacs" lien={{ texte: accueil.bacs.lien, href: '/bacs' }} fleches="rangee-bacs" />
         <div class="rangee-bacs" id="rangee-bacs">
-          {bacs.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b)} motif={b.motif} href={`/bacs/${b.slug}`} />)}
+          {bacs.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b)} motif={b.motif} mosaique={b.disques.map((d) => ({ src: d.pochette, motif: d.motif }))} href={`/bacs/${b.slug}`} />)}
         </div>
       </section>
 

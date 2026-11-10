@@ -62,7 +62,7 @@ const nb = bac.disques.length;
       <div class="conteneur">
         <h2 id="titre-autres" class="titre-h1">Les autres bacs</h2>
         <div class="rangee">
-          {autres.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b).replace(' · humeur', '')} motif={b.motif} href={`/bacs/${b.slug}`} />)}
+          {autres.map((b) => <CarteDisque titre={b.nom} artiste={detailBac(b).replace(' · humeur', '')} motif={b.motif} mosaique={b.disques.map((d) => ({ src: d.pochette, motif: d.motif }))} href={`/bacs/${b.slug}`} />)}
         </div>
       </div>
     </section>
