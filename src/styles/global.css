@@ -133,11 +133,11 @@ body.avec-lecteur { padding-bottom: 5.5rem; }
 /* A · Apparitions au défilement (posées par src/scripts/apparitions.ts) */
 [data-apparition] {
   opacity: 0;
-  transform: translateY(var(--distance-apparition));
+  transform: translateY(var(--distance-apparition)) scale(0.985);
   /* !important : passe devant les transitions propres aux composants le temps de l'apparition */
   transition:
-    opacity var(--duree-lent) var(--courbe-sortie),
-    transform var(--duree-lent) var(--courbe-sortie) !important;
+    opacity var(--duree-apparition) var(--courbe-douce),
+    transform var(--duree-apparition) var(--courbe-douce) !important;
   transition-delay: calc(var(--rang, 0) * var(--decalage-cascade)) !important;
 }
 [data-apparition].apparu { opacity: 1; transform: none; }
@@ -145,10 +145,10 @@ body.avec-lecteur { padding-bottom: 5.5rem; }
 /* B · Transition entre les pages : l'ancienne s'efface sous un voile brun, la nouvelle se pose.
    Le menu et la mini-platine restent en place (noms de transition à part). */
 ::view-transition { background: var(--couleur-fond-page); }
-::view-transition-old(root) { animation: r33-page-sort 300ms var(--courbe-entree-sortie) both; }
-::view-transition-new(root) { animation: r33-page-pose var(--duree-zoom) var(--courbe-sortie) 120ms both; }
+::view-transition-old(root) { animation: r33-page-sort 500ms var(--courbe-entree-sortie) both; }
+::view-transition-new(root) { animation: r33-page-pose var(--duree-page) var(--courbe-douce) 200ms both; }
 @keyframes r33-page-sort { to { opacity: 0; } }
-@keyframes r33-page-pose { from { opacity: 0; transform: translateY(12px); } }
+@keyframes r33-page-pose { from { opacity: 0; transform: translateY(28px); } }
 
 /* Version calme : fondus courts, sans déplacement ni cascade */
 @media (prefers-reduced-motion: reduce) {

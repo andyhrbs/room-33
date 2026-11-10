@@ -100,8 +100,11 @@
   --duree-normal: 400ms;
   --duree-lent: 700ms;
   --duree-zoom: 900ms;
-  --decalage-cascade: 80ms; /* écart entre éléments frères qui apparaissent (charte du mouvement) */
-  --distance-apparition: 20px;
+  --decalage-cascade: 120ms; /* écart entre éléments frères qui apparaissent (charte du mouvement) */
+  --distance-apparition: 40px;
+  --duree-apparition: 1100ms;
+  --duree-page: 1200ms;
+  --courbe-douce: cubic-bezier(0.16, 1, 0.3, 1); /* très longue arrivée : apparitions, transitions de page */
   --courbe-sortie: cubic-bezier(0.22, 1, 0.36, 1);
   --courbe-entree-sortie: cubic-bezier(0.65, 0, 0.35, 1);
   --courbe-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -116,5 +119,7 @@
     --duree-zoom: 0ms;
     --decalage-cascade: 0ms;
     --distance-apparition: 0px;
+    --duree-apparition: 0ms;
+    --duree-page: 0ms;
   }
 }
