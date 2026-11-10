@@ -1,0 +1,42 @@
+# Room 33 · réglages de l'espace /admin (Sveltia CMS)
+# - Connexion : compte GitHub (jeton personnel limité au dépôt room-33).
+# - Chaque « Enregistrer » crée un commit sur la branche dev → Netlify reconstruit le site dev (gratuit).
+#   Quand le site passera en production, on remplacera « dev » par « main ».
+# - Le contenu modifiable vit dans src/data/cms/ (fichiers JSON lus par le site au build).
+
+backend:
+  name: github
+  repo: andyhrbs/room-33
+  branch: dev
+  commit_messages:
+    create: 'Admin : ajoute {{collection}} « {{slug}} »'
+    update: 'Admin : modifie {{collection}} « {{slug}} »'
+    delete: 'Admin : supprime {{collection}} « {{slug}} »'
+    uploadMedia: 'Admin : ajoute l’image {{path}}'
+    deleteMedia: 'Admin : supprime l’image {{path}}'
+
+site_url: https://dev--room-33.netlify.app
+display_url: https://dev--room-33.netlify.app
+
+# Images envoyées depuis l'admin
+media_folder: public/images/cms
+public_folder: /images/cms
+
+collections:
+  - name: platine
+    label: La platine
+    description: Les textes écrits à la main sur la page La platine (le reste vient de Spotify).
+    files:
+      - name: mot-du-mois
+        label: Mon mot sur le mois
+        file: src/data/cms/platine.json
+        format: json
+        fields:
+          - name: mot
+            label: Mon mot (ordi)
+            widget: text
+            hint: Deux ou trois phrases sur ce que tu as écouté ce mois-ci. Garde les guillemets « ».
+          - name: motCourt
+            label: Mon mot (mobile, version courte)
+            widget: string
+            hint: Une seule phrase.

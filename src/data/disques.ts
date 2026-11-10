@@ -6,6 +6,7 @@
 // ==========================================================================
 import type { Motif } from '../components/types';
 import { infosAlbums, type Piste } from '../lib/catalogue';
+import motDuMois from './cms/platine.json';
 
 export interface Disque {
   slug: string;
@@ -120,8 +121,9 @@ export const platineDetail = {
     { nom: 'Mk.gee', ecoutes: 24 },
     { nom: 'Yussef Dayes', ecoutes: 18 },
   ],
-  mot: '« Un mois très soul, beaucoup de basses rondes. J’ai retourné cet album en boucle pendant les trajets… »',
-  motCourt: '« Un mois très soul, beaucoup de basses rondes. »',
+  // « Mon mot sur le mois » : modifiable dans /admin (fichier src/data/cms/platine.json)
+  mot: motDuMois.mot,
+  motCourt: motDuMois.motCourt,
 };
 
 // Le bac des visiteurs (démo de la maquette : les vraies recos arrivent au Sprint 5)
