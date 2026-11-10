@@ -227,6 +227,52 @@ function fermerPlein() {
 }
 document.addEventListener('cancel', (e) => { if ((e.target as Element).matches?.('[data-lecteur-plein]')) { e.preventDefault(); fermerPlein(); } }, true);
 
+// Glisser le lecteur plein écran vers le bas avec le doigt pour le fermer (comme une story ou Shazam).
+// Il suit le doigt ; lâché après un quart d'écran ou d'un geste rapide, il se ferme ; sinon il remonte.
+{
+  let d: HTMLDialogElement | null = null;
+  let id = -1, y0 = 0, dy = 0, yAvant = 0, tAvant = 0, vitesse = 0;
+  let appuye = false, glisse = false, ignorerClic = false;
+  const SEUIL = 8; // px avant de considérer que c'est un glissé (et pas un simple appui sur un bouton)
+
+  const finir = (el: HTMLDialogElement, fermer: boolean) => {
+    const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nettoyer = () => { el.style.transition = ''; el.style.transform = ''; el.classList.remove('glisse'); if (fermer) el.close(); };
+    if (calme) { nettoyer(); return; }
+    el.style.transition = fermer ? 'transform 0.28s var(--courbe-sortie)' : 'transform 0.45s var(--courbe-douce)';
+    el.style.transform = fermer ? 'translateY(100%)' : 'translateY(0)';
+    let fait = false;
+    const une = () => { if (!fait) { fait = true; nettoyer(); } };
+    el.addEventListener('transitionend', une, { once: true });
+    setTimeout(une, 600); // filet de sécurité si transitionend ne vient pas
+  };
+
+  document.addEventListener('pointerdown', (e) => {
+    const el = (e.target as Element).closest?.<HTMLDialogElement>('[data-lecteur-plein]');
+    if (!el?.open || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    d = el; id = e.pointerId; y0 = yAvant = e.clientY; tAvant = e.timeStamp; dy = 0; vitesse = 0; appuye = true; glisse = false;
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!appuye || e.pointerId !== id || !d) return;
+    dy = Math.max(0, e.clientY - y0);
+    const dt = e.timeStamp - tAvant;
+    if (dt > 0) { vitesse = (e.clientY - yAvant) / dt; yAvant = e.clientY; tAvant = e.timeStamp; }
+    if (!glisse && dy > SEUIL) { glisse = true; d.classList.add('glisse'); d.style.transition = 'none'; }
+    if (glisse) d.style.transform = `translateY(${dy}px)`;
+  });
+  const relacher = (e: PointerEvent) => {
+    if (!appuye || e.pointerId !== id || !d) return;
+    appuye = false;
+    if (!glisse) return;
+    ignorerClic = true; setTimeout(() => (ignorerClic = false), 80); // le doigt levé sur un bouton ne doit pas le déclencher
+    const fermer = e.type !== 'pointercancel' && (dy > innerHeight * 0.25 || (vitesse > 0.5 && dy > 40));
+    finir(d, fermer);
+  };
+  document.addEventListener('pointerup', relacher);
+  document.addEventListener('pointercancel', relacher);
+  document.addEventListener('click', (e) => { if (ignorerClic) { e.preventDefault(); e.stopPropagation(); } }, true);
+}
+
 // Clic sur le fond de la fenêtre = fermer
 document.addEventListener('click', (e) => {
   const d = e.target as HTMLElement;

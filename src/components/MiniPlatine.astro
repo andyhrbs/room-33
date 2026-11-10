@@ -168,7 +168,10 @@ const apps = [
   .lecteur-plein {
     width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0;
     background: var(--couleur-fond-page); color: var(--couleur-texte-principal); overflow: hidden;
+    touch-action: none; /* le doigt fait glisser le lecteur vers le bas (pas de défilement ici) */
+    user-select: none; -webkit-user-select: none;
   }
+  .lecteur-plein.glisse { animation: none; will-change: transform; }
   .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.5s var(--courbe-douce); }
   .lecteur-plein.ferme { animation: plein-descend 0.3s var(--courbe-entree-sortie) forwards; }
   .lecteur-plein::backdrop { background: rgb(18 11 7 / 0.6); }
@@ -184,7 +187,7 @@ const apps = [
   .plein-fermer {
     position: absolute; top: max(var(--espace-md), env(safe-area-inset-top)); left: var(--grille-marge); z-index: 2;
     width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; padding: 0;
-    border: var(--trait-filet) solid rgb(239 230 210 / 0.25); background: rgb(18 11 7 / 0.45); color: var(--couleur-texte-principal);
+    border: 0; background: rgb(18 11 7 / 0.45); color: var(--couleur-texte-principal);
     backdrop-filter: blur(8px);
   }
   .plein-bas { grid-row: 2; display: grid; gap: var(--espace-lg); justify-items: center; text-align: center; padding: 0 var(--grille-marge) max(var(--espace-xl), env(safe-area-inset-bottom)); margin-top: calc(-1 * var(--espace-2xl)); position: relative; }
