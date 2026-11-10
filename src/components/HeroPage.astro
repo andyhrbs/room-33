@@ -13,7 +13,7 @@ const [sx, sy, tx, ty] = recadrage ?? [1, 1, 0, 0];
 const taille = recadrage ? `${(100 / sx).toFixed(1)}% auto` : 'cover';
 const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50}% ${sy < 1 ? ((ty / (1 - sy)) * 100).toFixed(1) : 50}%` : positionProp;
 ---
-<header class="hero-page" style={image ? `--image: url('${image}'); --position: ${position}; --taille: ${taille}` : undefined}>
+<header class="hero-page hero-anime" style={image ? `--image: url('${image}'); --position: ${position}; --taille: ${taille}` : undefined}>
   <div class="conteneur contenu">
     <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour">{retour}</Bouton>
     <div class="titres">
@@ -30,11 +30,11 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
       <h1 class="titre-avec-lettrine">
         {titreMobile ? (
           <>
-            <span class="variante seulement-ordi" aria-hidden="true"><span class="lettrine">{decoupe(titre)[0]}</span><span class="titre-display">{decoupe(titre)[1]}</span></span>
-            <span class="variante seulement-mobile" aria-hidden="true"><span class="lettrine">{decoupe(titreMobile)[0]}</span><span class="titre-display">{decoupe(titreMobile)[1]}</span></span>
+            <span class="variante seulement-ordi" aria-hidden="true"><span class="lettrine h-chauffe">{decoupe(titre)[0]}</span><span class="masque"><span class="titre-display h-masque">{decoupe(titre)[1]}</span></span></span>
+            <span class="variante seulement-mobile" aria-hidden="true"><span class="lettrine h-chauffe">{decoupe(titreMobile)[0]}</span><span class="masque"><span class="titre-display h-masque">{decoupe(titreMobile)[1]}</span></span></span>
           </>
         ) : (
-          <span class="variante" aria-hidden="true"><span class="lettrine">{decoupe(titre)[0]}</span><span class="titre-display">{decoupe(titre)[1]}</span></span>
+          <span class="variante" aria-hidden="true"><span class="lettrine h-chauffe">{decoupe(titre)[0]}</span><span class="masque"><span class="titre-display h-masque">{decoupe(titre)[1]}</span></span></span>
         )}
         <span class="visuellement-cache">{titre}</span>
       </h1>

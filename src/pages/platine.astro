@@ -18,6 +18,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     <HeroPage filAriane={['La pièce', 'La platine']} recadrage={recadrages.platine} surtitreMobile="La platine" titre="Ce qui tourne en ce moment." titreMobile="Ce qui tourne.">
       <p class="texte-corps-l intro"><span class="seulement-ordi">Ce que j’écoute vraiment, en direct de Spotify. Pas de tri, pas de filtre.</span><span class="seulement-mobile">Ce que j’écoute vraiment, en direct de Spotify.</span></p>
     </HeroPage>
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     <section class="en-cours section conteneur" aria-labelledby="titre-en-cours">
       <!-- Platine dessinée en CSS : socle en noyer, plateau métal, vinyle qui tourne, reflet fixe, bras qui se pose -->
@@ -88,7 +90,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         </div>
       </div>
     </section>
-
+    </div>
   </main>
   <PiedDePage />
 </Base>

@@ -22,6 +22,8 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
         <Bouton style="primaire" href="/#recommander" data-ouvrir-reco class="cta">Recommandez-moi un son</Bouton>
       </div>
     </HeroPage>
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     <section class="recos section conteneur" aria-label="Les recos des visiteurs">
       {recos.length > 0 ? (
@@ -53,6 +55,7 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
         </div>
       </div>
     </section>
+    </div>
   </main>
   <PiedDePage />
 </Base>

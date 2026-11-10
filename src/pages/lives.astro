@@ -23,6 +23,8 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
       <p class="texte-corps-l intro"><span class="seulement-ordi">{t.intro}</span><span class="seulement-mobile">{t.introCourte}</span></p>
       <p class="texte-petit texte-secondaire seulement-ordi">{lives.length} lives</p>
     </HeroPage>
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     <section class="section conteneur lives" aria-labelledby="titre-une">
       <article class="une">
@@ -59,6 +61,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
     </section>
 
     <ModuleReco />
+    </div>
   </main>
   <PiedDePage />
 </Base>

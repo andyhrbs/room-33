@@ -14,6 +14,8 @@ import { images } from '../data/images';
 
   <main class="ambiance">
     <HeroPage image={images.pianoGrosPlan} recadrage={recadrages.comptoir} filAriane={t.filAriane} surtitreMobile={t.surtitreMobile} titre={t.titre} titreMobile={t.titreMobile} retour={t.retour} />
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     <section class="intro section conteneur" aria-label="Présentation">
       <div class="texte">
@@ -51,6 +53,7 @@ import { images } from '../data/images';
         </div>
       </div>
     </section>
+    </div>
   </main>
 
   <PiedDePage />

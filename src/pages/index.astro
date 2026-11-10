@@ -27,7 +27,7 @@ const suivants = reste.slice(0, 4);
 
   <main class="ambiance">
     <!-- Hero : la pièce en plein écran, le titre géant et une phrase (les points sur les objets ont été retirés) -->
-    <section class="hero" aria-labelledby="titre-accueil"
+    <section class="hero hero-accueil" aria-labelledby="titre-accueil" data-sans-apparition
       style={[
         images.pieceOrdi && `--image-ordi: url('${images.pieceOrdi}')`,
         images.pieceMobile && `--image-mobile: url('${images.pieceMobile}')`,
@@ -37,9 +37,11 @@ const suivants = reste.slice(0, 4);
           <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
           <Bouton style="lien" href="/bacs">{accueil.entrer}</Bouton>
         </div>
-        <h1 id="titre-accueil" class="titre-hero">{accueil.titre}</h1>
+        <h1 id="titre-accueil" class="titre-hero">{accueil.titre.split(' ').map((mot, i) => <><span class="masque-mot"><span class="h-masque" style={`--d: ${250 + i * 140}ms`}>{mot}</span></span>{' '}</>)}</h1>
       </div>
     </section>
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     <!-- Le morceau du moment -->
     <section class="morceau section" aria-labelledby="titre-morceau">
@@ -104,6 +106,7 @@ const suivants = reste.slice(0, 4);
     <LivesAccueil />
 
     <ModuleReco />
+    </div>
   </main>
 
   <PiedDePage />

@@ -36,6 +36,8 @@ const nb = bac.disques.length;
         </nav>
       </div>
     </HeroPage>
+    <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
+    <div class="rideau">
 
     {nb > 0 ? (
       <section class="contenu-bac section conteneur" aria-label={`Les disques du bac ${bac.nom}`}>
@@ -66,6 +68,7 @@ const nb = bac.disques.length;
         </div>
       </div>
     </section>
+    </div>
   </main>
   <PiedDePage />
 </Base>

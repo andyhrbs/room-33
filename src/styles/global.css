@@ -150,9 +150,69 @@ body.avec-lecteur { padding-bottom: 5.5rem; }
 @keyframes r33-page-sort { to { opacity: 0; } }
 @keyframes r33-page-pose { from { opacity: 0; transform: translateY(28px); } }
 
+/* C · Les heros : chaque page s'ouvre par son hero, en cascade
+   (accueil : après la lampe ; pages intérieures : la pièce s'éclaire, la lettrine chauffe, le titre monte ; fiche : le vinyle sort) */
+@keyframes r33-monte { from { opacity: 0; transform: translateY(var(--distance-apparition)); } }
+@keyframes r33-masque { from { transform: translateY(108%); } }
+@keyframes r33-chauffe { from { opacity: 0; text-shadow: 0 0 0 rgb(240 122 34 / 0); } 45% { opacity: 1; text-shadow: 0 0 0.3em rgb(240 122 34 / 0.8); } }
+@keyframes r33-eclaire { from { opacity: 1; } to { opacity: 0; } }
+@keyframes r33-vinyle { from { opacity: 0; transform: translateX(-38%) rotate(-120deg); } 25% { opacity: 1; } }
+.masque, .masque-mot { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.masque { display: block; }
+.h-masque { display: inline-block; animation: r33-masque var(--duree-page) var(--courbe-douce) var(--d, 600ms) both; }
+.masque > .h-masque { display: block; }
+.h-chauffe { animation: r33-chauffe 1.6s var(--courbe-douce) var(--d, 350ms) both; }
+/* pages intérieures */
+.hero-anime { isolation: isolate; }
+.hero-anime::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--couleur-fond-page); pointer-events: none; animation: r33-eclaire 1.8s var(--courbe-douce) both; }
+.hero-anime > * { position: relative; }
+.hero-anime .contenu > * { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 250ms both; }
+.hero-anime .contenu > .titres { animation: none; }
+.hero-anime .titres > :not(h1) { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 400ms both; }
+.hero-anime .contenu > :nth-child(n+3) { animation-delay: 950ms; }
+/* accueil : tout attend que la lampe soit allumée */
+.hero-accueil .accroche > * { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 800ms both; }
+.hero-accueil .accroche > * + * { animation-delay: 920ms; }
+html:not(.entree-vue) .hero-accueil *, html:not(.entree-vue) .hero-accueil *::before { animation-play-state: paused !important; }
+/* fiche disque : la pochette se pose, le vinyle sort de la pochette en tournant, les infos suivent */
+.hero-disque .pochette-fiche { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 100ms both; }
+.hero-disque .vinyle { animation: r33-vinyle 1.8s var(--courbe-douce) 650ms both; }
+.hero-disque .infos > * { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 400ms both; }
+.hero-disque .infos > :nth-child(2) { animation-delay: 520ms; }
+.hero-disque .infos > :nth-child(3) { animation-delay: 640ms; }
+.hero-disque .infos > :nth-child(4) { animation-delay: 760ms; }
+.hero-disque .infos > :nth-child(5) { animation-delay: 880ms; }
+.hero-disque .infos > :nth-child(n+6) { animation-delay: 1000ms; }
+
+/* D · Le rideau : le hero reste collé en haut et le reste de la page glisse par-dessus
+   (hauteur du collage et taux de recouvrement --couvert calculés par apparitions.ts) */
+/* !important : passe devant le « position: relative » des styles propres aux heros */
+.hero-accueil, .hero-page { position: sticky !important; top: var(--haut-collant, 0px) !important; z-index: 0; }
+.hero-accueil::after, .hero-page::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: var(--brun-950); opacity: calc(var(--couvert, 0) * 0.75);
+}
+.hero-accueil > .contenu, .hero-page > .contenu {
+  transform: translateY(calc(var(--couvert, 0) * -48px)) scale(calc(1 - var(--couvert, 0) * 0.04));
+  transform-origin: 50% 100%;
+}
+.rideau {
+  position: relative; z-index: 1;
+  box-shadow: 0 -28px 56px rgb(10 6 4 / 0.5);
+  background:
+    radial-gradient(45% 22% at 57% 24%, rgb(240 122 34 / 0.18), transparent 100%),
+    radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.08), transparent 100%),
+    radial-gradient(45% 16% at 40% 78%, rgb(239 230 210 / 0.05), transparent 100%),
+    var(--couleur-fond-page);
+}
+
 /* Version calme : fondus courts, sans déplacement ni cascade */
 @media (prefers-reduced-motion: reduce) {
   [data-apparition] { transform: none; transition: opacity 300ms linear !important; transition-delay: 0ms !important; }
+  .h-masque, .h-chauffe, .hero-anime .contenu > *, .hero-anime .titres > *, .hero-accueil .accroche > *,
+  .hero-disque .pochette-fiche, .hero-disque .vinyle, .hero-disque .infos > * { animation: none !important; }
+  .hero-anime::before { animation: r33-eclaire 300ms linear both; }
+  .hero-accueil > .contenu, .hero-page > .contenu { transform: none; }
   ::view-transition-old(root) { animation: r33-page-sort 200ms linear both; }
   ::view-transition-new(root) { animation: r33-fondu 250ms linear both; }
   @keyframes r33-fondu { from { opacity: 0; } }
