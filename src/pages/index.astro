@@ -12,6 +12,7 @@ import EnTeteSection from '../components/EnTeteSection.astro';
 import BandeauGenres from '../components/BandeauGenres.astro';
 import ModuleReco from '../components/ModuleReco.astro';
 import Entree from '../components/Entree.astro';
+import LivesAccueil from '../components/LivesAccueil.astro';
 import { accueil } from '../data/textes';
 import { bacs, top, morceauDuJour, platine, genres, detailBac } from '../data/disques';
 import { images } from '../data/images';
@@ -100,6 +101,9 @@ const suivants = reste.slice(0, 4);
     </div>
 
     <ModuleReco />
+
+    <!-- Les lives : façon page vidéo (après « Faites-moi découvrir un son », comme dans Figma) -->
+    <LivesAccueil />
   </main>
 
   <PiedDePage />

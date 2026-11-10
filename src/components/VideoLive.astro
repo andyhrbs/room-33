@@ -11,6 +11,24 @@ const { youtube, titre, grand = false, class: cls } = Astro.props;
     <span class="rond"><Icone nom="lecture" taille={grand ? 40 : 30} /></span>
   </button>
 </div>
+<script>
+  // (script déplacé ici depuis la page Les lives : il sert aussi à la section lives de l'accueil)
+  // Façade YouTube : la vidéo (youtube-nocookie) ne se charge qu'au clic, puis se lance.
+  // Clic délégué : marche aussi après une navigation fluide. L'extrait en cours s'arrête.
+  document.addEventListener('click', (e) => {
+    const bouton = (e.target as Element).closest('[data-lire-video]');
+    if (!bouton) return;
+    const bloc = bouton.closest<HTMLElement>('[data-video]')!;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    iframe.title = bloc.dataset.titre ?? 'Vidéo YouTube';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    bloc.replaceChildren(iframe);
+    iframe.focus();
+    document.dispatchEvent(new Event('room33:video')); // le lecteur d'extraits se met en pause
+  });
+</script>
 <style>
   .video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); overflow: hidden; background: var(--couleur-fond-image); }
   .video img, .video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }

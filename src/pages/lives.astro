@@ -63,24 +63,6 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   <PiedDePage />
 </Base>
 
-<script>
-  // Façade YouTube : la vidéo (youtube-nocookie) ne se charge qu'au clic, puis se lance.
-  // Clic délégué : marche aussi après une navigation fluide. L'extrait en cours s'arrête.
-  document.addEventListener('click', (e) => {
-    const bouton = (e.target as Element).closest('[data-lire-video]');
-    if (!bouton) return;
-    const bloc = bouton.closest<HTMLElement>('[data-video]')!;
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
-    iframe.title = bloc.dataset.titre ?? 'Vidéo YouTube';
-    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen = true;
-    bloc.replaceChildren(iframe);
-    iframe.focus();
-    document.dispatchEvent(new Event('room33:video')); // le lecteur d'extraits se met en pause
-  });
-</script>
-
 <style>
   .intro { max-width: 45rem; }
   .lives { display: grid; gap: var(--espace-3xl); }

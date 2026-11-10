@@ -1,0 +1,130 @@
+---
+// Accueil · « Les lives » : mise en page d'une page vidéo (grand lecteur, titre, ligne « chaîne »,
+// description, colonne « À suivre »), dans la charte Room 33. Maquette Figma « Les lives — façon page vidéo ».
+// Cliquer un live « À suivre » le passe dans le grand lecteur (et le lance) ; celui qui jouait prend sa place.
+// Mêmes lives que la page Les lives (gérés dans /admin) : le 1er de la liste est en scène.
+import EnTeteSection from './EnTeteSection.astro';
+import VideoLive from './VideoLive.astro';
+import Bouton from './Bouton.astro';
+import { accueil } from '../data/textes';
+import { lives } from '../data/lives';
+const t = accueil.lives;
+const [une, ...autres] = lives;
+const suivants = autres.slice(0, 3);
+const nom = (l: { artiste: string; titre: string }) => `${l.artiste} — ${l.titre}`;
+const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
+const yt = (id: string) => `https://www.youtube.com/watch?v=${id}`;
+const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: infos(l), mot: l.mot });
+---
+{une && (
+<section class="section conteneur lives-accueil" aria-labelledby="titre-lives-accueil" data-lives-accueil>
+  <EnTeteSection surtitre={t.surtitre} titre={t.titre} id="titre-lives-accueil" lien={{ texte: t.lien, href: '/lives' }} />
+
+  <div class="scene">
+    <div class="principal" data-principal={donnees(une)}>
+      <VideoLive youtube={une.youtube} titre={nom(une)} grand class="lecteur" />
+      <h3 class="titre-h3" data-champ="nom">{nom(une)}</h3>
+      <div class="chaine">
+        <span class="avatar" aria-hidden="true">R</span>
+        <span class="qui"><span class="texte-label">{t.chaine}</span><span class="texte-legende texte-secondaire">{t.chaineSous}</span></span>
+        <Bouton style="lien" href={yt(une.youtube)} target="_blank" rel="noopener" data-champ="youtube">{t.voirYoutube}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
+      </div>
+      <div class="description">
+        <p class="texte-label" data-champ="infos">{infos(une)}</p>
+        <p class="texte-avis" data-champ="mot">{une.mot}</p>
+      </div>
+    </div>
+
+    {suivants.length > 0 && (
+      <div class="suivre">
+        <h3 class="texte-label seulement-mobile">{t.aSuivre}</h3>
+        <h3 class="visuellement-cache seulement-ordi">{t.aSuivre}</h3>
+        <ul role="list">
+          {suivants.map((l) => (
+            <li>
+              <button type="button" class="suivant" data-suivant={donnees(l)} aria-label={`Lire : ${nom(l)}`}>
+                <span class="vignette"><img src={`/lives/vignettes/${l.youtube}.jpg`} alt="" loading="lazy" decoding="async" width="320" height="180" /><span class="rond" aria-hidden="true"></span></span>
+                <span class="textes"><span class="texte-label nom">{nom(l)}</span><span class="texte-legende texte-secondaire">{infos(l)}</span></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+  <Bouton style="lien" href="/lives" class="tous seulement-mobile">{t.lien}</Bouton>
+</section>
+)}
+
+<script>
+  // « À suivre » → grand lecteur : on échange les deux lives, puis on lance la vidéo (comme sur YouTube)
+  type L = { youtube: string; nom: string; infos: string; mot: string };
+  document.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>('[data-lives-accueil] [data-suivant]');
+    if (!b) return;
+    const section = b.closest<HTMLElement>('[data-lives-accueil]')!;
+    const p = section.querySelector<HTMLElement>('[data-principal]')!;
+    const nouveau: L = JSON.parse(b.dataset.suivant!), ancien: L = JSON.parse(p.dataset.principal!);
+    // la vignette cliquée prend le live qui était en scène
+    b.dataset.suivant = JSON.stringify(ancien);
+    b.setAttribute('aria-label', `Lire : ${ancien.nom}`);
+    b.querySelector('img')!.src = `/lives/vignettes/${ancien.youtube}.jpg`;
+    b.querySelector('.nom')!.textContent = ancien.nom;
+    b.querySelector('.texte-legende')!.textContent = ancien.infos;
+    // le grand lecteur prend le live choisi
+    p.dataset.principal = JSON.stringify(nouveau);
+    p.querySelector('[data-champ="nom"]')!.textContent = nouveau.nom;
+    p.querySelector('[data-champ="infos"]')!.textContent = nouveau.infos;
+    p.querySelector('[data-champ="mot"]')!.textContent = nouveau.mot;
+    p.querySelector<HTMLAnchorElement>('[data-champ="youtube"]')!.href = `https://www.youtube.com/watch?v=${nouveau.youtube}`;
+    const lecteur = p.querySelector<HTMLElement>('[data-video]')!;
+    lecteur.dataset.video = nouveau.youtube;
+    lecteur.dataset.titre = nouveau.nom;
+    // on remet la façade puis on la « clique » : la vidéo choisie se charge et se lance
+    lecteur.innerHTML = `<img src="/lives/vignettes/${nouveau.youtube}.jpg" alt="" width="1280" height="720" /><button type="button" class="lire" data-lire-video aria-label="Lire la vidéo : ${nouveau.nom.replace(/"/g, '&quot;')}"></button>`;
+    lecteur.querySelector<HTMLButtonElement>('[data-lire-video]')!.click();
+    lecteur.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  });
+</script>
+
+<style>
+  .lives-accueil { display: grid; gap: var(--espace-2xl); }
+  .scene { display: grid; grid-template-columns: minmax(0, 1fr) 23.75rem; gap: var(--espace-xl); align-items: start; }
+  .principal { display: grid; gap: var(--espace-md); }
+  .principal :global(.lecteur) { border-radius: 12px; }
+  .principal h3 { margin: 0; }
+  .chaine { display: flex; align-items: center; gap: var(--espace-sm); }
+  .avatar {
+    flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
+    background: var(--couleur-fond-image); font-family: var(--police-lettrine); font-size: 1.75rem; line-height: 1; padding-top: 4px;
+  }
+  .qui { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .description { display: grid; gap: 6px; padding-block: var(--espace-md); }
+  .description p { margin: 0; }
+
+  .suivre { display: grid; gap: var(--espace-sm); }
+  .suivre h3 { margin: 0; }
+  .suivre ul { display: grid; gap: var(--espace-sm); margin: 0; padding: 0; }
+  .suivant {
+    width: 100%; display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: var(--espace-sm); align-items: start;
+    padding: 0; border: 0; background: none; color: var(--couleur-texte-principal); text-align: left; cursor: pointer; border-radius: var(--rayon-bloc);
+  }
+  .suivant:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 4px; }
+  .vignette { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); overflow: hidden; background: var(--couleur-fond-image); }
+  .vignette img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--duree-normal) var(--courbe-standard); }
+  .vignette::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(18 11 7 / 0), rgb(18 11 7 / 0.55)); }
+  .rond { position: absolute; z-index: 1; left: 50%; top: 50%; width: 32px; height: 32px; translate: -50% -50%; border-radius: var(--rayon-pilule); background: var(--couleur-accent-defaut); }
+  .rond::after { content: ''; position: absolute; left: 12px; top: 9px; border-style: solid; border-width: 7px 0 7px 11px; border-color: transparent transparent transparent var(--couleur-texte-principal); }
+  .suivant:hover .vignette img { transform: scale(1.04); }
+  .textes { display: grid; gap: 4px; padding-top: 2px; }
+  .nom { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  @media (max-width: 63.99rem) {
+    .lives-accueil { background: var(--couleur-fond-ombre); gap: var(--espace-xl); }
+    .lives-accueil :global(.entete-section .actions) { display: none; } /* « Voir tous les lives » passe en bas */
+    .scene { grid-template-columns: 1fr; gap: var(--espace-xl); }
+    .description { background: var(--couleur-fond-tonal); border-radius: 12px; padding: var(--espace-md) var(--espace-lg); }
+    .suivant { grid-template-columns: 9.375rem minmax(0, 1fr); }
+    .lives-accueil :global(.tous) { justify-self: start; }
+  }
+</style>
