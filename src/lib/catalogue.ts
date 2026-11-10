@@ -7,7 +7,7 @@
 import { jetonApplication } from './spotify';
 
 export interface Piste { numero: number; titre: string; duree: string }
-export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; pistes: Piste[] }
+export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; pistes: Piste[] }
 
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -46,6 +46,7 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
         annee: a.release_date ? Number(String(a.release_date).slice(0, 4)) : undefined,
         label: a.label || undefined,
         lienSpotify: a.external_urls?.spotify,
+        lienArtiste: a.artists?.[0]?.external_urls?.spotify,
         pistes: (a.tracks?.items ?? []).map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms) })),
       });
     } catch (e) {

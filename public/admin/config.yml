@@ -72,7 +72,7 @@ collections:
     description: Les infos utilisées un peu partout sur le site.
     files:
       - name: site
-        label: Compte Instagram
+        label: Réseaux (Instagram, Spotify)
         file: src/data/cms/site.json
         format: json
         fields:
@@ -86,3 +86,8 @@ collections:
             widget: string
             hint: L'adresse complète de ton profil, par exemple https://www.instagram.com/andyh.robinson/
             pattern: ['^https://(www\.)?instagram\.com/.+', 'Le lien doit commencer par https://www.instagram.com/']
+          - name: spotifyUrl
+            label: Lien du profil Spotify
+            widget: string
+            hint: Dans Spotify, ouvre ton profil, puis ⋯ → Partager → Copier le lien. Sert pour le lien « Spotify » du pied de page.
+            pattern: ['^https://open\.spotify\.com/', 'Le lien doit commencer par https://open.spotify.com/']

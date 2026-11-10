@@ -85,8 +85,8 @@ const bac = bacDuDisque(d);
           <h2 id="titre-artiste" class="titre-h1">{d.artiste}</h2>
           <p class="texte-corps"><span class="seulement-ordi">{f.artiste.bio}</span><span class="seulement-mobile">{f.artiste.bioCourte}</span></p>
           <div class="liens">
-            <Bouton style="lien" href="#">Sa discographie</Bouton>
-            <Bouton style="lien" desactive class="seulement-ordi">Ses lives (bientôt)</Bouton>
+            <!-- page de l'artiste sur Spotify (récupérée au build) ; à défaut, une recherche Spotify sur son nom -->
+            <Bouton style="lien" href={d.lienArtiste ?? `https://open.spotify.com/search/${encodeURIComponent(d.artiste)}/artists`} target="_blank" rel="noopener">Sa discographie<span class="visuellement-cache"> sur Spotify (nouvel onglet)</span></Bouton>
           </div>
         </div>
       </div>

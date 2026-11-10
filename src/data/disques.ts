@@ -18,6 +18,7 @@ export interface Disque {
   spotifyId?: string;  // identifiant Spotify de l'album (sinon retrouvé par titre + artiste)
   label?: string;
   lienSpotify?: string;
+  lienArtiste?: string; // page de l'artiste sur Spotify (« Sa discographie »)
   pistes?: Piste[];
 }
 
@@ -37,7 +38,7 @@ const infos = await infosAlbums(disques.map((d) => ({ cle: d.slug, titre: d.titr
 for (const d of disques) {
   const i = infos.get(d.slug);
   if (!i) continue;
-  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify });
+  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify }, i.lienArtiste && { lienArtiste: i.lienArtiste });
 }
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;

@@ -13,6 +13,7 @@ export const site = {
   // compte Instagram : modifiable dans /admin (fichier src/data/cms/site.json)
   instagram: reglages.instagram,
   instagramUrl: reglages.instagramUrl,
+  spotifyUrl: reglages.spotifyUrl, // profil Spotify (pied de page)
 };
 
 // Les pages, dans l'ordre du menu mobile
