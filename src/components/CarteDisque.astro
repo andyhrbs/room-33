@@ -5,21 +5,22 @@
 import Pochette from './Pochette.astro';
 import type { Motif } from './types';
 type PochetteMini = { src?: string; motif?: Motif };
-interface Props { titre: string; artiste: string; annee?: string | number; href?: string; src?: string; motif?: Motif; rang?: number; mosaique?: PochetteMini[] }
-const { titre, artiste, annee, href = '#', rang, mosaique } = Astro.props;
+interface Props { titre: string; artiste: string; annee?: string | number; href?: string; src?: string; motif?: Motif; rang?: number; mosaique?: PochetteMini[]; externe?: string }
+// externe : le lien sort du site (Spotify) → nouvel onglet, et ce texte lu par les lecteurs d'écran
+const { titre, artiste, annee, href = '#', rang, mosaique, externe } = Astro.props;
 let { src, motif } = Astro.props;
 const quatre = mosaique && mosaique.length >= 4 ? mosaique.slice(0, 4) : null;
 if (mosaique && !quatre && mosaique.length) ({ src, motif } = { src: mosaique[0].src, motif: mosaique[0].motif ?? motif });
 ---
 <article class="carte">
-  <a href={href} class="lien">
+  <a href={href} class="lien" {...(externe ? { target: '_blank', rel: 'noopener' } : {})}>
     <div class="visuel">
       {quatre
         ? <div class="mosaique">{quatre.map((p) => <Pochette src={p.src} motif={p.motif} alt="" taille="100%" class="case" />)}</div>
         : <Pochette src={src} motif={motif} alt="" />}
       {rang && <span class="rang titre-h3" aria-hidden="true">{rang}</span>}
     </div>
-    <h3 class="texte-label titre">{rang && <span class="visuellement-cache">N° {rang} : </span>}{titre}</h3>
+    <h3 class="texte-label titre">{rang && <span class="visuellement-cache">N° {rang} : </span>}{titre}{externe && <span class="visuellement-cache"> {externe}</span>}</h3>
   </a>
   <p class="texte-petit texte-secondaire">{artiste}{annee && ` · ${annee}`}</p>
 </article>

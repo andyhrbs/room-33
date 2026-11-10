@@ -8,7 +8,8 @@ import { recadrages } from '../data/images';
 import Bouton from '../components/Bouton.astro';
 import CarteDisque from '../components/CarteDisque.astro';
 import { recos } from '../data/disques';
-import { site } from '../data/textes';
+import { site, visiteursTextes as t } from '../data/textes';
+const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
 const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 ---
 <Base title="Le bac des visiteurs" description="Les sons que vous m’avez recommandés et qui m’ont plu.">
@@ -17,21 +18,27 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     <HeroPage filAriane={['La pièce', 'Le bac des visiteurs']} recadrage={recadrages.visiteurs} surtitreMobile="Le bac des visiteurs" titre="Les sons qu’on m’a fait aimer." titreMobile="On m’a fait aimer.">
       <div class="infos">
         <p class="texte-corps-l"><span class="seulement-ordi">Les sons que vous m’avez recommandés et qui m’ont plu. Chaque disque garde le prénom de celui qui me l’a fait découvrir.</span><span class="seulement-mobile">Vos recos qui m’ont plu, avec votre prénom.</span></p>
-        <p class="texte-petit texte-secondaire seulement-ordi">24 disques · le dernier ajouté il y a 3 jours</p>
+        {recos.length > 0 && <p class="texte-petit texte-secondaire seulement-ordi">{t.compte(recos.length, dateFr(recos[0].ajoute))}</p>}
         <Bouton style="primaire" href="/#recommander" data-ouvrir-reco class="cta">Recommandez-moi un son</Bouton>
       </div>
     </HeroPage>
 
     <section class="recos section conteneur" aria-label="Les recos des visiteurs">
-      <ul role="list" class="grille">
-        {recos.map((r) => (
-          <li class="reco">
-            <CarteDisque titre={r.titre} artiste={r.artiste} annee={r.annee} motif={r.motif} href="#" />
-            <p class="texte-legende texte-secondaire">Conseillé par {r.prenom}</p>
-          </li>
-        ))}
-      </ul>
-      <Bouton style="lien" href="#">Voir les 24 disques</Bouton>
+      {recos.length > 0 ? (
+        <ul role="list" class="grille">
+          {recos.map((r) => (
+            <li class="reco">
+              <CarteDisque titre={r.titre} artiste={r.artiste} annee={r.annee} src={r.pochette} motif={r.motif} href={r.lien ?? '#'} externe={r.lien ? t.ecouter : undefined} />
+              <p class="texte-legende texte-secondaire">{t.conseille(r.prenom)}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="vide">
+          <h2 class="titre-h2">{t.videTitre}</h2>
+          <p class="texte-corps-l texte-secondaire">{t.videTexte}</p>
+        </div>
+      )}
     </section>
 
     <section class="appel section" aria-labelledby="titre-appel">
@@ -56,6 +63,9 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .recos { display: grid; gap: var(--espace-xl); justify-items: start; }
   .grille { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--espace-xl) var(--grille-gouttiere); }
   .reco { display: grid; gap: var(--espace-xs); align-content: start; }
+  .vide { display: grid; gap: var(--espace-sm); max-width: 40rem; padding: var(--espace-2xl); border: 1px dashed var(--couleur-bordure-defaut); border-radius: var(--rayon-bloc); }
+  .vide h2 { margin: 0; }
+  .vide p { margin: 0; }
   .appel { background: var(--couleur-fond-page); }
   .grille-appel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-lg) var(--espace-xl); }
   .texte { display: grid; gap: var(--espace-sm); max-width: 56rem; }
@@ -64,5 +74,6 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     .infos :global(.cta) { width: 100%; }
     .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-lg) var(--grille-gouttiere); }
     .recos { padding-top: var(--espace-md); }
+    .vide { padding: var(--espace-lg); }
   }
 </style>

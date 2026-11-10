@@ -8,7 +8,7 @@ import { recadrages } from '../data/images';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import Bouton from '../components/Bouton.astro';
-import { top, topTitres, pourquoiNumeroUn } from '../data/disques';
+import { top, topTitres, pourquoiNumeroUn, pourquoiTitreUn } from '../data/disques';
 const [un, ...autres] = top;
 const [titreUn, ...autresTitres] = topTitres;
 const rang = (i: number) => String(i).padStart(2, '0');
@@ -67,7 +67,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="titre-geant rang-un" aria-hidden="true">01</p>
           <h2 id="titre-un-titre" class="titre-h1"><span class="visuellement-cache">N° 1 : </span>{titreUn.titre}</h2>
           <p class="texte-corps-l texte-secondaire">{titreUn.disque.artiste} — {titreUn.disque.titre} ({titreUn.disque.annee})</p>
-          <p class="texte-avis"><span class="seulement-ordi">{pourquoiNumeroUn.long}</span><span class="seulement-mobile">{pourquoiNumeroUn.court}</span></p>
+          <p class="texte-avis"><span class="seulement-ordi">{pourquoiTitreUn.long}</span><span class="seulement-mobile">{pourquoiTitreUn.court}</span></p>
           <div class="actions">
             <Ecoute titre={titreUn.titre} artiste={titreUn.disque.artiste} />
             <Bouton style="lien" href={`/disques/${titreUn.disque.slug}`}>Voir la fiche</Bouton>
@@ -83,7 +83,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
               <a class="titre" href={`/disques/${t.disque.slug}`}>
                 <span class="visuellement-cache">N° {i + 2} : </span>
                 <span class="titre-h3 nom">{t.titre}</span>
-                <span class="texte-petit texte-secondaire">{t.disque.artiste} · {t.duree}</span>
+                <span class="texte-petit texte-secondaire">{[t.disque.artiste, t.duree].filter(Boolean).join(' · ')}</span>
               </a>
               <Bouton style="lien" href={`/disques/${t.disque.slug}`} class="seulement-ordi" aria-hidden="true" tabindex="-1">Voir la fiche</Bouton>
             </li>

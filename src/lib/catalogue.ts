@@ -56,3 +56,39 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
   console.log(`[Spotify] ${resultat.size}/${liste.length} disques complétés depuis Spotify.`);
   return resultat;
 }
+
+// ---------- Morceaux recommandés (bac des visiteurs) ----------
+export interface InfosTitre { titre: string; artiste: string; album?: string; pochette?: string; annee?: number; lienSpotify?: string }
+
+// Un morceau par son lien Spotify (open.spotify.com/track/…), sinon cherché par titre + artiste
+export async function infosTitres(liste: { cle: string; titre: string; artiste: string; spotifyId?: string }[]): Promise<Map<string, InfosTitre>> {
+  const resultat = new Map<string, InfosTitre>();
+  if (liste.length === 0) return resultat;
+  const jeton = await jetonApplication();
+  if (!jeton.ok) {
+    console.warn(`[Spotify] ${jeton.erreur} : recos des visiteurs sans pochette.`);
+    return resultat;
+  }
+  for (const m of liste) {
+    try {
+      let t: any;
+      if (m.spotifyId) t = await appel(jeton.jeton, `/tracks/${m.spotifyId}?market=FR`);
+      else {
+        const q = encodeURIComponent(`track:${m.titre} artist:${m.artiste}`);
+        t = (await appel(jeton.jeton, `/search?type=track&limit=1&market=FR&q=${q}`)).tracks?.items?.[0];
+      }
+      if (!t) { console.warn(`[Spotify] morceau introuvable : ${m.artiste} — ${m.titre}`); continue; }
+      resultat.set(m.cle, {
+        titre: t.name,
+        artiste: (t.artists ?? []).map((a: any) => a.name).join(', '),
+        album: t.album?.name,
+        pochette: t.album?.images?.[0]?.url,
+        annee: t.album?.release_date ? Number(String(t.album.release_date).slice(0, 4)) : undefined,
+        lienSpotify: t.external_urls?.spotify,
+      });
+    } catch (e) {
+      console.warn(`[Spotify] ${m.artiste} — ${m.titre} : ${(e as Error).message}`);
+    }
+  }
+  return resultat;
+}

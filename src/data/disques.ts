@@ -1,13 +1,17 @@
 // ==========================================================================
 // Room 33 — Les disques et les bacs, modifiables dans /admin :
 // - un fichier par disque dans src/data/cms/disques/ (rubrique « Les disques ») ;
-// - la liste des bacs dans src/data/cms/bacs.json (rubrique « Les bacs »).
+// - la liste des bacs dans src/data/cms/bacs.json (rubrique « Les bacs ») ;
+// - le Top (cms/top.json), le morceau du moment (cms/morceau.json), le bac des visiteurs (cms/visiteurs.json).
 // Au build, Spotify complète chaque disque (pochette, année, label, pistes, lien de l'artiste).
 // Contenu actuel = DÉMO (mêmes disques qu'avant) ; les textes vides retombent sur les textes de maquette.
 // ==========================================================================
 import type { Motif } from '../components/types';
-import { infosAlbums, type Piste } from '../lib/catalogue';
+import { infosAlbums, infosTitres, type Piste } from '../lib/catalogue';
 import donneesBacs from './cms/bacs.json';
+import donneesTop from './cms/top.json';
+import donneesMorceau from './cms/morceau.json';
+import donneesVisiteurs from './cms/visiteurs.json';
 
 export interface Disque {
   slug: string;
@@ -106,33 +110,37 @@ export const fiche = (d: Disque) => {
   };
 };
 
-// Le Top de la Room (ordre = classement)
-export const top = [
-  'dijon-absolutely',
-  'daniel-caesar-freudian',
-  'tom-misch-geography',
-  'yussef-dayes-black-classical-music',
-  'mk-gee-two-star',
-  'jordan-ward-forward',
-  'khamari-a-brief-nirvana',
-  'luidji-tristesse-business',
-].map(parSlug);
-
-// Top titres (bascule « Titres » du Top, et classements de la platine)
-export interface Titre { titre: string; disque: Disque; duree: string }
-export const topTitres: Titre[] = [
-  { titre: 'Best Part', disque: parSlug('daniel-caesar-freudian'), duree: '3:29' },
-  { titre: 'Many Times', disque: parSlug('dijon-absolutely'), duree: '3:41' },
-  { titre: 'It Runs Through Me', disque: parSlug('tom-misch-geography'), duree: '4:21' },
-  { titre: 'Are You Looking Up', disque: parSlug('mk-gee-two-star'), duree: '3:13' },
-  { titre: 'FAMJAM4000', disque: parSlug('jordan-ward-forward'), duree: '3:18' },
-  { titre: 'Get You', disque: parSlug('daniel-caesar-freudian'), duree: '4:38' },
-  { titre: 'Disco Yes', disque: parSlug('tom-misch-geography'), duree: '4:51' },
-];
-export const pourquoiNumeroUn = {
-  long: '« Pourquoi il est tout en haut : deux ou trois phrases, le morceau à écouter en premier. »',
-  court: '« Pourquoi il est tout en haut. »',
+// Disque lié depuis l'admin (Top, morceau du moment) : ignoré s'il a été supprimé entre-temps
+const disqueLie = (slug: string, ou: string) => {
+  const d = disques.find((x) => x.slug === slug);
+  if (!d) console.warn(`[Admin] ${ou} : le disque « ${slug} » n'existe plus, ignoré.`);
+  return d;
 };
+// Durée d'un morceau = celle de sa piste sur l'album (Spotify, au build)
+const normal = (s: string) => s.toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
+const dureeDe = (titre: string, d: Disque) => d.pistes?.find((p) => normal(p.titre).startsWith(normal(titre)))?.duree ?? '';
+
+// Le Top de la Room (ordre = classement), modifiable dans /admin › Le Top
+type DonneesTop = { albums?: { disque: string }[]; titres?: { titre: string; disque: string }[]; pourquoiAlbum?: string; pourquoiAlbumCourt?: string; pourquoiTitre?: string; pourquoiTitreCourt?: string };
+const t0 = donneesTop as DonneesTop;
+const topAdmin = (t0.albums ?? []).map((a) => disqueLie(a.disque, 'Top albums')).filter((d): d is Disque => Boolean(d));
+// Top vide (tous ses disques supprimés) : les disques les plus récents, pour que les pages tiennent debout
+export const top: Disque[] = topAdmin.length ? topAdmin : disques.slice().reverse();
+
+// Top titres (bascule « Titres » du Top, et classements de démo de la platine)
+export interface Titre { titre: string; disque: Disque; duree: string }
+const titresAdmin: Titre[] = (t0.titres ?? []).flatMap((t) => {
+  const disque = disqueLie(t.disque, 'Top titres');
+  return disque ? [{ titre: t.titre, disque, duree: dureeDe(t.titre, disque) }] : [];
+});
+export const topTitres: Titre[] = titresAdmin.length ? titresAdmin
+  : top.map((d) => ({ titre: d.pistes?.[0]?.titre ?? d.titre, disque: d, duree: d.pistes?.[0]?.duree ?? '' }));
+const pourquoi = (long?: string, court?: string) => ({
+  long: long || '« Pourquoi il est tout en haut : deux ou trois phrases, le morceau à écouter en premier. »',
+  court: court || long || '« Pourquoi il est tout en haut. »',
+});
+export const pourquoiNumeroUn = pourquoi(t0.pourquoiAlbum, t0.pourquoiAlbumCourt);
+export const pourquoiTitreUn = pourquoi(t0.pourquoiTitre, t0.pourquoiTitreCourt);
 
 // La platine (démo : les vraies stats Spotify arrivent au Sprint 4)
 export const platineDetail = {
@@ -148,18 +156,29 @@ export const platineDetail = {
   ],
 };
 
-// Le bac des visiteurs (démo de la maquette : les vraies recos arrivent au Sprint 5)
-const motifsRecos: Motif[] = ['cercles', 'lune', 'points', 'croix', 'bandes', 'arc', 'lune', 'points'];
-export const recos = ['Inès', 'Malik', 'Jade', 'Yanis', 'Léa', 'Sami', 'Chloé', 'Noah'].map((prenom, i) => ({
-  prenom, titre: 'Titre du morceau', artiste: 'Artiste', annee: 1970 + i * 3, motif: motifsRecos[i],
-}));
+// Le bac des visiteurs : les recos validées par Andyh, ajoutées dans /admin › Le bac des visiteurs
+// (la plus récente en premier). Spotify complète au build : pochette, année, lien.
+type EntreeReco = { prenom: string; titre: string; artiste: string; spotify?: string; ajoute?: string };
+export interface Reco { prenom: string; titre: string; artiste: string; annee?: number; pochette?: string; lien?: string; motif: Motif; ajoute: string }
+const entreesRecos = ((donneesVisiteurs as { recos?: EntreeReco[] }).recos ?? [])
+  .map((r, i) => ({ ...r, cle: String(i), spotifyId: r.spotify?.match(/track\/([A-Za-z0-9]{22})/)?.[1] }));
+const infosRecos = await infosTitres(entreesRecos);
+export const recos: Reco[] = entreesRecos
+  .map((r, i) => {
+    const s = infosRecos.get(r.cle);
+    return { prenom: r.prenom, titre: s?.titre ?? r.titre, artiste: s?.artiste ?? r.artiste, annee: s?.annee, pochette: s?.pochette, lien: s?.lienSpotify ?? (r.spotify || undefined), motif: motifs[i % motifs.length], ajoute: r.ajoute ?? '1970-01-01' };
+  })
+  .sort((a, b) => b.ajoute.localeCompare(a.ajoute));
 
-// Le morceau du moment (sans date : changé quand Andyh en a envie, il ne paraît jamais périmé)
+// Le morceau du moment (sans date : changé quand Andyh en a envie), modifiable dans /admin › L'accueil
+type DonneesMorceau = { titre: string; disque: string; avis?: string; avisCourt?: string };
+const m0 = donneesMorceau as DonneesMorceau;
+const disqueMorceau = disqueLie(m0.disque, 'Morceau du moment') ?? disques[disques.length - 1];
 export const morceauDuJour = {
-  titre: 'It Runs Through Me',
-  disque: parSlug('tom-misch-geography'),
-  avis: '« Deux phrases d’avis : pourquoi ce son aujourd’hui, ce qui me fait revenir dessus, la ligne de basse qui tue à 1:24. »',
-  avisCourt: '« Deux phrases d’avis : pourquoi ce son aujourd’hui. »',
+  titre: m0.titre,
+  disque: disqueMorceau,
+  avis: m0.avis || '« Deux phrases d’avis : pourquoi ce son aujourd’hui, ce qui me fait revenir dessus, la ligne de basse qui tue à 1:24. »',
+  avisCourt: m0.avisCourt || m0.avis || '« Deux phrases d’avis : pourquoi ce son aujourd’hui. »',
 };
 
 // La platine (chiffres Spotify au Sprint 4)

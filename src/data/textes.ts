@@ -134,6 +134,15 @@ export const comptoir = {
   },
 };
 
+// ---------- Page : Le bac des visiteurs ----------
+export const visiteursTextes = {
+  compte: (n: number, date: string) => `${n} son${n > 1 ? 's' : ''} · le dernier ajouté le ${date}`,
+  conseille: (prenom: string) => `Conseillé par ${prenom}`,
+  videTitre: 'Le bac attend son premier son.',
+  videTexte: 'Personne ne l’a encore rempli. Recommandez-moi un morceau : s’il me parle, il arrive ici avec votre prénom.',
+  ecouter: '(écouter sur Spotify, nouvel onglet)',
+};
+
 // ---------- Page : Les lives ----------
 export const livesTextes = {
   filAriane: ['La pièce', 'Les lives'],

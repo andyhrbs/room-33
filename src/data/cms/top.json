@@ -1,0 +1,25 @@
+{
+  "albums": [
+    { "disque": "dijon-absolutely" },
+    { "disque": "daniel-caesar-freudian" },
+    { "disque": "tom-misch-geography" },
+    { "disque": "yussef-dayes-black-classical-music" },
+    { "disque": "mk-gee-two-star" },
+    { "disque": "jordan-ward-forward" },
+    { "disque": "khamari-a-brief-nirvana" },
+    { "disque": "luidji-tristesse-business" }
+  ],
+  "pourquoiAlbum": "",
+  "pourquoiAlbumCourt": "",
+  "titres": [
+    { "titre": "Best Part", "disque": "daniel-caesar-freudian" },
+    { "titre": "Many Times", "disque": "dijon-absolutely" },
+    { "titre": "It Runs Through Me", "disque": "tom-misch-geography" },
+    { "titre": "Are You Looking Up", "disque": "mk-gee-two-star" },
+    { "titre": "FAMJAM4000", "disque": "jordan-ward-forward" },
+    { "titre": "Get You", "disque": "daniel-caesar-freudian" },
+    { "titre": "Disco Yes", "disque": "tom-misch-geography" }
+  ],
+  "pourquoiTitre": "",
+  "pourquoiTitreCourt": ""
+}

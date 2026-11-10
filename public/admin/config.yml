@@ -23,7 +23,6 @@ media_folder: public/images/cms
 public_folder: /images/cms
 
 collections:
-  # Encore à brancher à la fin : le Top, le bac des visiteurs, le morceau du moment.
   - name: disques
     label: Les disques
     label_singular: disque
@@ -158,6 +157,101 @@ collections:
                 label: Mon mot
                 widget: text
                 hint: Une à trois phrases. Garde les guillemets « ».
+  - name: top
+    label: Le Top
+    description: Le Top de la Room, page Le Top et accueil. Glisse les lignes pour changer le classement (la première = n° 1).
+    files:
+      - name: classement
+        label: Mon classement
+        file: src/data/cms/top.json
+        format: json
+        fields:
+          - name: albums
+            label: Albums (du n° 1 au n° 10)
+            label_singular: album
+            widget: list
+            min: 1
+            max: 10
+            summary: '{{fields.disque}}'
+            fields:
+              - name: disque
+                label: Disque
+                widget: relation
+                collection: disques
+                value_field: '{{slug}}'
+                search_fields: [titre, artiste]
+                display_fields: [artiste, titre]
+                hint: Le disque doit d'abord exister dans « Les disques ».
+          - { name: pourquoiAlbum, label: Pourquoi l'album n° 1 est tout en haut, widget: text, required: false, hint: "Deux ou trois phrases, et le morceau à écouter en premier. Garde les guillemets « »." }
+          - { name: pourquoiAlbumCourt, label: La même chose en une phrase (mobile), widget: string, required: false }
+          - name: titres
+            label: Titres (du n° 1 au n° 10)
+            label_singular: titre
+            widget: list
+            min: 1
+            max: 10
+            summary: '{{fields.titre}}'
+            fields:
+              - { name: titre, label: Titre du morceau, widget: string, hint: "Écrit comme sur Spotify : la durée se retrouve toute seule." }
+              - name: disque
+                label: Disque où il se trouve
+                widget: relation
+                collection: disques
+                value_field: '{{slug}}'
+                search_fields: [titre, artiste]
+                display_fields: [artiste, titre]
+                hint: Le disque doit d'abord exister dans « Les disques ».
+          - { name: pourquoiTitre, label: Pourquoi le titre n° 1 est tout en haut, widget: text, required: false, hint: Deux ou trois phrases. }
+          - { name: pourquoiTitreCourt, label: La même chose en une phrase (mobile), widget: string, required: false }
+
+  - name: accueil
+    label: L'accueil
+    description: Ce qui change sur la page d'accueil.
+    files:
+      - name: morceau
+        label: Le morceau du moment
+        file: src/data/cms/morceau.json
+        format: json
+        fields:
+          - { name: titre, label: Titre du morceau, widget: string, hint: Écrit comme sur Spotify (c'est lui qui joue dans l'extrait). }
+          - name: disque
+            label: Disque où il se trouve
+            widget: relation
+            collection: disques
+            value_field: '{{slug}}'
+            search_fields: [titre, artiste]
+            display_fields: [artiste, titre]
+            hint: Sert pour la pochette et le lien « Voir la fiche ». Le disque doit d'abord exister dans « Les disques ».
+          - { name: avis, label: Mon avis, widget: text, required: false, hint: "Deux phrases : pourquoi ce son en ce moment. Garde les guillemets « »." }
+          - { name: avisCourt, label: Mon avis en une phrase (mobile), widget: string, required: false }
+
+  - name: visiteurs
+    label: Le bac des visiteurs
+    description: Les recos reçues par e-mail (formulaire « Recommandez-moi un son ») que tu as validées. Spotify ajoute la pochette et l'année.
+    files:
+      - name: recos
+        label: Les recos validées
+        file: src/data/cms/visiteurs.json
+        format: json
+        fields:
+          - name: recos
+            label: Recos
+            label_singular: reco
+            widget: list
+            add_to_top: true
+            summary: '{{fields.prenom}} — {{fields.artiste}}, {{fields.titre}}'
+            fields:
+              - { name: prenom, label: Prénom du visiteur, widget: string, hint: Tel qu'il l'a écrit dans le formulaire. }
+              - { name: titre, label: Titre du morceau, widget: string }
+              - { name: artiste, label: Artiste, widget: string }
+              - name: spotify
+                label: Lien du morceau sur Spotify (conseillé)
+                widget: string
+                required: false
+                pattern: ['^$|open\.spotify\.com/(intl-[a-z]{2}/)?track/', 'Colle un lien de morceau Spotify (open.spotify.com/track/…)']
+                hint: Si l'e-mail de la reco a un lien Spotify (champ « lien »), colle-le ici. Sinon, laisse vide : Spotify cherche le morceau par titre et artiste.
+              - { name: ajoute, label: Ajouté le, widget: datetime, default: '{{now}}', hint: Sert à l'ordre (la plus récente en premier). }
+
   - name: reglages
     label: Réglages du site
     description: Les infos utilisées un peu partout sur le site.
