@@ -8,15 +8,20 @@ import VideoLive from './VideoLive.astro';
 import Bouton from './Bouton.astro';
 import { accueil } from '../data/textes';
 import { lives } from '../data/lives';
+import { infosVideo, dateFr } from '../lib/youtube';
 const t = accueil.lives;
-const [une, ...autres] = lives;
-const suivants = autres.slice(0, 3);
+// nom de la chaîne et date de publication lus sur YouTube au build (voir src/lib/youtube.ts)
+const affiches = await Promise.all(lives.slice(0, 4).map(async (l) => ({ ...l, yt: await infosVideo(l.youtube) })));
+const [une, ...suivants] = affiches;
 const nom = (l: { artiste: string; titre: string }) => `${l.artiste} — ${l.titre}`;
 const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
-// ligne « chaîne » : l'émission ou le lieu (1er morceau de « lieu »), puis la suite + l'année
-const chaine = (l: { lieu: string; annee: number }) => { const [premier, ...reste] = l.lieu.split(' · ').filter(Boolean); return { nom: premier || t.chaine, sous: [...reste, l.annee].filter(Boolean).join(' · ') }; };
+// ligne « chaîne » (Figma) : le nom de la chaîne YouTube + la date de publication.
+// Si YouTube n'a pas répondu au build : le lieu et l'année saisis dans l'admin.
+type Affiche = (typeof affiches)[number];
+const chaine = (l: Affiche) => ({ nom: l.yt.chaine ?? (l.lieu || t.chaine), sous: dateFr(l.yt.date) ?? (l.yt.chaine ? infos(l) : String(l.annee)) });
+const meta = (l: Affiche) => { const c = chaine(l); return [c.nom, c.sous].filter(Boolean).join(' · '); };
 const yt = (id: string) => `https://www.youtube.com/watch?v=${id}`;
-const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: infos(l), mot: l.mot, chaine: chaine(l) });
+const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: meta(l), mot: l.mot, chaine: chaine(l) });
 ---
 {une && (
 <section class="section conteneur lives-accueil" aria-labelledby="titre-lives-accueil" data-lives-accueil>
@@ -27,7 +32,7 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
       <VideoLive youtube={une.youtube} titre={nom(une)} grand class="lecteur" />
       <h3 class="titre-h3" data-champ="nom">{nom(une)}</h3>
       <div class="chaine">
-        <span class="avatar" aria-hidden="true">R</span>
+        <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" data-champ="avatar" /></span>
         <span class="qui"><span class="texte-label" data-champ="chaine">{chaine(une).nom}</span><span class="texte-legende texte-secondaire" data-champ="chaine-sous">{chaine(une).sous}</span></span>
         <Bouton style="lien" href={yt(une.youtube)} target="_blank" rel="noopener" data-champ="youtube">{t.voirYoutube}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
       </div>
@@ -42,7 +47,7 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
             <li>
               <button type="button" class="suivant" data-suivant={donnees(l)} aria-label={`Lire : ${nom(l)}`}>
                 <span class="vignette"><img src={`/lives/vignettes/${l.youtube}.jpg`} alt="" loading="lazy" decoding="async" width="320" height="180" /><span class="rond" aria-hidden="true"></span></span>
-                <span class="textes"><span class="texte-label nom">{nom(l)}</span><span class="texte-legende texte-secondaire">{infos(l)}</span></span>
+                <span class="textes"><span class="texte-label nom">{nom(l)}</span><span class="texte-legende texte-secondaire">{meta(l)}</span></span>
               </button>
             </li>
           ))}
@@ -71,6 +76,7 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
     // le grand lecteur prend le live choisi
     p.dataset.principal = JSON.stringify(nouveau);
     p.querySelector('[data-champ="nom"]')!.textContent = nouveau.nom;
+    p.querySelector<HTMLImageElement>('[data-champ="avatar"]')!.src = `/lives/avatars/${nouveau.youtube}.jpg`;
     p.querySelector('[data-champ="chaine"]')!.textContent = nouveau.chaine.nom;
     p.querySelector('[data-champ="chaine-sous"]')!.textContent = nouveau.chaine.sous;
     p.querySelector('[data-champ="mot"]')!.textContent = nouveau.mot;
@@ -96,7 +102,10 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
   .avatar {
     flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
     background: var(--couleur-fond-image); font-family: var(--police-lettrine); font-size: 1.75rem; line-height: 1; padding-top: 4px;
+    position: relative; overflow: hidden;
   }
+  /* photo de la chaîne par-dessus la lettrine (qui reste visible si la photo manque) */
+  .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .qui { flex: 1; min-width: 0; display: grid; gap: 2px; }
   .description { margin: 0; padding-block: var(--espace-md); }
 
