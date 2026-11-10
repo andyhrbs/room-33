@@ -140,9 +140,17 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .ouverture-allumee { filter: drop-shadow(0 4px 8px rgb(255 217 160 / 0.9)); }
   .reflets { opacity: 0.28; transition: opacity 0.35s var(--courbe-standard); }
   .allumee .reflets { opacity: 1; }
-  /* survol / focus : une lueur frémit dans le verre */
-  .lampe:hover .dome-allume, .lampe:focus-visible .dome-allume { opacity: 0.16; }
-  .allumee .lampe .dome-allume { opacity: 1; }
+  /* Survol (ou focus clavier) avant le clic — variante Figma « Survol » :
+     1. la lampe se balance, depuis le haut de l'écran (là où la tige est accrochée), puis s'immobilise ;
+     2. le verre se réchauffe (lueur dans le dôme, ouverture qui préchauffe) ;
+     3. le halo grossit et s'intensifie au lieu de pulser. */
+  .lampe svg { transform-origin: 50% calc(-1 * var(--haut)); }
+  .entree:not(.allumee) .lampe:hover svg, .clavier:not(.allumee) .lampe:focus-visible svg { animation: balancier 1.8s var(--courbe-standard); }
+  @keyframes balancier { 18% { rotate: 1.1deg; } 42% { rotate: -0.8deg; } 64% { rotate: 0.45deg; } 84% { rotate: -0.15deg; } }
+  .entree:not(.allumee) .lampe:hover .dome-allume, .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
+  .entree:not(.allumee) .lampe:hover .ouverture-allumee, .clavier:not(.allumee) .lampe:focus-visible .ouverture-allumee { opacity: 0.25; }
+  .entree:not(.allumee) .lampe:hover .reflets, .clavier:not(.allumee) .lampe:focus-visible .reflets { opacity: 0.6; }
+  .entree:not(.allumee):has(.lampe:hover) .halo, .clavier:not(.allumee):has(.lampe:focus-visible) .halo { animation: none; scale: 1.25; opacity: 1; }
   /* le contour de focus n'apparaît qu'à la navigation clavier (le focus initial est posé par le script) */
   .lampe:focus-visible { outline: none; }
   .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
@@ -151,5 +159,5 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     .entree { --k: 0.75; }
     .halo { width: 220px; height: 220px; }
   }
-  @media (prefers-reduced-motion: reduce) { .halo { animation: none; } .entree, .on, .reflets, .halo { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .halo, .lampe svg { animation: none !important; } .entree, .on, .reflets, .halo { transition: none; } }
 </style>
