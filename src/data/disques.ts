@@ -155,15 +155,27 @@ export const platineDetail = {
 
 // Le bac des visiteurs : les recos validées par Andyh, ajoutées dans /admin › Le bac des visiteurs
 // (la plus récente en premier). Spotify complète au build : pochette, année, lien.
-type EntreeReco = { prenom: string; titre: string; artiste: string; spotify?: string; ajoute?: string };
-export interface Reco { prenom: string; titre: string; artiste: string; annee?: number; pochette?: string; lien?: string; motif: Motif; ajoute: string }
+type EntreeReco = { prenom: string; type?: 'morceau' | 'album'; titre: string; artiste: string; spotify?: string; ajoute?: string };
+export interface Reco { prenom: string; type: 'morceau' | 'album'; titre: string; artiste: string; annee?: number; pochette?: string; lien?: string; motif: Motif; ajoute: string }
 const entreesRecos = ((donneesVisiteurs as { recos?: EntreeReco[] }).recos ?? [])
-  .map((r, i) => ({ ...r, cle: String(i), spotifyId: r.spotify?.match(/track\/([A-Za-z0-9]{22})/)?.[1] }));
-const infosRecos = await infosTitres(entreesRecos);
+  .map((r, i) => {
+    // le lien décide s'il est là (track / album), sinon le champ « type » de l'admin
+    const lien = r.spotify?.match(/(track|album)\/([A-Za-z0-9]{22})/);
+    const type: 'morceau' | 'album' = lien ? (lien[1] === 'album' ? 'album' : 'morceau') : r.type === 'album' ? 'album' : 'morceau';
+    return { ...r, type, cle: String(i), spotifyId: lien?.[2] };
+  });
+// morceaux : Spotify « tracks » ; albums : comme les disques du site (pochette, année, lien)
+const infosRecos = await infosTitres(entreesRecos.filter((r) => r.type === 'morceau'));
+const infosRecosAlbums = await infosAlbums(entreesRecos.filter((r) => r.type === 'album'));
 export const recos: Reco[] = entreesRecos
   .map((r, i) => {
+    const base = { prenom: r.prenom, type: r.type, motif: motifs[i % motifs.length], ajoute: r.ajoute ?? '1970-01-01' };
+    if (r.type === 'album') {
+      const a = infosRecosAlbums.get(r.cle);
+      return { ...base, titre: r.titre, artiste: r.artiste, annee: a?.annee, pochette: a?.pochette, lien: a?.lienSpotify ?? (r.spotify || undefined) };
+    }
     const s = infosRecos.get(r.cle);
-    return { prenom: r.prenom, titre: s?.titre ?? r.titre, artiste: s?.artiste ?? r.artiste, annee: s?.annee, pochette: s?.pochette, lien: s?.lienSpotify ?? (r.spotify || undefined), motif: motifs[i % motifs.length], ajoute: r.ajoute ?? '1970-01-01' };
+    return { ...base, titre: s?.titre ?? r.titre, artiste: s?.artiste ?? r.artiste, annee: s?.annee, pochette: s?.pochette, lien: s?.lienSpotify ?? (r.spotify || undefined) };
   })
   .sort((a, b) => b.ajoute.localeCompare(a.ajoute));
 

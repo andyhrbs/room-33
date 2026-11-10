@@ -27,6 +27,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       <input type="hidden" name="son" data-champ="son" />
       <input type="hidden" name="lien" data-champ="lien" />
       <input type="hidden" name="spotify_id" data-champ="spotify_id" />
+      <input type="hidden" name="type" data-champ="type" />
       <input type="hidden" name="page" data-champ="page" />
 
       <fieldset>
@@ -72,7 +73,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   <li>
     <button type="button" class="resultat" aria-pressed="false">
       <span class="vignette"><img alt="" width="48" height="48" loading="lazy" /></span>
-      <span class="infos"><span class="texte-label titre"></span><span class="texte-legende texte-secondaire meta"></span></span>
+      <span class="infos"><span class="texte-label titre"></span><span class="ligne-meta"><span class="etiquette texte-legende"></span><span class="texte-legende texte-secondaire meta"></span></span></span>
       <span class="action texte-bouton"></span>
     </button>
   </li>
@@ -80,7 +81,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 
 <script>
   import { tiroir as t } from '../data/textes';
-  type Son = { id?: string; titre: string; artiste: string; annee?: string; pochette?: string | null; lien?: string | null };
+  type Son = { type?: 'morceau' | 'album'; id?: string; titre: string; artiste: string; annee?: string; pochette?: string | null; lien?: string | null };
 
   const $ = <T extends Element>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
   const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -168,9 +169,11 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       b.setAttribute('aria-pressed', String(actif));
       b.classList.toggle('est-choisi', actif);
       li.querySelector('.titre')!.textContent = s.titre;
+      const etiquette = li.querySelector<HTMLElement>('.etiquette')!;
+      if (s.type) etiquette.textContent = s.type === 'album' ? t.album : t.morceau; else etiquette.remove();
       li.querySelector('.meta')!.textContent = [s.artiste, s.annee].filter(Boolean).join(' · ');
       li.querySelector('.action')!.innerHTML = actif ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 14L9 17L18 6"/></svg> ${t.choisi}` : t.choisir;
-      b.setAttribute('aria-label', `${actif ? t.choisi : t.choisir} : ${s.titre}, ${s.artiste}`);
+      b.setAttribute('aria-label', `${actif ? t.choisi : t.choisir} : ${s.type === 'album' ? `${t.album} ` : ''}${s.titre}, ${s.artiste}`);
       const img = li.querySelector('img')!;
       if (s.pochette) { img.src = s.pochette; img.onerror = () => img.remove(); } else img.remove();
       return li;
@@ -180,7 +183,8 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     choisi = s;
     const f = $<HTMLFormElement>('[data-form-reco]')!;
     const champ = (n: string) => $<HTMLInputElement>(`[data-champ="${n}"]`, f)!;
-    champ('son').value = s.titre === t.lienColle ? `${t.lienColle} (${s.artiste})` : `${s.titre} — ${s.artiste}`;
+    champ('son').value = s.titre === t.lienColle ? `${t.lienColle} (${s.artiste})` : `${s.type === 'album' ? `${t.album} : ` : ''}${s.titre} — ${s.artiste}`;
+    champ('type').value = s.type === 'album' ? 'album' : s.type === 'morceau' ? 'morceau' : '';
     champ('lien').value = s.lien ?? '';
     champ('spotify_id').value = s.id ?? '';
     erreurChoix(false);
@@ -328,6 +332,10 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .vignette { width: 48px; height: 48px; border-radius: var(--rayon-pochette); overflow: hidden; background: var(--couleur-fond-image); box-shadow: 0 6px 14px rgb(0 0 0 / 0.35); }
   .vignette img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .infos { display: grid; min-width: 0; }
+  /* étiquette « Morceau » / « Album » : petite pastille devant l'artiste */
+  .ligne-meta { display: flex; align-items: center; gap: var(--espace-xs); min-width: 0; }
+  .etiquette { flex: none; padding: 0 var(--espace-xs); border-radius: var(--rayon-pilule); background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal); line-height: 1.6; }
+  .ligne-meta .meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .infos > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .action { display: inline-flex; align-items: center; gap: var(--espace-2xs); white-space: nowrap; }
   .est-choisi .action :global(svg) { color: var(--couleur-accent-defaut); }

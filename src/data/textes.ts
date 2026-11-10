@@ -82,9 +82,9 @@ export const reco = {
 // ---------- Tiroir « Recommandez-moi un son » (s'ouvre de partout) ----------
 export const tiroir = {
   titre: 'Recommandez-moi un son',
-  intro: 'Un son qui pourrait me plaire ? Cherchez-le, choisissez-le, envoyez. Je l’écoute vraiment.',
+  intro: 'Un morceau ou un album qui pourrait me plaire ? Cherchez-le, choisissez-le, envoyez. Je l’écoute vraiment.',
   etape1: '1 · Votre son',
-  champ: 'Cherchez un titre ou un artiste',
+  champ: 'Cherchez un morceau, un album ou un artiste',
   aideLien: 'ou collez un lien Spotify, Apple Music, Deezer ou YouTube',
   etape2: '2 · Vous (facultatif)',
   prenom: 'Votre prénom',
@@ -96,6 +96,8 @@ export const tiroir = {
   choisir: 'Choisir',
   choisi: 'Choisi',
   lienColle: 'Lien collé',
+  morceau: 'Morceau',
+  album: 'Album',
   recherche: 'Recherche…',
   aucun: 'Aucun son trouvé. Essayez avec le nom de l’artiste, ou collez un lien.',
   erreurRecherche: 'La recherche ne répond pas. Réessayez, ou collez un lien.',

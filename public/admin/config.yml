@@ -215,7 +215,7 @@ collections:
 
   - name: visiteurs
     label: Le bac des visiteurs
-    description: Les recos reçues par e-mail (formulaire « Recommandez-moi un son ») que tu as validées. Spotify ajoute la pochette et l'année.
+    description: Les recos (morceaux ou albums) reçues par e-mail (formulaire « Recommandez-moi un son ») que tu as validées. Spotify ajoute la pochette et l'année.
     files:
       - name: recos
         label: Les recos validées
@@ -227,17 +227,25 @@ collections:
             label_singular: reco
             widget: list
             add_to_top: true
-            summary: '{{fields.prenom}} — {{fields.artiste}}, {{fields.titre}}'
+            summary: '{{fields.prenom}} — {{fields.artiste}}, {{fields.titre}} ({{fields.type}})'
             fields:
               - { name: prenom, label: Prénom du visiteur, widget: string, hint: Tel qu'il l'a écrit dans le formulaire. }
-              - { name: titre, label: Titre du morceau, widget: string }
+              - name: type
+                label: Morceau ou album
+                widget: select
+                default: morceau
+                options:
+                  - { label: Morceau, value: morceau }
+                  - { label: Album, value: album }
+                hint: "Repris de l'e-mail de la reco (champ « type »)."
+              - { name: titre, label: Titre (du morceau ou de l'album), widget: string }
               - { name: artiste, label: Artiste, widget: string }
               - name: spotify
-                label: Lien du morceau sur Spotify (conseillé)
+                label: Lien Spotify (conseillé)
                 widget: string
                 required: false
-                pattern: ['^$|open\.spotify\.com/(intl-[a-z]{2}/)?track/', 'Colle un lien de morceau Spotify (open.spotify.com/track/…)']
-                hint: "Si l'e-mail de la reco a un lien Spotify (champ « lien »), colle-le ici. Sinon, laisse vide : Spotify cherche le morceau par titre et artiste."
+                pattern: ['^$|open\.spotify\.com/(intl-[a-z]{2}/)?(track|album)/', 'Colle un lien Spotify de morceau ou d’album (open.spotify.com/track/… ou /album/…)']
+                hint: "Si l'e-mail de la reco a un lien Spotify (champ « lien »), colle-le ici. Sinon, laisse vide : Spotify cherche par titre et artiste."
               - { name: ajoute, label: Ajouté le, widget: datetime, default: '{{now}}', hint: Sert à l'ordre (la plus récente en premier). }
 
   - name: reglages
