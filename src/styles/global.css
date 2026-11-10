@@ -141,6 +141,7 @@ body.avec-lecteur { padding-bottom: 5.5rem; }
   transition-delay: calc(var(--rang, 0) * var(--decalage-cascade)) !important;
 }
 [data-apparition].apparu { opacity: 1; transform: none; }
+[data-apparition="fondu"] { transform: none; }
 
 /* B · Transition entre les pages : l'ancienne s'efface sous un voile brun, la nouvelle se pose.
    Le menu et la mini-platine restent en place (noms de transition à part). */

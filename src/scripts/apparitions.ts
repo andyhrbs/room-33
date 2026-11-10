@@ -32,7 +32,11 @@ function preparer() {
     for (const el of choisis) {
       const r = el.getBoundingClientRect();
       if (r.top < innerHeight && r.bottom > 0 && r.height > 0) continue; // déjà visible au chargement
-      el.dataset.apparition = '';
+      // dans une rangée qui défile à l'horizontale, un bloc décalé vers le bas ferait apparaître une barre
+      // de défilement verticale : là, simple fondu, sans déplacement
+      const parent = el.parentElement;
+      const defile = parent && /auto|scroll/.test(getComputedStyle(parent).overflowX);
+      el.dataset.apparition = defile ? 'fondu' : '';
       aSurveiller.push(el);
     }
   }
