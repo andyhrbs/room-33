@@ -1,0 +1,62 @@
+---
+// Bouton « retour » qui reste à portée de main : dès que le retour de la page (dans le hero, ou le fil
+// d'Ariane de la fiche disque) sort de l'écran par le haut, une pastille fixe apparaît sous la nav,
+// alignée sur la grille. Ordi et mobile. Elle disparaît quand on remonte jusqu'au retour d'origine.
+// Sur les pages à hero, le retour reste collé dans le hero : la pastille apparaît quand le rideau le recouvre.
+// L'élément d'origine porte [data-retour-origine].
+import Icone from './Icone.astro';
+interface Props { href: string; texte: string }
+const { href, texte } = Astro.props;
+---
+<a class="retour-flottant texte-petit" href={href} data-retour-flottant aria-hidden="true" tabindex="-1">
+  <Icone nom="fleche-gauche" taille={20} />
+  <span>{texte}</span>
+</a>
+
+<script>
+  // Visible quand le retour d'origine n'est plus lisible : sorti par le haut (sous la nav),
+  // ou recouvert par le « rideau » (les héros des pages intérieures restent collés et se font recouvrir).
+  let enAttente = false;
+  const maj = () => {
+    enAttente = false;
+    const flottant = document.querySelector<HTMLElement>('[data-retour-flottant]');
+    const origine = document.querySelector<HTMLElement>('[data-retour-origine]');
+    if (!flottant || !origine) return;
+    const o = origine.getBoundingClientRect();
+    const rideau = document.querySelector<HTMLElement>('.rideau')?.getBoundingClientRect();
+    const oui = o.bottom < 80 || (!!rideau && rideau.top < o.bottom);
+    if (flottant.classList.contains('visible') === oui) return;
+    flottant.classList.toggle('visible', oui);
+    // visible = vrai lien pour le clavier et les lecteurs d'écran ; caché = ignoré (pas de doublon)
+    flottant.setAttribute('aria-hidden', String(!oui));
+    flottant.tabIndex = oui ? 0 : -1;
+  };
+  const planifier = () => { if (!enAttente) { enAttente = true; requestAnimationFrame(maj); } };
+  addEventListener('scroll', planifier, { passive: true });
+  addEventListener('resize', planifier);
+  document.addEventListener('astro:page-load', planifier);
+</script>
+
+<style>
+  .retour-flottant {
+    position: fixed; z-index: 40;
+    top: calc(72px + var(--espace-sm));
+    /* aligné sur le bord gauche de la grille (conteneur de 1440 px centré) */
+    left: max(var(--grille-marge), calc((100vw - var(--grille-largeur-max)) / 2 + var(--grille-marge)));
+    display: inline-flex; align-items: center; gap: var(--espace-xs);
+    min-height: 44px; padding: 0 var(--espace-md) 0 var(--espace-sm);
+    border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    background: rgb(31 21 14 / 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: var(--couleur-texte-principal); text-decoration: none; box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: opacity var(--duree-normal) var(--courbe-sortie), transform var(--duree-normal) var(--courbe-sortie), background-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .retour-flottant.visible { opacity: 1; transform: none; pointer-events: auto; }
+  .retour-flottant :global(.icone) { color: var(--couleur-accent-defaut); }
+  @media (hover: hover) { .retour-flottant:hover { background: var(--couleur-fond-tonal); } }
+  .retour-flottant:active { transform: scale(0.96); }
+  .retour-flottant:focus-visible { border-radius: var(--rayon-pilule); }
+  /* mobile : la nav fait 60 px (68 px une fois défilée) */
+  @media (max-width: 63.99rem) { .retour-flottant { top: calc(68px + var(--espace-xs)); } }
+  @media (prefers-reduced-motion: reduce) { .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; } }
+</style>

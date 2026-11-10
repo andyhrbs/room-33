@@ -1,6 +1,7 @@
 ---
 // Hero des pages intérieures : gros plan de la pièce, retour, fil d'Ariane, titre avec lettrine.
 import Bouton from './Bouton.astro';
+import RetourFlottant from './RetourFlottant.astro';
 import { images, type Recadrage } from '../data/images';
 type Etape = string | { texte: string; href?: string };
 interface Props { image?: string | null; recadrage?: Recadrage; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string }
@@ -15,7 +16,7 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
 ---
 <header class="hero-page hero-anime" style={image ? `--image: url('${image}'); --position: ${position}; --taille: ${taille}` : undefined}>
   <div class="conteneur contenu">
-    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour">{retour}</Bouton>
+    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour" data-retour-origine>{retour}</Bouton>
     <div class="titres">
       <nav aria-label="Fil d’Ariane" class="seulement-ordi">
         <ol role="list" class="ariane texte-petit">
@@ -42,6 +43,8 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
     </div>
   </div>
 </header>
+<!-- hors du hero (qui bouge au défilement) : sinon la position fixe ne tiendrait pas -->
+<RetourFlottant href="/" texte={retour} />
 <style>
   .hero-page {
     position: relative; display: flex; align-items: flex-end;
