@@ -55,7 +55,6 @@ export const accueil = {
   accroche: 'Installez-vous, fouillez dans mes bacs, écoutez un extrait et recommandez-moi un son.',
   accrocheMobile: 'Installez-vous, fouillez dans mes bacs.',
   entrer: 'Entrer dans les bacs',
-  indice: 'Ou cliquez sur un objet de la pièce pour entrer.',
   // Points posés sur les objets de la photo (positions en % de l'image ordi, à recaler sur la photo finale)
   objets: [
     { nom: 'Le mur de pochettes', explication: 'Mes disques préférés, encadrés.', href: '/top', lien: 'Le Top', x: '50%', y: '24%', cote: 'droite' },

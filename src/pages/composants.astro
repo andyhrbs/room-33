@@ -12,7 +12,6 @@ import CarteDisque from '../components/CarteDisque.astro';
 import LigneTracklist from '../components/LigneTracklist.astro';
 import Ecoute from '../components/Ecoute.astro';
 import MiniPlatine from '../components/MiniPlatine.astro';
-import PointPiece from '../components/PointPiece.astro';
 import PiedDePage from '../components/PiedDePage.astro';
 
 const etats = ['Défaut', 'Survol', 'Pressé', 'Focus', 'Désactivé'];
@@ -107,16 +106,6 @@ const motifs = ['cercles', 'bandes', 'arc', 'lune', 'points', 'croix'] as const;
       <p class="texte-petit texte-secondaire">Le son et le choix de l’app arrivent au Sprint 4.</p>
     </section>
 
-    <section aria-labelledby="t-point">
-      <h2 id="t-point" class="titre-h3">Point de la pièce</h2>
-      <div class="scene">
-        <PointPiece nom="La platine" explication="Ce que j’écoute en ce moment." href="#" x="22%" y="45%" />
-        <PointPiece nom="Les bacs" explication="Mes disques, par genre et par humeur." href="#" x="55%" y="62%" />
-        <PointPiece nom="Le piano" explication="Qui je suis." href="#" x="85%" y="40%" cote="gauche" />
-        <p class="texte-legende texte-secondaire legende-scene">Fond provisoire : l’image de la pièce arrive au Sprint 3.</p>
-      </div>
-    </section>
-
     <section aria-labelledby="t-mini">
       <h2 id="t-mini" class="titre-h3">Mini-platine</h2>
       <MiniPlatine visible fixe={false} />
@@ -171,15 +160,6 @@ const motifs = ['cercles', 'bandes', 'arc', 'lune', 'points', 'croix'] as const;
   .grille-pochettes li { display: grid; gap: var(--espace-sm); }
   .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 15.625rem)); gap: var(--espace-xl) var(--grille-gouttiere); }
   .tracklist { max-width: 37.5rem; }
-
-  .scene {
-    position: relative; height: 22rem; border-radius: var(--rayon-bloc); overflow: hidden;
-    background:
-      radial-gradient(40% 50% at 22% 45%, rgb(240 122 34 / 0.18), transparent 70%),
-      radial-gradient(35% 45% at 85% 40%, rgb(240 122 34 / 0.12), transparent 70%),
-      linear-gradient(180deg, var(--brun-950), var(--noyer-500) 140%);
-  }
-  .legende-scene { position: absolute; left: var(--espace-md); bottom: var(--espace-md); }
 
   .cadre-nav { position: relative; border: var(--trait-filet) solid var(--couleur-bordure-discrete); border-radius: var(--rayon-bloc); overflow: hidden; }
   .fond-photo { background: linear-gradient(90deg, var(--noyer-500), var(--brun-800)); }

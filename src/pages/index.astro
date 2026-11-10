@@ -4,7 +4,6 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
 import Bouton from '../components/Bouton.astro';
-import PointPiece from '../components/PointPiece.astro';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import CarteDisque from '../components/CarteDisque.astro';
@@ -26,22 +25,16 @@ const suivants = reste.slice(0, 4);
   <Nav />
 
   <main class="ambiance">
-    <!-- Hero : la pièce, avec les points sur les objets -->
+    <!-- Hero : la pièce en plein écran, le titre géant et une phrase (les points sur les objets ont été retirés) -->
     <section class="hero" aria-labelledby="titre-accueil"
       style={[
         images.pieceOrdi && `--image-ordi: url('${images.pieceOrdi}')`,
         images.pieceMobile && `--image-mobile: url('${images.pieceMobile}')`,
       ].filter(Boolean).join('; ') || undefined}>
-      <div class="points seulement-ordi" aria-label="Les objets de la pièce" role="group">
-        {accueil.objets.map((o) => (
-          <PointPiece nom={o.nom} explication={o.explication} href={o.href} x={o.x} y={o.y} cote={o.cote as 'droite' | 'gauche'} />
-        ))}
-      </div>
       <div class="conteneur contenu">
         <div class="accroche">
           <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
           <Bouton style="lien" href="/bacs">{accueil.entrer}</Bouton>
-          <p class="texte-legende texte-secondaire seulement-ordi">{accueil.indice}</p>
         </div>
         <h1 id="titre-accueil" class="titre-hero">{accueil.titre}</h1>
       </div>
@@ -144,7 +137,6 @@ const suivants = reste.slice(0, 4);
   @media (max-width: 63.99rem) {
     .hero { min-height: 100svh; background: var(--voile), var(--image-mobile, var(--image-ordi, var(--provisoire))); background-size: cover; background-position: center; }
   }
-  .points { position: absolute; inset: 0; }
   .contenu { position: relative; display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-4xl); pointer-events: none; } /* Figma : 96 px en bas (ordi) */
   .contenu > * { pointer-events: auto; }
   .accroche { display: grid; justify-items: start; gap: 0; max-width: 25rem; } /* Figma : éléments collés (le bouton a ses propres marges) */
