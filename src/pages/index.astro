@@ -12,6 +12,7 @@ import LigneTracklist from '../components/LigneTracklist.astro';
 import EnTeteSection from '../components/EnTeteSection.astro';
 import BandeauGenres from '../components/BandeauGenres.astro';
 import ModuleReco from '../components/ModuleReco.astro';
+import Entree from '../components/Entree.astro';
 import { accueil } from '../data/textes';
 import { bacs, top, morceauDuJour, platine, genres, detailBac } from '../data/disques';
 import { images } from '../data/images';
@@ -21,6 +22,7 @@ const [premier, ...reste] = top;
 const suivants = reste.slice(0, 4);
 ---
 <Base>
+  <Entree />
   <Nav />
 
   <main class="ambiance">

@@ -23,6 +23,16 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <title>{fullTitle}</title>
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
+    <!-- Entrée « Allumez la lampe » : déjà vue (ou animations réduites) → on ne l'affiche pas, sans flash -->
+    <script is:inline>
+      (function () {
+        var marquer = function () {
+          try { if (localStorage.getItem('room33-entree') || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('entree-vue'); } catch (e) { document.documentElement.classList.add('entree-vue'); }
+        };
+        marquer();
+        document.addEventListener('astro:after-swap', marquer);
+      })();
+    </script>
   </head>
   <body>
     <slot />

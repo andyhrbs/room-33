@@ -1,0 +1,92 @@
+---
+// 00 · L'entrée : « Allumez la lampe ». Écran noir, la lampe pulse ; au clic, la pièce s'éclaire
+// en cercle depuis la lampe. « Entrer directement » toujours visible. Une seule fois par visiteur
+// (mémorisé), sautée si le visiteur a demandé de réduire les animations. Maquette Figma « 00 · L'entrée ».
+import Bouton from './Bouton.astro';
+---
+<div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree">
+  <div class="centre">
+    <div class="halo" aria-hidden="true"></div>
+    <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer">
+      <span class="globe"></span>
+      <span class="pied" aria-hidden="true"></span>
+    </button>
+    <h2 id="titre-entree" class="titre-h1">Allumez la lampe</h2>
+    <p class="texte-corps"><span class="seulement-ordi">Cliquez sur la lampe pour entrer dans le disquaire.</span><span class="seulement-mobile">Touchez la lampe pour entrer dans le disquaire.</span></p>
+  </div>
+  <Bouton style="lien" class="direct" data-entrer-direct>Entrer directement</Bouton>
+</div>
+
+<script>
+  // Relancé à chaque arrivée sur l'accueil (navigation fluide) ; ne fait rien si l'entrée a déjà été vue.
+  const CLE = 'room33-entree';
+  const vue = () => { try { localStorage.setItem(CLE, '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active'); };
+  document.addEventListener('astro:page-load', () => {
+    const e = document.querySelector<HTMLElement>('[data-entree]');
+    if (!e || document.documentElement.classList.contains('entree-vue')) { e?.remove(); return; }
+    document.documentElement.classList.add('entree-active');
+    const lampe = e.querySelector<HTMLButtonElement>('[data-allumer]')!;
+    lampe.focus({ preventScroll: true });
+    const finir = () => { e.remove(); vue(); document.querySelector<HTMLElement>('#titre-accueil')?.setAttribute('tabindex', '-1'); document.querySelector<HTMLElement>('#titre-accueil')?.focus({ preventScroll: true }); };
+    // La pièce s'éclaire en cercle depuis le globe de la lampe
+    lampe.addEventListener('click', () => {
+      const r = lampe.querySelector('.globe')!.getBoundingClientRect();
+      e.style.setProperty('--cx', `${r.left + r.width / 2}px`);
+      e.style.setProperty('--cy', `${r.top + r.height / 2}px`);
+      e.classList.add('allumage');
+      e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
+      setTimeout(finir, 1800); // filet de sécurité
+    }, { once: true });
+    // Entrer directement : simple fondu
+    const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
+    e.querySelector('[data-entrer-direct]')!.addEventListener('click', direct, { once: true });
+    e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); });
+  });
+</script>
+
+<style>
+  @property --r { syntax: '<length>'; inherits: false; initial-value: 0px; }
+  :global(html.entree-vue) .entree { display: none; }
+  :global(html.entree-active) { overflow: hidden; }
+  .entree {
+    position: fixed; inset: 0; z-index: 100;
+    display: grid; grid-template-rows: 1fr auto; justify-items: center;
+    padding: var(--espace-xl) var(--grille-marge) var(--espace-4xl);
+    background:
+      radial-gradient(45% 35% at 50% 40%, rgb(240 122 34 / 0.22), transparent 100%),
+      radial-gradient(48% 18% at 47% 6%, rgb(194 54 27 / 0.13), transparent 100%),
+      radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.10), transparent 100%),
+      radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
+      var(--brun-950);
+    /* trou circulaire qui grandit depuis la lampe = la pièce s'éclaire */
+    --r: 0px;
+    -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
+    mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
+    transition: --r 1.4s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
+  }
+  .entree.allumage { --r: 150vmax; }
+  .entree.fondu { opacity: 0; }
+  .centre { position: relative; display: grid; justify-items: center; align-content: center; gap: var(--espace-lg); text-align: center; }
+  .halo {
+    position: absolute; top: -128px; left: 50%; width: 320px; height: 320px; transform: translateX(-50%);
+    border-radius: 50%; background: radial-gradient(circle, rgb(240 122 34 / 0.35), transparent 70%);
+    animation: pulse 2.6s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes pulse { 50% { transform: translateX(-50%) scale(1.12); opacity: 0.7; } }
+  .lampe {
+    position: relative; display: grid; justify-items: center; width: 96px; height: 190px;
+    border: 0; background: none; padding: 0; cursor: pointer;
+  }
+  .globe { width: 64px; height: 64px; margin-top: 16px; border-radius: 50%; background: var(--couleur-accent-defaut); box-shadow: 0 0 26px rgb(240 122 34 / 0.8); transition: transform var(--duree-rapide) var(--courbe-standard), box-shadow var(--duree-rapide) var(--courbe-standard); }
+  .pied { width: 4px; height: 110px; background: var(--noyer-500); }
+  .lampe:hover .globe, .lampe:focus-visible .globe { transform: scale(1.06); box-shadow: 0 0 40px rgb(240 122 34 / 0.95); }
+  .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 6px; border-radius: var(--rayon-bloc); }
+  .entree :global(.direct) { justify-self: center; }
+  @media (max-width: 63.99rem) {
+    .halo { width: 220px; height: 220px; top: -78px; }
+    .lampe { height: 150px; }
+    .pied { height: 70px; }
+    .entree { padding-bottom: var(--espace-3xl); }
+  }
+  @media (prefers-reduced-motion: reduce) { .halo { animation: none; } .entree { transition: none; } }
+</style>
