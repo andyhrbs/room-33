@@ -128,9 +128,8 @@ export const recos = ['Inès', 'Malik', 'Jade', 'Yanis', 'Léa', 'Sami', 'Chloé
   prenom, titre: 'Titre du morceau', artiste: 'Artiste', annee: 1970 + i * 3, motif: motifsRecos[i],
 }));
 
-// Le morceau du jour
+// Le morceau du moment (sans date : changé quand Andyh en a envie, il ne paraît jamais périmé)
 export const morceauDuJour = {
-  date: '30 octobre',
   titre: 'It Runs Through Me',
   disque: parSlug('tom-misch-geography'),
   avis: '« Deux phrases d’avis : pourquoi ce son aujourd’hui, ce qui me fait revenir dessus, la ligne de basse qui tue à 1:24. »',

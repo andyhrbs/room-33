@@ -40,12 +40,12 @@ const suivants = reste.slice(0, 4);
       </div>
     </section>
 
-    <!-- Le morceau du jour -->
+    <!-- Le morceau du moment -->
     <section class="morceau section" aria-labelledby="titre-morceau">
       <div class="conteneur grille-morceau">
         <Pochette motif={m.disque.motif} src={m.disque.pochette} alt={`Pochette de ${m.disque.titre}`} class="pochette-morceau" />
         <div class="texte-morceau">
-          <p class="texte-label">{accueil.morceau.surtitre} · {m.date}</p>
+          <p class="texte-label">{accueil.morceau.surtitre}</p>
           <h2 id="titre-morceau" class="titre-display">{m.titre}</h2>
           <p class="texte-corps-l texte-secondaire">{m.disque.artiste} — {m.disque.titre} ({m.disque.annee})</p>
           <p class="texte-avis"><span class="seulement-ordi">{m.avis}</span><span class="seulement-mobile">{m.avisCourt}</span></p>
@@ -128,7 +128,7 @@ const suivants = reste.slice(0, 4);
   .titre-hero { white-space: nowrap; }
   @media (max-width: 63.99rem) { .titre-hero { white-space: normal; } .contenu { gap: 1.25rem; padding-bottom: var(--espace-3xl); } .accroche { gap: 1.25rem; } } /* Figma mobile : 64 px en bas, 20 px d'écart */
 
-  /* ---------- Morceau du jour ---------- */
+  /* ---------- Morceau du moment ---------- */
   .morceau { background: var(--couleur-fond-bloc); }
   .grille-morceau { display: grid; grid-template-columns: minmax(0, 30rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: center; }
   .texte-morceau { display: grid; gap: var(--espace-md); justify-items: start; }

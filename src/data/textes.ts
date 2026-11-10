@@ -57,7 +57,7 @@ export const accueil = {
   accroche: 'Installez-vous, fouillez dans mes bacs, écoutez un extrait et recommandez-moi un son.',
   accrocheMobile: 'Installez-vous, fouillez dans mes bacs.',
   entrer: 'Entrer dans les bacs',
-  morceau: { surtitre: 'Le morceau du jour', voirFiche: 'Voir la fiche' },
+  morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir la fiche' },
   bacs: { surtitre: 'Les bacs', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
   platine: { surtitre: 'La platine', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes' },
   top: { surtitre: 'Le Top de la Room', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top complet' },
