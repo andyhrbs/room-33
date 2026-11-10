@@ -1,10 +1,9 @@
 ---
-// 00 · L'entrée : « Allumez la lampe ». Écran noir ; l'abat-jour de la lampe à arc est suspendu en haut,
-// centré, la tige chromée descend tout droit (on ne voit pas le pied). Au clic, la lampe s'allume puis la
-// pièce s'éclaire en cercle depuis son ouverture. « Entrer directement » toujours visible. Une seule fois
-// par visiteur (mémorisé), sautée si le visiteur a demandé de réduire les animations.
+// 00 · L'entrée : « Allumez la lampe ». Écran noir, sans texte visible : l'abat-jour de la lampe à arc
+// est suspendu au centre de l'écran, la tige chromée descend tout droit (on ne voit pas le pied). Au clic,
+// la lampe s'allume puis la pièce s'éclaire en cercle depuis son ouverture. Échap = entrer directement.
+// Une seule fois par visiteur (mémorisé), sautée si le visiteur a demandé de réduire les animations.
 // Maquette Figma « 00 · L'entrée » + composant « Lampe d'entrée — lampe à arc » (Éteinte / Allumée).
-import Bouton from './Bouton.astro';
 // abat-jour : dôme bombé à flancs presque droits, lèvre arrondie (même tracé que Figma, centré sur x = 160)
 const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 356 302 360 292 360 L 28 360 C 18 360 10 356 10 344 Z';
 ---
@@ -34,9 +33,9 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       <!-- lumière qui tombe (allumée seulement) -->
       <path class="on" d="M 24 354 L 296 354 L 400 560 L -80 560 Z" fill="url(#lp-faisceau)" filter="url(#lp-flou-faisceau)"/>
       <!-- tige chromée : descend tout droit du haut de l'écran -->
-      <rect x="157" y="-600" width="6" height="784" fill="url(#lp-chrome-eteint)"/>
-      <rect class="on" x="157" y="-600" width="6" height="784" fill="url(#lp-chrome-allume)"/>
-      <rect class="reflets" x="158" y="-600" width="1.2" height="784" fill="#fff" fill-opacity="0.55"/>
+      <rect x="157" y="-2000" width="6" height="2184" fill="url(#lp-chrome-eteint)"/>
+      <rect class="on" x="157" y="-2000" width="6" height="2184" fill="url(#lp-chrome-allume)"/>
+      <rect class="reflets" x="158" y="-2000" width="1.2" height="2184" fill="#fff" fill-opacity="0.55"/>
       <!-- douille + chapeau -->
       <rect x="147" y="178" width="26" height="16" rx="3" fill="url(#lp-chrome-eteint)"/>
       <rect class="on" x="147" y="178" width="26" height="16" rx="3" fill="url(#lp-chrome-allume)"/>
@@ -58,9 +57,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   <!-- textes retirés à l'écran pour une entrée plus immersive : seuls les lecteurs d'écran les lisent -->
   <div class="visuellement-cache">
     <h2 id="titre-entree">Allumez la lampe</h2>
-    <p>Activez la lampe pour entrer dans le disquaire.</p>
+    <p>Activez la lampe pour entrer dans le disquaire, ou appuyez sur Échap pour entrer directement.</p>
   </div>
-  <Bouton style="lien" class="direct" data-entrer-direct>Entrer directement</Bouton>
 </div>
 
 <script>
@@ -84,9 +82,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
       setTimeout(finir, 2200); // filet de sécurité
     }, { once: true });
-    // Entrer directement : simple fondu
+    // Échap = entrer directement : simple fondu
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
-    e.querySelector('[data-entrer-direct]')!.addEventListener('click', direct, { once: true });
     e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); if (ev.key === 'Tab') e.classList.add('clavier'); });
   });
 </script>
@@ -97,10 +94,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   :global(html.entree-active) { overflow: hidden; }
   .entree {
     position: fixed; inset: 0; z-index: 100; overflow: hidden;
-    display: grid; align-content: end; justify-items: center;
-    padding: var(--espace-xl) var(--grille-marge) var(--espace-4xl);
     background:
-      radial-gradient(45% 35% at 50% 40%, rgb(240 122 34 / 0.22), transparent 100%),
+      radial-gradient(45% 35% at 50% 52%, rgb(240 122 34 / 0.22), transparent 100%),
       radial-gradient(48% 18% at 47% 6%, rgb(194 54 27 / 0.13), transparent 100%),
       radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.10), transparent 100%),
       radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
@@ -110,12 +105,12 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent calc(var(--r) - 1px), #000 var(--r));
     mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent calc(var(--r) - 1px), #000 var(--r));
     transition: --r 1.4s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
-    /* lampe suspendue en haut, centrée : décalage vertical + échelle (ordi 1, mobile 0,75) */
-    --haut: -20px; --k: 1;
+    /* lampe suspendue, abat-jour centré sur l'écran dans les deux sens (centre du verre : y = 284 dans le dessin) ;
+       échelle : ordi 1, mobile 0,75 */
+    --k: 1; --haut: calc(50dvh - 284px * var(--k));
   }
   .entree.allumage { --r: 150vmax; }
   .entree.fondu { opacity: 0; }
-  .entree :global(.direct) { justify-self: center; }
 
   /* halo qui pulse, centré sur l'abat-jour (centre du verre : y = 279 dans le dessin) */
   .halo {
@@ -151,7 +146,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
 
   @media (max-width: 63.99rem) {
-    .entree { --haut: -15px; --k: 0.75; padding-bottom: var(--espace-3xl); }
+    .entree { --k: 0.75; }
     .halo { width: 220px; height: 220px; }
   }
   @media (prefers-reduced-motion: reduce) { .halo { animation: none; } .entree, .on, .reflets, .halo { transition: none; } }
