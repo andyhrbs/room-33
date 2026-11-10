@@ -57,10 +57,9 @@ const tailleIcone = 20;
     background: var(--couleur-accent-defaut);
     color: var(--couleur-texte-principal);
   }
-  /* Survol : ambre clair, texte foncé (choix Figma d'Andyh) */
-  .bouton--primaire:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
-  .bouton--primaire:disabled:hover { color: var(--couleur-texte-principal); }
-  .bouton--primaire:active { background: var(--couleur-accent-presse); transform: scale(0.98); }
+  /* Survol et pression : orange foncé, texte ivoire ; pressé = se rétrécit (Figma, Kit UI › Bouton) */
+  .bouton--primaire:hover { background: var(--couleur-accent-presse); }
+  .bouton--primaire:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
 
   /* Secondaire */
   .bouton--secondaire {
@@ -69,7 +68,7 @@ const tailleIcone = 20;
     background: var(--couleur-fond-tonal);
   }
   .bouton--secondaire:hover { background: var(--couleur-fond-tonal-survol); }
-  .bouton--secondaire:active { background: var(--couleur-fond-tonal-presse); transform: scale(0.98); }
+  .bouton--secondaire:active { background: var(--couleur-fond-tonal-presse); transform: scale(0.96); }
 
   /* Lien */
   .bouton--lien { padding: var(--espace-xs) 0; text-underline-offset: 0.3em; }

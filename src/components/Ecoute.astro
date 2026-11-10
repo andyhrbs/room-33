@@ -26,7 +26,7 @@ const { titre, artiste, type = 'titre' } = Astro.props;
     background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
     transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
   }
-  .lecture:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
+  .lecture:hover { background: var(--couleur-accent-presse); }
   .lecture:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
   .lecture :global(.i-pause) { display: none; }
   [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }

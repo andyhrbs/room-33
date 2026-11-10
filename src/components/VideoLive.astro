@@ -41,5 +41,6 @@ const { youtube, titre, grand = false, class: cls } = Astro.props;
     transition: transform var(--duree-rapide) var(--courbe-standard), background-color var(--duree-rapide) var(--courbe-standard);
   }
   .grand .rond { width: 72px; height: 72px; }
-  .lire:hover .rond { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); transform: scale(1.05); }
+  .lire:hover .rond { background: var(--couleur-accent-presse); }
+  .lire:active .rond { background: var(--couleur-accent-presse); transform: scale(0.96); }
 </style>

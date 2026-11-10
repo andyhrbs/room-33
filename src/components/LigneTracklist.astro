@@ -44,9 +44,11 @@ const Tag = href ? 'a' : 'div';
   .rond {
     width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
     border: var(--trait-filet) solid var(--couleur-bordure-defaut);
-    transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
   }
   .lecture:hover .rond { background: var(--couleur-fond-tonal); }
+  .lecture:active .rond { transform: scale(0.96); }
+  [data-etat='lecture'] .lecture:hover .rond { background: var(--couleur-accent-presse); border-color: var(--couleur-accent-presse); }
   .lecture :global(.i-pause) { display: none; }
   [data-etat='lecture'] .rond { background: var(--couleur-accent-defaut); border-color: var(--couleur-accent-defaut); }
   [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }

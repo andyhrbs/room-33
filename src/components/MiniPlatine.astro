@@ -84,8 +84,10 @@ const apps = [
     width: 44px; height: 44px; border: 0; padding: 0; border-radius: 50%;
     display: grid; place-items: center;
     background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal);
+    transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
   }
-  .lecture-pause:hover { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); }
+  .lecture-pause:hover { background: var(--couleur-accent-presse); }
+  .lecture-pause:active { background: var(--couleur-accent-presse); transform: scale(0.96); }
   .lecture-pause :global(.i-lecture) { display: none; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-lecture) { display: block; }
   .mini-platine:not([data-etat='lecture']) .lecture-pause :global(.i-pause) { display: none; }
