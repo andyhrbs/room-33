@@ -23,14 +23,14 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <title>{fullTitle}</title>
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
-    <!-- Entrée « Allumez la lampe » : déjà vue → on ne l'affiche pas, sans flash.
+    <!-- Entrée « Allumez la lampe » : une fois par visite (sessionStorage : revient dans un nouvel onglet / une nouvelle session, pas en changeant de page) ; déjà vue → pas de flash.
          Test : ajouter ?entree à l'adresse pour la revoir à chaque fois. -->
     <script is:inline>
       (function () {
         var marquer = function () {
           try {
-            if (/[?&]entree\b/.test(location.search)) { localStorage.removeItem('room33-entree'); document.documentElement.classList.remove('entree-vue'); return; }
-            if (localStorage.getItem('room33-entree')) document.documentElement.classList.add('entree-vue');
+            if (/[?&]entree\b/.test(location.search)) { sessionStorage.removeItem('room33-entree'); document.documentElement.classList.remove('entree-vue'); return; }
+            if (sessionStorage.getItem('room33-entree')) document.documentElement.classList.add('entree-vue');
           } catch (e) { document.documentElement.classList.add('entree-vue'); }
         };
         marquer();
