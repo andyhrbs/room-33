@@ -1,0 +1,53 @@
+{
+  "bacs": [
+    {
+      "nom": "Soul & R&B",
+      "type": "genre",
+      "motif": "bandes",
+      "description": "Des voix, du groove, et de la chaleur.",
+      "slug": "soul-rnb"
+    },
+    {
+      "nom": "Jazz",
+      "type": "genre",
+      "motif": "arc",
+      "description": "Le jazz d’hier et celui d’aujourd’hui.",
+      "slug": "jazz"
+    },
+    {
+      "nom": "Rap",
+      "type": "genre",
+      "motif": "lune",
+      "description": "Des textes et des prods qui restent.",
+      "slug": "rap"
+    },
+    {
+      "nom": "Indie",
+      "type": "genre",
+      "motif": "croix",
+      "description": "Des sons faits à la maison, qui ne ressemblent à rien d’autre.",
+      "slug": "indie"
+    },
+    {
+      "nom": "Afro",
+      "type": "genre",
+      "motif": "points",
+      "description": "Afrobeat, highlife, et tout ce qui fait bouger.",
+      "slug": "afro"
+    },
+    {
+      "nom": "Classique",
+      "type": "genre",
+      "motif": "cercles",
+      "description": "Le piano d’abord, et le reste.",
+      "slug": "classique"
+    },
+    {
+      "nom": "Bac de nuit",
+      "type": "humeur",
+      "motif": "points",
+      "description": "Pour les fins de soirée : des sons lents et chauds, qui laissent de la place à la basse.",
+      "slug": "bac-de-nuit"
+    }
+  ]
+}

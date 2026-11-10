@@ -1,11 +1,13 @@
 // ==========================================================================
-// Room 33 — Disques de DÉMONSTRATION (Sprint 3)
-// Artistes repris de tes écoutes Spotify, albums choisis par Claude pour
-// remplir les pages. Au Sprint 4, ce fichier est remplacé par tes vrais
-// disques (ajoutés depuis /admin, pochettes et infos via Spotify).
+// Room 33 — Les disques et les bacs, modifiables dans /admin :
+// - un fichier par disque dans src/data/cms/disques/ (rubrique « Les disques ») ;
+// - la liste des bacs dans src/data/cms/bacs.json (rubrique « Les bacs »).
+// Au build, Spotify complète chaque disque (pochette, année, label, pistes, lien de l'artiste).
+// Contenu actuel = DÉMO (mêmes disques qu'avant) ; les textes vides retombent sur les textes de maquette.
 // ==========================================================================
 import type { Motif } from '../components/types';
 import { infosAlbums, type Piste } from '../lib/catalogue';
+import donneesBacs from './cms/bacs.json';
 
 export interface Disque {
   slug: string;
@@ -13,25 +15,41 @@ export interface Disque {
   artiste: string;
   annee: number;
   genre: string;
-  motif: Motif;        // pochette de démo en attendant les vraies (Sprint 4)
+  motif: Motif;        // pochette de démo tant que Spotify n'a pas donné la vraie
   pochette?: string;   // URL de la vraie pochette (Spotify, au build)
   spotifyId?: string;  // identifiant Spotify de l'album (sinon retrouvé par titre + artiste)
   label?: string;
   lienSpotify?: string;
   lienArtiste?: string; // page de l'artiste sur Spotify (« Sa discographie »)
   pistes?: Piste[];
+  humeurs: string[];   // bacs d'humeur où ranger aussi le disque (ex. « Bac de nuit »)
+  ajoute: string;      // date d'ajout (ordre des disques, « mis à jour le » des bacs)
+  textes: TextesDisque; // ce qu'Andyh écrit dans l'admin (peut être vide)
+}
+export interface TextesDisque {
+  avis?: string; avisCourt?: string;
+  moment?: { temps?: string; texte?: string; texteCourt?: string };
+  credits?: { role: string; nom: string }[];
+  bio?: string; bioCourte?: string;
 }
 
-export const disques: Disque[] = [
-  { slug: 'dijon-absolutely', spotifyId: '4E691gbRgo2Zb6ToII2DWO', titre: 'Absolutely', artiste: 'Dijon', annee: 2021, genre: 'Soul & R&B', motif: 'bandes' },
-  { slug: 'daniel-caesar-freudian', spotifyId: '4E1XUBMTpLO7GpBzUo65Jp', titre: 'Freudian', artiste: 'Daniel Caesar', annee: 2017, genre: 'Soul & R&B', motif: 'lune' },
-  { slug: 'tom-misch-geography', spotifyId: '0hDnsNkxpMDZrpBlGjldtW', titre: 'Geography', artiste: 'Tom Misch', annee: 2018, genre: 'Indie', motif: 'arc' },
-  { slug: 'yussef-dayes-black-classical-music', spotifyId: '2A5yzYdLTVTLQaCp4CTKwG', titre: 'Black Classical Music', artiste: 'Yussef Dayes', annee: 2023, genre: 'Jazz', motif: 'points' },
-  { slug: 'mk-gee-two-star', titre: 'Two Star & the Dream Police', artiste: 'Mk.gee', annee: 2024, genre: 'Indie', motif: 'croix' },
-  { slug: 'jordan-ward-forward', titre: 'FORWARD', artiste: 'Jordan Ward', annee: 2023, genre: 'Soul & R&B', motif: 'cercles' },
-  { slug: 'khamari-a-brief-nirvana', spotifyId: '01bSLjnn8QGscvuDqccWFd', titre: 'A Brief Nirvana', artiste: 'Khamari', annee: 2022, genre: 'Soul & R&B', motif: 'arc' },
-  { slug: 'luidji-tristesse-business', titre: 'Tristesse Business : Saison 1', artiste: 'Luidji', annee: 2022, genre: 'Rap', motif: 'lune' },
-];
+type EntreeDisque = TextesDisque & { titre: string; artiste: string; genre: string; humeurs?: string[]; spotify?: string; annee?: number; ajoute?: string; motif?: Motif };
+const motifs: Motif[] = ['bandes', 'lune', 'arc', 'points', 'croix', 'cercles'];
+const fichiers = import.meta.glob<EntreeDisque>('./cms/disques/*.json', { eager: true, import: 'default' });
+
+export const disques: Disque[] = Object.entries(fichiers)
+  .map(([chemin, e], i) => ({
+    slug: chemin.split('/').pop()!.replace(/\.json$/, ''),
+    titre: e.titre, artiste: e.artiste, genre: e.genre,
+    annee: Number(e.annee) || 0,
+    motif: e.motif && motifs.includes(e.motif) ? e.motif : motifs[i % motifs.length],
+    // lien d'album Spotify collé dans l'admin → identifiant (sinon Spotify le retrouve par titre + artiste)
+    spotifyId: e.spotify?.match(/album\/([A-Za-z0-9]{22})/)?.[1],
+    humeurs: e.humeurs ?? [],
+    ajoute: e.ajoute ?? '1970-01-01',
+    textes: { avis: e.avis, avisCourt: e.avisCourt, moment: e.moment, credits: e.credits, bio: e.bio, bioCourte: e.bioCourte },
+  }))
+  .sort((a, b) => a.ajoute.localeCompare(b.ajoute)); // du plus ancien au plus récent
 
 // Au build : on complète chaque disque avec Spotify (pochette, année, label, pistes)
 const infos = await infosAlbums(disques.map((d) => ({ cle: d.slug, titre: d.titre, artiste: d.artiste, spotifyId: d.spotifyId })));
@@ -43,38 +61,45 @@ for (const d of disques) {
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
 
-// Bacs : par genre (rempli automatiquement) et par humeur (choisis à la main)
+// Bacs : par genre (rempli automatiquement avec le genre de chaque disque) et par humeur (disques qui le cochent)
 export interface Bac { slug: string; nom: string; type: 'genre' | 'humeur'; motif: Motif; description: string; disques: Disque[]; maj: string }
-const parGenre = (g: string) => disques.filter((d) => d.genre === g);
-const choix = (...slugs: string[]) => slugs.map(parSlug);
-const MAJ = '28 octobre 2026';
-export const bacs: Bac[] = [
-  { slug: 'soul-rnb', nom: 'Soul & R&B', type: 'genre', motif: 'bandes', description: 'Des voix, du groove, et de la chaleur.', disques: parGenre('Soul & R&B'), maj: MAJ },
-  { slug: 'jazz', nom: 'Jazz', type: 'genre', motif: 'arc', description: 'Le jazz d’hier et celui d’aujourd’hui.', disques: parGenre('Jazz'), maj: MAJ },
-  { slug: 'rap', nom: 'Rap', type: 'genre', motif: 'lune', description: 'Des textes et des prods qui restent.', disques: parGenre('Rap'), maj: MAJ },
-  { slug: 'indie', nom: 'Indie', type: 'genre', motif: 'croix', description: 'Des sons faits à la maison, qui ne ressemblent à rien d’autre.', disques: parGenre('Indie'), maj: MAJ },
-  { slug: 'afro', nom: 'Afro', type: 'genre', motif: 'points', description: 'Afrobeat, highlife, et tout ce qui fait bouger.', disques: parGenre('Afro'), maj: MAJ },
-  { slug: 'classique', nom: 'Classique', type: 'genre', motif: 'cercles', description: 'Le piano d’abord, et le reste.', disques: parGenre('Classique'), maj: MAJ },
-  { slug: 'bac-de-nuit', nom: 'Bac de nuit', type: 'humeur', motif: 'points', description: 'Pour les fins de soirée : des sons lents et chauds, qui laissent de la place à la basse.', disques: choix('daniel-caesar-freudian', 'khamari-a-brief-nirvana', 'dijon-absolutely', 'yussef-dayes-black-classical-music'), maj: MAJ },
-];
+const versSlug = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, 'n').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const dateMaj = (liste: Disque[]) => {
+  const plusRecent = liste.map((d) => d.ajoute).sort().pop();
+  const d = plusRecent ? new Date(plusRecent) : null;
+  return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
+};
+type EntreeBac = { nom: string; type?: string; motif?: Motif; description?: string; slug?: string };
+export const bacs: Bac[] = (donneesBacs.bacs as EntreeBac[]).map((b, i) => {
+  const type = b.type === 'humeur' ? 'humeur' : 'genre';
+  const liste = type === 'genre' ? disques.filter((d) => d.genre === b.nom) : disques.filter((d) => d.humeurs.includes(b.nom));
+  return { slug: b.slug || versSlug(b.nom), nom: b.nom, type, motif: b.motif && motifs.includes(b.motif) ? b.motif : motifs[i % motifs.length], description: b.description ?? '', disques: liste, maj: dateMaj(liste.length ? liste : disques) }; // bac vide : date du dernier disque ajouté
+});
 export const bacParSlug = (slug: string) => bacs.find((b) => b.slug === slug)!;
 export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}${b.type === 'humeur' ? ' · humeur' : ''}`;
 // Le bac d'un disque : son bac de genre
-export const bacDuDisque = (d: Disque) => bacs.find((b) => b.type === 'genre' && b.nom === d.genre)!;
+// (si son bac de genre a été supprimé dans l'admin : lien vers le premier bac, sans casser la page)
+export const bacDuDisque = (d: Disque) => bacs.find((b) => b.type === 'genre' && b.nom === d.genre) ?? { ...bacs[0], nom: d.genre || bacs[0].nom };
 // Numérotation façon vinyle : A1, A2, A3, B1…
 export const face = (i: number, parFace = 3) => `${String.fromCharCode(65 + Math.floor(i / parFace))}${(i % parFace) + 1}`;
 
-// Fiche disque : textes provisoires de la maquette (les tiens arrivent au Sprint 4)
+// Fiche disque : les textes saisis dans l'admin ; à défaut, les textes provisoires de la maquette
 export const fiche = (d: Disque) => {
   const i = disques.indexOf(d);
   const memeVeine = [...disques.filter((x) => x !== d && x.genre === d.genre), ...disques.filter((x) => x !== d && x.genre !== d.genre)].slice(0, 4);
+  const t = d.textes;
+  const credits = t.credits?.filter((c) => c.role && c.nom).map((c) => [c.role, c.nom] as [string, string]);
   return {
     reference: `DSQ-${String(i + 1).padStart(3, '0')}`,
-    avis: '« Ici, ton avis en 3 à 5 phrases, comme une note de pochette. Ce que ce disque te fait, quand tu l’écoutes, le morceau à écouter en premier si on ne connaît pas. »',
-    avisCourt: '« Ton avis en 3 à 5 phrases, comme une note de pochette. »',
-    moment: { temps: '1:24', texte: 'À 1:24, la voix décroche et tout le morceau s’envole. Le passage qui m’accroche, en deux ou trois phrases.', texteCourt: 'À 1:24, la voix décroche et tout le morceau s’envole.' },
-    credits: [['Claviers', 'Nom du pianiste'], ['Basse', 'Nom du bassiste'], ['Batterie', 'Nom du batteur'], ['Production', 'Nom du producteur']],
-    artiste: { bio: 'Deux lignes pour situer l’artiste : d’où il vient, ce qu’il a changé, par quel disque commencer.', bioCourte: 'Deux lignes pour situer l’artiste.' },
+    avis: t.avis || '« Ici, ton avis en 3 à 5 phrases, comme une note de pochette. Ce que ce disque te fait, quand tu l’écoutes, le morceau à écouter en premier si on ne connaît pas. »',
+    avisCourt: t.avisCourt || t.avis || '« Ton avis en 3 à 5 phrases, comme une note de pochette. »',
+    moment: {
+      temps: t.moment?.temps || '1:24',
+      texte: t.moment?.texte || 'À 1:24, la voix décroche et tout le morceau s’envole. Le passage qui m’accroche, en deux ou trois phrases.',
+      texteCourt: t.moment?.texteCourt || t.moment?.texte || 'À 1:24, la voix décroche et tout le morceau s’envole.',
+    },
+    credits: credits?.length ? credits : [['Claviers', 'Nom du pianiste'], ['Basse', 'Nom du bassiste'], ['Batterie', 'Nom du batteur'], ['Production', 'Nom du producteur']],
+    artiste: { bio: t.bio || 'Deux lignes pour situer l’artiste : d’où il vient, ce qu’il a changé, par quel disque commencer.', bioCourte: t.bioCourte || t.bio || 'Deux lignes pour situer l’artiste.' },
     memeVeine,
     precedent: disques[(i - 1 + disques.length) % disques.length],
     suivant: disques[(i + 1) % disques.length],
