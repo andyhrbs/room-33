@@ -184,7 +184,9 @@ async function choisirApp(m: Morceau) {
   dialogue.querySelector('[data-choix-morceau]')!.textContent = `${m.titre} — ${m.artiste}`;
   const boutons = dialogue.querySelectorAll<HTMLButtonElement>('[data-app]');
   boutons.forEach((b) => (b.disabled = true));
+  dialogue.classList.remove('ferme');
   dialogue.showModal();
+  dialogue.focus({ preventScroll: true }); // pas de contour sur la croix à l'ouverture au doigt
   const l = await liens(m);
   if (morceauChoix !== m) return;
   boutons.forEach((b) => (b.disabled = !l?.[b.dataset.app!]));
@@ -211,11 +213,23 @@ document.addEventListener('click', async (e) => {
     const l = await liens(morceauChoix);
     const url = l?.[choix.dataset.app!];
     if (url) window.open(url, '_blank', 'noopener');
-    document.querySelector<HTMLDialogElement>('[data-choix-app]')?.close();
+    fermerChoix();
     return;
   }
-  if (cible.closest('[data-fermer-choix]')) document.querySelector<HTMLDialogElement>('[data-choix-app]')?.close();
+  if (cible.closest('[data-fermer-choix]')) fermerChoix();
 });
+
+// Fenêtre « Écouter en entier sur… » : se referme en douceur (croix, fond, Échap, choix d'une app)
+function fermerChoix() {
+  const d = document.querySelector<HTMLDialogElement>('[data-choix-app]');
+  if (!d?.open || d.classList.contains('ferme')) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { d.close(); return; }
+  d.classList.add('ferme');
+  const fin = (e?: AnimationEvent) => { if (e && e.target !== d) return; d.removeEventListener('animationend', fin); d.classList.remove('ferme'); d.close(); };
+  d.addEventListener('animationend', fin);
+  setTimeout(() => { if (d.classList.contains('ferme')) fin(); }, 400);
+}
+document.addEventListener('cancel', (e) => { if ((e.target as Element).matches?.('[data-choix-app]')) { e.preventDefault(); fermerChoix(); } }, true);
 
 // Lecteur plein écran : se referme en glissant vers le bas
 function fermerPlein() {
@@ -276,7 +290,7 @@ document.addEventListener('cancel', (e) => { if ((e.target as Element).matches?.
 // Clic sur le fond de la fenêtre = fermer
 document.addEventListener('click', (e) => {
   const d = e.target as HTMLElement;
-  if (d instanceof HTMLDialogElement && d.matches('[data-choix-app]')) d.close();
+  if (d instanceof HTMLDialogElement && d.matches('[data-choix-app]')) fermerChoix();
 });
 
 // Après chaque navigation : remettre les bons états sur la nouvelle page

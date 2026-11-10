@@ -82,15 +82,15 @@ const apps = [
   </dialog>
 </aside>
 
-<dialog class="choix-app" data-choix-app aria-labelledby="titre-choix-app">
-  <div class="entete">
+<dialog class="choix-app" data-choix-app aria-labelledby="titre-choix-app" tabindex="-1">
+  <div class="entete" style="--i: 0">
     <h2 id="titre-choix-app" class="titre-h3">Écouter en entier sur…</h2>
     <button type="button" class="fermer" data-fermer-choix aria-label="Fermer"><Icone nom="fermer" taille={24} /></button>
   </div>
-  <p class="texte-petit texte-secondaire" data-choix-morceau></p>
+  <p class="texte-petit texte-secondaire" data-choix-morceau style="--i: 1"></p>
   <ul role="list" class="apps">
-    {apps.map((a) => (
-      <li><button type="button" class="app-choix texte-label" data-app={a.id} disabled>
+    {apps.map((a, i) => (
+      <li style={`--i: ${i + 2}`}><button type="button" class="app-choix texte-label" data-app={a.id} disabled>
         <span class="logo-app" aria-hidden="true">{a.logo && <img src={a.logo} alt="" width="28" height="28" />}</span>
         <span class="nom-app">{a.nom}</span>
         <Icone nom="fleche-droite" taille={20} />
@@ -257,4 +257,25 @@ const apps = [
   .logo-app img { width: 100%; height: 100%; object-fit: contain; }
   .app-choix:hover:not(:disabled) { color: var(--couleur-accent-defaut); }
   .app-choix:disabled { opacity: 0.4; cursor: default; }
+
+  /* Animations de la fenêtre (charte « feutré ») : elle monte doucement en grandissant un peu, le fond s'assombrit,
+     puis le contenu arrive en cascade (titre, morceau, chaque app). Les apps s'« allument » quand leurs liens arrivent. */
+  .choix-app[open] { animation: choix-entre 0.5s var(--courbe-douce); }
+  .choix-app[open]::backdrop { animation: choix-fondu 0.4s var(--courbe-standard); }
+  .choix-app[open] :is(.entete, [data-choix-morceau], .apps li) { animation: choix-ligne 0.6s var(--courbe-douce) both; animation-delay: calc(80ms + var(--i, 0) * 60ms); }
+  .choix-app.ferme { animation: choix-sort 0.22s var(--courbe-entree-sortie) forwards; }
+  .choix-app.ferme::backdrop { animation: choix-fondu 0.22s var(--courbe-entree-sortie) reverse forwards; }
+  @keyframes choix-entre { from { opacity: 0; transform: translateY(24px) scale(0.96); } }
+  @keyframes choix-sort { to { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  @keyframes choix-fondu { from { opacity: 0; } }
+  @keyframes choix-ligne { from { opacity: 0; transform: translateY(10px); } }
+  .app-choix { transition: opacity var(--duree-normal) var(--courbe-standard), color var(--duree-rapide) var(--courbe-standard); }
+  .app-choix :global(.icone) { transition: transform var(--duree-rapide) var(--courbe-standard); }
+  @media (hover: hover) { .app-choix:hover:not(:disabled) :global(.icone) { transform: translateX(4px); } }
+  .app-choix:active:not(:disabled) .logo-app { transform: scale(0.96); }
+  .choix-app:focus, .choix-app:focus-visible { outline: none; }
+  .fermer:focus-visible { border-radius: 50%; }
+  @media (prefers-reduced-motion: reduce) {
+    .choix-app[open], .choix-app[open]::backdrop, .choix-app.ferme, .choix-app.ferme::backdrop, .choix-app[open] :is(.entete, [data-choix-morceau], .apps li) { animation: none; }
+  }
 </style>
