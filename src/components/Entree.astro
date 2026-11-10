@@ -14,14 +14,14 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     <svg viewBox="0 0 320 430" overflow="visible" aria-hidden="true" focusable="false">
       <defs>
         <radialGradient id="lp-dome-eteint" cx="0.47" cy="0.42" r="0.56">
-          <stop offset="0" stop-color="#6a3a1e"/><stop offset="0.45" stop-color="#4a2614"/><stop offset="0.8" stop-color="#33190c"/><stop offset="1" stop-color="#1f0e06"/>
+          <stop offset="0" stop-color="#94573a"/><stop offset="0.45" stop-color="#6e3c20"/><stop offset="0.8" stop-color="#4a2614"/><stop offset="1" stop-color="#2e1609"/>
         </radialGradient>
         <radialGradient id="lp-dome-allume" cx="0.47" cy="0.42" r="0.56">
           <stop offset="0" stop-color="#ffc27a"/><stop offset="0.32" stop-color="#f8953c"/><stop offset="0.62" stop-color="#f07a22"/><stop offset="1" stop-color="#b4480f"/>
         </radialGradient>
         <radialGradient id="lp-ouv-eteinte"><stop offset="0" stop-color="#24160d"/><stop offset="1" stop-color="#140c07"/></radialGradient>
         <radialGradient id="lp-ouv-allumee"><stop offset="0" stop-color="#fff"/><stop offset="0.55" stop-color="#fff3dc"/><stop offset="1" stop-color="#ffc27a"/></radialGradient>
-        <linearGradient id="lp-chrome-eteint" x1="0" x2="1"><stop offset="0" stop-color="#1a130e"/><stop offset="0.45" stop-color="#6b5a4b"/><stop offset="1" stop-color="#2a211a"/></linearGradient>
+        <linearGradient id="lp-chrome-eteint" x1="0" x2="1"><stop offset="0" stop-color="#2e241c"/><stop offset="0.45" stop-color="#9a8672"/><stop offset="1" stop-color="#3c3027"/></linearGradient>
         <linearGradient id="lp-chrome-allume" x1="0" x2="1"><stop offset="0" stop-color="#4a3a2e"/><stop offset="0.45" stop-color="#f2e6d4"/><stop offset="1" stop-color="#8a7562"/></linearGradient>
         <linearGradient id="lp-faisceau" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0" stop-color="#ffe2b0" stop-opacity="0.38"/><stop offset="0.4" stop-color="#ffb766" stop-opacity="0.12"/><stop offset="1" stop-color="#f07a22" stop-opacity="0"/>
@@ -85,6 +85,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
       setTimeout(finir, 2200); // filet de sécurité
     }, { once: true });
+    // un toucher n'importe où sur l'écran allume aussi la lampe (sur téléphone, on ne vise pas forcément l'abat-jour)
+    e.addEventListener('click', (ev) => { if (!lampe.contains(ev.target as Node) && !e.classList.contains('allumee')) lampe.click(); });
     // Échap = entrer directement : simple fondu
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
     e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); if (ev.key === 'Tab') e.classList.add('clavier'); });
@@ -96,10 +98,10 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   :global(html.entree-vue) .entree { display: none; }
   :global(html.entree-active) { overflow: hidden; }
   .entree {
-    position: fixed; inset: 0; z-index: 100; overflow: hidden;
+    position: fixed; inset: 0; z-index: 100; overflow: hidden; cursor: pointer;
     /* lueur et vignette centrées sur l'abat-jour (au milieu de l'écran) */
     background:
-      radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.22), transparent 100%),
+      radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.3), transparent 100%),
       radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
       var(--brun-950);
     /* trou circulaire qui grandit depuis la lampe = la pièce s'éclaire */
@@ -118,7 +120,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .halo {
     position: absolute; left: 50%; top: calc(var(--haut) + 284px * var(--k));
     width: 320px; height: 320px; translate: -50% -50%;
-    border-radius: 50%; background: radial-gradient(circle, rgb(240 122 34 / 0.35), transparent 70%);
+    border-radius: 50%; background: radial-gradient(circle, rgb(240 122 34 / 0.45), transparent 70%);
     animation: pulse 2.6s ease-in-out infinite; pointer-events: none;
     transition: scale 0.35s var(--courbe-standard), opacity 0.35s var(--courbe-standard);
   }
@@ -138,19 +140,22 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .allumee .on { opacity: 1; }
   .dome-allume { filter: drop-shadow(0 0 22px rgb(240 122 34 / 0.6)); }
   .ouverture-allumee { filter: drop-shadow(0 4px 8px rgb(255 217 160 / 0.9)); }
-  .reflets { opacity: 0.28; transition: opacity 0.35s var(--courbe-standard); }
+  .reflets { opacity: 0.5; transition: opacity 0.35s var(--courbe-standard); }
   .allumee .reflets { opacity: 1; }
   /* Survol (ou focus clavier) avant le clic — variante Figma « Survol » :
      1. la lampe se balance, depuis le haut de l'écran (là où la tige est accrochée), puis s'immobilise ;
      2. le verre se réchauffe (lueur dans le dôme, ouverture qui préchauffe) ;
      3. le halo grossit et s'intensifie au lieu de pulser. */
   .lampe svg { transform-origin: 50% calc(-1 * var(--haut)); }
-  .entree:not(.allumee) .lampe:hover svg, .clavier:not(.allumee) .lampe:focus-visible svg { animation: balancier 1.8s var(--courbe-standard); }
   @keyframes balancier { 18% { rotate: 1.1deg; } 42% { rotate: -0.8deg; } 64% { rotate: 0.45deg; } 84% { rotate: -0.15deg; } }
-  .entree:not(.allumee) .lampe:hover .dome-allume, .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
-  .entree:not(.allumee) .lampe:hover .ouverture-allumee, .clavier:not(.allumee) .lampe:focus-visible .ouverture-allumee { opacity: 0.25; }
-  .entree:not(.allumee) .lampe:hover .reflets, .clavier:not(.allumee) .lampe:focus-visible .reflets { opacity: 0.6; }
-  .entree:not(.allumee):has(.lampe:hover) .halo, .clavier:not(.allumee):has(.lampe:focus-visible) .halo { animation: none; scale: 1.25; opacity: 1; }
+  /* survol seulement avec une souris : sur écran tactile, le 1er toucher déclencherait le survol au lieu d'allumer */
+  @media (hover: hover) {
+    .entree:not(.allumee) .lampe:hover svg, .clavier:not(.allumee) .lampe:focus-visible svg { animation: balancier 1.8s var(--courbe-standard); }
+    .entree:not(.allumee) .lampe:hover .dome-allume, .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
+    .entree:not(.allumee) .lampe:hover .ouverture-allumee, .clavier:not(.allumee) .lampe:focus-visible .ouverture-allumee { opacity: 0.25; }
+    .entree:not(.allumee) .lampe:hover .reflets, .clavier:not(.allumee) .lampe:focus-visible .reflets { opacity: 0.75; }
+    .entree:not(.allumee):has(.lampe:hover) .halo, .clavier:not(.allumee):has(.lampe:focus-visible) .halo { animation: none; scale: 1.25; opacity: 1; }
+  }
   /* le contour de focus n'apparaît qu'à la navigation clavier (le focus initial est posé par le script) */
   .lampe:focus-visible { outline: none; }
   .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
