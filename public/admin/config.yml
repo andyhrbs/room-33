@@ -23,7 +23,55 @@ media_folder: public/images/cms
 public_folder: /images/cms
 
 collections:
-  # Le reste du contenu (disques, Top, lives, morceau du jour…) sera branché à la fin du projet.
+  # Le reste du contenu (disques et bacs, Top, bac des visiteurs, morceau du moment…) sera branché à la fin du projet.
+  - name: lives
+    label: Les lives
+    description: Les prestations live de la page Les lives. Le premier de la liste est « à la une » — glisse un live en haut pour le mettre à la une.
+    files:
+      - name: liste
+        label: Mes lives
+        file: src/data/cms/lives.json
+        format: json
+        fields:
+          - name: lives
+            label: Lives
+            label_singular: live
+            widget: list
+            add_to_top: true
+            summary: '{{fields.artiste}} — {{fields.titre}}'
+            fields:
+              - name: video
+                label: Lien de la vidéo YouTube
+                widget: string
+                hint: Colle l'adresse de la vidéo (youtube.com/watch?v=…, youtu.be/…, /live/…). La vignette se fait toute seule.
+                pattern: ['(youtube\.com|youtu\.be)/|^[\w-]{11}$', 'Colle un lien YouTube']
+              - name: artiste
+                label: Artiste
+                widget: string
+              - name: titre
+                label: Titre du live
+                widget: string
+                hint: Par exemple « Tiny Desk Concert » ou « Live at Joshua Tree ».
+              - name: lieu
+                label: Émission, lieu, ville
+                widget: string
+                required: false
+                hint: Par exemple « NPR Music · Washington ».
+              - name: annee
+                label: Année
+                widget: number
+                value_type: int
+                min: 1950
+                max: 2100
+              - name: mot
+                label: Mon mot
+                widget: text
+                hint: Une à trois phrases. Garde les guillemets « ».
+              - name: disque
+                label: Disque lié (facultatif)
+                widget: string
+                required: false
+                hint: Le nom du disque dans l'adresse de sa fiche (ex. tom-misch-geography pour /disques/tom-misch-geography). Laisse vide sinon.
   - name: reglages
     label: Réglages du site
     description: Les infos utilisées un peu partout sur le site.

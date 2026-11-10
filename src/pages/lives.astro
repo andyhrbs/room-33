@@ -10,6 +10,10 @@ import ModuleReco from '../components/ModuleReco.astro';
 import { recadrages } from '../data/images';
 import { livesTextes as t } from '../data/textes';
 import { lives } from '../data/lives';
+import { disques } from '../data/disques';
+// « Voir le disque » seulement si le disque existe vraiment dans les bacs (évite un lien cassé saisi dans l'admin)
+const existe = new Set(disques.map((d) => d.slug));
+const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
 const [une, ...autres] = lives;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
 ---
@@ -27,9 +31,9 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
         <div class="texte-une">
           <p class="texte-label">{t.une}</p>
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
-          <p class="texte-petit texte-secondaire">{une.lieu} · {une.annee}</p>
+          <p class="texte-petit texte-secondaire">{infos(une)}</p>
           <p class="texte-avis">{une.mot}</p>
-          {une.disque && <Bouton style="lien" href={`/disques/${une.disque}`}>{t.voirDisque}</Bouton>}
+          {une.disque && existe.has(une.disque) && <Bouton style="lien" href={`/disques/${une.disque}`}>{t.voirDisque}</Bouton>}
         </div>
       </article>
 
@@ -44,9 +48,9 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
               <VideoLive youtube={l.youtube} titre={nom(l)} />
               <div class="texte-carte">
                 <h3 class="texte-label">{nom(l)}</h3>
-                <p class="texte-petit texte-secondaire">{l.lieu} · {l.annee}</p>
+                <p class="texte-petit texte-secondaire">{infos(l)}</p>
                 <p class="texte-petit">{l.mot}</p>
-                {l.disque && <a class="texte-petit lien-disque" href={`/disques/${l.disque}`}>{t.voirDisque}</a>}
+                {l.disque && existe.has(l.disque) && <a class="texte-petit lien-disque" href={`/disques/${l.disque}`}>{t.voirDisque}</a>}
               </div>
             </li>
           ))}

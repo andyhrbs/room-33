@@ -1,7 +1,7 @@
 // Vignettes des vidéos, récupérées sur YouTube AU BUILD et servies par Room 33 :
 // le visiteur ne contacte pas YouTube tant qu'il ne lance pas une vidéo (vie privée).
 import type { APIRoute, GetStaticPaths } from 'astro';
-import { lives } from '../../../data/lives';
+import { lives } from '../../../data/lives'; // vignettes : une par live de l'admin
 
 export const getStaticPaths: GetStaticPaths = () => lives.map((l) => ({ params: { id: l.youtube } }));
 
