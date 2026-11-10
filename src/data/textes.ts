@@ -19,13 +19,14 @@ export const pages = [
   { numero: '02', court: 'Les bacs', long: 'Les bacs', explication: 'Mes disques, par genre et par humeur.', href: '/bacs' },
   { numero: '03', court: 'Le Top', long: 'Le Top de la Room', explication: 'Mes disques préférés, classés.', href: '/top' },
   { numero: '04', court: 'La platine', long: 'La platine', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
-  { numero: '05', court: 'Le comptoir', long: 'Le comptoir', explication: 'Qui je suis.', href: '/comptoir' },
-  { numero: '06', court: 'Le bac des visiteurs', long: 'Le bac des visiteurs', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
+  { numero: '05', court: 'Les lives', long: 'Les lives', explication: 'Les concerts que je repasse en boucle.', href: '/lives' },
+  { numero: '06', court: 'Le comptoir', long: 'Le comptoir', explication: 'Qui je suis.', href: '/comptoir' },
+  { numero: '07', court: 'Le bac des visiteurs', long: 'Le bac des visiteurs', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
 ] as const;
 
 export const nav = {
   // Liens visibles dans la barre du haut (ordi)
-  liens: ['Les bacs', 'Le Top', 'La platine', 'Le comptoir'],
+  liens: ['Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le comptoir'],
   cta: 'Recommandez-moi un son',
   ouvrirMenu: 'Ouvrir le menu',
   fermerMenu: 'Fermer le menu',
@@ -35,7 +36,7 @@ export const piedDePage = {
   question: 'Un son à me faire écouter ?',
   champ: 'Titre, artiste ou lien',
   envoyer: 'Envoyer',
-  liens: ['La pièce', 'Les bacs', 'Le Top', 'La platine', 'Le bac des visiteurs', 'Le comptoir'],
+  liens: ['La pièce', 'Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le bac des visiteurs', 'Le comptoir'],
   cta: 'Recommandez-moi un son',
   reseaux: { instagram: 'Instagram', spotify: 'Spotify', dm: 'Écrivez-moi en DM' },
   copyright: '© 2026 Room 33 · Mentions légales',
@@ -59,6 +60,7 @@ export const accueil = {
   objets: [
     { nom: 'Le mur de pochettes', explication: 'Mes disques préférés, encadrés.', href: '/top', lien: 'Le Top', x: '50%', y: '24%', cote: 'droite' },
     { nom: 'La platine', explication: 'Ce que j’écoute en ce moment.', href: '/platine', lien: 'La platine', x: '68%', y: '47%', cote: 'gauche' },
+    { nom: 'La chaîne hi-fi', explication: 'Les concerts que je repasse en boucle.', href: '/lives', lien: 'Les lives', x: '76%', y: '50%', cote: 'gauche' },
     { nom: 'Le buffet à vinyles', explication: 'Mes bacs, par genre et par humeur.', href: '/bacs', lien: 'Les bacs', x: '34%', y: '49%', cote: 'droite' },
     { nom: 'La caisse à vinyles', explication: 'Glissez-moi un son que je ne connais pas.', href: '/#recommander', lien: 'Recommandez-moi un son', x: '14%', y: '58%', cote: 'droite' },
     { nom: 'Le piano', explication: 'Posez-vous, je vous raconte qui je suis.', href: '/comptoir', lien: 'Le comptoir', x: '86%', y: '56%', cote: 'gauche' },
@@ -108,4 +110,18 @@ export const comptoir = {
     cta: 'Recommandez-moi un son',
     insta: 'Écrivez-moi sur Insta',
   },
+};
+
+// ---------- Page : Les lives ----------
+export const livesTextes = {
+  filAriane: ['La pièce', 'Les lives'],
+  surtitreMobile: 'Les lives',
+  titre: 'Sur scène.',
+  intro: 'Les concerts et les sessions que je ne me lasse pas de revoir, et ceux qui m’ont donné envie de jouer.',
+  introCourte: 'Les concerts que je ne me lasse pas de revoir.',
+  une: 'Le live à la une',
+  tous: { surtitre: 'Tous les lives', titre: 'Sur scène, en studio, dans un salon.' },
+  voirDisque: 'Voir le disque',
+  lire: 'Lire la vidéo',
+  consentement: 'La vidéo se charge depuis YouTube quand vous la lancez.',
 };

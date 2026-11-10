@@ -19,4 +19,5 @@ export const recadrages: Record<string, Recadrage> = {
   top: [0.5, 0.5, 0.25, 0.03],        // le mur de cadres
   visiteurs: [0.6, 0.6, 0.20, 0.30],  // le canapé
   comptoir: [0.42, 0.62, 0.56, 0.30], // le piano
+  lives: [0.4, 0.425, 0.48, 0.27],    // la chaîne hi-fi
 };

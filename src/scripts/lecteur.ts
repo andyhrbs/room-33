@@ -169,3 +169,4 @@ document.addEventListener('click', (e) => {
 // Après chaque navigation : remettre les bons états sur la nouvelle page
 document.addEventListener('astro:page-load', afficher);
 document.addEventListener('room33:ecoutes', afficher); // listes remplies en direct (page Platine)
+document.addEventListener('room33:video', () => { if (!audio.paused) audio.pause(); }); // une vidéo démarre : on coupe l'extrait

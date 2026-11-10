@@ -1,0 +1,98 @@
+---
+// 09 · Les lives : les prestations live qu'Andyh aime (vidéos YouTube)
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+import HeroPage from '../components/HeroPage.astro';
+import Bouton from '../components/Bouton.astro';
+import VideoLive from '../components/VideoLive.astro';
+import ModuleReco from '../components/ModuleReco.astro';
+import { recadrages } from '../data/images';
+import { livesTextes as t } from '../data/textes';
+import { lives } from '../data/lives';
+const [une, ...autres] = lives;
+const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
+---
+<Base title="Les lives" description={t.intro}>
+  <Nav />
+  <main class="ambiance">
+    <HeroPage filAriane={t.filAriane} recadrage={recadrages.lives} surtitreMobile={t.surtitreMobile} titre={t.titre}>
+      <p class="texte-corps-l intro"><span class="seulement-ordi">{t.intro}</span><span class="seulement-mobile">{t.introCourte}</span></p>
+      <p class="texte-petit texte-secondaire seulement-ordi">{lives.length} lives</p>
+    </HeroPage>
+
+    <section class="section conteneur lives" aria-labelledby="titre-une">
+      <article class="une">
+        <VideoLive youtube={une.youtube} titre={nom(une)} grand />
+        <div class="texte-une">
+          <p class="texte-label">{t.une}</p>
+          <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
+          <p class="texte-petit texte-secondaire">{une.lieu} · {une.annee}</p>
+          <p class="texte-avis">{une.mot}</p>
+          {une.disque && <Bouton style="lien" href={`/disques/${une.disque}`}>{t.voirDisque}</Bouton>}
+        </div>
+      </article>
+
+      <div class="tous">
+        <div class="entete">
+          <p class="texte-label">{t.tous.surtitre}</p>
+          <h2 class="titre-h2">{t.tous.titre}</h2>
+        </div>
+        <ul role="list" class="grille">
+          {autres.map((l) => (
+            <li class="carte">
+              <VideoLive youtube={l.youtube} titre={nom(l)} />
+              <div class="texte-carte">
+                <h3 class="texte-label">{nom(l)}</h3>
+                <p class="texte-petit texte-secondaire">{l.lieu} · {l.annee}</p>
+                <p class="texte-petit">{l.mot}</p>
+                {l.disque && <a class="texte-petit lien-disque" href={`/disques/${l.disque}`}>{t.voirDisque}</a>}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p class="texte-legende texte-secondaire">{t.consentement}</p>
+      </div>
+    </section>
+
+    <ModuleReco />
+  </main>
+  <PiedDePage />
+</Base>
+
+<script>
+  // Façade YouTube : la vidéo (youtube-nocookie) ne se charge qu'au clic, puis se lance.
+  // Clic délégué : marche aussi après une navigation fluide. L'extrait en cours s'arrête.
+  document.addEventListener('click', (e) => {
+    const bouton = (e.target as Element).closest('[data-lire-video]');
+    if (!bouton) return;
+    const bloc = bouton.closest<HTMLElement>('[data-video]')!;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    iframe.title = bloc.dataset.titre ?? 'Vidéo YouTube';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    bloc.replaceChildren(iframe);
+    iframe.focus();
+    document.dispatchEvent(new Event('room33:video')); // le lecteur d'extraits se met en pause
+  });
+</script>
+
+<style>
+  .intro { max-width: 45rem; }
+  .lives { display: grid; gap: var(--espace-3xl); }
+  .une { display: grid; grid-template-columns: minmax(0, 49.5rem) minmax(0, 1fr); gap: var(--espace-2xl); align-items: center; }
+  .texte-une { display: grid; gap: var(--espace-sm); justify-items: start; }
+  .tous { display: grid; gap: var(--espace-xl); }
+  .entete { display: grid; gap: var(--espace-xs); }
+  .grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-2xl) var(--espace-lg); margin: 0; padding: 0; }
+  .carte { display: grid; gap: var(--espace-sm); align-content: start; }
+  .texte-carte { display: grid; gap: var(--espace-2xs); }
+  .texte-carte h3 { margin: 0; }
+  .lien-disque { justify-self: start; color: var(--couleur-texte-principal); padding-block: var(--espace-xs); }
+  @media (max-width: 63.99rem) {
+    .lives { gap: var(--espace-2xl); }
+    .une { grid-template-columns: 1fr; gap: var(--espace-lg); }
+    .grille { grid-template-columns: 1fr; gap: var(--espace-xl); }
+  }
+</style>

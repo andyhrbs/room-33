@@ -1,0 +1,27 @@
+---
+// Vidéo YouTube en « façade » : on affiche la vignette (servie par Room 33) et un bouton lecture.
+// YouTube n'est chargé qu'au clic (youtube-nocookie), puis la vidéo se lance. Coupe l'extrait en cours.
+import Icone from './Icone.astro';
+interface Props { youtube: string; titre: string; grand?: boolean; class?: string }
+const { youtube, titre, grand = false, class: cls } = Astro.props;
+---
+<div class:list={['video', { grand }, cls]} data-video={youtube} data-titre={titre}>
+  <img src={`/lives/vignettes/${youtube}.jpg`} alt="" loading={grand ? 'eager' : 'lazy'} decoding="async" width="1280" height="720" />
+  <button type="button" class="lire" data-lire-video aria-label={`Lire la vidéo : ${titre}`}>
+    <span class="rond"><Icone nom="lecture" taille={grand ? 40 : 30} /></span>
+  </button>
+</div>
+<style>
+  .video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); overflow: hidden; background: var(--couleur-fond-image); }
+  .video img, .video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .video::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgb(18 11 7 / 0), rgb(18 11 7 / 0.6)); }
+  .video:has(iframe)::after { display: none; }
+  .lire { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); }
+  .rond {
+    width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--rayon-pilule);
+    background: var(--couleur-accent-defaut); padding-left: 3px;
+    transition: transform var(--duree-rapide) var(--courbe-standard), background-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .grand .rond { width: 72px; height: 72px; }
+  .lire:hover .rond { background: var(--couleur-accent-survol); color: var(--couleur-accent-texte-dessus); transform: scale(1.05); }
+</style>
