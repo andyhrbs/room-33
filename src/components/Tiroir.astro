@@ -1,0 +1,355 @@
+---
+// 04 · « Recommandez-moi un son » : tiroir qui s'ouvre de partout (nav, menu mobile, pied de page,
+// module de l'accueil, bac des visiteurs, comptoir…). Ordi = tiroir à droite, mobile = feuille du bas.
+// <dialog> modal : le focus reste dedans, Échap ferme, le reste de la page est inerte.
+// Recherche Spotify en direct (dès 3 lettres) via /api/recherche, ou lien collé.
+// Envoi : Netlify Forms (formulaire « recommandation », détecté au build) + champ piège anti-robots.
+// Maquettes Figma : écrans « 04 · Recommandez-moi un son » (tiroir, recherche, envoi en cours, envoyé, erreur).
+import Bouton from './Bouton.astro';
+import Icone from './Icone.astro';
+import { tiroir as t, site } from '../data/textes';
+const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
+---
+<dialog class="tiroir" data-tiroir aria-labelledby="tiroir-titre">
+  <div class="poignee seulement-mobile" aria-hidden="true"></div>
+  <div class="entete">
+    <!-- trait d'union insécable : le titre se coupe après « Recommandez-moi », comme dans Figma -->
+    <h2 id="tiroir-titre" class="titre-h2">{t.titre.replace('-', '\u2011')}</h2>
+    <button type="button" class="fermer" data-fermer-tiroir aria-label={t.fermer}><Icone nom="fermer" /></button>
+  </div>
+
+  <!-- Vue 1 : le formulaire -->
+  <div class="vue" data-vue="formulaire">
+    <p class="texte-corps intro">{t.intro}</p>
+    <form name="recommandation" method="POST" data-netlify="true" netlify-honeypot="piege" data-form-reco data-astro-reload novalidate>
+      <input type="hidden" name="form-name" value="recommandation" />
+      <p class="visuellement-cache" aria-hidden="true"><label>Ne pas remplir : <input name="piege" tabindex="-1" autocomplete="off" /></label></p>
+      <input type="hidden" name="son" data-champ="son" />
+      <input type="hidden" name="lien" data-champ="lien" />
+      <input type="hidden" name="spotify_id" data-champ="spotify_id" />
+      <input type="hidden" name="page" data-champ="page" />
+
+      <fieldset>
+        <legend class="texte-label">{t.etape1}</legend>
+        <div class="champ-recherche" data-zone-recherche>
+          <label for="tiroir-recherche" class="visuellement-cache">{t.champ}</label>
+          <Icone nom="recherche" class="loupe" />
+          <input id="tiroir-recherche" class="texte-corps" type="search" placeholder={t.champ} autocomplete="off" enterkeyhint="search"
+            aria-describedby="tiroir-aide tiroir-erreur-choix" data-recherche />
+        </div>
+        <p id="tiroir-erreur-choix" class="erreur texte-legende" data-erreur-choix hidden>{t.erreurChoix}</p>
+        <p class="statut texte-legende texte-secondaire" data-statut-recherche aria-live="polite"></p>
+        <ul class="resultats" role="list" data-resultats></ul>
+        <p id="tiroir-aide" class="texte-legende texte-secondaire">{t.aideLien}</p>
+      </fieldset>
+
+      <fieldset>
+        <legend class="texte-label">{t.etape2}</legend>
+        <label for="tiroir-prenom" class="visuellement-cache">{t.prenom}</label>
+        <input id="tiroir-prenom" name="prenom" class="ligne texte-corps" placeholder={t.prenom} autocomplete="given-name" maxlength="40" />
+        <label for="tiroir-mot" class="visuellement-cache">{t.mot}</label>
+        <textarea id="tiroir-mot" name="mot" class="ligne texte-corps" rows="2" placeholder={t.mot} maxlength="500"></textarea>
+      </fieldset>
+
+      <p class="erreur texte-legende" data-erreur-envoi role="alert" hidden>{t.erreurEnvoi}</p>
+      <Bouton style="primaire" type="submit" pleineLargeur class="envoyer" data-envoyer>{t.envoyer}</Bouton>
+    </form>
+    <Bouton style="lien" href={dm} target="_blank" rel="noopener" class="insta">{t.insta}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
+    <p class="texte-legende texte-secondaire">{t.note}</p>
+  </div>
+
+  <!-- Vue 2 : envoyé -->
+  <div class="vue merci" data-vue="merci" hidden>
+    <div class="pochette-merci" data-pochette-merci aria-hidden="true"></div>
+    <p class="titre-h1" tabindex="-1" data-titre-merci>{t.merciTitre}</p>
+    <p class="texte-corps texte-secondaire">{t.merci}</p>
+    <Bouton style="secondaire" pleineLargeur data-autre-reco>{t.autre}</Bouton>
+    <Bouton style="lien" href="/" data-retour-piece>{t.retour}</Bouton>
+  </div>
+</dialog>
+
+<template data-modele-resultat>
+  <li>
+    <button type="button" class="resultat" aria-pressed="false">
+      <span class="vignette"><img alt="" width="48" height="48" loading="lazy" /></span>
+      <span class="infos"><span class="texte-label titre"></span><span class="texte-legende texte-secondaire meta"></span></span>
+      <span class="action texte-bouton"></span>
+    </button>
+  </li>
+</template>
+
+<script>
+  import { tiroir as t } from '../data/textes';
+  type Son = { id?: string; titre: string; artiste: string; annee?: string; pochette?: string | null; lien?: string | null };
+
+  const $ = <T extends Element>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
+  const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let choisi: Son | null = null;
+  let resultats: Son[] = [];
+  let minuteur = 0, demande: AbortController | null = null, opener: HTMLElement | null = null;
+
+  const plateformes: [RegExp, string][] = [
+    [/open\.spotify\.com|spotify\.link/, 'Spotify'], [/music\.apple\.com/, 'Apple Music'],
+    [/deezer\.(com|page\.link)/, 'Deezer'], [/youtu\.?be|music\.youtube\.com/, 'YouTube'],
+  ];
+  const estLien = (v: string) => /^https?:\/\//i.test(v.trim()) || /^(open\.spotify|music\.apple|(www\.)?deezer|(music\.|www\.)?youtube|youtu\.be)/i.test(v.trim());
+
+  // ---------- Ouvrir / fermer ----------
+  function ouvrir(depuis?: HTMLElement | null, requete = '') {
+    const d = $<HTMLDialogElement>('[data-tiroir]');
+    if (!d || d.open) return;
+    opener = depuis ?? (document.activeElement as HTMLElement);
+    afficherVue('formulaire');
+    d.classList.remove('ferme');
+    d.showModal();
+    document.documentElement.classList.add('tiroir-ouvert');
+    const champ = $<HTMLInputElement>('[data-recherche]', d)!;
+    if (requete) { champ.value = requete; chercher(requete, true); }
+    champ.focus();
+  }
+  function fermer() {
+    const d = $<HTMLDialogElement>('[data-tiroir]');
+    if (!d?.open) return;
+    const fin = () => { d.close(); d.classList.remove('ferme'); document.documentElement.classList.remove('tiroir-ouvert'); opener?.focus?.({ preventScroll: true }); };
+    if (reduit()) return fin();
+    d.classList.add('ferme');
+    setTimeout(fin, 260);
+  }
+  function afficherVue(v: 'formulaire' | 'merci') {
+    document.querySelectorAll<HTMLElement>('[data-tiroir] [data-vue]').forEach((el) => (el.hidden = el.dataset.vue !== v));
+  }
+
+  // ---------- Recherche ----------
+  function statut(texte: string) { const s = $('[data-statut-recherche]'); if (s) s.textContent = texte; }
+  function chercher(v: string, immediat = false) {
+    clearTimeout(minuteur);
+    demande?.abort();
+    const q = v.trim();
+    if (estLien(q)) return lienColle(q);
+    if (q.length < 3) { resultats = []; dessiner(); statut(''); return; }
+    minuteur = window.setTimeout(async () => {
+      demande = new AbortController();
+      statut(t.recherche);
+      try {
+        const r = await fetch(`/api/recherche?q=${encodeURIComponent(q)}`, { signal: demande.signal });
+        if (!r.ok) throw new Error();
+        resultats = (await r.json()).resultats ?? [];
+        dessiner();
+        statut(resultats.length ? `${resultats.length} résultat${resultats.length > 1 ? 's' : ''}` : t.aucun);
+      } catch (e) {
+        if ((e as Error).name === 'AbortError') return;
+        resultats = []; dessiner(); statut(t.erreurRecherche);
+      }
+    }, immediat ? 0 : 300);
+  }
+  async function lienColle(lien: string) {
+    const url = /^https?:/i.test(lien) ? lien : `https://${lien}`;
+    const nom = plateformes.find(([re]) => re.test(url))?.[1];
+    // lien Spotify : on récupère le titre et la pochette ; autres plateformes : le lien suffit
+    if (nom === 'Spotify') {
+      statut(t.recherche);
+      try {
+        const r = await fetch(`/api/recherche?q=${encodeURIComponent(url)}`);
+        const son = (await r.json()).resultats?.[0];
+        if (son) { resultats = [son]; choisir(son); dessiner(); statut(''); return; }
+      } catch { /* on garde le lien tel quel */ }
+    }
+    const son: Son = { titre: t.lienColle, artiste: nom ?? new URL(url).hostname.replace(/^www\./, ''), lien: url };
+    resultats = [son]; choisir(son); dessiner(); statut('');
+  }
+  function dessiner() {
+    const ul = $<HTMLUListElement>('[data-resultats]'), modele = $<HTMLTemplateElement>('[data-modele-resultat]');
+    if (!ul || !modele) return;
+    ul.replaceChildren(...resultats.map((s, i) => {
+      const li = modele.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      const b = li.querySelector('button')!;
+      const actif = !!choisi && (choisi.id ? choisi.id === s.id : choisi.lien === s.lien);
+      b.dataset.index = String(i);
+      b.setAttribute('aria-pressed', String(actif));
+      b.classList.toggle('est-choisi', actif);
+      li.querySelector('.titre')!.textContent = s.titre;
+      li.querySelector('.meta')!.textContent = [s.artiste, s.annee].filter(Boolean).join(' · ');
+      li.querySelector('.action')!.innerHTML = actif ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 14L9 17L18 6"/></svg> ${t.choisi}` : t.choisir;
+      b.setAttribute('aria-label', `${actif ? t.choisi : t.choisir} : ${s.titre}, ${s.artiste}`);
+      const img = li.querySelector('img')!;
+      if (s.pochette) { img.src = s.pochette; img.onerror = () => img.remove(); } else img.remove();
+      return li;
+    }));
+  }
+  function choisir(s: Son) {
+    choisi = s;
+    const f = $<HTMLFormElement>('[data-form-reco]')!;
+    const champ = (n: string) => $<HTMLInputElement>(`[data-champ="${n}"]`, f)!;
+    champ('son').value = s.titre === t.lienColle ? `${t.lienColle} (${s.artiste})` : `${s.titre} — ${s.artiste}`;
+    champ('lien').value = s.lien ?? '';
+    champ('spotify_id').value = s.id ?? '';
+    erreurChoix(false);
+  }
+  function erreurChoix(oui: boolean) {
+    const p = $<HTMLElement>('[data-erreur-choix]'); if (p) p.hidden = !oui;
+    $('[data-zone-recherche]')?.classList.toggle('en-erreur', oui);
+    $('[data-recherche]')?.setAttribute('aria-invalid', String(oui));
+  }
+
+  // ---------- Envoi (Netlify Forms) ----------
+  async function envoyer(f: HTMLFormElement) {
+    if (!choisi) { erreurChoix(true); $<HTMLInputElement>('[data-recherche]')?.focus(); return; }
+    $<HTMLInputElement>('[data-champ="page"]', f)!.value = location.pathname;
+    const bouton = $<HTMLButtonElement>('[data-envoyer]', f)!, libelle = bouton.querySelector('.texte-bouton')!;
+    const erreur = $<HTMLElement>('[data-erreur-envoi]', f)!;
+    erreur.hidden = true; bouton.disabled = true; bouton.setAttribute('aria-busy', 'true'); libelle.textContent = t.envoi;
+    try {
+      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(f) as unknown as Record<string, string>).toString() });
+      if (!r.ok) throw new Error();
+      const poch = $<HTMLElement>('[data-pochette-merci]');
+      if (poch) poch.style.backgroundImage = choisi.pochette ? `url("${choisi.pochette}")` : '';
+      afficherVue('merci');
+      $<HTMLElement>('[data-titre-merci]')?.focus();
+    } catch {
+      erreur.hidden = false;
+    } finally {
+      bouton.disabled = false; bouton.removeAttribute('aria-busy'); libelle.textContent = t.envoyer;
+    }
+  }
+  function reinitialiser() {
+    const f = $<HTMLFormElement>('[data-form-reco]'); f?.reset();
+    choisi = null; resultats = []; dessiner(); statut(''); erreurChoix(false);
+    afficherVue('formulaire');
+    $<HTMLInputElement>('[data-recherche]')?.focus();
+  }
+
+  // ---------- Écouteurs (délégués : marchent sur toutes les pages, même après navigation) ----------
+  document.addEventListener('click', (e) => {
+    const c = e.target as Element;
+    const ouvreur = c.closest<HTMLElement>('[data-ouvrir-reco], a[href$="#recommander"]');
+    if (ouvreur && !ouvreur.closest('[data-tiroir]')) { e.preventDefault(); ouvrir(ouvreur); return; }
+    if (c.closest('[data-fermer-tiroir]')) return fermer();
+    if (c instanceof HTMLDialogElement && c.matches('[data-tiroir]')) return fermer(); // clic sur le fond
+    const r = c.closest<HTMLButtonElement>('[data-tiroir] .resultat');
+    if (r) { choisir(resultats[Number(r.dataset.index)]); dessiner(); return; }
+    if (c.closest('[data-autre-reco]')) return reinitialiser();
+    if (c.closest('[data-retour-piece]')) { fermer(); if (location.pathname === '/') e.preventDefault(); }
+  });
+  document.addEventListener('input', (e) => {
+    const el = e.target as HTMLInputElement;
+    if (el.matches?.('[data-tiroir] [data-recherche]')) { if (choisi && !estLien(el.value)) { choisi = null; } chercher(el.value); }
+  });
+  document.addEventListener('submit', (e) => {
+    const f = e.target as HTMLFormElement;
+    if (f.matches('[data-form-reco]')) { e.preventDefault(); envoyer(f); return; }
+    // champs express (accueil, pied de page) : ouvrent le tiroir avec la recherche déjà tapée
+    if (f.matches('[data-reco], [data-reco-express]')) {
+      e.preventDefault();
+      const v = (f.querySelector('input') as HTMLInputElement | null)?.value ?? '';
+      ouvrir(f.querySelector('button'), v.trim());
+    }
+  });
+  document.addEventListener('cancel', (e) => {
+    if ((e.target as Element).matches?.('[data-tiroir]')) { e.preventDefault(); fermer(); }
+  }, true);
+  // lien direct vers /#recommander (depuis une autre page) : on ouvre le tiroir à l'arrivée
+  document.addEventListener('astro:page-load', () => {
+    if (location.hash === '#recommander') { history.replaceState(null, '', location.pathname + location.search); ouvrir(); }
+  });
+</script>
+
+<style>
+  :global(html.tiroir-ouvert) { overflow: hidden; }
+  .tiroir {
+    --largeur: min(35rem, 100vw);
+    position: fixed; inset: 0 0 0 auto; margin: 0; width: var(--largeur); max-width: 100vw; height: 100dvh; max-height: 100dvh;
+    padding: var(--espace-3xl) var(--espace-2xl) var(--espace-2xl);
+    border: 0; border-left: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal);
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+  .tiroir[open] { display: grid; align-content: start; gap: var(--espace-lg); animation: entrer-droite 0.4s var(--courbe-sortie); }
+  .tiroir.ferme { animation: sortir-droite 0.26s var(--courbe-entree-sortie) forwards; }
+  .tiroir::backdrop { background: rgb(18 11 7 / 0.7); animation: fondu 0.4s var(--courbe-standard); }
+  .tiroir.ferme::backdrop { animation: fondu 0.26s reverse forwards; }
+  @keyframes entrer-droite { from { transform: translateX(100%); } }
+  @keyframes sortir-droite { to { transform: translateX(100%); } }
+  @keyframes entrer-bas { from { transform: translateY(100%); } }
+  @keyframes sortir-bas { to { transform: translateY(100%); } }
+  @keyframes fondu { from { opacity: 0; } }
+
+  .entete { display: flex; align-items: start; justify-content: space-between; gap: var(--espace-md); }
+  .entete h2 { min-width: 0; }
+  .fermer { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: var(--espace-xs) calc(-1 * var(--espace-xs)) 0 0; border: 0; background: none; color: var(--couleur-texte-principal); border-radius: var(--rayon-pilule); cursor: pointer; transition: background-color var(--duree-rapide) var(--courbe-standard); }
+  .fermer:hover { background: var(--couleur-fond-tonal); }
+  .fermer:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 2px; }
+
+  .vue { display: grid; gap: var(--espace-lg); }
+  .vue[hidden] { display: none; }
+  form, fieldset { display: grid; gap: var(--espace-md); }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { padding: 0; margin-bottom: var(--espace-xs); }
+
+  /* champ de recherche souligné (trait ambre au focus, rouge en erreur) */
+  .champ-recherche { display: flex; align-items: center; gap: var(--espace-sm); padding: var(--espace-md) 0; border-bottom: 1.5px solid var(--couleur-bordure-defaut); transition: border-color var(--duree-rapide) var(--courbe-standard); }
+  .champ-recherche:focus-within { border-bottom-color: var(--couleur-accent-defaut); }
+  .champ-recherche.en-erreur { border-bottom-color: var(--couleur-erreur); }
+  .loupe { flex: none; color: var(--couleur-texte-principal); }
+  input, textarea { font: inherit; color: var(--couleur-texte-principal); caret-color: var(--couleur-accent-defaut); letter-spacing: var(--interlettre-texte); }
+  .champ-recherche input { flex: 1; min-width: 0; background: none; border: 0; padding: 0; }
+  .champ-recherche input::-webkit-search-cancel-button { filter: invert(0.9) sepia(0.2); }
+  input::placeholder, textarea::placeholder { color: var(--couleur-texte-secondaire); opacity: 1; }
+  input:focus-visible, textarea:focus-visible { outline: none; }
+  .ligne { width: 100%; background: none; border: 0; border-bottom: 1.5px solid var(--couleur-bordure-discrete); padding: var(--espace-md) 0; resize: none; field-sizing: content; min-height: 3.5rem; transition: border-color var(--duree-rapide) var(--courbe-standard); }
+  .ligne:focus-visible { border-bottom-color: var(--couleur-accent-defaut); }
+  .erreur { color: var(--couleur-erreur); }
+  .statut:empty { display: none; }
+
+  /* résultats : vignette + titre + action ; le son choisi a un fond tonal et une coche ambre */
+  .resultats { display: grid; gap: var(--espace-2xs); margin: 0; padding: 0; }
+  .resultats:empty { display: none; }
+  .resultat {
+    width: 100%; display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: var(--espace-md);
+    padding: var(--espace-xs) var(--espace-sm); border: 0; border-radius: var(--rayon-bloc); background: none;
+    color: var(--couleur-texte-principal); text-align: left; cursor: pointer;
+    transition: background-color var(--duree-rapide) var(--courbe-standard);
+  }
+  .resultat:hover { background: var(--couleur-fond-tonal); }
+  .resultat:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 2px; }
+  .resultat.est-choisi { background: var(--couleur-fond-tonal-survol); }
+  .vignette { width: 48px; height: 48px; border-radius: var(--rayon-pochette); overflow: hidden; background: var(--couleur-fond-image); box-shadow: 0 6px 14px rgb(0 0 0 / 0.35); }
+  .vignette img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .infos { display: grid; min-width: 0; }
+  .infos > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .action { display: inline-flex; align-items: center; gap: var(--espace-2xs); white-space: nowrap; }
+  .est-choisi .action :global(svg) { color: var(--couleur-accent-defaut); }
+
+  .vue :global(.envoyer) { margin-top: var(--espace-xs); }
+  .vue :global(.envoyer[disabled]) { opacity: 0.45; cursor: progress; }
+  .vue :global(.insta) { justify-self: center; }
+
+  /* vue « envoyé » : la pochette tombe dans la caisse */
+  .merci { justify-items: center; text-align: center; padding-top: var(--espace-xl); }
+  .merci .titre-h1:focus { outline: none; }
+  .pochette-merci {
+    width: 7.5rem; aspect-ratio: 1; border-radius: var(--rayon-pochette); rotate: 4deg;
+    background: radial-gradient(circle at 78% 22%, var(--ivoire-100) 0 9%, transparent 9.5%), radial-gradient(circle at 70% 100%, var(--ambre-500) 0 62%, transparent 62.5%), var(--noyer-500);
+    background-size: cover; background-position: center;
+    box-shadow: 0 18px 36px rgb(0 0 0 / 0.45);
+    animation: tomber 0.6s var(--courbe-sortie);
+  }
+  @keyframes tomber { from { transform: translateY(-40px); opacity: 0; rotate: -6deg; } }
+  .merci :global(.bouton--plein) { margin-top: var(--espace-md); }
+
+  /* mobile : feuille qui monte du bas */
+  @media (max-width: 40rem) {
+    .tiroir {
+      inset: auto 0 0 0; width: 100vw; height: auto; max-height: 92dvh;
+      padding: var(--espace-sm) var(--grille-marge) var(--espace-xl);
+      border-left: 0; border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
+      border-radius: 16px 16px 0 0;
+    }
+    .tiroir[open] { animation-name: entrer-bas; gap: var(--espace-md); }
+    .tiroir.ferme { animation-name: sortir-bas; }
+    .poignee { justify-self: center; width: 2.5rem; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); margin-bottom: var(--espace-sm); }
+    .vue { gap: var(--espace-md); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tiroir[open], .tiroir.ferme, .tiroir::backdrop, .pochette-merci { animation: none; }
+  }
+</style>

@@ -1,5 +1,5 @@
 ---
-// Module « Recommandez-moi un son » (accueil). L'envoi sera branché au Sprint 5.
+// Module « Recommandez-moi un son » (accueil) : le champ ouvre le tiroir avec la recherche déjà tapée (voir Tiroir.astro).
 import Bouton from './Bouton.astro';
 import { reco, site } from '../data/textes';
 ---
@@ -8,7 +8,7 @@ import { reco, site } from '../data/textes';
     <p class="texte-label">{reco.surtitre}</p>
     <h2 id="reco-titre" class="titre-h1">{reco.titre}</h2>
     <p class="texte-corps texte-secondaire intro"><span class="seulement-ordi">{reco.texte}</span><span class="seulement-mobile">{reco.texteMobile}</span></p>
-    <form class="formulaire" data-reco action="#recommander">
+    <form class="formulaire" data-reco data-astro-reload action="#recommander">
       <label for="reco-son" class="visuellement-cache">{reco.titre}</label>
       <input id="reco-son" name="son" class="texte-corps" placeholder={reco.champ} autocomplete="off" data-placeholder-mobile={reco.champMobile} />
       <Bouton style="primaire" type="submit" class="envoyer">{reco.envoyer}</Bouton>

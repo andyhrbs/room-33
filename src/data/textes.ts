@@ -75,6 +75,35 @@ export const reco = {
   insta: 'ou écrivez-moi sur Insta',
 };
 
+// ---------- Tiroir « Recommandez-moi un son » (s'ouvre de partout) ----------
+export const tiroir = {
+  titre: 'Recommandez-moi un son',
+  intro: 'Un son qui pourrait me plaire ? Cherchez-le, choisissez-le, envoyez. Je l’écoute vraiment.',
+  etape1: '1 · Votre son',
+  champ: 'Cherchez un titre ou un artiste',
+  aideLien: 'ou collez un lien Spotify, Apple Music, Deezer ou YouTube',
+  etape2: '2 · Vous (facultatif)',
+  prenom: 'Votre prénom',
+  mot: 'Un mot sur ce son, pourquoi il me plairait…',
+  envoyer: 'Envoyer au disquaire',
+  envoi: 'Envoi en cours…',
+  insta: 'Plutôt en DM ? Écrivez-moi sur Insta',
+  note: 'Si je valide votre son, il rejoint le bac des visiteurs avec votre prénom.',
+  choisir: 'Choisir',
+  choisi: 'Choisi',
+  lienColle: 'Lien collé',
+  recherche: 'Recherche…',
+  aucun: 'Aucun son trouvé. Essayez avec le nom de l’artiste, ou collez un lien.',
+  erreurRecherche: 'La recherche ne répond pas. Réessayez, ou collez un lien.',
+  erreurChoix: 'Choisissez un son avant d’envoyer.',
+  erreurEnvoi: 'L’envoi n’a pas marché. Réessayez dans un instant, ou écrivez-moi sur Insta.',
+  merciTitre: 'C’est dans la caisse.',
+  merci: 'Merci ! J’écoute ça bientôt. Si je valide, votre son rejoint le bac des visiteurs avec votre prénom.',
+  autre: 'Recommander un autre son',
+  retour: 'Retour à la pièce',
+  fermer: 'Fermer',
+};
+
 // ---------- Page : Le comptoir ----------
 export const comptoir = {
   retour: 'Retour dans la pièce',
