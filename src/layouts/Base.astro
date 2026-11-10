@@ -32,7 +32,7 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
           try {
             if (/[?&]entree\b/.test(location.search)) { sessionStorage.removeItem('room33-entree'); document.documentElement.classList.remove('entree-vue'); return; }
             if (sessionStorage.getItem('room33-entree')) document.documentElement.classList.add('entree-vue');
-          } catch (e) { document.documentElement.classList.add('entree-vue'); }
+          } catch (e) { /* mémoire du navigateur bloquée (navigation privée stricte, navigateur intégré à une appli) : on montre l'entrée */ }
         };
         marquer();
         document.addEventListener('astro:after-swap', marquer);
