@@ -4,13 +4,15 @@
 // Textes repris tels quels de la maquette Figma (le travail sur les textes
 // viendra après le code).
 // ==========================================================================
+import reglages from './cms/site.json';
 
 export const site = {
   nom: 'Room 33',
   descriptionParDefaut:
     'Bienvenue chez moi. Installez-vous, fouillez dans mes bacs et glissez-moi vos sons.',
-  instagram: '@andyh.robinson',
-  instagramUrl: 'https://www.instagram.com/andyh.robinson/',
+  // compte Instagram : modifiable dans /admin (fichier src/data/cms/site.json)
+  instagram: reglages.instagram,
+  instagramUrl: reglages.instagramUrl,
 };
 
 // Les pages, dans l'ordre du menu mobile

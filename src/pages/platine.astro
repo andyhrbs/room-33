@@ -89,16 +89,6 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       </div>
     </section>
 
-    <section class="mot section" aria-labelledby="titre-mot">
-      <div class="conteneur deux-colonnes">
-        <h2 id="titre-mot" class="titre-h1">Mon mot sur le mois</h2>
-        <div class="texte">
-          <blockquote class="titre-h3 seulement-ordi">{p.mot}</blockquote>
-          <blockquote class="texte-corps-l seulement-mobile">{p.motCourt}</blockquote>
-          <p class="texte-petit texte-secondaire">— Andyh, le disquaire</p>
-        </div>
-      </div>
-    </section>
   </main>
   <PiedDePage />
 </Base>
@@ -349,16 +339,11 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .vinyle.a-larret { animation-play-state: paused; }
   .direct.a-larret .point { background: var(--couleur-texte-secondaire); }
 
-  .mot { background: var(--couleur-fond-page); }
-  .deux-colonnes { display: grid; grid-template-columns: minmax(0, 17.625rem) minmax(0, 53.375rem); justify-content: space-between; gap: var(--espace-sm) var(--espace-3xl); }
-  .texte { display: grid; gap: var(--espace-sm); }
-  blockquote { margin: 0; }
 
   @media (max-width: 63.99rem) {
     .en-cours { grid-template-columns: 1fr; gap: var(--espace-lg); padding-top: var(--espace-md); }
     .morceau .titre-display { font-size: var(--taille-h1); }
     .afficheurs { grid-template-columns: 1fr; }
     .classements { grid-template-columns: 1fr; gap: var(--espace-xl); }
-    .deux-colonnes { grid-template-columns: 1fr; }
   }
 </style>

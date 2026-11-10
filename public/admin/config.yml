@@ -23,20 +23,23 @@ media_folder: public/images/cms
 public_folder: /images/cms
 
 collections:
-  - name: platine
-    label: La platine
-    description: Les textes écrits à la main sur la page La platine (le reste vient de Spotify).
+  # Le reste du contenu (disques, Top, lives, morceau du jour…) sera branché à la fin du projet.
+  - name: reglages
+    label: Réglages du site
+    description: Les infos utilisées un peu partout sur le site.
     files:
-      - name: mot-du-mois
-        label: Mon mot sur le mois
-        file: src/data/cms/platine.json
+      - name: site
+        label: Compte Instagram
+        file: src/data/cms/site.json
         format: json
         fields:
-          - name: mot
-            label: Mon mot (ordi)
-            widget: text
-            hint: Deux ou trois phrases sur ce que tu as écouté ce mois-ci. Garde les guillemets « ».
-          - name: motCourt
-            label: Mon mot (mobile, version courte)
+          - name: instagram
+            label: Pseudo Instagram
             widget: string
-            hint: Une seule phrase.
+            hint: Avec le @ devant, par exemple @andyh.robinson. Sert pour tous les liens « Écrivez-moi en DM ».
+            pattern: ['^@[A-Za-z0-9._]+$', 'Le pseudo commence par @ et ne contient que des lettres, chiffres, points ou _']
+          - name: instagramUrl
+            label: Lien du profil
+            widget: string
+            hint: L'adresse complète de ton profil, par exemple https://www.instagram.com/andyh.robinson/
+            pattern: ['^https://(www\.)?instagram\.com/.+', 'Le lien doit commencer par https://www.instagram.com/']
