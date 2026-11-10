@@ -55,16 +55,6 @@ export const accueil = {
   accroche: 'Installez-vous, fouillez dans mes bacs, écoutez un extrait et recommandez-moi un son.',
   accrocheMobile: 'Installez-vous, fouillez dans mes bacs.',
   entrer: 'Entrer dans les bacs',
-  // Points posés sur les objets de la photo (positions en % de l'image ordi, à recaler sur la photo finale)
-  objets: [
-    { nom: 'Le mur de pochettes', explication: 'Mes disques préférés, encadrés.', href: '/top', lien: 'Le Top', x: '50%', y: '24%', cote: 'droite' },
-    { nom: 'La platine', explication: 'Ce que j’écoute en ce moment.', href: '/platine', lien: 'La platine', x: '68%', y: '47%', cote: 'gauche' },
-    { nom: 'La chaîne hi-fi', explication: 'Les concerts que je repasse en boucle.', href: '/lives', lien: 'Les lives', x: '76%', y: '50%', cote: 'gauche' },
-    { nom: 'Le buffet à vinyles', explication: 'Mes bacs, par genre et par humeur.', href: '/bacs', lien: 'Les bacs', x: '34%', y: '49%', cote: 'droite' },
-    { nom: 'La caisse à vinyles', explication: 'Glissez-moi un son que je ne connais pas.', href: '/#recommander', lien: 'Recommandez-moi un son', x: '14%', y: '58%', cote: 'droite' },
-    { nom: 'Le piano', explication: 'Posez-vous, je vous raconte qui je suis.', href: '/comptoir', lien: 'Le comptoir', x: '86%', y: '56%', cote: 'gauche' },
-  ],
-  visite: { surtitre: 'La pièce', titre: 'Faites le tour de la pièce' },
   morceau: { surtitre: 'Le morceau du jour', voirFiche: 'Voir la fiche' },
   bacs: { surtitre: 'Les bacs', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
   platine: { surtitre: 'La platine', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes' },

@@ -40,21 +40,6 @@ const suivants = reste.slice(0, 4);
       </div>
     </section>
 
-    <!-- Mobile : la visite de la pièce, objet par objet -->
-    <section class="visite section conteneur seulement-mobile" aria-labelledby="titre-visite">
-      <EnTeteSection surtitre={accueil.visite.surtitre} titre={accueil.visite.titre} id="titre-visite" />
-      <ul role="list" class="objets">
-        {accueil.objets.map((o, i) => (
-          <li class="objet">
-            <div class="vignette" style={`--x: ${o.x}; --y: ${o.y}`} aria-hidden="true"></div>
-            <h3 class="titre-h3">{o.nom}</h3>
-            <p class="texte-corps texte-secondaire">{o.explication}</p>
-            <Bouton style="lien" href={o.href}>{o.lien}</Bouton>
-          </li>
-        ))}
-      </ul>
-    </section>
-
     <!-- Le morceau du jour -->
     <section class="morceau section" aria-labelledby="titre-morceau">
       <div class="conteneur grille-morceau">
@@ -142,17 +127,6 @@ const suivants = reste.slice(0, 4);
   .accroche { display: grid; justify-items: start; gap: 0; max-width: 25rem; } /* Figma : éléments collés (le bouton a ses propres marges) */
   .titre-hero { white-space: nowrap; }
   @media (max-width: 63.99rem) { .titre-hero { white-space: normal; } .contenu { gap: 1.25rem; padding-bottom: var(--espace-3xl); } .accroche { gap: 1.25rem; } } /* Figma mobile : 64 px en bas, 20 px d'écart */
-
-  /* ---------- Visite (mobile) ---------- */
-  .visite { display: grid; gap: var(--espace-lg); }
-  .objets { display: grid; gap: var(--espace-2xl); }
-  .objet { display: grid; justify-items: start; gap: var(--espace-xs); }
-  .vignette {
-    width: 100%; aspect-ratio: 350 / 220; border-radius: var(--rayon-bloc); margin-bottom: var(--espace-xs);
-    background:
-      radial-gradient(35% 45% at var(--x) var(--y), rgb(240 122 34 / 0.35), transparent 70%),
-      linear-gradient(160deg, var(--noyer-500), var(--brun-950));
-  }
 
   /* ---------- Morceau du jour ---------- */
   .morceau { background: var(--couleur-fond-bloc); }
