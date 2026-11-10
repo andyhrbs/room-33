@@ -55,9 +55,10 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       </g>
     </svg>
   </button>
-  <div class="centre">
-    <h2 id="titre-entree" class="titre-h1">Allumez la lampe</h2>
-    <p class="texte-corps"><span class="seulement-ordi">Cliquez sur la lampe pour entrer dans le disquaire.</span><span class="seulement-mobile">Touchez la lampe pour entrer dans le disquaire.</span></p>
+  <!-- textes retirés à l'écran pour une entrée plus immersive : seuls les lecteurs d'écran les lisent -->
+  <div class="visuellement-cache">
+    <h2 id="titre-entree">Allumez la lampe</h2>
+    <p>Activez la lampe pour entrer dans le disquaire.</p>
   </div>
   <Bouton style="lien" class="direct" data-entrer-direct>Entrer directement</Bouton>
 </div>
@@ -96,7 +97,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   :global(html.entree-active) { overflow: hidden; }
   .entree {
     position: fixed; inset: 0; z-index: 100; overflow: hidden;
-    display: grid; grid-template-rows: 1fr auto; justify-items: center;
+    display: grid; align-content: end; justify-items: center;
     padding: var(--espace-xl) var(--grille-marge) var(--espace-4xl);
     background:
       radial-gradient(45% 35% at 50% 40%, rgb(240 122 34 / 0.22), transparent 100%),
@@ -114,8 +115,6 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   }
   .entree.allumage { --r: 150vmax; }
   .entree.fondu { opacity: 0; }
-  /* textes sous l'abat-jour */
-  .centre { display: grid; justify-items: center; align-content: center; gap: var(--espace-lg); text-align: center; padding-top: 280px; }
   .entree :global(.direct) { justify-self: center; }
 
   /* halo qui pulse, centré sur l'abat-jour (centre du verre : y = 279 dans le dessin) */
@@ -154,7 +153,6 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   @media (max-width: 63.99rem) {
     .entree { --haut: -15px; --k: 0.75; padding-bottom: var(--espace-3xl); }
     .halo { width: 220px; height: 220px; }
-    .centre { padding-top: 200px; }
   }
   @media (prefers-reduced-motion: reduce) { .halo { animation: none; } .entree, .on, .reflets, .halo { transition: none; } }
 </style>
