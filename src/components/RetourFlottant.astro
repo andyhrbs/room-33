@@ -8,9 +8,9 @@ import Icone from './Icone.astro';
 interface Props { href: string; texte: string }
 const { href, texte } = Astro.props;
 ---
-<a class="retour-flottant texte-petit" href={href} data-retour-flottant aria-hidden="true" tabindex="-1">
+<a class="retour-flottant texte-petit" href={href} data-retour-flottant aria-hidden="true" tabindex="-1" aria-label={texte}>
   <Icone nom="fleche-gauche" taille={20} />
-  <span class="libelle">{texte}</span>
+  <span class="libelle" aria-hidden="true"><span>{texte}</span></span>
 </a>
 
 <script>
@@ -38,47 +38,43 @@ const { href, texte } = Astro.props;
 </script>
 
 <style>
-  /* Sobre, comme le bouton « lien » du hero : pas de fond ni de contour (maquette Figma d'Andyh).
-     Lisibilité sur ce qui défile dessous (pochettes claires, textes) : un halo sombre doux autour des lettres
-     et de la flèche, qui reste invisible sur le fond brun et ne se voit que quand c'est nécessaire. */
+  /* Juste la flèche, dans une pastille ronde (fond brun translucide + contour discret) pour rester visible
+     sur tout ce qui défile dessous. Au survol (ou au clavier), la pastille s'allonge et le texte se déroule
+     à droite de la flèche. Au toucher : flèche seule (le texte est lu par les lecteurs d'écran). */
   .retour-flottant {
-    --halo: 0 1px 2px rgb(18 11 7 / 0.85), 0 0 14px rgb(18 11 7 / 0.7);
     position: fixed; z-index: 40;
     top: calc(72px + var(--espace-sm));
     /* aligné sur le bord gauche de la grille (conteneur de 1440 px centré) */
     left: max(var(--grille-marge), calc((100vw - var(--grille-largeur-max)) / 2 + var(--grille-marge)));
-    display: inline-flex; align-items: center; gap: var(--espace-xs);
-    min-height: 44px; padding: 0; /* zone de clic de 44 px de haut */
+    display: inline-flex; align-items: center;
+    height: 44px; min-width: 44px; padding: 0 11px; /* flèche de 20 px centrée dans un rond de 44 px */
+    border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    background: rgb(31 21 14 / 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
     color: var(--couleur-texte-principal); text-decoration: none;
-    text-shadow: var(--halo);
     opacity: 0; transform: translateY(-8px); pointer-events: none;
-    transition: opacity var(--duree-normal) var(--courbe-sortie), transform var(--duree-normal) var(--courbe-sortie);
+    transition: opacity var(--duree-normal) var(--courbe-sortie), transform var(--duree-normal) var(--courbe-sortie),
+      background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), padding var(--duree-normal) var(--courbe-sortie);
   }
   .retour-flottant.visible { opacity: 1; transform: none; pointer-events: auto; }
-  .retour-flottant :global(.icone) {
-    color: var(--couleur-accent-defaut);
-    filter: drop-shadow(0 1px 2px rgb(18 11 7 / 0.85)) drop-shadow(0 0 8px rgb(18 11 7 / 0.6));
-    transition: transform var(--duree-normal) var(--courbe-sortie);
-  }
-  /* Survol : le soulignement se dessine de gauche à droite, la flèche recule un peu (elle « montre » le retour) */
-  .libelle { position: relative; padding-block: 2px; }
-  .libelle::after {
-    content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--trait-filet);
-    background: currentColor; box-shadow: 0 1px 4px rgb(18 11 7 / 0.6);
-    transform: scaleX(0); transform-origin: right;
-    transition: transform var(--duree-normal) var(--courbe-sortie);
-  }
+  .retour-flottant :global(.icone) { flex: none; color: var(--couleur-accent-defaut); transition: transform var(--duree-normal) var(--courbe-sortie); }
+  /* le texte : largeur 0 → largeur du texte (grille 0fr → 1fr, sans valeur en dur), puis il apparaît */
+  .libelle { display: grid; grid-template-columns: 0fr; transition: grid-template-columns var(--duree-normal) var(--courbe-sortie); }
+  .libelle > span { overflow: hidden; white-space: nowrap; opacity: 0; transform: translateX(-6px); transition: opacity var(--duree-rapide) var(--courbe-standard), transform var(--duree-normal) var(--courbe-sortie); }
   @media (hover: hover) {
-    .retour-flottant:hover .libelle::after { transform: scaleX(1); transform-origin: left; }
-    .retour-flottant:hover :global(.icone) { transform: translateX(-4px); }
+    .retour-flottant:hover { padding-right: var(--espace-md); background: rgb(43 30 21 / 0.94); border-color: var(--couleur-bordure-defaut); } /* fond bloc, presque opaque : le texte reste net sur les pochettes */
+    .retour-flottant:hover .libelle { grid-template-columns: 1fr; }
+    .retour-flottant:hover .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); transition-delay: 80ms; }
+    .retour-flottant:hover :global(.icone) { transform: translateX(-2px); }
   }
-  .retour-flottant:focus-visible .libelle::after { transform: scaleX(1); transform-origin: left; }
+  .retour-flottant:focus-visible { padding-right: var(--espace-md); outline-offset: 3px; border-radius: var(--rayon-pilule); }
+  .retour-flottant:focus-visible .libelle { grid-template-columns: 1fr; }
+  .retour-flottant:focus-visible .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); }
   .retour-flottant:active { transform: scale(0.96); }
-  .retour-flottant:focus-visible { outline-offset: 6px; border-radius: var(--rayon-pilule); }
   /* mobile : la nav fait 60 px (68 px une fois défilée) */
   @media (max-width: 63.99rem) { .retour-flottant { top: calc(68px + var(--espace-xs)); } }
   @media (prefers-reduced-motion: reduce) {
     .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; }
-    .libelle::after, .retour-flottant :global(.icone) { transition: none; }
+    .libelle, .libelle > span, .retour-flottant :global(.icone) { transition: none; }
   }
 </style>
