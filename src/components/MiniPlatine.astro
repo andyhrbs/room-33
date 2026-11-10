@@ -4,14 +4,17 @@
 // Contient aussi la fenêtre « Écouter en entier sur… » (choix de l'app, mémorisé).
 import Icone from './Icone.astro';
 import Bouton from './Bouton.astro';
+import { existsSync } from 'node:fs';
 interface Props { titre?: string; artiste?: string; temps?: string; progression?: number; visible?: boolean; fixe?: boolean }
 const { titre = 'Titre du morceau', artiste = 'Artiste', temps = '0:00 / 0:30', progression = 0, visible = false, fixe = true } = Astro.props;
+// Logos officiels des plateformes : fichiers à déposer dans public/logos/ (spotify.svg, apple.svg, deezer.svg, youtube.svg),
+// téléchargés depuis leurs kits presse. Tant qu'un fichier manque, une pastille neutre prend sa place.
 const apps = [
   { id: 'spotify', nom: 'Spotify' },
   { id: 'apple', nom: 'Apple Music' },
   { id: 'deezer', nom: 'Deezer' },
   { id: 'youtube', nom: 'YouTube Music' },
-];
+].map((a) => ({ ...a, logo: existsSync(`public/logos/${a.id}.svg`) ? `/logos/${a.id}.svg` : null }));
 ---
 <aside class:list={['mini-platine', { fixe }]} aria-label="Lecteur d’extraits" data-mini-platine data-ecoute-courante hidden={!visible}>
   <div class="en-cours">
@@ -43,7 +46,11 @@ const apps = [
   <p class="texte-petit texte-secondaire" data-choix-morceau></p>
   <ul role="list" class="apps">
     {apps.map((a) => (
-      <li><button type="button" class="app-choix texte-label" data-app={a.id} disabled>{a.nom}<Icone nom="fleche-droite" taille={20} /></button></li>
+      <li><button type="button" class="app-choix texte-label" data-app={a.id} disabled>
+        <span class="logo-app" aria-hidden="true">{a.logo && <img src={a.logo} alt="" width="28" height="28" />}</span>
+        <span class="nom-app">{a.nom}</span>
+        <Icone nom="fleche-droite" taille={20} />
+      </button></li>
     ))}
   </ul>
   <p class="texte-legende texte-secondaire">Votre choix est retenu pour les prochaines fois.</p>
@@ -106,6 +113,11 @@ const apps = [
     width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: space-between;
     border: 0; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); background: none; padding: var(--espace-sm) 0; color: inherit; text-align: left;
   }
+  .app-choix { gap: var(--espace-sm); }
+  .nom-app { flex: 1; }
+  .logo-app { width: 28px; height: 28px; flex: none; border-radius: 6px; background: var(--couleur-fond-tonal); overflow: hidden; display: grid; place-items: center; }
+  .logo-app:has(img) { background: none; }
+  .logo-app img { width: 100%; height: 100%; object-fit: contain; }
   .app-choix:hover:not(:disabled) { color: var(--couleur-accent-defaut); }
   .app-choix:disabled { opacity: 0.4; cursor: default; }
   .app-choix[data-memo] { color: var(--couleur-accent-defaut); }
