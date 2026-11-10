@@ -13,6 +13,8 @@ import { lives } from '../data/lives';
 import { disques } from '../data/disques';
 // « Voir le disque » seulement si le disque existe vraiment dans les bacs (évite un lien cassé saisi dans l'admin)
 const existe = new Set(disques.map((d) => d.slug));
+// « Voir sur YouTube » : ouvre la vidéo sur YouTube (pour l'enregistrer, la partager, s'abonner)
+const surYoutube = (l: { youtube: string }) => `https://www.youtube.com/watch?v=${l.youtube}`;
 const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
 const [une, ...autres] = lives;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
@@ -33,7 +35,10 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
           <p class="texte-petit texte-secondaire">{infos(une)}</p>
           <p class="texte-avis">{une.mot}</p>
-          {une.disque && existe.has(une.disque) && <Bouton style="lien" href={`/disques/${une.disque}`}>{t.voirDisque}</Bouton>}
+          <div class="actions-une">
+            <Bouton style="lien" href={surYoutube(une)} target="_blank" rel="noopener">{t.voirYoutube}<span class="visuellement-cache"> : {nom(une)} (nouvel onglet)</span></Bouton>
+            {une.disque && existe.has(une.disque) && <Bouton style="lien" href={`/disques/${une.disque}`}>{t.voirDisque}</Bouton>}
+          </div>
         </div>
       </article>
 
@@ -50,7 +55,10 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
                 <h3 class="texte-label">{nom(l)}</h3>
                 <p class="texte-petit texte-secondaire">{infos(l)}</p>
                 <p class="texte-petit">{l.mot}</p>
-                {l.disque && existe.has(l.disque) && <a class="texte-petit lien-disque" href={`/disques/${l.disque}`}>{t.voirDisque}</a>}
+                <div class="liens-carte">
+                  <a class="texte-petit lien-disque" href={surYoutube(l)} target="_blank" rel="noopener">{t.voirYoutube}<span class="visuellement-cache"> : {nom(l)} (nouvel onglet)</span></a>
+                  {l.disque && existe.has(l.disque) && <a class="texte-petit lien-disque" href={`/disques/${l.disque}`}>{t.voirDisque}</a>}
+                </div>
               </div>
             </li>
           ))}
@@ -93,6 +101,8 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   .carte { display: grid; gap: var(--espace-sm); align-content: start; }
   .texte-carte { display: grid; gap: var(--espace-2xs); }
   .texte-carte h3 { margin: 0; }
+  .actions-une { display: flex; flex-wrap: wrap; gap: var(--espace-2xs) var(--espace-xl); }
+  .liens-carte { display: flex; flex-wrap: wrap; gap: 0 var(--espace-lg); }
   .lien-disque { justify-self: start; color: var(--couleur-texte-principal); padding-block: var(--espace-xs); }
   @media (max-width: 63.99rem) {
     .lives { gap: var(--espace-2xl); }
