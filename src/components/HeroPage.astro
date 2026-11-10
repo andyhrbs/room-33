@@ -1,13 +1,19 @@
 ---
 // Hero des pages intérieures : gros plan de la pièce, retour, fil d'Ariane, titre avec lettrine.
 import Bouton from './Bouton.astro';
+import { images, type Recadrage } from '../data/images';
 type Etape = string | { texte: string; href?: string };
-interface Props { image?: string | null; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string }
-const { image, position = 'center', filAriane, surtitreMobile, titre, titreMobile, retour = 'Retour dans la pièce' } = Astro.props;
+interface Props { image?: string | null; recadrage?: Recadrage; position?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string }
+const { image: imageProp, recadrage, position: positionProp = 'center', filAriane, surtitreMobile, titre, titreMobile, retour = 'Retour dans la pièce' } = Astro.props;
 // Titre court sur mobile (maquette Figma) ; un seul H1 lu par les lecteurs d'écran et Google : le titre complet
 const decoupe = (t: string) => [t.charAt(0), t.slice(1)];
+// Gros plan : la photo de la pièce, recadrée comme dans Figma (zoom + position)
+const image = imageProp ?? (recadrage ? images.pieceOrdi : null);
+const [sx, sy, tx, ty] = recadrage ?? [1, 1, 0, 0];
+const taille = recadrage ? `${(100 / sx).toFixed(1)}% auto` : 'cover';
+const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50}% ${sy < 1 ? ((ty / (1 - sy)) * 100).toFixed(1) : 50}%` : positionProp;
 ---
-<header class="hero-page" style={image ? `--image: url('${image}'); --position: ${position}` : undefined}>
+<header class="hero-page" style={image ? `--image: url('${image}'); --position: ${position}; --taille: ${taille}` : undefined}>
   <div class="conteneur contenu">
     <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour">{retour}</Bouton>
     <div class="titres">
@@ -41,9 +47,10 @@ const decoupe = (t: string) => [t.charAt(0), t.slice(1)];
     position: relative; display: flex; align-items: flex-end;
     min-height: clamp(45rem, 60vw, 53.75rem);
     background:
-      linear-gradient(180deg, rgb(18 10 8 / 0.55) 0%, rgb(18 10 8 / 0) 22%, rgb(18 10 8 / 0) 50%, rgb(18 10 8 / 0.95) 100%),
+      /* voile Figma : brun 900 à 35 % → 10 % → 75 % → 100 % (le texte reste lisible en bas) */
+      linear-gradient(180deg, rgb(31 21 14 / 0.35) 0%, rgb(31 21 14 / 0.10) 35%, rgb(31 21 14 / 0.75) 70%, var(--couleur-fond-page) 100%),
       var(--image, radial-gradient(60% 50% at 30% 30%, rgb(240 122 34 / 0.25), transparent), linear-gradient(160deg, var(--noyer-500), var(--brun-950)));
-    background-size: cover; background-position: var(--position, center);
+    background-size: 100% 100%, var(--taille, cover); background-position: center, var(--position, center); background-repeat: no-repeat;
   }
   .contenu { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-lg); padding-bottom: var(--espace-2xl); }
   .contenu :global(.retour) { justify-self: start; }
