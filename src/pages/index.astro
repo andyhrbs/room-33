@@ -143,12 +143,11 @@ const suivants = reste.slice(0, 4);
     .hero { min-height: 100svh; background: var(--voile), var(--image-mobile, var(--image-ordi, var(--provisoire))); background-size: cover; background-position: center; }
   }
   .points { position: absolute; inset: 0; }
-  .contenu { position: relative; display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-3xl); pointer-events: none; }
+  .contenu { position: relative; display: grid; gap: var(--espace-lg); padding-bottom: var(--espace-4xl); pointer-events: none; } /* Figma : 96 px en bas (ordi) */
   .contenu > * { pointer-events: auto; }
-  .accroche { display: grid; justify-items: start; gap: var(--espace-sm); max-width: 25rem; }
-  .accroche .texte-legende { margin-top: calc(-1 * var(--espace-xs)); }
+  .accroche { display: grid; justify-items: start; gap: 0; max-width: 25rem; } /* Figma : éléments collés (le bouton a ses propres marges) */
   .titre-hero { white-space: nowrap; }
-  @media (max-width: 63.99rem) { .titre-hero { white-space: normal; } .contenu { gap: var(--espace-md); } }
+  @media (max-width: 63.99rem) { .titre-hero { white-space: normal; } .contenu { gap: 1.25rem; padding-bottom: var(--espace-3xl); } .accroche { gap: 1.25rem; } } /* Figma mobile : 64 px en bas, 20 px d'écart */
 
   /* ---------- Visite (mobile) ---------- */
   .visite { display: grid; gap: var(--espace-lg); }
