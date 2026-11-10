@@ -9,7 +9,7 @@ interface Props { chemin: string; ouvertPourDemo?: boolean }
 const { chemin, ouvertPourDemo = false } = Astro.props;
 const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.startsWith(href));
 ---
-<dialog id={ouvertPourDemo ? undefined : 'menu-principal'} class:list={['menu', { demo: ouvertPourDemo }]} aria-label="Menu" open={ouvertPourDemo}>
+<dialog id={ouvertPourDemo ? undefined : 'menu-principal'} class:list={['menu', { demo: ouvertPourDemo }]} aria-label="Menu" open={ouvertPourDemo} tabindex="-1">
   <div class="entete">
     <Logo />
     <button class="fermer" type="button" data-fermer-menu autofocus={!ouvertPourDemo}>
@@ -51,6 +51,8 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
   .menu[open] { display: flex; animation: apparait var(--duree-normal) var(--courbe-sortie); }
   .menu.demo { position: relative; height: 52.75rem; inset: auto; }
+  .menu:focus, .menu:focus-visible { outline: none; }
+  .fermer:focus-visible { border-radius: 50%; }
   .menu::backdrop { background: var(--couleur-fond-page); }
   @keyframes apparait { from { opacity: 0; transform: translateY(-8px); } }
 
@@ -60,14 +62,22 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
   .fermer { width: 44px; height: 44px; margin-right: -8px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: inherit; }
 
-  .liens { display: grid; gap: var(--espace-lg); padding: var(--espace-3xl) var(--grille-marge) var(--espace-xl); }
-  .liens a { display: flex; gap: var(--espace-sm); text-decoration: none; }
-  .numero { padding-top: 0.6em; min-width: 1.4rem; }
+  /* Espacements de la maquette Figma (menu ouvert, mobile 390) : liens 32 px en haut et en bas, 16 px entre eux,
+     numéro centré sur le lien ; le bas suit directement les liens. */
+  .liens { display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge); }
+  .liens a { display: flex; align-items: center; gap: var(--espace-sm); text-decoration: none; }
+  .numero { min-width: 1.4rem; }
   .texte { display: grid; gap: 2px; }
   .libelle { text-underline-offset: 0.15em; text-decoration-thickness: var(--trait-filet); }
   .liens a:hover .libelle, .liens a[aria-current='page'] .libelle { text-decoration: underline; }
 
-  .bas { margin-top: auto; display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge) var(--espace-2xl); }
+  .bas { display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge) max(var(--espace-2xl), env(safe-area-inset-bottom)); }
+  /* Écran de téléphone plus court que la maquette (barres du navigateur) : on resserre pour que tout le menu tienne */
+  @media (max-height: 50rem) {
+    .entete { padding-block: var(--espace-xs); }
+    .liens { gap: var(--espace-xs); padding-block: var(--espace-md); }
+    .bas { gap: var(--espace-xs); padding-top: var(--espace-md); padding-bottom: max(var(--espace-md), env(safe-area-inset-bottom)); }
+  }
   .instagram { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; }
   .instagram:hover { color: var(--couleur-texte-principal); }
 
