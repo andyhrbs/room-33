@@ -18,7 +18,8 @@ const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(B
 // ligne « chaîne » (Figma) : le nom de la chaîne YouTube + la date de publication.
 // Si YouTube n'a pas répondu au build : le lieu et l'année saisis dans l'admin.
 type Affiche = (typeof affiches)[number];
-const chaine = (l: Affiche) => ({ nom: l.yt.chaine ?? (l.lieu || t.chaine), sous: dateFr(l.yt.date) ?? (l.yt.chaine ? infos(l) : String(l.annee)) });
+// sans date YouTube : l'année saisie dans l'admin (jamais le lieu, pour ne pas répéter le nom de la chaîne)
+const chaine = (l: Affiche) => ({ nom: l.yt.chaine ?? (l.lieu || t.chaine), sous: dateFr(l.yt.date) ?? String(l.annee) });
 const meta = (l: Affiche) => { const c = chaine(l); return [c.nom, c.sous].filter(Boolean).join(' · '); };
 const yt = (id: string) => `https://www.youtube.com/watch?v=${id}`;
 const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: meta(l), mot: l.mot, chaine: chaine(l) });

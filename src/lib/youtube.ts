@@ -20,7 +20,14 @@ async function lire(id: string): Promise<InfosVideo> {
     const r = await fetch(`https://www.youtube.com/watch?v=${id}&hl=fr`, { ...delai(), headers: { 'Accept-Language': 'fr-FR,fr;q=0.9' } });
     if (r.ok) {
       const html = await r.text();
-      infos.date = html.match(/<meta itemprop="(?:uploadDate|datePublished)" content="([^"]+)"/)?.[1] ?? html.match(/"publishDate":"([^"]+)"/)?.[1];
+      // la date apparaît sous plusieurs formes selon la version de page que YouTube renvoie
+      infos.date = [
+        /<meta itemprop="(?:uploadDate|datePublished)" content="([^"]+)"/,
+        /"(?:uploadDate|publishDate)":"(\d{4}-\d{2}-\d{2}[^"]*)"/,
+        /"(?:uploadDate|publishDate)":\{"simpleText":"([^"]+)"\}/,
+        /"dateText":\{"simpleText":"([^"]+)"\}/,
+      ].map((re) => html.match(re)?.[1]).find(Boolean);
+      if (!infos.date) console.warn(`[YouTube] date introuvable pour ${id}`);
       const vignettes = html.match(/"videoOwnerRenderer":\{"thumbnail":\{"thumbnails":(\[[^\]]+\])/)?.[1];
       if (vignettes) {
         const liste = JSON.parse(vignettes) as { url: string; width?: number }[];
@@ -40,5 +47,6 @@ export const infosVideo = (id: string) => {
 export const dateFr = (iso?: string) => {
   if (!iso) return undefined;
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? undefined : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  // date au format ISO → « 13 juillet 2020 » ; texte déjà lisible (« 13 juil. 2020 ») → tel quel
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 };
