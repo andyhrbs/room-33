@@ -44,9 +44,20 @@ export const infosVideo = (id: string) => {
 };
 
 // « 13 juillet 2020 »
-export const dateFr = (iso?: string) => {
-  if (!iso) return undefined;
-  const d = new Date(iso);
-  // date au format ISO → « 13 juillet 2020 » ; texte déjà lisible (« 13 juil. 2020 ») → tel quel
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+export const dateFr = (brut?: string) => {
+  if (!brut) return undefined;
+  const d = new Date(brut);
+  // date au format ISO → « 13 juillet 2020 »
+  if (!Number.isNaN(d.getTime()) && /^\d{4}-/.test(brut)) return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  // texte de la page YouTube (« Sortie le 13 juil. 2020 », « Diffusé en direct le 4 août 2022 ») → « 13 juillet 2020 »
+  const m = brut.match(/(\d{1,2})(?:er)?\s+([a-zéèûô]+)\.?\s+(\d{4})/i);
+  if (m) {
+    const brutMois = m[2].toLowerCase().normalize('NFD');
+    // « juin » et « juil. » commencent pareil : on regarde la 4e lettre
+    const nom = MOIS.find((x) => x.normalize('NFD').startsWith(brutMois.slice(0, brutMois.startsWith('ju') ? 4 : 3)));
+    if (nom) return `${Number(m[1])} ${nom} ${m[3]}`;
+  }
+  // texte relatif (« il y a 3 ans ») ou illisible : rien, le site affiche alors l'année saisie dans l'admin
+  return undefined;
 };
