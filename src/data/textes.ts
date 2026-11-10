@@ -141,7 +141,6 @@ export const livesTextes = {
   introCourte: 'Les concerts que je ne me lasse pas de revoir.',
   une: 'Le live à la une',
   tous: { surtitre: 'Tous les lives', titre: 'Sur scène, en studio, dans un salon.' },
-  voirDisque: 'Voir le disque',
   voirYoutube: 'Voir sur YouTube',
   lire: 'Lire la vidéo',
   consentement: 'La vidéo se charge depuis YouTube quand vous la lancez.',

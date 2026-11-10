@@ -67,11 +67,6 @@ collections:
                 label: Mon mot
                 widget: text
                 hint: Une à trois phrases. Garde les guillemets « ».
-              - name: disque
-                label: Disque lié (facultatif)
-                widget: string
-                required: false
-                hint: Le nom du disque dans l'adresse de sa fiche (ex. tom-misch-geography pour /disques/tom-misch-geography). Laisse vide sinon.
   - name: reglages
     label: Réglages du site
     description: Les infos utilisées un peu partout sur le site.

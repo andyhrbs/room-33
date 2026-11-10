@@ -12,7 +12,6 @@ export interface Live {
   lieu: string;      // émission, lieu, ville
   annee: number;
   mot: string;       // ton mot (une à trois phrases)
-  disque?: string;   // slug d'un disque de tes bacs, pour « Voir le disque »
 }
 
 // Accepte un lien YouTube sous toutes ses formes (watch?v=, youtu.be/, /live/, /shorts/, /embed/) ou l'identifiant seul
@@ -23,12 +22,12 @@ export function idYoutube(video: string): string | null {
   return m ? m[1] : null;
 }
 
-type Entree = { video: string; artiste: string; titre: string; lieu?: string; annee?: number; mot?: string; disque?: string };
+type Entree = { video: string; artiste: string; titre: string; lieu?: string; annee?: number; mot?: string };
 
 export const lives: Live[] = (donnees.lives as Entree[])
   .map((l) => ({ ...l, youtube: idYoutube(l.video) }))
   .filter((l): l is Entree & { youtube: string } => !!l.youtube) // un lien illisible ne casse pas la page : le live est ignoré
   .map((l) => ({
     youtube: l.youtube, artiste: l.artiste, titre: l.titre, lieu: l.lieu ?? '',
-    annee: Number(l.annee) || new Date().getFullYear(), mot: l.mot ?? '', disque: l.disque || undefined,
+    annee: Number(l.annee) || new Date().getFullYear(), mot: l.mot ?? '',
   }));
