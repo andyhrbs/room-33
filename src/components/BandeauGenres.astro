@@ -1,6 +1,7 @@
 ---
 // Bandeau qui fait défiler les genres en très grand.
-// Bouton pause obligatoire (règle d'accessibilité WCAG 2.2.2 : tout ce qui bouge plus de 5 s doit pouvoir s'arrêter).
+// Règle d'accessibilité WCAG 2.2.2 (tout ce qui bouge plus de 5 s doit pouvoir s'arrêter) :
+// pause au survol de la souris, et bouton pause invisible qui n'apparaît qu'à la navigation au clavier (touche Tab).
 import Icone from './Icone.astro';
 import { accueil } from '../data/textes';
 interface Props { genres: string[] }
@@ -32,11 +33,14 @@ const ligne = genres.join('  ·  ') + '  ·  ';
 </script>
 <style>
   .bandeau { position: relative; background: var(--couleur-fond-ombre); overflow: hidden; padding-block: var(--espace-xl); }
-  .piste { display: flex; width: max-content; animation: defile 40s linear infinite; }
+  .piste { display: flex; width: max-content; animation: defile 70s linear infinite; }
   .piste span { white-space: pre; padding-right: 0; }
   .en-pause .piste { animation-play-state: paused; }
+  @media (hover: hover) { .bandeau:hover .piste { animation-play-state: paused; } }
   @keyframes defile { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .piste { animation: none; } }
+  /* invisible tant qu'on ne l'atteint pas au clavier */
+  .pause:not(:focus-visible) { opacity: 0; pointer-events: none; }
   .pause {
     position: absolute; right: var(--grille-marge); top: var(--espace-xl);
     width: 44px; height: 44px; display: grid; place-items: center;
