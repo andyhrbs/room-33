@@ -126,6 +126,9 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
 
 /* Place pour la mini-platine en bas quand un extrait a été lancé */
 body.avec-lecteur { padding-bottom: 5.5rem; }
+/* … et cette place prend la couleur du pied de page (sinon une bande plus claire apparaît sous lui) */
+body.avec-lecteur:has(.pied) { padding-bottom: 0; }
+body.avec-lecteur .pied { padding-bottom: 5.5rem; }
 
 /* ==========================================================================
    Mouvement — socle (charte du mouvement, Claude Design « Room 33 — Charte du mouvement »)
