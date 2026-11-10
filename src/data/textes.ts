@@ -9,8 +9,8 @@ export const site = {
   nom: 'Room 33',
   descriptionParDefaut:
     'Bienvenue chez moi. Installez-vous, fouillez dans mes bacs et glissez-moi vos sons.',
-  instagram: '@andyhrobinson',
-  instagramUrl: 'https://www.instagram.com/andyhrobinson/',
+  instagram: '@andyh.robinson',
+  instagramUrl: 'https://www.instagram.com/andyh.robinson/',
 };
 
 // Les pages, dans l'ordre du menu mobile
