@@ -13,8 +13,10 @@ const [une, ...autres] = lives;
 const suivants = autres.slice(0, 3);
 const nom = (l: { artiste: string; titre: string }) => `${l.artiste} — ${l.titre}`;
 const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
+// ligne « chaîne » : l'émission ou le lieu (1er morceau de « lieu »), puis la suite + l'année
+const chaine = (l: { lieu: string; annee: number }) => { const [premier, ...reste] = l.lieu.split(' · ').filter(Boolean); return { nom: premier || t.chaine, sous: [...reste, l.annee].filter(Boolean).join(' · ') }; };
 const yt = (id: string) => `https://www.youtube.com/watch?v=${id}`;
-const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: infos(l), mot: l.mot });
+const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: infos(l), mot: l.mot, chaine: chaine(l) });
 ---
 {une && (
 <section class="section conteneur lives-accueil" aria-labelledby="titre-lives-accueil" data-lives-accueil>
@@ -26,19 +28,15 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
       <h3 class="titre-h3" data-champ="nom">{nom(une)}</h3>
       <div class="chaine">
         <span class="avatar" aria-hidden="true">R</span>
-        <span class="qui"><span class="texte-label">{t.chaine}</span><span class="texte-legende texte-secondaire">{t.chaineSous}</span></span>
+        <span class="qui"><span class="texte-label" data-champ="chaine">{chaine(une).nom}</span><span class="texte-legende texte-secondaire" data-champ="chaine-sous">{chaine(une).sous}</span></span>
         <Bouton style="lien" href={yt(une.youtube)} target="_blank" rel="noopener" data-champ="youtube">{t.voirYoutube}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
       </div>
-      <div class="description">
-        <p class="texte-label" data-champ="infos">{infos(une)}</p>
-        <p class="texte-avis" data-champ="mot">{une.mot}</p>
-      </div>
+      <p class="texte-avis description" data-champ="mot">{une.mot}</p>
     </div>
 
     {suivants.length > 0 && (
       <div class="suivre">
-        <h3 class="texte-label seulement-mobile">{t.aSuivre}</h3>
-        <h3 class="visuellement-cache seulement-ordi">{t.aSuivre}</h3>
+        <h3 class="visuellement-cache">{t.aSuivre}</h3>
         <ul role="list">
           {suivants.map((l) => (
             <li>
@@ -52,13 +50,12 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
       </div>
     )}
   </div>
-  <Bouton style="lien" href="/lives" class="tous seulement-mobile">{t.lien}</Bouton>
 </section>
 )}
 
 <script>
   // « À suivre » → grand lecteur : on échange les deux lives, puis on lance la vidéo (comme sur YouTube)
-  type L = { youtube: string; nom: string; infos: string; mot: string };
+  type L = { youtube: string; nom: string; infos: string; mot: string; chaine: { nom: string; sous: string } };
   document.addEventListener('click', (e) => {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-lives-accueil] [data-suivant]');
     if (!b) return;
@@ -74,7 +71,8 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
     // le grand lecteur prend le live choisi
     p.dataset.principal = JSON.stringify(nouveau);
     p.querySelector('[data-champ="nom"]')!.textContent = nouveau.nom;
-    p.querySelector('[data-champ="infos"]')!.textContent = nouveau.infos;
+    p.querySelector('[data-champ="chaine"]')!.textContent = nouveau.chaine.nom;
+    p.querySelector('[data-champ="chaine-sous"]')!.textContent = nouveau.chaine.sous;
     p.querySelector('[data-champ="mot"]')!.textContent = nouveau.mot;
     p.querySelector<HTMLAnchorElement>('[data-champ="youtube"]')!.href = `https://www.youtube.com/watch?v=${nouveau.youtube}`;
     const lecteur = p.querySelector<HTMLElement>('[data-video]')!;
@@ -88,7 +86,8 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
 </script>
 
 <style>
-  .lives-accueil { display: grid; gap: var(--espace-2xl); }
+  /* même structure sur ordi et mobile (Figma) ; fond ombre pour détacher la section */
+  .lives-accueil { display: grid; gap: var(--espace-2xl); background: var(--couleur-fond-ombre); max-width: none; padding-inline: max(var(--grille-marge), calc((100% - var(--grille-largeur-max)) / 2 + var(--grille-marge))); }
   .scene { display: grid; grid-template-columns: minmax(0, 1fr) 23.75rem; gap: var(--espace-xl); align-items: start; }
   .principal { display: grid; gap: var(--espace-md); }
   .principal :global(.lecteur) { border-radius: 12px; }
@@ -99,8 +98,7 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
     background: var(--couleur-fond-image); font-family: var(--police-lettrine); font-size: 1.75rem; line-height: 1; padding-top: 4px;
   }
   .qui { flex: 1; min-width: 0; display: grid; gap: 2px; }
-  .description { display: grid; gap: 6px; padding-block: var(--espace-md); }
-  .description p { margin: 0; }
+  .description { margin: 0; padding-block: var(--espace-md); }
 
   .suivre { display: grid; gap: var(--espace-sm); }
   .suivre h3 { margin: 0; }
@@ -120,11 +118,8 @@ const donnees = (l: typeof une) => JSON.stringify({ youtube: l.youtube, nom: nom
   .nom { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
   @media (max-width: 63.99rem) {
-    .lives-accueil { background: var(--couleur-fond-ombre); gap: var(--espace-xl); }
-    .lives-accueil :global(.entete-section .actions) { display: none; } /* « Voir tous les lives » passe en bas */
+    .lives-accueil { gap: var(--espace-xl); }
     .scene { grid-template-columns: 1fr; gap: var(--espace-xl); }
-    .description { background: var(--couleur-fond-tonal); border-radius: 12px; padding: var(--espace-md) var(--espace-lg); }
     .suivant { grid-template-columns: 9.375rem minmax(0, 1fr); }
-    .lives-accueil :global(.tous) { justify-self: start; }
   }
 </style>
