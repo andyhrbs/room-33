@@ -1,7 +1,7 @@
 ---
 // Lecteur d'extraits fixé en bas, qui persiste d'une page à l'autre (transition:persist dans Base).
 // Apparaît dès qu'on lance un extrait. Le son est géré par src/scripts/lecteur.ts.
-// Contient aussi la fenêtre « Écouter en entier sur… » (choix de l'app, mémorisé).
+// Contient aussi la fenêtre « Écouter en entier sur… » (choix de l'app, proposé à chaque fois).
 import Icone from './Icone.astro';
 import Bouton from './Bouton.astro';
 import { existsSync } from 'node:fs';
@@ -53,7 +53,6 @@ const apps = [
       </button></li>
     ))}
   </ul>
-  <p class="texte-legende texte-secondaire">Votre choix est retenu pour les prochaines fois.</p>
 </dialog>
 
 <style>
@@ -120,5 +119,4 @@ const apps = [
   .logo-app img { width: 100%; height: 100%; object-fit: contain; }
   .app-choix:hover:not(:disabled) { color: var(--couleur-accent-defaut); }
   .app-choix:disabled { opacity: 0.4; cursor: default; }
-  .app-choix[data-memo] { color: var(--couleur-accent-defaut); }
 </style>

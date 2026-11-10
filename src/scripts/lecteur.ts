@@ -4,14 +4,13 @@
 //   du morceau décrit par son conteneur [data-ecoute] (data-titre, data-artiste, data-type).
 // - La mini-platine (en bas) persiste d'une page à l'autre grâce au ClientRouter :
 //   ce script tourne une seule fois et le son continue pendant la navigation.
-// - « Ouvrir l'app » : liens via /api/liens (Odesli) ; l'app choisie est mémorisée.
+// - « Ouvrir l'app » : liens via /api/liens ; le visiteur choisit l'app à chaque fois
+//   (pas de mémorisation : un mauvais clic ne l'enferme pas dans une app).
 // ==========================================================================
 
 type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' };
 type Etat = '' | 'chargement' | 'lecture' | 'pause' | 'erreur';
 
-const APPS: Record<string, string> = { spotify: 'Spotify', apple: 'Apple Music', deezer: 'Deezer', youtube: 'YouTube Music' };
-const CLE_APP = 'room33-app';
 const audio = new Audio();
 audio.preload = 'none';
 
@@ -26,8 +25,6 @@ const lireMorceau = (el: Element | null): Morceau | null => {
   return { titre: c.dataset.titre, artiste: c.dataset.artiste, type: c.dataset.type === 'album' ? 'album' : 'titre' };
 };
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-const lireMemo = () => { try { return localStorage.getItem(CLE_APP); } catch { return null; } };
-const ecrireMemo = (app: string | null) => { try { app ? localStorage.setItem(CLE_APP, app) : localStorage.removeItem(CLE_APP); } catch { /* stockage indisponible */ } };
 
 // ---------- Affichage ----------
 function afficher() {
@@ -56,7 +53,6 @@ function afficher() {
     mini.querySelector('[data-lecture-pause]')!.setAttribute('aria-label', etat === 'lecture' ? 'Mettre en pause' : 'Reprendre l’extrait');
     document.body.classList.add('avec-lecteur');
   }
-  afficherApps();
 }
 
 function progression() {
@@ -127,38 +123,14 @@ function liens(m: Morceau) {
   return cacheLiens.get(k)!;
 }
 
-function afficherApps() {
-  const memo = lireMemo();
-  document.querySelectorAll<HTMLElement>('[data-ouvrir-app]').forEach((b) => {
-    const texte = b.querySelector('.texte-bouton');
-    if (texte) texte.textContent = memo && APPS[memo] ? `Ouvrir dans ${APPS[memo]}` : 'Ouvrir l’app';
-  });
-  document.querySelectorAll<HTMLElement>('[data-changer-app]').forEach((b) => (b.hidden = !memo));
-}
-
-async function ouvrirApp(m: Morceau, forcerChoix = false) {
-  const memo = lireMemo();
-  if (memo && APPS[memo] && !forcerChoix) {
-    // ouvrir l'onglet tout de suite (sinon le navigateur le bloque), puis y mettre le lien
-    const onglet = window.open('about:blank', '_blank');
-    const l = await liens(m);
-    const url = l?.[memo] ?? l?.deezer;
-    if (onglet && url) { onglet.opener = null; onglet.location.href = url; }
-    else { onglet?.close(); choisirApp(m); }
-    return;
-  }
-  choisirApp(m);
-}
-
 let morceauChoix: Morceau | null = null;
 async function choisirApp(m: Morceau) {
   const dialogue = document.querySelector<HTMLDialogElement>('[data-choix-app]');
   if (!dialogue) return;
   morceauChoix = m;
   dialogue.querySelector('[data-choix-morceau]')!.textContent = `${m.titre} — ${m.artiste}`;
-  const memo = lireMemo();
   const boutons = dialogue.querySelectorAll<HTMLButtonElement>('[data-app]');
-  boutons.forEach((b) => { b.disabled = true; b.toggleAttribute('data-memo', b.dataset.app === memo); });
+  boutons.forEach((b) => (b.disabled = true));
   dialogue.showModal();
   const l = await liens(m);
   if (morceauChoix !== m) return;
@@ -175,18 +147,14 @@ document.addEventListener('click', async (e) => {
   if (cible.closest('[data-lecture-pause]')) { if (!courant) return; if (etat === 'erreur') basculer({ ...courant }); else if (audio.paused) jouer(); else audio.pause(); return; }
 
   const app = cible.closest('[data-ouvrir-app]');
-  if (app) { e.preventDefault(); const m = app.closest('[data-mini-platine]') ? courant : lireMorceau(app); if (m) ouvrirApp(m); return; }
-
-  const changer = cible.closest('[data-changer-app]');
-  if (changer) { const m = lireMorceau(changer); if (m) choisirApp(m); return; }
+  if (app) { e.preventDefault(); const m = app.closest('[data-mini-platine]') ? courant : lireMorceau(app); if (m) choisirApp(m); return; }
 
   const choix = cible.closest<HTMLButtonElement>('[data-app]');
   if (choix && morceauChoix && !choix.disabled) {
     const l = await liens(morceauChoix);
     const url = l?.[choix.dataset.app!];
-    if (url) { ecrireMemo(choix.dataset.app!); window.open(url, '_blank', 'noopener'); }
+    if (url) window.open(url, '_blank', 'noopener');
     document.querySelector<HTMLDialogElement>('[data-choix-app]')?.close();
-    afficherApps();
     return;
   }
   if (cible.closest('[data-fermer-choix]')) document.querySelector<HTMLDialogElement>('[data-choix-app]')?.close();
