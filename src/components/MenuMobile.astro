@@ -62,21 +62,25 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
   }
   .fermer { width: 44px; height: 44px; margin-right: -8px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: inherit; }
 
-  /* Espacements de la maquette Figma (menu ouvert, mobile 390) : liens 32 px en haut et en bas, 16 px entre eux,
-     numéro centré sur le lien ; le bas suit directement les liens. */
-  .liens { display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge); }
-  .liens a { display: flex; align-items: center; gap: var(--espace-sm); text-decoration: none; }
+  /* Espacements d'origine (64 px au-dessus des liens, 24 px entre eux, 32 px dessous ; bas : 32 / 16 / 48 px).
+     S'il manque de la hauteur (téléphone + barres du navigateur), ils se resserrent tous ensemble, juste assez
+     pour que le menu tienne en entier. --reste = hauteur libre une fois le contenu posé (~585 px). */
+  .menu { --reste: calc(100dvh - 36.5rem); }
+  .liens {
+    display: grid;
+    gap: clamp(0.5rem, calc(var(--reste) * 0.0714), var(--espace-lg));
+    padding: clamp(0.75rem, calc(var(--reste) * 0.19), var(--espace-3xl)) var(--grille-marge) clamp(0.5rem, calc(var(--reste) * 0.095), var(--espace-xl));
+  }
+  .liens a { display: flex; align-items: center; gap: var(--espace-sm); text-decoration: none; } /* numéro centré sur le lien (Figma) */
   .numero { min-width: 1.4rem; }
   .texte { display: grid; gap: 2px; }
   .libelle { text-underline-offset: 0.15em; text-decoration-thickness: var(--trait-filet); }
   .liens a:hover .libelle, .liens a[aria-current='page'] .libelle { text-decoration: underline; }
 
-  .bas { display: grid; gap: var(--espace-md); padding: var(--espace-xl) var(--grille-marge) max(var(--espace-2xl), env(safe-area-inset-bottom)); }
-  /* Écran de téléphone plus court que la maquette (barres du navigateur) : on resserre pour que tout le menu tienne */
-  @media (max-height: 50rem) {
-    .entete { padding-block: var(--espace-xs); }
-    .liens { gap: var(--espace-xs); padding-block: var(--espace-md); }
-    .bas { gap: var(--espace-xs); padding-top: var(--espace-md); padding-bottom: max(var(--espace-md), env(safe-area-inset-bottom)); }
+  .bas {
+    margin-top: auto; display: grid;
+    gap: clamp(0.5rem, calc(var(--reste) * 0.048), var(--espace-md));
+    padding: clamp(0.75rem, calc(var(--reste) * 0.095), var(--espace-xl)) var(--grille-marge) max(clamp(0.75rem, calc(var(--reste) * 0.143), var(--espace-2xl)), env(safe-area-inset-bottom));
   }
   .instagram { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; }
   .instagram:hover { color: var(--couleur-texte-principal); }
