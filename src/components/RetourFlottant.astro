@@ -21,12 +21,15 @@ const { href, texte } = Astro.props;
     enAttente = false;
     const flottant = document.querySelector<HTMLElement>('[data-retour-flottant]');
     const origine = document.querySelector<HTMLElement>('[data-retour-origine]');
-    if (!flottant || !origine) return;
+    if (!flottant || !origine) { document.documentElement.classList.remove('retour-visible'); return; }
+    // sorti de <main> (qui crée son propre empilement) pour passer au-dessus de la barre du haut sur mobile
+    if (flottant.parentElement !== document.body) document.body.append(flottant);
     const o = origine.getBoundingClientRect();
     const rideau = document.querySelector<HTMLElement>('.rideau')?.getBoundingClientRect();
     const oui = o.bottom < 80 || (!!rideau && rideau.top < o.bottom);
     if (flottant.classList.contains('visible') === oui) return;
     flottant.classList.toggle('visible', oui);
+    document.documentElement.classList.toggle('retour-visible', oui); // mobile : le logo se décale pour lui faire place dans la barre
     // visible = vrai lien pour le clavier et les lecteurs d'écran ; caché = ignoré (pas de doublon)
     flottant.setAttribute('aria-hidden', String(!oui));
     flottant.tabIndex = oui ? 0 : -1;
@@ -72,7 +75,12 @@ const { href, texte } = Astro.props;
   .retour-flottant:focus-visible .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); }
   .retour-flottant:active { transform: scale(0.96); }
   /* mobile : la nav fait 60 px (68 px une fois défilée) */
-  @media (max-width: 63.99rem) { .retour-flottant { top: calc(68px + var(--espace-xs)); left: var(--grille-marge); } }
+  /* mobile : dans la barre du haut, à gauche du logo (qui se décale) : ne recouvre jamais le contenu */
+  @media (max-width: 63.99rem) {
+    .retour-flottant { z-index: 60; top: max(12px, calc(env(safe-area-inset-top) + 12px)); left: calc(var(--grille-marge) - 8px); }
+    :global(html.retour-visible .nav .gauche) { transform: translateX(44px); }
+  }
+  :global(.nav .gauche) { transition: transform var(--duree-normal) var(--courbe-sortie); }
   @media (prefers-reduced-motion: reduce) {
     .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; }
     .libelle, .libelle > span, .retour-flottant :global(.icone) { transition: none; }
