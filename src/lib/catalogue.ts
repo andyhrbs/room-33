@@ -7,7 +7,7 @@
 import { jetonApplication } from './spotify';
 
 export interface Piste { numero: number; titre: string; duree: string }
-export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; pistes: Piste[] }
+export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; pistes: Piste[] }
 
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -35,11 +35,17 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
     console.warn(`[Spotify] ${jeton.erreur} : pochettes de démo conservées.`);
     return resultat;
   }
+  const photos = new Map<string, string | undefined>(); // une seule demande par artiste
   for (const d of liste) {
     try {
       const id = d.spotifyId ?? (await chercherAlbum(jeton.jeton, d.titre, d.artiste));
       if (!id) { console.warn(`[Spotify] album introuvable : ${d.artiste} — ${d.titre}`); continue; }
       const a = await appel(jeton.jeton, `/albums/${id}?market=FR`);
+      // photo de l'artiste principal (section « Découvrir l'artiste »)
+      const idArtiste: string | undefined = a.artists?.[0]?.id;
+      if (idArtiste && !photos.has(idArtiste)) {
+        try { photos.set(idArtiste, (await appel(jeton.jeton, `/artists/${idArtiste}`)).images?.[0]?.url); } catch { photos.set(idArtiste, undefined); }
+      }
       resultat.set(d.cle, {
         spotifyId: id,
         pochette: a.images?.[0]?.url,
@@ -47,6 +53,7 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
         label: a.label || undefined,
         lienSpotify: a.external_urls?.spotify,
         lienArtiste: a.artists?.[0]?.external_urls?.spotify,
+        photoArtiste: idArtiste ? photos.get(idArtiste) : undefined,
         pistes: (a.tracks?.items ?? []).map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms) })),
       });
     } catch (e) {
