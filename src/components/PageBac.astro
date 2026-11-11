@@ -103,17 +103,20 @@ const nb = bac.disques.length;
   });
 
   // Ordi : section aimantée, renforcée.
-  // - Dès qu'on scrolle vers elle (elle est à moins de 60 % d'écran), la page s'emboîte dessus, sous la nav.
+  // - Dès que les 3/4 de la section sont à l'écran (en descendant comme en remontant), la page s'emboîte dessus, sous la nav.
   // - Une fois emboîtée, les petits coups de molette sont absorbés : elle ne bouge pas.
-  // - Un vrai coup de molette (2 crans d’un coup) la libère et la page repart.
+  // - Un vrai coup de molette (SEUIL) la libère et la page repart.
   // - Filet de sécurité : si le défilement s'arrête près d'elle (clavier, barre de défilement), elle se cale aussi.
+  // - Mesure : ajouter ?molette à l'adresse affiche la force de chaque coup de molette (pour régler SEUIL).
   {
-    const NAV = 72, SEUIL = 180, ZONE = 0.6; // SEUIL : force du « vrai coup » de molette (≈ 2 crans), la même vers le haut et vers le bas
-    let anim = false, cumul = 0, dernier = 0, libre = false;
+    const NAV = 72, SEUIL = 180, VISIBLE = 0.75; // SEUIL : force du « vrai coup » (somme des deltaY d'un même geste), la même vers le haut et vers le bas
+    let anim = false, cumul = 0, dernier = 0, libre = false, derniereMolette = 0, dernierY = window.scrollY;
     const actif = () => matchMedia('(min-width: 64rem)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.querySelector('dialog[open]');
     const lenis = () => (window as unknown as { room33Lenis?: { scrollTo: (y: number, o: object) => void } }).room33Lenis;
     const section = () => document.querySelector<HTMLElement>('[data-ecran-bac]');
     const ecartDe = (el: HTMLElement) => el.getBoundingClientRect().top - NAV;
+    // écart max pour que les 3/4 de la section soient visibles sous la nav
+    const zone = (el: HTMLElement) => el.offsetHeight * (1 - VISIBLE);
     const emboiter = (el: HTMLElement) => {
       const cible = window.scrollY + ecartDe(el);
       anim = true; cumul = 0;
@@ -121,33 +124,65 @@ const nb = bac.disques.length;
       if (l) l.scrollTo(cible, { duration: 0.75, easing: (t: number) => 1 - Math.pow(1 - t, 4), lock: true, force: true, onComplete: () => { anim = false; } });
       else { window.scrollTo({ top: cible, behavior: 'smooth' }); setTimeout(() => (anim = false), 750); }
     };
+
+    // --- Mesure de la molette (?molette) ---
+    let mesure = false;
+    try { if (location.search.includes('molette')) sessionStorage.setItem('room33-molette', '1'); mesure = sessionStorage.getItem('room33-molette') === '1'; } catch { mesure = location.search.includes('molette'); }
+    let panneau: HTMLElement | null = null, coup = { somme: 0, n: 0, debut: 0, fin: 0 }; const historique: string[] = [];
+    const afficher = (etat: string) => {
+      if (!mesure) return;
+      if (!panneau || !panneau.isConnected) {
+        panneau = document.createElement('div');
+        panneau.setAttribute('style', 'position:fixed;right:16px;bottom:16px;z-index:9999;width:280px;padding:12px 14px;border-radius:12px;background:rgb(18 11 7/.92);color:#f3e9da;font:13px/1.5 ui-monospace,monospace;border:1px solid rgb(243 233 218/.2);pointer-events:none');
+        document.body.append(panneau);
+      }
+      panneau.innerHTML = `<b>Mesure molette</b> · seuil ${SEUIL}<br>Coup en cours : <b>${Math.round(coup.somme)}</b> (${coup.n} évén.)<br>État : ${etat}<br><br>Derniers coups :<br>${historique.join('<br>') || '—'}`;
+    };
+    const noter = (deltaY: number) => {
+      if (!mesure) return;
+      const t = performance.now();
+      if (t - coup.fin > 350 && coup.n) { historique.unshift(`${Math.round(coup.somme)} px · ${coup.n} évén. · ${Math.round(coup.fin - coup.debut)} ms`); historique.length = Math.min(historique.length, 6); coup = { somme: 0, n: 0, debut: t, fin: t }; }
+      if (!coup.n) coup.debut = t;
+      coup.somme += deltaY; coup.n++; coup.fin = t;
+    };
+
     // appelé par Lenis pour chaque mouvement de molette (voir defilement.ts) ; false = Lenis ne fait rien
     (window as unknown as { room33Garde?: (d: { deltaY: number; event: Event }) => boolean }).room33Garde = ({ deltaY, event }) => {
-      const el = section(); if (!el || !actif() || event.type !== 'wheel') return true;
-      const bloquer = () => { event.preventDefault(); return false; };
-      if (anim) return bloquer();
-      const ecart = ecartDe(el), h = innerHeight;
+      if (event.type === 'wheel') noter(deltaY);
+      const el = section(); if (!el || !actif() || event.type !== 'wheel') { afficher('hors section'); return true; }
+      derniereMolette = performance.now();
+      const bloquer = (etat: string) => { event.preventDefault(); afficher(etat); return false; };
+      if (anim) return bloquer('emboîtement…');
+      const ecart = ecartDe(el), z = zone(el);
       const emboitee = Math.abs(ecart) < 3;
       if (emboitee && !libre) {
         const t = performance.now(); if (t - dernier > 350) cumul = 0; dernier = t;
         cumul += deltaY;
-        if (Math.abs(cumul) < SEUIL) return bloquer(); // petit coup : on reste
-        libre = true; cumul = 0; return true;            // vrai coup : on laisse partir
+        if (Math.abs(cumul) < SEUIL) return bloquer(`retenue (${Math.round(Math.abs(cumul))} / ${SEUIL})`); // petit coup : on reste
+        libre = true; cumul = 0; afficher('libérée ✓'); return true;            // vrai coup : on laisse partir
       }
       if (!emboitee) {
-        if (Math.abs(ecart) > h * ZONE) libre = false; // sortie loin : la prochaine approche ré-emboîte
+        if (Math.abs(ecart) > z) libre = false; // sortie au-delà des 3/4 : la prochaine approche ré-emboîte
+        if (!libre && Math.abs(ecart) <= z) { emboiter(el); return bloquer('emboîtement…'); }
         const versElle = (deltaY > 0 && ecart > 0) || (deltaY < 0 && ecart < 0);
-        if (!libre && versElle && Math.abs(ecart) <= h * ZONE) { emboiter(el); return bloquer(); }
-        if (libre && Math.abs(ecart) > 40 && versElle) { libre = false; emboiter(el); return bloquer(); } // on revient dessus
+        if (libre && Math.abs(ecart) > 40 && versElle) { libre = false; emboiter(el); return bloquer('emboîtement…'); } // on revient dessus
       }
+      afficher(libre ? 'libre' : 'défilement');
       return true;
     };
     let minuteur = 0;
     addEventListener('scroll', () => {
+      const y = window.scrollY, sens = Math.sign(y - dernierY); dernierY = y;
       if (anim) return; clearTimeout(minuteur);
+      const el = section(); if (!el || !actif()) return;
+      // pendant l'élan de la molette (Lenis continue après le dernier cran) : on s'emboîte dès que les 3/4 sont visibles
+      const ecart = ecartDe(el);
+      const versElle = (sens > 0 && ecart > 0) || (sens < 0 && ecart < 0);
+      if (!libre && versElle && performance.now() - derniereMolette < 600 && Math.abs(ecart) >= 3 && Math.abs(ecart) <= zone(el)) { emboiter(el); return; }
+      if (libre && Math.abs(ecart) > zone(el)) libre = false;
       minuteur = window.setTimeout(() => {
-        const el = section(); if (!el || !actif() || libre) return;
-        const ecart = ecartDe(el); if (Math.abs(ecart) >= 3 && Math.abs(ecart) < innerHeight * 0.3) emboiter(el);
+        const el2 = section(); if (!el2 || !actif() || libre) return;
+        const e2 = ecartDe(el2); if (Math.abs(e2) >= 3 && Math.abs(e2) <= zone(el2)) emboiter(el2);
       }, 160);
     }, { passive: true });
   }
