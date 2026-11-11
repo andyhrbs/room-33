@@ -57,7 +57,7 @@ const { href, texte } = Astro.props;
       background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), padding var(--duree-normal) var(--courbe-sortie);
   }
   .retour-flottant.visible { opacity: 1; transform: none; pointer-events: auto; }
-  .retour-flottant :global(.icone) { flex: none; color: var(--couleur-accent-defaut); transition: transform var(--duree-normal) var(--courbe-sortie); }
+  .retour-flottant :global(.icone) { flex: none; color: var(--couleur-texte-principal); /* ivoire, comme dans Figma (avant : orange) */ transition: transform var(--duree-normal) var(--courbe-sortie); }
   /* le texte : largeur 0 → largeur du texte (grille 0fr → 1fr, sans valeur en dur), puis il apparaît */
   .libelle { display: grid; grid-template-columns: 0fr; transition: grid-template-columns var(--duree-normal) var(--courbe-sortie); }
   .libelle > span { overflow: hidden; white-space: nowrap; opacity: 0; transform: translateX(-6px); transition: opacity var(--duree-rapide) var(--courbe-standard), transform var(--duree-normal) var(--courbe-sortie); }
