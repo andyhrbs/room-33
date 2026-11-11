@@ -57,14 +57,6 @@ collections:
       - { name: annee, label: Année (si Spotify ne la trouve pas), widget: number, value_type: int, required: false, min: 1900, max: 2100 }
       - { name: avis, label: Mon avis, widget: text, required: false, hint: "3 à 5 phrases, comme une note de pochette. Garde les guillemets « »." }
       - { name: avisCourt, label: Mon avis (version courte, mobile), widget: string, required: false, hint: Une phrase. Vide = le début de l'avis complet. }
-      - name: moment
-        label: Le moment à écouter
-        widget: object
-        required: false
-        fields:
-          - { name: temps, label: À quel moment, widget: string, required: false, hint: 'Ex. 1:24' }
-          - { name: texte, label: Ce qui se passe, widget: text, required: false, hint: Le passage qui t'accroche, en deux ou trois phrases. }
-          - { name: texteCourt, label: Version courte (mobile), widget: string, required: false }
       - name: credits
         label: Crédits (notes de pochette)
         label_singular: crédit

@@ -60,20 +60,6 @@ const bac = bacDuDisque(d);
       </div>
     </section>
 
-    <!-- « Le moment à écouter » : ordi seulement (retiré du mobile, comme dans Figma) -->
-    <section class="bande moment seulement-ordi" aria-labelledby="titre-moment">
-      <div class="conteneur deux-colonnes">
-        <div class="titre-moment">
-          <p class="texte-label">Le moment à écouter</p>
-          <h2 id="titre-moment" class="titre-h1">Écoutez à {f.moment.temps}.</h2>
-        </div>
-        <div class="texte">
-          <p class="texte-corps-l">{f.moment.texte}</p>
-          <p class="texte-petit texte-secondaire">L’extrait ne va pas jusque-là : écoutez le morceau en entier pour l’entendre.</p>
-        </div>
-      </div>
-    </section>
-
     <section class="bande artiste-bande" aria-labelledby="titre-artiste">
       <div class="conteneur artiste-grille">
         <div class="photo-artiste" role="img" aria-label={`Photo de ${d.artiste} (à venir)`}></div>
@@ -131,12 +117,9 @@ const bac = bacDuDisque(d);
   /* Bandes éditoriales : titre à gauche, texte à droite */
   .bande { padding-block: clamp(4rem, 2.59rem + 6.01vw, 7.5rem); }
   .avis { background: var(--couleur-fond-bloc); }
-  .moment { background: var(--couleur-fond-ombre); }
   .artiste-bande { background: var(--couleur-fond-page); }
   .deux-colonnes { display: grid; grid-template-columns: minmax(0, 17.625rem) minmax(0, 53.375rem); justify-content: space-between; gap: var(--espace-md) var(--espace-3xl); align-items: start; }
   .texte { display: grid; gap: var(--espace-md); justify-items: start; }
-  /* Surtitre + titre du « Moment à écouter » : 12 px entre les deux (Figma) */
-  .titre-moment { display: grid; gap: var(--espace-sm); }
   .artiste-grille .texte { gap: var(--espace-sm); }
   blockquote { margin: 0; }
   .artiste-grille { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: var(--espace-xl); align-items: center; }
