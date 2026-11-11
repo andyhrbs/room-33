@@ -10,7 +10,7 @@ import Icone from './Icone.astro';
 import { tiroir as t, site } from '../data/textes';
 const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 ---
-<dialog class="tiroir" data-tiroir aria-labelledby="tiroir-titre">
+<dialog class="tiroir" data-tiroir aria-labelledby="tiroir-titre" tabindex="-1">
   <div class="poignee seulement-mobile" aria-hidden="true"></div>
   <div class="entete">
     <!-- trait d'union insécable : le titre se coupe après « Recommandez-moi », comme dans Figma -->
@@ -85,6 +85,13 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 
   const $ = <T extends Element>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
   const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Téléphone / tablette : on ne place pas le curseur dans le champ (le clavier s'ouvrirait et cacherait la feuille) ;
+  // le focus va sur la feuille elle-même, le clavier s'ouvre quand le visiteur touche le champ.
+  const tactile = () => matchMedia('(pointer: coarse), (max-width: 63.99rem)').matches;
+  const focusChamp = (d: ParentNode = document) => {
+    if (tactile()) $<HTMLDialogElement>('[data-tiroir]')?.focus({ preventScroll: true });
+    else $<HTMLInputElement>('[data-recherche]', d)?.focus();
+  };
   let choisi: Son | null = null;
   let resultats: Son[] = [];
   let minuteur = 0, demande: AbortController | null = null, opener: HTMLElement | null = null;
@@ -105,8 +112,9 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     d.showModal();
     document.documentElement.classList.add('tiroir-ouvert');
     const champ = $<HTMLInputElement>('[data-recherche]', d)!;
+    champ.placeholder = tactile() ? t.champCourt : t.champ; // mobile : texte plus court, qui tient sur la ligne
     if (requete) { champ.value = requete; chercher(requete, true); }
-    champ.focus();
+    focusChamp(d);
   }
   function fermer() {
     const d = $<HTMLDialogElement>('[data-tiroir]');
@@ -219,7 +227,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     const f = $<HTMLFormElement>('[data-form-reco]'); f?.reset();
     choisi = null; resultats = []; dessiner(); statut(''); erreurChoix(false);
     afficherVue('formulaire');
-    $<HTMLInputElement>('[data-recherche]')?.focus();
+    focusChamp();
   }
 
   // ---------- Écouteurs (délégués : marchent sur toutes les pages, même après navigation) ----------
@@ -280,6 +288,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal);
     overflow-y: auto; overscroll-behavior: contain;
   }
+  .tiroir:focus, .tiroir:focus-visible { outline: none; }
   .tiroir[open] { display: grid; align-content: start; gap: var(--espace-lg); animation: entrer-droite 0.4s var(--courbe-sortie); }
   .tiroir.ferme { animation: sortir-droite 0.26s var(--courbe-entree-sortie) forwards; }
   .tiroir::backdrop { background: rgb(18 11 7 / 0.7); animation: fondu 0.4s var(--courbe-standard); }

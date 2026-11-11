@@ -85,6 +85,7 @@ export const tiroir = {
   intro: 'Un morceau ou un album qui pourrait me plaire ? Cherchez-le, choisissez-le, envoyez. Je l’écoute vraiment.',
   etape1: '1 · Votre son',
   champ: 'Cherchez un morceau, un album ou un artiste',
+  champCourt: 'Morceau, album ou artiste',
   aideLien: 'ou collez un lien Spotify, Apple Music, Deezer ou YouTube',
   etape2: '2 · Vous (facultatif)',
   prenom: 'Votre prénom',
