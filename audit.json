@@ -1,0 +1,239 @@
+{
+ "rapports": [
+  {
+   "page": "/",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Entrer dans les bacs ← [object SVGAnimatedString]",
+    "Voir sur YouTube (nouvel onglet) ← barre"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/bacs/soul-rnb",
+   "petits": [
+    "Jazz (30×38)",
+    "Rap (29×38)",
+    "Indie (33×38)",
+    "Afro (28×38)",
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← feuilles",
+    "A1 Absolutely Dijon ← barre",
+    "Écouter un extrait de Absolutely, Dijon ← barre"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/disques/daniel-caesar-freudian",
+   "petits": [
+    "Soul & R&B (64×28)",
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/top",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← [object SVGAnimatedString]"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/platine",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← vinyle a-larret"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/lives",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← une apparu"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/visiteurs",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← texte-corps-l texte-secondaire apparu",
+    "Recommandez-moi un son ← titre-h1 apparu"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/comptoir",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "La platine (51×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [
+    "Retour dans la pièce ← intro section conteneur"
+   ],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/mentions-legales",
+   "petits": [
+    "@andyh.robinson sur Instagram (216×22)",
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [],
+   "sansCible": [],
+   "erreurs": []
+  },
+  {
+   "page": "/404",
+   "petits": [
+    "La pièce (44×28)",
+    "Les bacs (47×28)",
+    "Les lives (43×28)",
+    "Le bac des visiteurs (102×28)",
+    "Le Top (34×28)",
+    "La platine (51×28)",
+    "Le comptoir (63×28)",
+    "Recommandez-moi un son (148×28)",
+    "Instagram (nouvel onglet) (56×28)",
+    "Spotify (nouvel onglet) (37×28)",
+    "Écrivez-moi en DM (nouvel onglet) (99×28)",
+    "Mentions légales (81×17)"
+   ],
+   "recouverts": [],
+   "sansCible": [],
+   "erreurs": []
+  }
+ ],
+ "morts": [],
+ "externes": [
+  "https://www.youtube.com/watch?v=2eXGtT7E5aU",
+  "https://ig.me/m/andyh.robinson",
+  "https://www.instagram.com/andyh.robinson/",
+  "https://open.spotify.com/user/31fgbv5n3yxwmhh2d7hjymiqxpaq",
+  "https://open.spotify.com/search/Daniel%20Caesar/artists",
+  "https://www.youtube.com/watch?v=PBKa-AAy_vo",
+  "https://www.youtube.com/watch?v=BnEgnrUCXPY",
+  "https://www.youtube.com/watch?v=Yy4pcKn0Y_k"
+ ]
+}

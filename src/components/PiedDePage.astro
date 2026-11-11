@@ -51,8 +51,9 @@ const colonne2 = ['Les lives', 'Le bac des visiteurs', 'Le comptoir'];
   .reco :global(.bouton) { justify-self: start; }
 
   .colonnes { display: flex; flex-wrap: wrap; gap: var(--espace-lg) var(--espace-3xl); }
-  .colonnes ul { display: grid; gap: var(--espace-xs); align-content: start; }
-  .colonnes a { text-decoration: none; font-size: var(--taille-corps); }
+  /* zone de toucher d'au moins 24 px (WCAG 2.5.8) : 4 px au-dessus et au-dessous de chaque lien au lieu de 8 px d'écart, même rythme */
+  .colonnes ul { display: grid; gap: 0; align-content: start; }
+  .colonnes a { display: inline-block; padding-block: var(--espace-2xs); text-decoration: none; font-size: var(--taille-corps); }
   .colonnes a:hover { text-decoration: underline; text-underline-offset: 0.25em; }
 
   .signature { display: grid; gap: var(--espace-3xl); }
