@@ -44,7 +44,7 @@ function afficher() {
       if (m) b.setAttribute('aria-label', e === 'lecture' ? `Mettre en pause l’extrait de ${m.titre}, ${m.artiste}` : `Écouter un extrait de ${m.titre}, ${m.artiste}`);
     });
     const statut = c.querySelector<HTMLElement>('[data-statut]');
-    if (statut) statut.textContent = e === 'erreur' ? 'Extrait indisponible' : e === 'chargement' ? 'Chargement…' : '30 s · aperçu Deezer';
+    if (statut) { if (e === 'erreur' || e === 'chargement') statut.textContent = e === 'erreur' ? 'Extrait indisponible' : 'Chargement…'; else statut.innerHTML = '30 s<span class="seulement-ordi"> · aperçu Deezer</span>'; } // mobile : « 30 s » (Figma)
   });
   // mini-platine
   const mini = document.querySelector<HTMLElement>('[data-mini-platine]');

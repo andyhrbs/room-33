@@ -64,17 +64,19 @@ for (const d of disques) {
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
 
 // Bacs : un bac par genre, rempli automatiquement avec les disques de ce genre
-export interface Bac { slug: string; nom: string; motif: Motif; description: string; disques: Disque[]; maj: string }
+export interface Bac { slug: string; nom: string; motif: Motif; description: string; disques: Disque[]; maj: string; majCourt: string }
 const versSlug = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, 'n').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const dateMaj = (liste: Disque[]) => {
+// « 28 octobre 2026 » (ordi) ou « 28 oct. » (mobile, maquette Figma)
+const dateMaj = (liste: Disque[], court = false) => {
   const plusRecent = liste.map((d) => d.ajoute).sort().pop();
   const d = plusRecent ? new Date(plusRecent) : null;
-  return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
+  if (!d || Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('fr-FR', court ? { day: 'numeric', month: 'short', timeZone: 'UTC' } : { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 };
 type EntreeBac = { nom: string; motif?: Motif; description?: string; slug?: string };
 export const bacs: Bac[] = (donneesBacs.bacs as EntreeBac[]).map((b, i) => {
   const liste = disques.filter((d) => d.genre === b.nom);
-  return { slug: b.slug || versSlug(b.nom), nom: b.nom, motif: b.motif && motifs.includes(b.motif) ? b.motif : motifs[i % motifs.length], description: b.description ?? '', disques: liste, maj: dateMaj(liste.length ? liste : disques) }; // bac vide : date du dernier disque ajouté
+  return { slug: b.slug || versSlug(b.nom), nom: b.nom, motif: b.motif && motifs.includes(b.motif) ? b.motif : motifs[i % motifs.length], description: b.description ?? '', disques: liste, maj: dateMaj(liste.length ? liste : disques), majCourt: dateMaj(liste.length ? liste : disques, true) }; // bac vide : date du dernier disque ajouté
 });
 export const bacParSlug = (slug: string) => bacs.find((b) => b.slug === slug)!;
 export const detailBac = (b: Bac) => `${b.disques.length} disque${b.disques.length > 1 ? 's' : ''}`;

@@ -7,10 +7,10 @@ import HeroPage from '../components/HeroPage.astro';
 import { recadrages } from '../data/images';
 import Bouton from '../components/Bouton.astro';
 import CarteDisque from '../components/CarteDisque.astro';
+import AppelReco from '../components/AppelReco.astro';
 import { recos } from '../data/disques';
-import { site, visiteursTextes as t } from '../data/textes';
+import { visiteursTextes as t } from '../data/textes';
 const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
-const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 ---
 <Base title="Le bac des visiteurs" description="Les sons que vous m’avez recommandés et qui m’ont plu.">
   <Nav />
@@ -43,18 +43,7 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       )}
     </section>
 
-    <section class="appel section" aria-labelledby="titre-appel">
-      <div class="conteneur grille-appel">
-        <div class="texte">
-          <h2 id="titre-appel" class="titre-h1">Votre son pourrait être ici.</h2>
-          <p class="texte-corps-l"><span class="seulement-ordi">Cherchez-le ou collez un lien. Si je valide, il rejoint le bac avec votre prénom.</span><span class="seulement-mobile">Si je valide, il rejoint le bac avec votre prénom.</span></p>
-        </div>
-        <div class="actions">
-          <Bouton style="secondaire" href="/#recommander" data-ouvrir-reco class="seulement-ordi">Recommandez-moi un son</Bouton>
-          <Bouton style="lien" href={insta} target="_blank" rel="noopener">ou écrivez-moi sur Insta</Bouton>
-        </div>
-      </div>
-    </section>
+    <AppelReco />
     </div>
   </main>
   <PiedDePage />
@@ -69,10 +58,6 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .vide { display: grid; gap: var(--espace-sm); max-width: 40rem; padding: var(--espace-2xl); border: 1px dashed var(--couleur-bordure-defaut); border-radius: var(--rayon-bloc); }
   .vide h2 { margin: 0; }
   .vide p { margin: 0; }
-  .appel { background: var(--couleur-fond-page); }
-  .grille-appel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-lg) var(--espace-xl); }
-  .texte { display: grid; gap: var(--espace-sm); max-width: 56rem; }
-  .actions { display: grid; gap: var(--espace-md); justify-items: start; }
   @media (max-width: 63.99rem) {
     .infos :global(.cta) { width: 100%; }
     .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-lg) var(--grille-gouttiere); }

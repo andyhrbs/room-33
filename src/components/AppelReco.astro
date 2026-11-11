@@ -1,0 +1,26 @@
+---
+// « Votre son pourrait être ici. » : appel à recommander un son, en bas du bac des visiteurs et des lives
+// (maquettes Figma : bloc « Ton son ici ? »). Ordi : bouton du tiroir + lien Insta ; mobile : lien Insta seul
+// (le bouton « Recommandez-moi un son » est déjà dans la barre du haut et le menu).
+import Bouton from './Bouton.astro';
+import { site } from '../data/textes';
+const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
+---
+<section class="appel section" aria-labelledby="titre-appel">
+  <div class="conteneur grille-appel">
+    <div class="texte">
+      <h2 id="titre-appel" class="titre-h1">Votre son pourrait être ici.</h2>
+      <p class="texte-corps-l"><span class="seulement-ordi">Cherchez-le ou collez un lien. Si je valide, il rejoint le bac avec votre prénom.</span><span class="seulement-mobile">Si je valide, il rejoint le bac avec votre prénom.</span></p>
+    </div>
+    <div class="actions">
+      <Bouton style="secondaire" href="/#recommander" data-ouvrir-reco class="seulement-ordi">Recommandez-moi un son</Bouton>
+      <Bouton style="lien" href={insta} target="_blank" rel="noopener">ou écrivez-moi sur Insta</Bouton>
+    </div>
+  </div>
+</section>
+<style>
+  .appel { background: var(--couleur-fond-page); }
+  .grille-appel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-lg) var(--espace-xl); }
+  .texte { display: grid; gap: var(--espace-sm); max-width: 56rem; }
+  .actions { display: grid; gap: var(--espace-md); justify-items: start; }
+</style>
