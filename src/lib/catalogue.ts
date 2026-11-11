@@ -20,7 +20,7 @@ const sauverMemoire = () => { try { mkdirSync(DOSSIER_MEMOIRE, { recursive: true
 export const etatSpotify: { jeton?: string; erreurs: string[]; depuisMemoire: string[] } = { erreurs: [], depuisMemoire: [] };
 
 export interface Piste { numero: number; titre: string; duree: string; deezer?: number } // deezer : id du morceau sur Deezer (extrait de 30 s), trouvé au build
-export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[]; extraitAlbum?: number }
+export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[]; extraitAlbum?: number; deezerAlbum?: number }
 
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -116,7 +116,89 @@ async function deezerParUpc(upc: string): Promise<string | undefined> {
   return undefined;
 }
 
-export async function infosAlbums(liste: { cle: string; titre: string; artiste: string; spotifyId?: string }[]): Promise<Map<string, InfosSpotify>> {
+// ---------- Catalogue depuis Deezer (source principale) ----------
+// Deezer (API publique, sans clé, limites larges) donne tout ce qu'affiche une fiche : pochette 1000 px,
+// année, label, titres et durées, photo de l'artiste, code-barres et extraits — ceux du MÊME album.
+// Spotify ne sert plus qu'en secours (album absent de Deezer) et pour les écoutes perso de la platine.
+type EntreeAlbum = { cle: string; titre: string; artiste: string; spotifyId?: string };
+const meme = (a = '', b = '') => { const x = simple(a), y = simple(b); return !!x && !!y && (x === y || x.includes(y) || y.includes(x)); };
+const brut = (s = '') => s.toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
+const VARIANTE = /\b(live|remix(es)?|deluxe|edition|version|instrumental|acoustic|remaster(ed)?|tour)\b/i;
+async function albumParUpc(upc: string): Promise<number | undefined> {
+  for (const code of variantesUpc(upc)) { try { const a = await deezerJson(`/album/upc:${code}`); if (a?.id) return a.id; } catch { /* variante suivante */ } }
+  return undefined;
+}
+// Ordre : album déjà trouvé au build précédent → code-barres via le lien Spotify de l'admin (exact) →
+// recherche par artiste + titre, en préférant le titre identique, l'album (pas le single), et en écartant live / deluxe / remix.
+async function trouverAlbumDeezer(d: EntreeAlbum, jeton?: string, connu?: number): Promise<number | undefined> {
+  if (connu) return connu;
+  if (d.spotifyId && jeton) {
+    try { const upc = (await appel(jeton, `/albums/${d.spotifyId}?market=FR`)).external_ids?.upc; const id = upc && (await albumParUpc(upc)); if (id) return id; } catch { /* Spotify indisponible : recherche */ }
+  }
+  const parties = d.artiste.split(/·|,|&/).map((x) => x.trim()).filter(Boolean); // classique : « Chopin · Martha Argerich »
+  const candidats = new Map<number, any>();
+  for (const q of [`artist:"${parties[0]}" album:"${d.titre}"`, `${parties[0]} ${d.titre}`, `album:"${d.titre}"`]) {
+    try { for (const al of (await deezerJson(`/search/album?limit=25&q=${encodeURIComponent(q)}`)).data ?? []) if (parties.some((p) => meme(al.artist?.name, p))) candidats.set(al.id, al); } catch { /* requête suivante */ }
+  }
+  const t = d.titre;
+  const proche = (al: any) => simple(al.title) === simple(t) || simple(al.title).startsWith(simple(t)) || simple(t).startsWith(simple(al.title));
+  const score = (al: any) => (brut(al.title) === brut(t) ? 6 : 0) + (simple(al.title) === simple(t) ? 3 : 0) + (al.record_type === 'album' ? 3 : al.record_type === 'ep' ? 1 : 0)
+    - (VARIANTE.test(al.title) && !VARIANTE.test(t) ? 4 : 0) + Math.min(al.nb_tracks ?? 0, 40) / 100;
+  return [...candidats.values()].filter(proche).sort((x, y) => score(y) - score(x))[0]?.id;
+}
+const imageDeezer = (u?: string) => (u && !/\/(artist|cover)\/\//.test(u) ? u : undefined); // image vide = pas de photo
+async function infosDeezer(d: EntreeAlbum, jeton?: string, connu?: number): Promise<InfosSpotify | undefined> {
+  const id = await trouverAlbumDeezer(d, jeton, connu);
+  if (!id) return undefined;
+  const al = await deezerJson(`/album/${id}`);
+  const pistesDz: PisteDeezer[] = (await deezerJson(`/album/${id}/tracks?limit=200`)).data ?? [];
+  const upc: string | undefined = al.upc || undefined;
+  const liens: Record<string, string> = {};
+  if (d.spotifyId) liens.spotify = `https://open.spotify.com/album/${d.spotifyId}`;
+  if (al.link) liens.deezer = al.link;
+  if (upc) { const ap = await appleParUpc(upc); if (ap) liens.apple = ap; }
+  const sansExtrait = pistesDz.filter((t) => !t.preview).map((t) => t.title);
+  rapportExtraits.push({ disque: `${d.artiste} — ${d.titre}`, pistes: pistesDz.length, sansExtrait, source: 'Deezer' });
+  if (sansExtrait.length) console.warn(`[Extraits] ${d.artiste} — ${d.titre} : pas d'extrait pour ${sansExtrait.join(' · ')}`);
+  return {
+    spotifyId: d.spotifyId ?? '',
+    pochette: imageDeezer(al.cover_xl || al.cover_big),
+    annee: al.release_date ? Number(String(al.release_date).slice(0, 4)) || undefined : undefined,
+    label: al.label || undefined,
+    lienSpotify: liens.spotify,
+    photoArtiste: imageDeezer(al.artist?.picture_xl || al.artist?.picture_big),
+    upc,
+    liens,
+    pistes: pistesDz.map((t) => ({ numero: t.track_position ?? 0, titre: t.title, duree: duree(((t as any).duration ?? 0) * 1000), deezer: t.preview ? t.id : undefined })),
+    extraitAlbum: pistesDz.filter((t) => t.preview).sort((x, y) => (y.rank ?? 0) - (x.rank ?? 0))[0]?.id,
+    deezerAlbum: id,
+  };
+}
+
+export async function infosAlbums(liste: EntreeAlbum[]): Promise<Map<string, InfosSpotify>> {
+  const resultat = new Map<string, InfosSpotify>();
+  const jeton = await jetonApplication(); // seulement pour le secours
+  const restants: EntreeAlbum[] = [];
+  for (const d of liste) {
+    try {
+      const cleM = `${d.artiste}|${d.titre}|${d.spotifyId ?? ''}`.toLowerCase();
+      const i = await infosDeezer(d, jeton.ok ? jeton.jeton : undefined, memoire[cleM]?.deezerAlbum);
+      if (i) { resultat.set(d.cle, i); memoire[cleM] = i; continue; }
+      console.warn(`[Deezer] album introuvable : ${d.artiste} — ${d.titre} (on essaie Spotify)`);
+      etatSpotify.erreurs.push(`${d.artiste} — ${d.titre} : absent de Deezer`);
+    } catch (e) {
+      console.warn(`[Deezer] ${d.artiste} — ${d.titre} : ${(e as Error).message} (on essaie Spotify)`);
+      etatSpotify.erreurs.push(`${d.artiste} — ${d.titre} : Deezer ${(e as Error).message}`);
+    }
+    restants.push(d);
+  }
+  sauverMemoire();
+  if (restants.length) for (const [k, v] of await infosAlbumsSpotify(restants)) resultat.set(k, v);
+  console.log(`[Catalogue] ${resultat.size}/${liste.length} disques complétés (${liste.length - restants.length} depuis Deezer).`);
+  return resultat;
+}
+
+async function infosAlbumsSpotify(liste: { cle: string; titre: string; artiste: string; spotifyId?: string }[]): Promise<Map<string, InfosSpotify>> {
   const resultat = new Map<string, InfosSpotify>();
   const cleMemoire = (d: { titre: string; artiste: string; spotifyId?: string }) => `${d.artiste}|${d.titre}|${d.spotifyId ?? ''}`.toLowerCase();
   const depuisMemoire = (d: { cle: string; titre: string; artiste: string; spotifyId?: string }) => {

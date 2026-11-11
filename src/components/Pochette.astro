@@ -16,9 +16,13 @@ const motifs: Record<Motif, { fond: string; formes: string }> = {
 const m = motifs[motif];
 // Images Spotify : même image en 3 tailles (64, 300, 640 px) → le navigateur charge la plus légère qui suffit
 const SPOT = 'ab67616d0000b273';
+// Images Deezer : la taille est dans l'adresse (…/1000x1000-000000-80-0-0.jpg) → 250, 500 ou 1000 px
+const DZ = /\/(\d+)x\1-000000-80-0-0\.jpg$/;
 const srcset = src?.includes(SPOT)
   ? [['ab67616d00004851', 64], ['ab67616d00001e02', 300], [SPOT, 640]].map(([k, w]) => `${src.replace(SPOT, k as string)} ${w}w`).join(', ')
-  : undefined;
+  : src && DZ.test(src)
+    ? [250, 500, 1000].map((w) => `${src.replace(DZ, `/${w}x${w}-000000-80-0-0.jpg`)} ${w}w`).join(', ')
+    : undefined;
 const sizes = srcset ? (taille.endsWith('px') ? taille : '(max-width: 64rem) 90vw, 40vw') : undefined;
 ---
 <div class:list={['pochette', cls]} style={`--taille: ${taille}; background: ${src ? 'var(--couleur-fond-image)' : m.fond}`}>
