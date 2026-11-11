@@ -117,7 +117,7 @@ const apps = [
     border-radius: 0;
     border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
     box-shadow: 0 -12px 32px rgb(0 0 0 / 0.35);
-    padding-block: var(--espace-sm) max(var(--espace-sm), env(safe-area-inset-bottom));
+    padding-block: var(--espace-xs) max(var(--espace-xs), env(safe-area-inset-bottom)); /* Figma ordi : 8 px en haut et en bas (84 px de haut) */
     padding-inline: max(var(--grille-marge), calc((100% - var(--grille-largeur-max)) / 2 + var(--grille-marge)));
   }
   /* Gauche */
@@ -220,6 +220,7 @@ const apps = [
   /* Mobile : comme le mini-lecteur de Spotify : disque · titre/artiste · app · lecture, et un filet d'avancement en haut */
   @media (max-width: 63.99rem) {
     .mini-platine { grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--espace-sm); }
+    .fixe { padding-block: var(--espace-sm) max(var(--espace-sm), env(safe-area-inset-bottom)); } /* Figma mobile : 12 px */
     .gauche { gap: var(--espace-sm); }
     .vinyle { width: 44px; height: 44px; }
     .centre { order: 3; }

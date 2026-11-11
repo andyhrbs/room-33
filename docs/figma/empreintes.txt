@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 00:20 : maj figma + « Voir le disque » sur les lignes du Top de l'accueil (ordi)
+# Empreintes Figma de référence — 12 nov. 2026, 00:25 : maj figma (mini-platine ordi 84 px)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -16,27 +16,27 @@
 348:4587 1ps94kx
 79:2357:cadre 1bylfid
 79:2358 1mcf4ql
-16:131:cadre 1qzhv5g
-23:720 3gbzxf
+16:131:cadre zi91f1
+23:720 1ak71ej
 16:132 t30js3
 16:198 1661gs8
 349:2916 f2wywi
 349:2918 1g7ol5r
 349:2940 1sd359r
-349:2958 77mm5t
-256:2734 c3cuq
-16:292 1l9xloi
+349:2958 1qmzl6n
+256:2734 4sb2yf
+16:292 ma3cej
 16:137 p4phlg
-15:19:cadre 1jgho5c
-23:681 ie3ngt
+15:19:cadre 1aw02yg
+23:681 1mijslh
 15:20 ne1dse
 15:74 uk9ccr
 15:89 1l0gdh8
 15:93 gds4hs
 15:133 yk00wf
-15:151 1rbfks1
-256:2674 hs4rmi
-15:212 v0jyr6
+15:151 8ovjau
+256:2674 xh3y8z
+15:212 1v6md29
 182:2232 tu08b2
 17:395:cadre dr2x2e
 23:799 15uz760
@@ -53,7 +53,7 @@
 338:4236 zd8bh9
 17:330 1efsnh
 17:353 1wsj48f
-17:382 enz4nv
+17:382 1hqklmg
 182:2248 tu08b2
 18:574:cadre i7y54l
 23:863 n1otcf
@@ -75,7 +75,7 @@
 18:488 1rkuw7y
 18:502 msxf7
 18:532 1o91b8d
-18:561 1hoxekk
+18:561 x5f8hn
 182:2264 tu08b2
 24:791:cadre eqi4z
 24:792 jt2pj9
@@ -122,7 +122,7 @@
 25:781 1xswbqz
 25:798 kfhmn8
 25:937 lluul1
-25:966 mrpedo
+25:966 at63hf
 182:2280 tu08b2
 67:1637:cadre 16puknm
 67:1799 1ofyrth
@@ -202,7 +202,7 @@
 212:233 1axryq7
 266:2751 1y9mk8v
 12:24 ardhb3
-12:48 1e1alhv
+12:48 1e3voaa
 12:81 41ef2z
 77:92 i5wao6
 205:285 iwftil
