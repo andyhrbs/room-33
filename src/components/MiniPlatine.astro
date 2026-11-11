@@ -175,7 +175,7 @@ const apps = [
   /* à l'ouverture, le focus va sur le lecteur lui-même (pas sur la croix) : aucun contour au toucher */
   .lecteur-plein:focus, .lecteur-plein:focus-visible { outline: none; }
   .plein-fermer:focus-visible { border-radius: 50%; } /* au clavier : contour rond, la croix reste ronde */
-  .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.5s var(--courbe-douce); }
+  .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.85s var(--courbe-douce); } /* montée plus lente (0,5 s → 0,85 s) */
   .lecteur-plein.ferme { animation: plein-descend 0.3s var(--courbe-entree-sortie) forwards; }
   /* pas de voile derrière : le lecteur couvre tout l'écran, et quand on le fait glisser la page apparaît telle quelle (sans assombrissement) */
   .lecteur-plein::backdrop { background: transparent; }

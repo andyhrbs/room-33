@@ -374,7 +374,8 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       border-left: 0; border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
       border-radius: 16px 16px 0 0;
     }
-    .tiroir[open] { animation-name: entrer-bas; gap: var(--espace-md); }
+    .tiroir[open] { animation: entrer-bas 0.8s var(--courbe-douce); gap: var(--espace-md); } /* mobile : la feuille monte plus lentement (0,4 s → 0,8 s) */
+    .tiroir[open]::backdrop { animation-duration: 0.8s; }
     .tiroir.ferme { animation-name: sortir-bas; }
     .poignee { justify-self: center; width: 2.5rem; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); margin-bottom: var(--espace-sm); }
     .vue { gap: var(--espace-md); }
