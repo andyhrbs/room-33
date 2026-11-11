@@ -39,6 +39,6 @@ export const reponse = (donnees, statut = 200, cache = 600) =>
 export const parametres = (req) => {
   const u = new URL(req.url).searchParams;
   const titre = (u.get('titre') || '').slice(0, 200), artiste = (u.get('artiste') || '').slice(0, 200);
-  const type = u.get('type') === 'album' ? 'album' : 'titre';
+  const type = u.get('type') === 'album' ? 'album' : u.get('type') === 'artiste' ? 'artiste' : 'titre';
   return titre && artiste ? { titre, artiste, type } : null;
 };

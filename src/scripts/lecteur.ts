@@ -8,7 +8,7 @@
 //   (pas de mémorisation : un mauvais clic ne l'enferme pas dans une app).
 // ==========================================================================
 
-type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' };
+type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' | 'artiste' };
 type Etat = '' | 'chargement' | 'lecture' | 'pause' | 'erreur';
 
 const audio = new Audio();
@@ -181,7 +181,9 @@ async function choisirApp(m: Morceau) {
   const dialogue = document.querySelector<HTMLDialogElement>('[data-choix-app]');
   if (!dialogue) return;
   morceauChoix = m;
-  dialogue.querySelector('[data-choix-morceau]')!.textContent = `${m.titre} — ${m.artiste}`;
+  // « Sa discographie » : la fenêtre propose la page de l'artiste sur chaque app
+  dialogue.querySelector('#titre-choix-app')!.textContent = m.type === 'artiste' ? 'Sa discographie sur…' : 'Écouter en entier sur…';
+  dialogue.querySelector('[data-choix-morceau]')!.textContent = m.type === 'artiste' ? m.artiste : `${m.titre} — ${m.artiste}`;
   const boutons = dialogue.querySelectorAll<HTMLButtonElement>('[data-app]');
   boutons.forEach((b) => (b.disabled = true));
   dialogue.classList.remove('ferme');
@@ -207,6 +209,9 @@ document.addEventListener('click', async (e) => {
 
   const app = cible.closest('[data-ouvrir-app]');
   if (app) { e.preventDefault(); const m = app.closest('[data-mini-platine]') ? courant : lireMorceau(app); if (m) choisirApp(m); return; }
+
+  const discographie = cible.closest<HTMLElement>('[data-ouvrir-artiste]');
+  if (discographie?.dataset.artiste) { e.preventDefault(); choisirApp({ titre: discographie.dataset.artiste, artiste: discographie.dataset.artiste, type: 'artiste' }); return; }
 
   const choix = cible.closest<HTMLButtonElement>('[data-app]');
   if (choix && morceauChoix && !choix.disabled) {

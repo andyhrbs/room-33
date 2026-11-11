@@ -68,8 +68,9 @@ const bac = bacDuDisque(d);
           <h2 id="titre-artiste" class="titre-h1">{d.artiste}</h2>
           <p class="texte-corps"><span class="seulement-ordi">{f.artiste.bio}</span><span class="seulement-mobile">{f.artiste.bioCourte}</span></p>
           <div class="liens">
-            <!-- page de l'artiste sur Spotify (récupérée au build) ; à défaut, une recherche Spotify sur son nom -->
-            <Bouton style="lien" href={d.lienArtiste ?? `https://open.spotify.com/search/${encodeURIComponent(d.artiste)}/artists`} target="_blank" rel="noopener">Sa discographie<span class="visuellement-cache"> sur Spotify (nouvel onglet)</span></Bouton>
+            <!-- « Sa discographie » : ouvre la fenêtre de choix de l'app (page de l'artiste sur Spotify, Apple Music, Deezer ou YouTube Music).
+                 Sans JavaScript : le lien mène à sa page Spotify. -->
+            <Bouton style="lien" href={d.lienArtiste ?? `https://open.spotify.com/search/${encodeURIComponent(d.artiste)}/artists`} target="_blank" rel="noopener" data-ouvrir-artiste data-artiste={d.artiste} aria-haspopup="dialog">Sa discographie</Bouton>
           </div>
         </div>
       </div>
