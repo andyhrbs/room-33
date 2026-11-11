@@ -220,21 +220,17 @@ const nb = bac.disques.length;
   /* Ordi : la section tient dans la hauteur de l'écran sous la nav (72 px) ; la pile se dimensionne sur la place restante */
   @media (min-width: 64rem) {
     .ecran-bac {
-      /* 64 px en haut et en bas (Figma) ; la pile prend la place restante : écran − nav − marges − titre/genres/infos − contrôles */
-      --h-pile: clamp(10rem, calc(100svh - 72px - 30.25rem), 32.5rem); /* 484 px autour : marges 128 + titre/genres/infos 212 + 24 + contrôles 120 */
+      /* 24 px en haut et en bas (Figma) ; la pile prend la place restante : écran − nav − marges − titre/genres/infos − contrôles */
+      --h-pile: clamp(10rem, calc(100svh - 72px - 25.25rem), 34rem); /* 404 px autour : marges 48 + titre/genres/infos 212 + 24 + contrôles 120 */
       min-height: calc(100svh - 72px); scroll-margin-top: 72px;
       display: flex; flex-direction: column; justify-content: center;
-      padding-block: var(--espace-3xl);
+      padding-block: var(--espace-lg);
     }
     .ecran-bac .contenu-bac { grid-template-columns: minmax(0, 37.5rem) minmax(0, 33.5rem); } /* Figma : pile 600, liste 536 */
     .ecran-bac .tracklist { gap: var(--espace-md); }
     .liste-bac:not(.deroulee) > :nth-child(n+5) { display: none; } /* 4 morceaux visibles sur ordi */
     .ecran-bac .zone-filtres { padding-top: 0; }
     .ecran-bac .zone-filtres + .section { padding-block: var(--espace-lg) 0; }
-  }
-  /* petits écrans d'ordi (moins de 800 px de haut) : marges de 32 px pour garder une pile lisible */
-  @media (min-width: 64rem) and (max-height: 50rem) {
-    .ecran-bac { padding-block: var(--espace-xl); --h-pile: clamp(10rem, calc(100svh - 72px - 26.25rem), 32.5rem); }
   }
   @media (max-width: 63.99rem) {
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
