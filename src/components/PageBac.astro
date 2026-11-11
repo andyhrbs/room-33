@@ -118,8 +118,9 @@ const nb = bac.disques.length;
 </script>
 
 <style>
-  .infos-bac { display: grid; gap: var(--espace-sm); min-width: 0; }
-  .zone-filtres { display: grid; gap: var(--espace-md); }
+  .infos-bac { display: grid; gap: var(--espace-2xs); min-width: 0; } /* Figma : 4 px */
+  /* Figma « Bac — pile + tracklist » : 120 px en haut (64 mobile), 24 px entre filtres, infos et pile (12 mobile) */
+  .zone-filtres { display: grid; gap: var(--espace-lg); }
   .infos-genre { display: grid; gap: var(--espace-2xs); }
   /* changement de genre : la nouvelle zone apparaît en fondu */
   .zone-bac { animation: zone-entre var(--duree-normal) var(--courbe-sortie); }
@@ -128,10 +129,10 @@ const nb = bac.disques.length;
   @media (prefers-reduced-motion: reduce) { .zone-bac { animation: none; } }
   .filtres { min-width: 0; }
   /* filtres en tête du contenu : 72 px sous le hero (ordi), puis la pile */
-  .zone-filtres { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
-  .zone-filtres + .section { padding-top: clamp(2rem, 1.4rem + 2.6vw, 3.5rem); }
+  .zone-filtres { padding-top: clamp(4rem, 2.59rem + 6.01vw, 7.5rem); }
+  .zone-filtres + .section { padding-top: var(--espace-lg); }
   .description { max-width: 45rem; }
-  .filtres ul { display: flex; flex-wrap: wrap; gap: var(--espace-xs) var(--espace-md); margin-top: var(--espace-xs); }
+  .filtres ul { display: flex; flex-wrap: wrap; gap: var(--espace-xs) 1.25rem; } /* Figma : 8 px + 12 px de marge par filtre */
   .filtres a { display: inline-block; padding: var(--espace-xs) 0; text-decoration: none; text-underline-offset: 6px; text-decoration-thickness: 2px; white-space: nowrap; }
   .filtres a:hover { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
   .filtres a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: 2px; }
@@ -143,13 +144,16 @@ const nb = bac.disques.length;
   .vide { display: grid; gap: var(--espace-md); justify-items: start; max-width: 45rem; }
 
   .autres { background: var(--couleur-fond-ombre); }
-  .autres .conteneur { display: grid; gap: var(--espace-xl); }
+  .autres .conteneur { display: grid; gap: var(--espace-xl); } /* 32 px ordi, 24 mobile */
   .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); }
   .rangee > :global(*) { flex: 0 0 15.625rem; scroll-snap-align: start; }
 
   @media (max-width: 63.99rem) {
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
-    .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); }
+    .zone-filtres { gap: var(--espace-sm); }
+    .zone-filtres + .section { padding-top: var(--espace-sm); }
+    .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); padding-bottom: 0; } /* la tracklist (fond bloc, 64 px dedans) touche la section suivante */
+    .autres .conteneur { gap: var(--espace-lg); }
     .tracklist { background: var(--couleur-fond-bloc); margin-inline: calc(-1 * var(--grille-marge)); padding: var(--espace-3xl) var(--grille-marge); }
     .tracklist .titre-h3 { margin-bottom: var(--espace-xs); }
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }

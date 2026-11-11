@@ -70,7 +70,7 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
     /* mobile : la photo horizontale doit couvrir tout le hero vertical (en attendant la photo verticale) */
     .hero-page { min-height: 45rem; background-size: 100% 100%, cover; }
     .contenu { padding-bottom: var(--espace-xl); gap: var(--espace-lg); } /* Figma : 32 px en bas, 24 px d'écart (mobile) */
-    .titres { gap: var(--espace-sm); }
+    .titres { gap: var(--espace-xs); } /* Figma mobile : 8 px dans l'en-tête */
     /* mobile : même alignement que l'ordi et que Figma (lettrine centrée sur la ligne du titre) */
     .titre-avec-lettrine .lettrine { margin-right: -0.02em; }
   }
