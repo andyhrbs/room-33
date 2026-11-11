@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 interface Props { titre?: string; artiste?: string; temps?: string; progression?: number; visible?: boolean; fixe?: boolean }
 const { titre = 'Titre du morceau', artiste = 'Artiste', temps = '0:00 / 0:30', progression = 0, visible = false, fixe = true } = Astro.props;
 // Logos officiels des plateformes : fichiers à déposer dans public/logos/ (spotify.svg, apple.svg, deezer.svg, youtube.svg),
-// téléchargés depuis leurs kits presse. Tant qu'un fichier manque, une pastille neutre prend sa place.
+// repris de la maquette Figma (Kit UI › Choix de l'app). Tant qu'un fichier manque, une pastille neutre prend sa place.
 const apps = [
   { id: 'spotify', nom: 'Spotify' },
   { id: 'apple', nom: 'Apple Music' },
