@@ -107,7 +107,6 @@ const nb = bac.disques.length;
   // - Une fois emboîtée, les petits coups de molette sont absorbés : elle ne bouge pas.
   // - Un vrai coup de molette (SEUIL) la libère et la page repart.
   // - Filet de sécurité : si le défilement s'arrête près d'elle (clavier, barre de défilement), elle se cale aussi.
-  // - Mesure : ajouter ?molette à l'adresse affiche la force de chaque coup de molette (pour régler SEUIL).
   {
     const NAV = 72, SEUIL = 180, VISIBLE = 0.75; // SEUIL : force du « vrai coup » (somme des deltaY d'un même geste), la même vers le haut et vers le bas
     let anim = false, cumul = 0, dernier = 0, libre = false, derniereMolette = 0, dernierY = window.scrollY;
@@ -125,49 +124,26 @@ const nb = bac.disques.length;
       else { window.scrollTo({ top: cible, behavior: 'smooth' }); setTimeout(() => (anim = false), 750); }
     };
 
-    // --- Mesure de la molette (?molette) ---
-    let mesure = false;
-    try { if (location.search.includes('molette')) sessionStorage.setItem('room33-molette', '1'); mesure = sessionStorage.getItem('room33-molette') === '1'; } catch { mesure = location.search.includes('molette'); }
-    let panneau: HTMLElement | null = null, coup = { somme: 0, n: 0, debut: 0, fin: 0 }; const historique: string[] = [];
-    const afficher = (etat: string) => {
-      if (!mesure) return;
-      if (!panneau || !panneau.isConnected) {
-        panneau = document.createElement('div');
-        panneau.setAttribute('style', 'position:fixed;right:16px;bottom:16px;z-index:9999;width:280px;padding:12px 14px;border-radius:12px;background:rgb(18 11 7/.92);color:#f3e9da;font:13px/1.5 ui-monospace,monospace;border:1px solid rgb(243 233 218/.2);pointer-events:none');
-        document.body.append(panneau);
-      }
-      panneau.innerHTML = `<b>Mesure molette</b> · seuil ${SEUIL}<br>Coup en cours : <b>${Math.round(coup.somme)}</b> (${coup.n} évén.)<br>État : ${etat}<br><br>Derniers coups :<br>${historique.join('<br>') || '—'}`;
-    };
-    const noter = (deltaY: number) => {
-      if (!mesure) return;
-      const t = performance.now();
-      if (t - coup.fin > 350 && coup.n) { historique.unshift(`${Math.round(coup.somme)} px · ${coup.n} évén. · ${Math.round(coup.fin - coup.debut)} ms`); historique.length = Math.min(historique.length, 6); coup = { somme: 0, n: 0, debut: t, fin: t }; }
-      if (!coup.n) coup.debut = t;
-      coup.somme += deltaY; coup.n++; coup.fin = t;
-    };
-
     // appelé par Lenis pour chaque mouvement de molette (voir defilement.ts) ; false = Lenis ne fait rien
     (window as unknown as { room33Garde?: (d: { deltaY: number; event: Event }) => boolean }).room33Garde = ({ deltaY, event }) => {
-      if (event.type === 'wheel') noter(deltaY);
-      const el = section(); if (!el || !actif() || event.type !== 'wheel') { afficher('hors section'); return true; }
+      const el = section(); if (!el || !actif() || event.type !== 'wheel') return true;
       derniereMolette = performance.now();
-      const bloquer = (etat: string) => { event.preventDefault(); afficher(etat); return false; };
-      if (anim) return bloquer('emboîtement…');
+      const bloquer = () => { event.preventDefault(); return false; };
+      if (anim) return bloquer();
       const ecart = ecartDe(el), z = zone(el);
       const emboitee = Math.abs(ecart) < 3;
       if (emboitee && !libre) {
         const t = performance.now(); if (t - dernier > 350) cumul = 0; dernier = t;
         cumul += deltaY;
-        if (Math.abs(cumul) < SEUIL) return bloquer(`retenue (${Math.round(Math.abs(cumul))} / ${SEUIL})`); // petit coup : on reste
-        libre = true; cumul = 0; afficher('libérée ✓'); return true;            // vrai coup : on laisse partir
+        if (Math.abs(cumul) < SEUIL) return bloquer(); // petit coup : on reste
+        libre = true; cumul = 0; return true;            // vrai coup : on laisse partir
       }
       if (!emboitee) {
         if (Math.abs(ecart) > z) libre = false; // sortie au-delà des 3/4 : la prochaine approche ré-emboîte
-        if (!libre && Math.abs(ecart) <= z) { emboiter(el); return bloquer('emboîtement…'); }
+        if (!libre && Math.abs(ecart) <= z) { emboiter(el); return bloquer(); }
         const versElle = (deltaY > 0 && ecart > 0) || (deltaY < 0 && ecart < 0);
-        if (libre && Math.abs(ecart) > 40 && versElle) { libre = false; emboiter(el); return bloquer('emboîtement…'); } // on revient dessus
+        if (libre && Math.abs(ecart) > 40 && versElle) { libre = false; emboiter(el); return bloquer(); } // on revient dessus
       }
-      afficher(libre ? 'libre' : 'défilement');
       return true;
     };
     let minuteur = 0;
