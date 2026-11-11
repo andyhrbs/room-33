@@ -12,7 +12,10 @@ const total = disques.length;
   <div class="feuilles" aria-live="polite">
     {disques.map((d, i) => (
       <div class="feuille" data-index={i} style={`--i: ${i}`} aria-hidden={i === 0 ? 'false' : 'true'}>
-        <Pochette motif={d.motif} src={d.pochette} alt={`Pochette de ${d.titre}, ${d.artiste}`} />
+        <!-- la pochette du dessus se « prend » : clic ou toucher → la fiche du disque (comme « Sortir ce disque », qui reste le chemin clavier) -->
+        <a class="prendre" href={`/disques/${d.slug}`} tabindex="-1" aria-label={`Ouvrir la fiche de ${d.titre}, ${d.artiste}`}>
+          <Pochette motif={d.motif} src={d.pochette} alt={`Pochette de ${d.titre}, ${d.artiste}`} />
+        </a>
         <p class="visuellement-cache">{d.titre}, {d.artiste} ({d.annee})</p>
       </div>
     ))}
@@ -74,6 +77,12 @@ const total = disques.length;
     transition: transform var(--duree-normal) var(--courbe-sortie), opacity var(--duree-normal) var(--courbe-sortie);
   }
   .feuille[aria-hidden='true'] { pointer-events: none; }
+  /* pochette du dessus : cliquable, elle se soulève légèrement au survol (on « prend » le disque) */
+  .prendre { display: block; border-radius: var(--rayon-pochette); transition: transform var(--duree-rapide) var(--courbe-sortie); }
+  .feuille[aria-hidden='false'] .prendre { cursor: pointer; }
+  @media (hover: hover) { .feuille[aria-hidden='false'] .prendre:hover { transform: translateY(-6px); } }
+  .feuille[aria-hidden='false'] .prendre:active { transform: scale(0.98); }
+  @media (prefers-reduced-motion: reduce) { .prendre { transition: none; } .feuille[aria-hidden='false'] .prendre:hover { transform: none; } }
   .controles { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
   .controles :global(.icone-gauche), .controles :global(.icone-droite) { color: var(--couleur-texte-principal); } /* flèches ivoire (Figma) */
   /* flèches seules (maquette Figma mobile), zone de toucher de 44 px */
