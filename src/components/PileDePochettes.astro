@@ -32,8 +32,9 @@ const total = disques.length;
 </div>
 
 <script>
-  // Relancé à chaque page (navigation fluide du ClientRouter)
-  document.addEventListener('astro:page-load', () => document.querySelectorAll<HTMLElement>('[data-pile]').forEach((pile) => {
+  // Relancé à chaque page (navigation fluide du ClientRouter) et quand on change de genre sur place
+  const brancher = () => document.querySelectorAll<HTMLElement>('[data-pile]:not([data-branche])').forEach((pile) => {
+    pile.dataset.branche = '';
     const total = Number(pile.dataset.total);
     const feuilles = [...pile.querySelectorAll<HTMLElement>('.feuille')];
     const position = pile.querySelector('[data-position]')!;
@@ -57,7 +58,9 @@ const total = disques.length;
       if (e.key === 'ArrowRight') aller(1);
     });
     maj();
-  }));
+  });
+  document.addEventListener('astro:page-load', brancher);
+  document.addEventListener('room33:bac-change', brancher);
 </script>
 
 <style>

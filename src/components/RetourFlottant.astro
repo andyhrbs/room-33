@@ -44,8 +44,8 @@ const { href, texte } = Astro.props;
   .retour-flottant {
     position: fixed; z-index: 40;
     top: calc(72px + var(--espace-sm));
-    /* aligné sur le bord gauche de la grille (conteneur de 1440 px centré) */
-    left: max(var(--grille-marge), calc((100vw - var(--grille-largeur-max)) / 2 + var(--grille-marge)));
+    /* ordi : centré dans la marge de gauche, hors du contenu (ne recouvre ni les filtres ni les titres) */
+    left: max(var(--espace-md), calc((max(var(--grille-marge), calc((100vw - var(--grille-largeur-max)) / 2 + var(--grille-marge))) - 44px) / 2));
     display: inline-flex; align-items: center;
     height: 44px; min-width: 44px; padding: 0 11px; /* flèche de 20 px centrée dans un rond de 44 px */
     border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-discrete);
@@ -72,7 +72,7 @@ const { href, texte } = Astro.props;
   .retour-flottant:focus-visible .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); }
   .retour-flottant:active { transform: scale(0.96); }
   /* mobile : la nav fait 60 px (68 px une fois défilée) */
-  @media (max-width: 63.99rem) { .retour-flottant { top: calc(68px + var(--espace-xs)); } }
+  @media (max-width: 63.99rem) { .retour-flottant { top: calc(68px + var(--espace-xs)); left: var(--grille-marge); } }
   @media (prefers-reduced-motion: reduce) {
     .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; }
     .libelle, .libelle > span, .retour-flottant :global(.icone) { transition: none; }

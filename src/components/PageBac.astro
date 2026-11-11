@@ -12,26 +12,31 @@ import CarteDisque from './CarteDisque.astro';
 import { bacs, detailBac, face, type Bac } from '../data/disques';
 interface Props { bac: Bac }
 const { bac } = Astro.props;
+const totalDisques = bacs.reduce((n, b) => n + b.disques.length, 0);
+const bacsRemplis = bacs.filter((b) => b.disques.length > 0).length;
 const autres = bacs.filter((b) => b !== bac && b.disques.length > 0).slice(0, 4);
 const nb = bac.disques.length;
 ---
-<Base title={bac.nom} description={bac.description}>
+<Base title={`${bac.nom} · Les bacs`} description={bac.description}>
   <Nav />
   <main class="ambiance">
+    <!-- Hero général, le même pour tous les bacs : le genre se choisit dans la section suivante -->
     <HeroPage
       recadrage={recadrages.bac}
-      filAriane={[{ texte: 'La pièce', href: '/' }, { texte: 'Les bacs', href: '/bacs' }, bac.nom]}
-      surtitreMobile={`Les bacs / ${bac.nom}`}
-      titre={bac.nom}
+      filAriane={[{ texte: 'La pièce', href: '/' }, 'Les bacs']}
+      surtitreMobile="Les bacs"
+      titre="Tous mes disques."
     >
       <div class="infos-bac">
-        <p class="texte-corps-l description">{bac.description}</p>
-        <p class="texte-petit texte-secondaire">{detailBac(bac)} · <span class="seulement-ordi">mis à jour le {bac.maj}</span><span class="seulement-mobile">maj {bac.majCourt}</span></p>
+        <p class="texte-corps-l description">Mes disques, rangés par genre. Choisissez un bac, et piochez.</p>
+        <p class="texte-petit texte-secondaire">{totalDisques} disques · {bacsRemplis} bacs</p>
       </div>
     </HeroPage>
     <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
     <div class="rideau">
 
+    <!-- Zone du bac : changée sur place quand on choisit un autre genre (on reste à cet endroit de la page) -->
+    <div class="zone-bac" data-zone-bac>
     <!-- filtres des genres : sortis du hero, en tête du contenu (maquette Figma) -->
     <div class="conteneur zone-filtres">
       <nav aria-label="Les autres bacs" class="filtres">
@@ -41,6 +46,11 @@ const nb = bac.disques.length;
           ))}
         </ul>
       </nav>
+      <div class="infos-genre">
+        <h2 class="visuellement-cache">{bac.nom}</h2>
+        <p class="texte-corps-l description">{bac.description}</p>
+        <p class="texte-petit texte-secondaire">{detailBac(bac)} · <span class="seulement-ordi">mis à jour le {bac.maj}</span><span class="seulement-mobile">maj {bac.majCourt}</span></p>
+      </div>
     </div>
     {nb > 0 ? (
       <section class="contenu-bac section conteneur" aria-label={`Les disques du bac ${bac.nom}`}>
@@ -72,12 +82,50 @@ const nb = bac.disques.length;
       </div>
     </section>
     </div>
+    </div>
   </main>
   <PiedDePage />
 </Base>
 
+<script>
+  // Choisir un autre genre : on charge la page de ce bac et on remplace seulement la zone du bac,
+  // sans remonter au hero. L'adresse change (/bacs/jazz) pour pouvoir partager le bac.
+  const zone = () => document.querySelector<HTMLElement>('[data-zone-bac]');
+  document.addEventListener('click', async (e) => {
+    const lien = (e.target as Element).closest<HTMLAnchorElement>('[data-zone-bac] .filtres a');
+    if (!lien || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault(); e.stopImmediatePropagation(); // avant la navigation fluide d'Astro
+    if (lien.getAttribute('aria-current') === 'page') return;
+    const z = zone(); if (!z) return;
+    z.setAttribute('aria-busy', 'true'); z.classList.add('change');
+    try {
+      const html = await (await fetch(lien.href)).text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const neuve = doc.querySelector('[data-zone-bac]');
+      if (!neuve) throw new Error();
+      const garder = window.scrollY;
+      z.replaceWith(neuve);
+      window.scrollTo(0, garder);
+      document.title = doc.title;
+      history.replaceState(history.state, '', lien.href); // garde l'historique d'Astro intact
+      document.dispatchEvent(new CustomEvent('room33:bac-change'));
+      document.dispatchEvent(new CustomEvent('room33:ecoutes'));
+      (neuve.querySelector<HTMLElement>(`.filtres a[href="${lien.getAttribute('href')}"]`))?.focus({ preventScroll: true });
+    } catch {
+      location.href = lien.href; // en cas de souci : navigation classique
+    }
+  }, true);
+</script>
+
 <style>
   .infos-bac { display: grid; gap: var(--espace-sm); min-width: 0; }
+  .zone-filtres { display: grid; gap: var(--espace-md); }
+  .infos-genre { display: grid; gap: var(--espace-2xs); }
+  /* changement de genre : la nouvelle zone apparaît en fondu */
+  .zone-bac { animation: zone-entre var(--duree-normal) var(--courbe-sortie); }
+  .zone-bac.change { opacity: 0.4; transition: opacity var(--duree-rapide) linear; }
+  @keyframes zone-entre { from { opacity: 0.4; } }
+  @media (prefers-reduced-motion: reduce) { .zone-bac { animation: none; } }
   .filtres { min-width: 0; }
   /* filtres en tête du contenu : 72 px sous le hero (ordi), puis la pile */
   .zone-filtres { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
