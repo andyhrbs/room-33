@@ -5,6 +5,19 @@
 // Sans clés (ou si Spotify ne répond pas), le site garde les motifs de démo.
 // ==========================================================================
 import { jetonApplication } from './spotify';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+
+// ---------- Mémoire entre deux builds ----------
+// Netlify garde node_modules d'un build à l'autre : on y range la dernière réponse Spotify réussie
+// de chaque disque. Si Spotify refuse (trop de builds d'affilée : code 429) ou ne répond pas,
+// le disque garde sa pochette, ses titres et ses extraits au lieu de retomber sur la démo.
+const DOSSIER_MEMOIRE = 'node_modules/.cache/room33';
+const FICHIER_MEMOIRE = `${DOSSIER_MEMOIRE}/disques-spotify.json`;
+let memoire: Record<string, InfosSpotify> = {};
+try { memoire = JSON.parse(readFileSync(FICHIER_MEMOIRE, 'utf8')); } catch { /* premier build : rien en mémoire */ }
+const sauverMemoire = () => { try { mkdirSync(DOSSIER_MEMOIRE, { recursive: true }); writeFileSync(FICHIER_MEMOIRE, JSON.stringify(memoire)); } catch { /* pas grave */ } };
+// État du dernier build, affiché dans /rapport-extraits.json (aide au diagnostic, sans aucune clé)
+export const etatSpotify: { jeton?: string; erreurs: string[]; depuisMemoire: string[] } = { erreurs: [], depuisMemoire: [] };
 
 export interface Piste { numero: number; titre: string; duree: string; deezer?: number } // deezer : id du morceau sur Deezer (extrait de 30 s), trouvé au build
 export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[]; extraitAlbum?: number }
@@ -12,8 +25,15 @@ export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: nu
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
 
-async function appel(jeton: string, chemin: string) {
+async function appel(jeton: string, chemin: string, essai = 0): Promise<any> {
   const rep = await fetch(API + chemin, { headers: { Authorization: `Bearer ${jeton}` }, signal: AbortSignal.timeout(10000) });
+  // trop de demandes : Spotify dit combien de secondes attendre ; on attend (max 15 s) et on réessaie 2 fois
+  if (rep.status === 429 && essai < 2) {
+    const attente = Math.min(Number(rep.headers.get('retry-after')) || 3, 15);
+    console.warn(`[Spotify] 429 (trop de demandes) : pause de ${attente} s`);
+    await new Promise((r) => setTimeout(r, attente * 1000));
+    return appel(jeton, chemin, essai + 1);
+  }
   if (!rep.ok) throw new Error(`Spotify ${rep.status} sur ${chemin.split('?')[0]}`);
   return rep.json();
 }
@@ -98,16 +118,23 @@ async function deezerParUpc(upc: string): Promise<string | undefined> {
 
 export async function infosAlbums(liste: { cle: string; titre: string; artiste: string; spotifyId?: string }[]): Promise<Map<string, InfosSpotify>> {
   const resultat = new Map<string, InfosSpotify>();
+  const cleMemoire = (d: { titre: string; artiste: string; spotifyId?: string }) => `${d.artiste}|${d.titre}|${d.spotifyId ?? ''}`.toLowerCase();
+  const depuisMemoire = (d: { cle: string; titre: string; artiste: string; spotifyId?: string }) => {
+    const m = memoire[cleMemoire(d)];
+    if (m) { resultat.set(d.cle, m); etatSpotify.depuisMemoire.push(`${d.artiste} — ${d.titre}`); }
+  };
   const jeton = await jetonApplication();
   if (!jeton.ok) {
-    console.warn(`[Spotify] ${jeton.erreur} : pochettes de démo conservées.`);
+    console.warn(`[Spotify] ${jeton.erreur} : disques repris de la mémoire du build précédent (sinon pochettes de démo).`);
+    etatSpotify.jeton = jeton.erreur;
+    liste.forEach(depuisMemoire);
     return resultat;
   }
   const photos = new Map<string, string | undefined>(); // une seule demande par artiste
   for (const d of liste) {
     try {
       const id = d.spotifyId ?? (await chercherAlbum(jeton.jeton, d.titre, d.artiste));
-      if (!id) { console.warn(`[Spotify] album introuvable : ${d.artiste} — ${d.titre}`); continue; }
+      if (!id) { console.warn(`[Spotify] album introuvable : ${d.artiste} — ${d.titre}`); etatSpotify.erreurs.push(`${d.artiste} — ${d.titre} : album introuvable`); depuisMemoire(d); continue; }
       const a = await appel(jeton.jeton, `/albums/${id}?market=FR`);
       // photo de l'artiste principal (section « Découvrir l'artiste »)
       const idArtiste: string | undefined = a.artists?.[0]?.id;
@@ -174,9 +201,13 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
       });
     } catch (e) {
       console.warn(`[Spotify] ${d.artiste} — ${d.titre} : ${(e as Error).message}`);
+      etatSpotify.erreurs.push(`${d.artiste} — ${d.titre} : ${(e as Error).message}`);
     }
+    if (resultat.has(d.cle)) memoire[cleMemoire(d)] = resultat.get(d.cle)!;
+    else depuisMemoire(d);
   }
-  console.log(`[Spotify] ${resultat.size}/${liste.length} disques complétés depuis Spotify.`);
+  sauverMemoire();
+  console.log(`[Spotify] ${resultat.size}/${liste.length} disques complétés (${etatSpotify.depuisMemoire.length} depuis la mémoire).`);
   return resultat;
 }
 
