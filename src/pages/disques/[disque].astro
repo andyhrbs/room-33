@@ -60,21 +60,16 @@ const bac = bacDuDisque(d);
       </div>
     </section>
 
-    <section class="bande moment" aria-labelledby="titre-moment">
+    <!-- « Le moment à écouter » : ordi seulement (retiré du mobile, comme dans Figma) -->
+    <section class="bande moment seulement-ordi" aria-labelledby="titre-moment">
       <div class="conteneur deux-colonnes">
         <div class="titre-moment">
           <p class="texte-label">Le moment à écouter</p>
           <h2 id="titre-moment" class="titre-h1">Écoutez à {f.moment.temps}.</h2>
         </div>
         <div class="texte">
-          <p class="texte-corps-l seulement-ordi">{f.moment.texte}</p>
-          <p class="texte-corps seulement-mobile">{f.moment.texteCourt}</p>
+          <p class="texte-corps-l">{f.moment.texte}</p>
           <p class="texte-petit texte-secondaire">L’extrait ne va pas jusque-là : écoutez le morceau en entier pour l’entendre.</p>
-          <dl class="credits seulement-mobile">
-            {f.credits.map(([role, nom]) => (
-              <div><dt class="texte-avis">{role}</dt><dd class="texte-petit texte-secondaire">— {nom}</dd></div>
-            ))}
-          </dl>
         </div>
       </div>
     </section>
