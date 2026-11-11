@@ -177,7 +177,8 @@ const apps = [
   .plein-fermer:focus-visible { border-radius: 50%; } /* au clavier : contour rond, la croix reste ronde */
   .lecteur-plein[open] { display: grid; grid-template-rows: minmax(0, 1fr) auto; animation: plein-monte 0.5s var(--courbe-douce); }
   .lecteur-plein.ferme { animation: plein-descend 0.3s var(--courbe-entree-sortie) forwards; }
-  .lecteur-plein::backdrop { background: rgb(18 11 7 / 0.6); }
+  /* pas de voile derrière : le lecteur couvre tout l'écran, et quand on le fait glisser la page apparaît telle quelle (sans assombrissement) */
+  .lecteur-plein::backdrop { background: transparent; }
   @keyframes plein-monte { from { transform: translateY(100%); } }
   @keyframes plein-descend { to { transform: translateY(100%); } }
   @media (prefers-reduced-motion: reduce) { .lecteur-plein[open], .lecteur-plein.ferme { animation-name: none; } }
