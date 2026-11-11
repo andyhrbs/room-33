@@ -21,7 +21,7 @@ const bac = bacDuDisque(d);
   <Nav />
   <main class="ambiance">
     <nav class="conteneur ariane-zone" aria-label="Fil d’Ariane" data-retour-origine>
-      <ol role="list" class="ariane texte-petit">
+      <ol role="list" class="ariane texte-corps">
         <li class="seulement-ordi"><a href="/bacs">Les bacs</a></li>
         <li><a href={`/bacs/${bac.slug}`}>{bac.nom}</a></li>
         <li><span aria-current="page">{d.titre}</span></li>
