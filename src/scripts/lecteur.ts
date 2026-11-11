@@ -241,46 +241,76 @@ function fermerPlein() {
 }
 document.addEventListener('cancel', (e) => { if ((e.target as Element).matches?.('[data-lecteur-plein]')) { e.preventDefault(); fermerPlein(); } }, true);
 
-// Glisser le lecteur plein écran vers le bas avec le doigt pour le fermer (comme une story ou Shazam).
-// Il suit le doigt ; lâché après un quart d'écran ou d'un geste rapide, il se ferme ; sinon il remonte.
+// Glisser le lecteur plein écran vers le bas avec le doigt pour le fermer (comme une feuille iOS, Shazam ou Apple Music).
+// Pendant le geste : il suit le doigt en rétrécissant un peu, ses coins s'arrondissent (on sent qu'on le « décolle »),
+// vers le haut il résiste (effet élastique). Au lâcher : il part avec l'élan du doigt et ralentit (fermeture),
+// ou revient en douceur, sans rebond (charte « feutré »).
 {
   let d: HTMLDialogElement | null = null;
-  let id = -1, y0 = 0, dy = 0, yAvant = 0, tAvant = 0, vitesse = 0;
+  let id = -1, y0 = 0, dy = 0;
+  let points: { y: number; t: number }[] = [];
   let appuye = false, glisse = false, ignorerClic = false;
   const SEUIL = 8; // px avant de considérer que c'est un glissé (et pas un simple appui sur un bouton)
 
-  const finir = (el: HTMLDialogElement, fermer: boolean) => {
+  // position → apparence : de 0 (en place) à 1 (une hauteur d'écran plus bas)
+  const poser = (el: HTMLDialogElement, y: number) => {
+    const p = Math.min(1, Math.max(0, y / innerHeight));
+    const echelle = 1 - Math.min(p, 0.5) * 0.12;          // jusqu'à 94 % à mi-écran
+    const rayon = Math.min(28, Math.max(0, y) * 0.35);     // coins arrondis dès les premiers pixels
+    el.style.transform = `translateY(${y}px) scale(${echelle})`;
+    el.style.borderRadius = `${rayon}px`;
+  };
+  // vitesse moyenne des 80 dernières ms (plus fiable que le dernier mouvement seul), en px/ms
+  const vitesse = () => {
+    const fin = points[points.length - 1], debut = points.find((q) => fin.t - q.t <= 80) ?? points[0];
+    return fin && debut && fin.t > debut.t ? (fin.y - debut.y) / (fin.t - debut.t) : 0;
+  };
+
+  const finir = (el: HTMLDialogElement, fermer: boolean, v: number) => {
     const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const nettoyer = () => { el.style.transition = ''; el.style.transform = ''; el.classList.remove('glisse'); if (fermer) el.close(); };
+    const nettoyer = () => { el.style.transition = ''; el.style.transform = ''; el.style.borderRadius = ''; el.classList.remove('glisse'); if (fermer) el.close(); };
     if (calme) { nettoyer(); return; }
-    el.style.transition = fermer ? 'transform 0.28s var(--courbe-sortie)' : 'transform 0.45s var(--courbe-douce)';
-    el.style.transform = fermer ? 'translateY(100%)' : 'translateY(0)';
+    let duree: number, courbe: string;
+    if (fermer) {
+      // on garde l'élan : plus le geste est rapide, plus la fin est courte ; la courbe démarre à la vitesse du doigt
+      const reste = innerHeight - dy;
+      duree = Math.round(Math.min(380, Math.max(200, reste / Math.max(v, 1.4))));
+      courbe = 'cubic-bezier(0.25, 0.8, 0.3, 1)';
+    } else {
+      duree = 520; courbe = 'cubic-bezier(0.16, 1, 0.3, 1)'; // retour long et doux
+    }
+    el.style.transition = `transform ${duree}ms ${courbe}, border-radius ${duree}ms ${courbe}`;
+    if (fermer) { el.style.transform = `translateY(${innerHeight}px) scale(0.92)`; el.style.borderRadius = '28px'; }
+    else { el.style.transform = 'translateY(0) scale(1)'; el.style.borderRadius = '0px'; }
     let fait = false;
     const une = () => { if (!fait) { fait = true; nettoyer(); } };
-    el.addEventListener('transitionend', une, { once: true });
-    setTimeout(une, 600); // filet de sécurité si transitionend ne vient pas
+    el.addEventListener('transitionend', (e) => { if (e.propertyName === 'transform') une(); });
+    setTimeout(une, duree + 150); // filet de sécurité si transitionend ne vient pas
   };
 
   document.addEventListener('pointerdown', (e) => {
     const el = (e.target as Element).closest?.<HTMLDialogElement>('[data-lecteur-plein]');
     if (!el?.open || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    d = el; id = e.pointerId; y0 = yAvant = e.clientY; tAvant = e.timeStamp; dy = 0; vitesse = 0; appuye = true; glisse = false;
+    d = el; id = e.pointerId; y0 = e.clientY; dy = 0; points = [{ y: e.clientY, t: e.timeStamp }]; appuye = true; glisse = false;
   });
   document.addEventListener('pointermove', (e) => {
     if (!appuye || e.pointerId !== id || !d) return;
-    dy = Math.max(0, e.clientY - y0);
-    const dt = e.timeStamp - tAvant;
-    if (dt > 0) { vitesse = (e.clientY - yAvant) / dt; yAvant = e.clientY; tAvant = e.timeStamp; }
-    if (!glisse && dy > SEUIL) { glisse = true; d.classList.add('glisse'); d.style.transition = 'none'; }
-    if (glisse) d.style.transform = `translateY(${dy}px)`;
+    const brut = e.clientY - y0;
+    points.push({ y: e.clientY, t: e.timeStamp }); if (points.length > 12) points.shift();
+    if (!glisse && brut > SEUIL) { glisse = true; d.classList.add('glisse'); d.style.transition = 'none'; d.style.transformOrigin = '50% 0'; }
+    if (!glisse) return;
+    // vers le bas : suit le doigt ; vers le haut : résiste (élastique, 24 px au plus)
+    dy = brut >= 0 ? brut : -Math.min(24, Math.sqrt(-brut) * 3);
+    poser(d, dy);
   });
   const relacher = (e: PointerEvent) => {
     if (!appuye || e.pointerId !== id || !d) return;
     appuye = false;
     if (!glisse) return;
     ignorerClic = true; setTimeout(() => (ignorerClic = false), 80); // le doigt levé sur un bouton ne doit pas le déclencher
-    const fermer = e.type !== 'pointercancel' && (dy > innerHeight * 0.25 || (vitesse > 0.5 && dy > 40));
-    finir(d, fermer);
+    const v = vitesse();
+    const fermer = e.type !== 'pointercancel' && (dy > innerHeight * 0.25 || (v > 0.5 && dy > 40));
+    finir(d, fermer, v);
   };
   document.addEventListener('pointerup', relacher);
   document.addEventListener('pointercancel', relacher);
