@@ -39,6 +39,7 @@ const nb = bac.disques.length;
     <div class="zone-bac" data-zone-bac>
     <!-- filtres des genres : sortis du hero, en tête du contenu (maquette Figma) -->
     <div class="conteneur zone-filtres">
+      <h2 class="titre-h1 seulement-mobile">Choisissez dans les bacs.</h2>
       <nav aria-label="Les autres bacs" class="filtres">
         <ul role="list">
           {bacs.map((b) => (
@@ -151,6 +152,8 @@ const nb = bac.disques.length;
   @media (max-width: 63.99rem) {
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
     .zone-filtres { gap: var(--espace-sm); }
+    .zone-filtres .titre-h1 { margin: 0; }
+    .tracklist .titre-h3 { font-size: var(--taille-h1); line-height: normal; } /* Figma mobile : « Dans ce bac » en H1 comme les autres titres de section */
     .zone-filtres + .section { padding-top: var(--espace-sm); }
     .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); padding-bottom: 0; } /* la tracklist (fond bloc, 64 px dedans) touche la section suivante */
     .autres .conteneur { gap: var(--espace-lg); }
