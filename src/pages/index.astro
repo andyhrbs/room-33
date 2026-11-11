@@ -85,7 +85,7 @@ const suivants = reste.slice(0, 4);
         </div>
       </section>
 
-      <section class="section conteneur apercu" aria-labelledby="titre-top">
+      <section class="section conteneur apercu apercu-top" aria-labelledby="titre-top">
         <EnTeteSection surtitre={accueil.top.surtitre} titre={accueil.top.titre} id="titre-top" lien={{ texte: accueil.top.lien, href: '/top' }} />
         <div class="classement">
           <a class="numero-un" href={`/disques/${premier.slug}`}>
@@ -154,6 +154,8 @@ const suivants = reste.slice(0, 4);
   .rangee-bacs::-webkit-scrollbar { display: none; }
   .rangee-bacs > :global(*) { flex: 0 0 15.625rem; scroll-snap-align: start; }
   .platine { background: var(--couleur-fond-page); }
+  /* Figma : le Top sur fond ombre, toute la largeur (section dans le conteneur : le fond déborde) */
+  .apercu-top { background: var(--couleur-fond-ombre); box-shadow: 0 0 0 100vmax var(--couleur-fond-ombre); clip-path: inset(0 -100vmax); }
   .afficheurs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--espace-lg); margin: 0; }
   .afficheur { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dd { margin: 0; }

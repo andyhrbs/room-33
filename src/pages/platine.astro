@@ -311,7 +311,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .direct { display: inline-flex; align-items: center; gap: var(--espace-xs); }
   .point { width: 8px; height: 8px; border-radius: 50%; background: var(--couleur-deco-sunset); }
 
-  .ecoutes { background: var(--couleur-fond-ombre); }
+  .ecoutes { background: none; } /* Figma : sans fond (ordi et mobile) */
   .grille-ecoutes { display: grid; gap: var(--espace-xl); }
   .entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espace-lg); }
   .periode { display: inline-flex; gap: var(--espace-2xs); padding: var(--espace-2xs); border: var(--trait-filet) solid var(--couleur-bordure-defaut); border-radius: var(--rayon-pilule); }

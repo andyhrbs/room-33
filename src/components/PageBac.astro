@@ -223,7 +223,7 @@ const nb = bac.disques.length;
 
   .vide { display: grid; gap: var(--espace-md); justify-items: start; max-width: 45rem; }
 
-  .autres { background: var(--couleur-fond-ombre); }
+  .autres { background: var(--couleur-fond-page); } /* Figma : fond page (ordi et mobile) */
   .autres .conteneur { display: grid; gap: var(--espace-xl); } /* 32 px ordi, 24 mobile */
   .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); scrollbar-width: none; } /* défile au doigt, sans barre de défilement */
   .rangee::-webkit-scrollbar { display: none; }
@@ -254,7 +254,7 @@ const nb = bac.disques.length;
     .zone-filtres + .section { padding-top: var(--espace-sm); }
     .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); padding-bottom: 0; } /* la tracklist (fond bloc, 64 px dedans) touche la section suivante */
     .autres .conteneur { gap: var(--espace-lg); }
-    .tracklist { background: var(--couleur-fond-bloc); margin-inline: calc(-1 * var(--grille-marge)); padding: var(--espace-3xl) var(--grille-marge); }
+    .tracklist { margin-inline: calc(-1 * var(--grille-marge)); padding: var(--espace-3xl) var(--grille-marge); } /* Figma : sans fond, comme l'ordi */
     .tracklist .titre-h3 { margin-bottom: var(--espace-xs); }
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
   }
