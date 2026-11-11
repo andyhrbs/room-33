@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 11 nov. 2026, 23:15 : fiche « Les titres » (ordi + mobile), Top sans ▶, « Voir le disque » (Figma aligné sur le site dev)
+# Empreintes Figma de référence — 11 nov. 2026, 23:30 : aperçu de la platine (accueil) avec photo, pochette et noms (Figma aligné sur le site dev)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -16,27 +16,27 @@
 348:4587 1ps94kx
 79:2357:cadre 1bylfid
 79:2358 1mcf4ql
-16:131:cadre 2gworm
-23:720 vjb4f5
+16:131:cadre hgzg95
+23:720 ghltgw
 16:132 t30js3
 16:198 1661gs8
 349:2916 f2wywi
 349:2918 1g7ol5r
-349:2940 1jhuwhe
-349:2958 1xu95pa
-256:2734 3caieg
-16:292 1on2l8p
+349:2940 1x53wim
+349:2958 lgexmo
+256:2734 1o1togb
+16:292 7ynllf
 16:137 p4phlg
-15:19:cadre 1dw6hkx
-23:681 1yl4s44
+15:19:cadre 6cybto
+23:681 re5chl
 15:20 ne1dse
 15:74 uk9ccr
 15:89 1l0gdh8
 15:93 gds4hs
-15:133 4lfo3e
-15:151 janolm
-256:2674 tnjgbj
-15:212 j0ihkj
+15:133 gfkqa
+15:151 9gx7nr
+256:2674 23rd1z
+15:212 tqxjnh
 182:2232 tu08b2
 17:395:cadre dr2x2e
 23:799 15uz760
