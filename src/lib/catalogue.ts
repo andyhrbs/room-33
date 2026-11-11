@@ -131,12 +131,13 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
       let source = dz.length ? 'album Deezer (UPC)' : '';
       if (!dz.length) { dz = await pistesDeezerParNom(d.artiste, d.titre); if (dz.length) source = 'album Deezer (titre)'; }
       const ids = new Map<string, number>(); // cle « disque-piste » → id Deezer
+      const nomsDeezer = new Map<string, string>();
       const cleP = (p: any) => `${p.disc_number ?? 1}-${p.track_number}`;
       for (const p of items) {
         const memePlace = dz.find((t) => (t.disk_number ?? 1) === (p.disc_number ?? 1) && t.track_position === p.track_number);
         const ok = (t?: PisteDeezer) => t && t.preview && (simple(t.title).startsWith(simple(p.name).slice(0, 6)) || simple(p.name).startsWith(simple(t.title_short || t.title).slice(0, 6)));
         const t = ok(memePlace) ? memePlace : dz.find((x) => x.preview && simple(x.title_short || x.title) === simple(p.name));
-        if (t) ids.set(cleP(p), t.id);
+        if (t) { ids.set(cleP(p), t.id); if (!p.name) nomsDeezer.set(cleP(p), t.title_short || t.title); } // Spotify donne parfois un titre vide
       }
       const manquantes = items.filter((p) => !ids.has(cleP(p)));
       let erreurIsrc = '';
@@ -169,7 +170,7 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
         photoArtiste: idArtiste ? photos.get(idArtiste) : undefined,
         upc,
         liens,
-        pistes: items.map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms), deezer: ids.get(cleP(p)) })),
+        pistes: items.map((p: any) => ({ numero: p.track_number, titre: p.name || nomsDeezer.get(cleP(p)) || '', duree: duree(p.duration_ms), deezer: ids.get(cleP(p)) })),
       });
     } catch (e) {
       console.warn(`[Spotify] ${d.artiste} — ${d.titre} : ${(e as Error).message}`);
