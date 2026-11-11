@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 11 nov. 2026, 23:10 : Figma aligné sur le site dev (audit complet), point de départ des prochaines « maj figma »
+# Empreintes Figma de référence — 11 nov. 2026, 23:00 : ▶ ajouté sur les lignes du Top (Figma aligné sur le site dev)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -126,14 +126,14 @@
 67:1799 1ofyrth
 110:2136 1eiq7js
 67:1647 lny3xf
-67:1671 97j4cd
+67:1671 1862y5a
 67:1761 epmvg
 67:1793 p4phlg
 67:1381:cadre 1wd69g9
 67:1636 3edt0a
 110:2146 z35unx
 67:1391 t6w82j
-67:1425 1ywi2q1
+67:1425 be1ge1
 67:1587 y3r5l0
 182:2296 tu08b2
 268:2764:cadre 1v1acay
