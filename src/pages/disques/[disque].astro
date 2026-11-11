@@ -67,13 +67,13 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
           </div>
           <ol role="list" class="pistes">
             {pistes.map((p) => (
-              <li class:list={['piste', { coeur: estCoeur(p.titre) }]} data-ecoute data-titre={p.titre} data-artiste={d.artiste} data-type="titre" data-deezer={p.deezer}>
+              <li class:list={['piste', { coeur: estCoeur(p.titre) }]} data-ecoute data-titre={p.titre || 'Sans titre'} data-artiste={d.artiste} data-type="titre" data-deezer={p.deezer}>
                 <span class="num texte-label texte-secondaire">{String(p.numero).padStart(2, '0')}</span>
                 <span class="nom-piste">
-                  <span class="texte-corps nom">{p.titre}</span>
+                  <span class="texte-corps nom">{p.titre || 'Sans titre'}</span>
                   {estCoeur(p.titre) && <span class="badge-coeur texte-legende"><Icone nom="coeur" taille={14} /> Mon coup de cœur</span>}
                 </span>
-                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${p.titre}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
+                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${p.titre || "Sans titre"}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
                 <span class="texte-petit texte-secondaire duree">{p.duree}</span>
               </li>
             ))}
