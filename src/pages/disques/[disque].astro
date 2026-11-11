@@ -71,7 +71,7 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
                 <span class="num texte-label texte-secondaire">{String(p.numero).padStart(2, '0')}</span>
                 <span class="nom-piste">
                   <span class="texte-corps nom">{p.titre || 'Sans titre'}</span>
-                  {estCoeur(p.titre) && <span class="badge-coeur texte-legende"><Icone nom="coeur" taille={14} /> Mon coup de cœur</span>}
+                  {estCoeur(p.titre) && <span class="badge-coeur texte-legende" title="Mon coup de cœur"><Icone nom="coeur" taille={14} /> <span class="libelle-coeur">Mon coup de cœur</span></span>}
                 </span>
                 <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${p.titre || "Sans titre"}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
                 <span class="texte-petit texte-secondaire duree">{p.duree}</span>
@@ -185,6 +185,8 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
   /* coup de cœur : fond tonal + cœur ambre */
   .piste.coeur { background: var(--couleur-fond-tonal); border-bottom-color: transparent; }
   .badge-coeur { display: inline-flex; align-items: center; gap: var(--espace-2xs); color: var(--couleur-accent-defaut); white-space: nowrap; }
+  /* Figma ordi : le cœur seul (le libellé reste lu par les lecteurs d'écran) ; mobile : cœur + « Mon coup de cœur » */
+  @media (min-width: 64rem) { .libelle-coeur { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }
   /* ▶ extrait (comme la tracklist des bacs) */
   .lecture { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
   .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }

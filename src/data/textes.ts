@@ -60,7 +60,7 @@ export const accueil = {
   entrer: 'Entrer dans les bacs',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
   bacs: { surtitre: 'Les bacs', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
-  platine: { surtitre: 'La platine', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', legendeArtiste: 'le plus écouté du mois', legendeTitre: 'en boucle ce mois-ci', indispo: 'Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.' },
+  platine: { surtitre: 'La platine', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', legendeArtiste: 'Le plus écouté du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.' },
   top: { surtitre: 'Le Top de la Room', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top complet' },
   lives: { surtitre: 'Les lives', titre: 'Ce soir, sur scène.', lien: 'Voir tous les lives', chaine: 'Andyh · Room 33', chaineSous: 'Les lives que je repasse en boucle', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
   bandeauPause: 'Mettre en pause le défilement',

@@ -20,7 +20,7 @@
   --ivoire-100-62: rgb(239 230 210 / 0.62);
   --ivoire-100-20: rgb(239 230 210 / 0.20);
   --ivoire-100-14: rgb(239 230 210 / 0.14);
-  --ivoire-100-08: rgb(239 230 210 / 0.08);
+  --ivoire-100-08: rgb(239 230 210 / 0.04); /* Figma : 4 % (nom gardé pour rester aligné sur la variable Figma) */
   --sable-400: #B9AC94;
 
   /* ---------- Thème « Disquaire » (rôles des couleurs) ---------- */

@@ -79,7 +79,7 @@ const suivants = reste.slice(0, 4);
               <dt class="texte-petit texte-secondaire">{accueil.platine.legendeArtiste}</dt>
               <dd class="valeur">
                 <span class="photo" data-photo-artiste aria-hidden="true" style={ecoutesMois?.artiste?.image ? `background-image: url("${ecoutesMois.artiste.image}")` : undefined}></span>
-                <span class="titre-h1 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
+                <span class="titre-h2 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
               </dd>
             </div>
             <div class="afficheur">
@@ -87,7 +87,7 @@ const suivants = reste.slice(0, 4);
               <dd class="valeur">
                 <span class="vignette" data-pochette-titre aria-hidden="true" style={ecoutesMois?.titre?.pochette ? `background-image: url("${ecoutesMois.titre.pochette}")` : undefined}></span>
                 <span class="nom-titre">
-                  <span class="titre-h1 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
+                  <span class="titre-h2 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
                   <span class="texte-petit texte-secondaire" data-artiste-titre>{ecoutesMois?.titre?.artiste ?? ''}</span>
                 </span>
               </dd>
@@ -192,13 +192,14 @@ const suivants = reste.slice(0, 4);
   /* Figma : le Top sur fond ombre, toute la largeur (section dans le conteneur : le fond déborde) */
   .apercu-top { background: var(--couleur-fond-ombre); box-shadow: 0 0 0 100vmax var(--couleur-fond-ombre); clip-path: inset(0 -100vmax); }
   .afficheurs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--espace-lg); margin: 0; }
-  .afficheur { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  /* Figma ordi : légende au-dessus (corps 16), visuel 80 px, nom en H2 ; mobile : légende en dessous (voir plus bas) */
+  .afficheur { display: flex; flex-direction: column; gap: var(--espace-md); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .afficheur dt { font-size: var(--taille-corps); }
   .afficheur dd { margin: 0; }
   /* artiste et titre n° 1 : photo ronde / pochette carrée + nom (les noms longs passent à la ligne) */
   .afficheurs[hidden] { display: none; }
-  .valeur { display: flex; align-items: flex-start; gap: var(--espace-sm); min-width: 0; }
-  .photo, .vignette { margin-top: max(0px, calc((var(--taille-h1) * 1.2 - 48px) / 2)); } /* centrés sur la 1re ligne du nom */
-  .photo, .vignette { width: 48px; height: 48px; flex: none; background: var(--couleur-fond-image) center / cover no-repeat; }
+  .valeur { display: flex; align-items: center; gap: var(--espace-lg); min-width: 0; }
+  .photo, .vignette { width: 80px; height: 80px; flex: none; background: var(--couleur-fond-image) center / cover no-repeat; }
   .photo { border-radius: var(--rayon-pilule); }
   .vignette { border-radius: var(--rayon-pochette); }
   .nom-titre { display: grid; gap: var(--espace-2xs); min-width: 0; }
@@ -212,8 +213,11 @@ const suivants = reste.slice(0, 4);
     .rangee-bacs { gap: var(--espace-md); margin-inline: calc(var(--grille-marge) * -1); padding-inline: var(--grille-marge); scroll-padding-inline: var(--grille-marge); }
     .rangee-bacs > :global(*) { flex-basis: min(15.625rem, 72vw); }
     .afficheurs { gap: var(--espace-md); }
+    .afficheur { flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); }
+    .afficheur dt { font-size: var(--taille-petit); }
     .valeur { flex-direction: column; align-items: flex-start; gap: var(--espace-xs); }
-    .photo, .vignette { width: 40px; height: 40px; margin-top: 0; }
+    .photo, .vignette { width: 40px; height: 40px; }
+    .nom { font-size: var(--taille-h1); line-height: normal; }
     .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
     .numero-un :global(.pochette) { width: 100%; }
   }

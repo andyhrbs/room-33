@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 11 nov. 2026, 23:30 : aperçu de la platine (accueil) avec photo, pochette et noms (Figma aligné sur le site dev)
+# Empreintes Figma de référence — 11 nov. 2026, 23:45 : maj figma (fond tonal 4 %, aperçu platine ordi, cœur seul sur la fiche ordi)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -27,16 +27,16 @@
 256:2734 1o1togb
 16:292 7ynllf
 16:137 p4phlg
-15:19:cadre 6cybto
-23:681 re5chl
+15:19:cadre 1jgho5c
+23:681 ie3ngt
 15:20 ne1dse
 15:74 uk9ccr
 15:89 1l0gdh8
 15:93 gds4hs
-15:133 gfkqa
-15:151 9gx7nr
-256:2674 23rd1z
-15:212 tqxjnh
+15:133 yk00wf
+15:151 1s1aroj
+256:2674 hs4rmi
+15:212 v0jyr6
 182:2232 tu08b2
 17:395:cadre dr2x2e
 23:799 15uz760
@@ -70,7 +70,7 @@
 23:847 1711obt
 18:436 1bb7i3g
 18:438 11s7z3e
-372:3115 1jvti3z
+372:3115 1mt1seh
 18:474 zh5mq1
 18:488 19irggg
 18:502 1urdl6w
@@ -108,7 +108,7 @@
 25:1146 1wsrj8z
 110:2116 1xntfj9
 25:986 1pkl3cg
-25:1002 d8yp9i
+25:1002 1916zha
 25:1113 lud025
 25:1136 1afyz7
 25:1129 p4phlg
@@ -162,7 +162,7 @@
 69:2124 16rkfee
 112:2141 wokm6d
 69:1989 195zjck
-69:1999 opwh4g
+69:1999 16n4ed6
 69:2060 pemn5k
 69:2086 1qzwqy8
 69:2118 p4phlg
@@ -170,7 +170,7 @@
 69:1987 1ffnhv9
 106:2158 wso96o
 69:1839 mbppmt
-69:1849 ayya4r
+69:1849 c253z6
 69:1912 1wzjbcn
 69:1938 sh22c6
 182:2328 tu08b2
@@ -178,7 +178,7 @@
 217:2582 d272u5
 217:2583 1q46in2
 218:2848 hxvamu
-217:2615 15lznvd
+217:2615 orb8t6
 217:2619 66ezzw
 217:2620 p4phlg
 217:2532:cadre 1jhfhfq
@@ -233,7 +233,7 @@ var:gris/50 15mql2h
 var:annotation/jaune xzjo77
 var:annotation/encre 7joch6
 var:ivoire/100-62 cgqbtw
-var:ivoire/100-08 1rrkzc5
+var:ivoire/100-08 148fjmy
 var:ambre/600 hi1qil
 var:ivoire/100-14 jc3fzc
 var:ivoire/100-20 15hm8o2
