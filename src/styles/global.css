@@ -187,17 +187,15 @@ html:not(.entree-vue) .hero-accueil *, html:not(.entree-vue) .hero-accueil *::be
 .hero-disque .infos > :nth-child(5) { animation-delay: 880ms; }
 .hero-disque .infos > :nth-child(n+6) { animation-delay: 1000ms; }
 
-/* D · Le rideau : le hero reste collé en haut et le reste de la page glisse par-dessus
-   (hauteur du collage et taux de recouvrement --couvert calculés par apparitions.ts) */
+/* D · Le rideau : le hero reste fixe et le reste de la page glisse par-dessus ; seul un voile sombre
+   s'épaissit à mesure qu'il est recouvert (--couvert calculé par apparitions.ts) */
 /* !important : passe devant le « position: relative » des styles propres aux heros */
-.hero-accueil, .hero-page { position: sticky !important; top: var(--haut-collant, 0px) !important; z-index: 0; }
+/* Fixe « fill » (comme Forma Studio) : le hero fait exactement la hauteur de l'écran et ne bouge plus du tout ;
+   svh = hauteur avec les barres du navigateur affichées (pas de saut quand elles se replient sur iPhone) */
+.hero-accueil, .hero-page { position: sticky !important; top: 0 !important; z-index: 0; height: 100vh; height: 100svh; min-height: 0 !important; }
 .hero-accueil::after, .hero-page::after {
   content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: var(--brun-950); opacity: calc(var(--couvert, 0) * 0.75);
-}
-.hero-accueil > .contenu, .hero-page > .contenu {
-  transform: translateY(calc(var(--couvert, 0) * -48px)) scale(calc(1 - var(--couvert, 0) * 0.04));
-  transform-origin: 50% 100%;
 }
 .rideau {
   position: relative; z-index: 1;

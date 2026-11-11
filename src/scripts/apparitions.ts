@@ -77,13 +77,11 @@ addEventListener('scroll', () => {
   });
 }, { passive: true });
 
-// Le rideau : le hero colle en haut (s'il est plus haut que l'écran, il défile d'abord jusqu'à montrer son bas),
-// puis s'assombrit et s'enfonce légèrement à mesure que la page le recouvre.
+// Le rideau : le hero (hauteur de l'écran) reste fixe ; il s'assombrit à mesure que la page le recouvre.
 function rideau() {
   const hero = document.querySelector<HTMLElement>('.hero-accueil, .hero-page');
   const suite = document.querySelector<HTMLElement>('.rideau');
   if (!hero || !suite) return;
-  hero.style.setProperty('--haut-collant', `${Math.min(0, innerHeight - hero.offsetHeight)}px`);
   const r = suite.getBoundingClientRect().top;
   const couvert = Math.min(1, Math.max(0, 1 - r / innerHeight));
   hero.style.setProperty('--couvert', couvert.toFixed(3));
