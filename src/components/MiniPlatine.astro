@@ -242,7 +242,9 @@ const apps = [
     background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal);
     box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
   }
-  .choix-app[open] { display: grid; gap: var(--espace-md); }
+  /* hauteur = son contenu, lignes collées en haut : Safari (iOS) étirait d'abord la fenêtre sur toute la hauteur
+     et répartissait les lignes dans le vide pendant l'ouverture */
+  .choix-app[open] { display: grid; gap: var(--espace-md); align-content: start; height: fit-content; max-height: calc(100dvh - 2 * var(--espace-md)); inset: 0; margin: auto; overflow-y: auto; }
   .choix-app::backdrop { background: rgb(18 11 7 / 0.7); }
   .entete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
   .fermer { width: 44px; height: 44px; margin-right: -10px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: inherit; }
