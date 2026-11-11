@@ -13,7 +13,7 @@ import BandeauGenres from '../components/BandeauGenres.astro';
 import Entree from '../components/Entree.astro';
 import LivesAccueil from '../components/LivesAccueil.astro';
 import { accueil } from '../data/textes';
-import { bacs, top, morceauDuJour, ecoutesMois, genres, detailBac } from '../data/disques';
+import { bacs, top, morceauDuJour, ecoutesMois, genres, detailBac, deezerDe } from '../data/disques';
 import { images } from '../data/images';
 
 const m = morceauDuJour;
@@ -52,7 +52,7 @@ const suivants = reste.slice(0, 4);
           <p class="texte-corps-l texte-secondaire">{m.disque.artiste} — {m.disque.titre} ({m.disque.annee})</p>
           <p class="texte-avis"><span class="seulement-ordi">{m.avis}</span><span class="seulement-mobile">{m.avisCourt}</span></p>
           <div class="actions">
-            <Ecoute titre={m.titre} artiste={m.disque.artiste} />
+            <Ecoute titre={m.titre} artiste={m.disque.artiste} deezer={deezerDe(m.titre, m.disque)} />
             <Bouton style="lien" href={`/disques/${m.disque.slug}`}>{accueil.morceau.voirFiche}</Bouton>
           </div>
         </div>
@@ -107,7 +107,7 @@ const suivants = reste.slice(0, 4);
           </a>
           <ol role="list" class="suivants">
             {suivants.map((d, i) => (
-              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" liens={d.liens} upc={d.upc} />
+              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" liens={d.liens} upc={d.upc} deezer={d.extraitAlbum} />
             ))}
           </ol>
         </div>

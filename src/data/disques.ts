@@ -30,6 +30,7 @@ export interface Disque {
   upc?: string;          // code-barres de l'album (Spotify), pour retrouver le même disque sur chaque plateforme
   liens?: Record<string, string>; // liens « Ouvrir l'app » résolus au build (spotify, apple, deezer)
   pistes?: Piste[];
+  extraitAlbum?: number; // id Deezer du titre joué par « Écouter un extrait » de l'album (au build)
   coupDeCoeur?: string;  // titre du morceau préféré d'Andyh sur l'album (admin), signalé dans la tracklist de la fiche
   ajoute: string;      // date d'ajout (ordre des disques, « mis à jour le » des bacs)
   textes: TextesDisque; // ce qu'Andyh écrit dans l'admin (peut être vide)
@@ -64,7 +65,7 @@ const infos = await infosAlbums(disques.map((d) => ({ cle: d.slug, titre: d.titr
 for (const d of disques) {
   const i = infos.get(d.slug);
   if (!i) continue;
-  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify }, i.lienArtiste && { lienArtiste: i.lienArtiste }, i.photoArtiste && { photoArtiste: i.photoArtiste }, i.upc && { upc: i.upc }, Object.keys(i.liens).length && { liens: i.liens });
+  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes, extraitAlbum: i.extraitAlbum }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify }, i.lienArtiste && { lienArtiste: i.lienArtiste }, i.photoArtiste && { photoArtiste: i.photoArtiste }, i.upc && { upc: i.upc }, Object.keys(i.liens).length && { liens: i.liens });
 }
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;
@@ -123,7 +124,10 @@ const disqueLie = (slug: string, ou: string) => {
 };
 // Durée d'un morceau = celle de sa piste sur l'album (Spotify, au build)
 const normal = (s: string) => s.toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
-const dureeDe = (titre: string, d: Disque) => d.pistes?.find((p) => normal(p.titre).startsWith(normal(titre)))?.duree ?? '';
+const pisteDe = (titre: string, d: Disque) => d.pistes?.find((p) => normal(p.titre) === normal(titre)) ?? d.pistes?.find((p) => normal(p.titre).startsWith(normal(titre)));
+const dureeDe = (titre: string, d: Disque) => pisteDe(titre, d)?.duree ?? '';
+// id Deezer d'un morceau de l'album (extrait exact au clic), s'il a été trouvé au build
+export const deezerDe = (titre: string, d: Disque) => pisteDe(titre, d)?.deezer;
 
 // Le Top de la Room (ordre = classement), modifiable dans /admin › Le Top
 type DonneesTop = { albums?: { disque: string }[]; titres?: { titre: string; disque: string }[]; pourquoiAlbum?: string; pourquoiAlbumCourt?: string; pourquoiTitre?: string; pourquoiTitreCourt?: string };

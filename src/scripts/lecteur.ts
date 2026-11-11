@@ -8,7 +8,8 @@
 //   (pas de mémorisation : un mauvais clic ne l'enferme pas dans une app).
 // ==========================================================================
 
-type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' | 'artiste'; liens?: Record<string, string>; upc?: string };
+// deezer / isrc : identifiants exacts du morceau (trouvés au build, ou donnés par Spotify) → l'extrait ne dépend pas d'une recherche par nom
+type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' | 'artiste'; liens?: Record<string, string>; upc?: string; deezer?: string; isrc?: string };
 type Etat = '' | 'chargement' | 'lecture' | 'pause' | 'erreur';
 
 const audio = new Audio();
@@ -28,7 +29,7 @@ const lireMorceau = (el: Element | null): Morceau | null => {
   if (!c?.dataset.titre || !c.dataset.artiste) return null;
   let liensConnus: Record<string, string> | undefined;
   try { liensConnus = c.dataset.liens ? JSON.parse(c.dataset.liens) : undefined; } catch { liensConnus = undefined; }
-  return { titre: c.dataset.titre, artiste: c.dataset.artiste, type: c.dataset.type === 'album' ? 'album' : 'titre', liens: liensConnus, upc: c.dataset.upc || undefined };
+  return { titre: c.dataset.titre, artiste: c.dataset.artiste, type: c.dataset.type === 'album' ? 'album' : 'titre', liens: liensConnus, upc: c.dataset.upc || undefined, deezer: c.dataset.deezer || undefined, isrc: c.dataset.isrc || undefined };
 };
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
@@ -133,7 +134,11 @@ async function basculer(m: Morceau) {
   etat = 'chargement';
   afficher();
   try {
-    const rep = await fetch(`/api/extrait?${new URLSearchParams({ titre: m.titre, artiste: m.artiste, type: m.type })}`);
+    const q = new URLSearchParams({ titre: m.titre, artiste: m.artiste, type: m.type });
+    if (m.deezer) q.set('deezer', m.deezer);
+    if (m.isrc) q.set('isrc', m.isrc);
+    if (m.upc) q.set('upc', m.upc);
+    const rep = await fetch(`/api/extrait?${q}`);
     const d = await rep.json();
     if (n !== demande) return; // un autre extrait a été demandé entre-temps
     if (!rep.ok || !d.extrait) throw new Error();

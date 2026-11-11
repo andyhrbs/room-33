@@ -4,7 +4,7 @@ import { cles, demanderJeton } from '../lib/spotify.mjs';
 
 const PERIODES = { '4-semaines': 'short_term', '6-mois': 'medium_term', '1-an': 'long_term' };
 const pochette = (images = []) => (images.find((i) => i.width === 300) || images[0])?.url ?? null;
-const morceau = (t) => t && { titre: t.name, artiste: t.artists.map((a) => a.name).join(', '), album: t.album?.name, annee: Number(String(t.album?.release_date ?? '').slice(0, 4)) || null, pochette: pochette(t.album?.images), duree: `${Math.floor(t.duration_ms / 60000)}:${String(Math.round((t.duration_ms % 60000) / 1000)).padStart(2, '0')}`, lien: t.external_urls?.spotify };
+const morceau = (t) => t && { titre: t.name, artiste: t.artists.map((a) => a.name).join(', '), isrc: t.external_ids?.isrc, album: t.album?.name, annee: Number(String(t.album?.release_date ?? '').slice(0, 4)) || null, pochette: pochette(t.album?.images), duree: `${Math.floor(t.duration_ms / 60000)}:${String(Math.round((t.duration_ms % 60000) / 1000)).padStart(2, '0')}`, lien: t.external_urls?.spotify };
 
 const json = (donnees, statut = 200, cache = 60) =>
   new Response(JSON.stringify(donnees), {

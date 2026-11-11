@@ -8,7 +8,7 @@ import { recadrages } from '../data/images';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import LigneTracklist from '../components/LigneTracklist.astro';
-import { platineDetail as p, topTitres } from '../data/disques';
+import { platineDetail as p, topTitres, deezerDe } from '../data/disques';
 const enCours = p.enCours;
 const rang = (i: number) => String(i + 1).padStart(2, '0');
 ---
@@ -38,7 +38,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         <p class="texte-label direct" data-etat><span class="point"></span><span class="seulement-ordi">En ce moment sur la platine</span><span class="seulement-mobile">En ce moment</span></p>
         <h2 id="titre-en-cours" class="titre-display" data-titre>{enCours.titre}</h2>
         <p class="texte-corps-l texte-secondaire" data-detail>{enCours.disque.artiste} — {enCours.disque.titre} ({enCours.disque.annee})</p>
-        <Ecoute titre={enCours.titre} artiste={enCours.disque.artiste} />
+        <Ecoute titre={enCours.titre} artiste={enCours.disque.artiste} deezer={deezerDe(enCours.titre, enCours.disque)} />
       </div>
     </section>
 
@@ -64,7 +64,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
           <div class="liste">
             <h3 class="titre-h3">Top titres</h3>
             <ol role="list" data-top-titres>
-              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} ecoute="titre" />)}
+              {topTitres.slice(0, 5).map((t, i) => <LigneTracklist face={rang(i)} titre={t.titre} artiste={t.disque.artiste} duree={t.duree} motif={t.disque.motif} src={t.disque.pochette} href={`/disques/${t.disque.slug}`} ecoute="titre" deezer={deezerDe(t.titre, t.disque)} />)}
             </ol>
             <template data-modele-titre><LigneTracklist face="" titre="-" artiste="-" duree="0:00" src="data:," href="#" ecoute="titre" /></template>
           </div>
@@ -101,7 +101,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   // Spotify d'Andyh côté serveur et ne renvoie que ce qui s'affiche ici.
   // Tant que la réponse n'est pas arrivée, la page montre les valeurs de démo, atténuées.
   // ==========================================================================
-  type Morceau = { titre: string; artiste: string; album?: string; annee?: number | null; pochette?: string | null; duree?: string; lien?: string; le?: string };
+  type Morceau = { titre: string; artiste: string; isrc?: string; album?: string; annee?: number | null; pochette?: string | null; duree?: string; lien?: string; le?: string };
   type Reponse = { enCours: Morceau | null; derniere: Morceau | null; topTitres: Morceau[]; topArtistes: { nom: string; image?: string | null; genres: string[]; lien?: string }[]; erreur?: string };
 
   const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
@@ -131,7 +131,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     if (m.pochette) macaron.style.backgroundImage = `url("${m.pochette}")`;
     $('[data-vinyle]').classList.toggle('a-larret', !d.enCours);
     const ecoute = document.querySelector<HTMLElement>('.morceau [data-ecoute]');
-    if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.dataset.type = 'titre'; ecoute.querySelector('[data-ecouter]')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
+    if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.dataset.type = 'titre'; delete ecoute.dataset.deezer; if (m.isrc) ecoute.dataset.isrc = m.isrc; else delete ecoute.dataset.isrc; ecoute.querySelector('[data-ecouter]')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
   }
 
   function afficherClassements(d: Reponse) {
@@ -160,6 +160,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       const [titre, artiste] = li.querySelectorAll('.infos > span');
       titre.textContent = t.titre; artiste.textContent = t.artiste;
       li.dataset.titre = t.titre; li.dataset.artiste = t.artiste; li.dataset.type = 'titre';
+      delete li.dataset.deezer; if (t.isrc) li.dataset.isrc = t.isrc; else delete li.dataset.isrc; // morceau exact sur Deezer (code ISRC)
       li.querySelector('.duree')!.textContent = t.duree ?? '';
       const img = li.querySelector('img')!;
       img.removeAttribute('srcset'); img.src = t.pochette ?? ''; img.alt = '';

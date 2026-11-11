@@ -6,8 +6,8 @@
 // ==========================================================================
 import { jetonApplication } from './spotify';
 
-export interface Piste { numero: number; titre: string; duree: string }
-export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[] }
+export interface Piste { numero: number; titre: string; duree: string; deezer?: number } // deezer : id du morceau sur Deezer (extrait de 30 s), trouvé au build
+export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[]; extraitAlbum?: number }
 
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -17,6 +17,34 @@ async function appel(jeton: string, chemin: string) {
   if (!rep.ok) throw new Error(`Spotify ${rep.status} sur ${chemin.split('?')[0]}`);
   return rep.json();
 }
+
+// ---------- Extraits Deezer, résolus au build ----------
+// Pour chaque piste, on garde l'id Deezer du MÊME morceau (le lien d'extrait, lui, expire : il est
+// redemandé au clic par /api/extrait?deezer=…). Ordre d'essai : album Deezer retrouvé par son UPC
+// (même disque, même ordre de pistes), puis le code ISRC du morceau (identifiant unique d'un enregistrement).
+type PisteDeezer = { id: number; title: string; title_short?: string; preview?: string; track_position?: number; disk_number?: number; rank?: number; readable?: boolean };
+const simple = (s = '') => s.toLowerCase().normalize('NFD').replace(/\([^)]*\)|\[[^\]]*\]| - .*$/g, '').replace(/[^a-z0-9]/g, '');
+async function deezerJson(chemin: string) {
+  const r = await fetch('https://api.deezer.com' + chemin, { signal: AbortSignal.timeout(8000) });
+  if (!r.ok) throw new Error(`Deezer ${r.status}`);
+  const d = await r.json();
+  if (d?.error) throw new Error('Deezer : ' + (d.error.message || 'erreur'));
+  return d;
+}
+async function pistesDeezerParUpc(upc: string): Promise<PisteDeezer[]> {
+  for (const code of variantesUpc(upc)) {
+    try {
+      const a = await deezerJson(`/album/upc:${code}`);
+      if (!a?.id) continue;
+      return (await deezerJson(`/album/${a.id}/tracks?limit=200`)).data ?? [];
+    } catch { /* variante suivante */ }
+  }
+  return [];
+}
+async function deezerParIsrc(isrc: string): Promise<PisteDeezer | undefined> {
+  try { const t = await deezerJson(`/track/isrc:${isrc}`); return t?.id ? t : undefined; } catch { return undefined; }
+}
+export const rapportExtraits: { disque: string; pistes: number; sansExtrait: string[]; source: string }[] = [];
 
 // Retrouve l'identifiant Spotify d'un album à partir de son titre et de son artiste
 async function chercherAlbum(jeton: string, titre: string, artiste: string): Promise<string | undefined> {
@@ -89,7 +117,38 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
       }
       const manque = ['spotify', 'apple', 'deezer'].filter((k) => !liens[k]);
       if (manque.length) console.warn(`[Liens] ${d.artiste} — ${d.titre} : lien introuvable au build pour ${manque.join(', ')} (recherche en direct au clic)`);
+      // extraits : id Deezer de chaque piste (album par UPC, sinon ISRC piste par piste)
+      const items: any[] = a.tracks?.items ?? [];
+      const dz = upc ? await pistesDeezerParUpc(upc) : [];
+      const ids = new Map<string, number>(); // cle « disque-piste » → id Deezer
+      const cleP = (p: any) => `${p.disc_number ?? 1}-${p.track_number}`;
+      for (const p of items) {
+        const memePlace = dz.find((t) => (t.disk_number ?? 1) === (p.disc_number ?? 1) && t.track_position === p.track_number);
+        const ok = (t?: PisteDeezer) => t && t.preview && (simple(t.title).startsWith(simple(p.name).slice(0, 6)) || simple(p.name).startsWith(simple(t.title_short || t.title).slice(0, 6)));
+        const t = ok(memePlace) ? memePlace : dz.find((x) => x.preview && simple(x.title_short || x.title) === simple(p.name));
+        if (t) ids.set(cleP(p), t.id);
+      }
+      const manquantes = items.filter((p) => !ids.has(cleP(p)));
+      if (manquantes.length) {
+        // codes ISRC : seulement dans la fiche complète d'un morceau (par lots de 50)
+        for (let i = 0; i < manquantes.length; i += 50) {
+          try {
+            const lot = (await appel(jeton.jeton, `/tracks?ids=${manquantes.slice(i, i + 50).map((p) => p.id).join(',')}&market=FR`)).tracks ?? [];
+            for (const t of lot) {
+              const isrc = t?.external_ids?.isrc;
+              const trouve = isrc ? await deezerParIsrc(isrc) : undefined;
+              if (trouve?.preview) ids.set(cleP(t), trouve.id);
+            }
+          } catch (e) { console.warn(`[Extraits] ${d.artiste} — ${d.titre} : ISRC indisponibles (${(e as Error).message})`); }
+        }
+      }
+      const sansExtrait = items.filter((p) => !ids.has(cleP(p))).map((p) => p.name);
+      if (sansExtrait.length) console.warn(`[Extraits] ${d.artiste} — ${d.titre} : pas d'extrait Deezer pour ${sansExtrait.length}/${items.length} titre(s) : ${sansExtrait.join(' · ')}`);
+      rapportExtraits.push({ disque: `${d.artiste} — ${d.titre}`, pistes: items.length, sansExtrait, source: dz.length ? 'album Deezer (UPC)' : 'ISRC' });
+      // extrait « de l'album » : son titre le plus écouté sur Deezer (sinon le 1er qui a un extrait)
+      const extraitAlbum = dz.filter((t) => t.preview).sort((x, y) => (y.rank ?? 0) - (x.rank ?? 0))[0]?.id ?? [...ids.values()][0];
       resultat.set(d.cle, {
+        extraitAlbum,
         spotifyId: id,
         pochette: a.images?.[0]?.url,
         annee: a.release_date ? Number(String(a.release_date).slice(0, 4)) : undefined,
@@ -99,7 +158,7 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
         photoArtiste: idArtiste ? photos.get(idArtiste) : undefined,
         upc,
         liens,
-        pistes: (a.tracks?.items ?? []).map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms) })),
+        pistes: items.map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms), deezer: ids.get(cleP(p)) })),
       });
     } catch (e) {
       console.warn(`[Spotify] ${d.artiste} — ${d.titre} : ${(e as Error).message}`);
