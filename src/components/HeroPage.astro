@@ -55,7 +55,7 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
       var(--image, radial-gradient(60% 50% at 30% 30%, rgb(240 122 34 / 0.25), transparent), linear-gradient(160deg, var(--noyer-500), var(--brun-950)));
     background-size: 100% 100%, var(--taille, cover); background-position: center, var(--position, center); background-repeat: no-repeat;
   }
-  .contenu { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-lg); padding-bottom: var(--espace-4xl); } /* Figma : 96 px en bas (ordi) */
+  .contenu { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-lg); padding-bottom: var(--espace-3xl); } /* Figma : 64 px en bas (ordi et mobile) */
   .contenu :global(.retour) { justify-self: start; }
   .retour :global(.icone) { color: var(--couleur-accent-defaut); }
   .titres { display: grid; gap: var(--espace-md); }
@@ -69,7 +69,7 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
   @media (max-width: 63.99rem) {
     /* mobile : la photo horizontale doit couvrir tout le hero vertical (en attendant la photo verticale) */
     .hero-page { min-height: 45rem; background-size: 100% 100%, cover; }
-    .contenu { padding-bottom: var(--espace-xl); gap: var(--espace-lg); } /* Figma : 32 px en bas, 24 px d'écart (mobile) */
+    .contenu { gap: var(--espace-lg); } /* mobile : 64 px en bas aussi, 24 px d'écart */
     .titres { gap: var(--espace-xs); } /* Figma mobile : 8 px dans l'en-tête */
     /* mobile : même alignement que l'ordi et que Figma (lettrine centrée sur la ligne du titre) */
     .titre-avec-lettrine .lettrine { margin-right: -0.02em; }
