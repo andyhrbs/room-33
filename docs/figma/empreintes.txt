@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 00:15 : maj figma (platine mobile, « Les titres » en une colonne, photo artiste mobile carrée)
+# Empreintes Figma de référence — 12 nov. 2026, 00:20 : maj figma + « Voir le disque » sur les lignes du Top de l'accueil (ordi)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -34,7 +34,7 @@
 15:89 1l0gdh8
 15:93 gds4hs
 15:133 yk00wf
-15:151 1s1aroj
+15:151 1rbfks1
 256:2674 hs4rmi
 15:212 v0jyr6
 182:2232 tu08b2
