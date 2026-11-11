@@ -98,8 +98,8 @@ const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.start
 
   .gauche, .droite { flex: 1; display: flex; align-items: center; }
   .droite { justify-content: flex-end; }
-  /* 5 liens : l'écart se resserre sur les petits ordis (1024 px) pour ne pas toucher le bouton */
-  .liens ul { display: flex; gap: clamp(1rem, -0.5rem + 2.35vw, 2rem); white-space: nowrap; }
+  /* 6 liens : l'écart se resserre sur les petits ordis (1024 px) pour ne pas toucher le bouton */
+  .liens ul { display: flex; gap: clamp(0.75rem, -0.9rem + 2.35vw, 2rem); white-space: nowrap; }
   /* Lien actif : souligné, trait 1 px, décalé de 6 px (Figma) */
   .liens a { text-decoration: none; padding-block: var(--espace-xs); text-underline-offset: 6px; }
   .liens a:hover, .liens a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }

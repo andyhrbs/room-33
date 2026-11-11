@@ -9,14 +9,12 @@ const colonne2 = ['Les lives', 'Le bac des visiteurs', 'Le comptoir'];
 <footer class="pied">
   <div class="conteneur interieur">
     <div class="haut">
-      <form class="reco" action="#recommander" data-reco-express data-astro-reload>
+      <!-- « Un son à me faire écouter ? » + bouton qui ouvre le tiroir (maquette Figma : plus de champ ici) -->
+      <div class="reco">
         <h2 class="titre-h2" id="pied-reco">{piedDePage.question}</h2>
-        <div class="ligne">
-          <label class="visuellement-cache" for="pied-son">{piedDePage.question}</label>
-          <input id="pied-son" name="son" class="texte-petit" placeholder={piedDePage.champ} autocomplete="off" />
-          <Bouton style="lien" type="submit">{piedDePage.envoyer}</Bouton>
-        </div>
-      </form>
+        <Bouton style="secondaire" href="/#recommander" data-ouvrir-reco class="seulement-ordi">{piedDePage.cta}</Bouton>
+        <Bouton style="lien" href="/#recommander" data-ouvrir-reco class="seulement-mobile">{piedDePage.cta}</Bouton>
+      </div>
 
       <nav class="colonnes" aria-label="Plan du site">
         <ul role="list">
@@ -49,17 +47,8 @@ const colonne2 = ['Les lives', 'Le bac des visiteurs', 'Le comptoir'];
   .pied { background: var(--couleur-fond-ombre); overflow: hidden; }
   .interieur { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-4xl); padding-block: var(--espace-4xl); }
   .haut { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--espace-2xl) var(--espace-xl); }
-  .reco { display: grid; gap: var(--espace-md); flex: 1 1 28rem; max-width: 33.5rem; }
-  .ligne { display: flex; align-items: center; gap: var(--espace-lg); }
-  .ligne input {
-    flex: 1; min-width: 0; max-width: 16.25rem;
-    background: none; border: 0; padding: var(--espace-xs) 0;
-    border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete);
-    caret-color: var(--couleur-accent-defaut); letter-spacing: var(--interlettre-texte);
-    transition: border-color var(--duree-rapide) var(--courbe-standard);
-  }
-  .ligne input::placeholder { color: var(--couleur-texte-secondaire); opacity: 1; }
-  .ligne input:focus-visible { outline: none; border-bottom-color: var(--couleur-accent-defaut); }
+  .reco { display: grid; gap: var(--espace-md); flex: 1 1 28rem; max-width: 33.5rem; align-content: start; }
+  .reco :global(.bouton) { justify-self: start; }
 
   .colonnes { display: flex; flex-wrap: wrap; gap: var(--espace-lg) var(--espace-3xl); }
   .colonnes ul { display: grid; gap: var(--espace-xs); align-content: start; }

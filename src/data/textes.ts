@@ -29,7 +29,7 @@ export const pages = [
 
 export const nav = {
   // Liens visibles dans la barre du haut (ordi)
-  liens: ['Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le comptoir'],
+  liens: ['Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le comptoir', 'Le bac des visiteurs'],
   cta: 'Recommandez-moi un son',
   ouvrirMenu: 'Ouvrir le menu',
   fermerMenu: 'Fermer le menu',

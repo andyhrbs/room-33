@@ -73,11 +73,13 @@ const total = disques.length;
   }
   .feuille[aria-hidden='true'] { pointer-events: none; }
   .controles { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
+  /* flèches seules (maquette Figma mobile), zone de toucher de 44 px */
   .rond {
     width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0;
-    border-radius: var(--rayon-pilule); background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal);
+    border-radius: var(--rayon-pilule); background: none; color: var(--couleur-texte-principal);
+    transition: transform var(--duree-rapide) var(--courbe-standard), background-color var(--duree-rapide) var(--courbe-standard);
   }
-  .rond:hover { background: var(--couleur-fond-tonal-survol); }
+  .rond:active { transform: scale(0.96); background: var(--couleur-fond-tonal); }
   .sortir { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; justify-self: start; }
   .sortir:hover .texte-bouton { text-decoration: underline; text-underline-offset: 0.3em; }
   @media (max-width: 63.99rem) {
@@ -85,6 +87,5 @@ const total = disques.length;
       justify-self: stretch; justify-content: center; padding: var(--espace-md) var(--espace-lg);
       border-radius: var(--rayon-pochette); background: var(--couleur-fond-tonal);
     }
-    .sortir svg { display: none; }
   }
 </style>

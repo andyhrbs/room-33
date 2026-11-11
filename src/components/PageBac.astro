@@ -27,18 +27,21 @@ const nb = bac.disques.length;
       <div class="infos-bac">
         <p class="texte-corps-l description">{bac.description}</p>
         <p class="texte-petit texte-secondaire">{detailBac(bac)} · <span class="seulement-ordi">mis à jour le {bac.maj}</span><span class="seulement-mobile">maj {bac.majCourt}</span></p>
-        <nav aria-label="Les autres bacs" class="filtres">
-          <ul role="list">
-            {bacs.map((b) => (
-              <li><a class="texte-label" href={`/bacs/${b.slug}`} aria-current={b === bac ? 'page' : undefined}>{b.nom}</a></li>
-            ))}
-          </ul>
-        </nav>
       </div>
     </HeroPage>
     <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
     <div class="rideau">
 
+    <!-- filtres des genres : sortis du hero, en tête du contenu (maquette Figma) -->
+    <div class="conteneur zone-filtres">
+      <nav aria-label="Les autres bacs" class="filtres">
+        <ul role="list">
+          {bacs.map((b) => (
+            <li><a class="texte-label" href={`/bacs/${b.slug}`} aria-current={b === bac ? 'page' : undefined}>{b.nom}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
     {nb > 0 ? (
       <section class="contenu-bac section conteneur" aria-label={`Les disques du bac ${bac.nom}`}>
         <PileDePochettes disques={bac.disques} />
@@ -76,6 +79,9 @@ const nb = bac.disques.length;
 <style>
   .infos-bac { display: grid; gap: var(--espace-sm); min-width: 0; }
   .filtres { min-width: 0; }
+  /* filtres en tête du contenu : 72 px sous le hero (ordi), puis la pile */
+  .zone-filtres { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
+  .zone-filtres + .section { padding-top: clamp(2rem, 1.4rem + 2.6vw, 3.5rem); }
   .description { max-width: 45rem; }
   .filtres ul { display: flex; flex-wrap: wrap; gap: var(--espace-xs) var(--espace-md); margin-top: var(--espace-xs); }
   .filtres a { display: inline-block; padding: var(--espace-xs) 0; text-decoration: none; text-underline-offset: 6px; text-decoration-thickness: 2px; white-space: nowrap; }
@@ -95,7 +101,7 @@ const nb = bac.disques.length;
 
   @media (max-width: 63.99rem) {
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
-    .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); padding-top: var(--espace-md); }
+    .contenu-bac { grid-template-columns: 1fr; gap: var(--espace-3xl); }
     .tracklist { background: var(--couleur-fond-bloc); margin-inline: calc(-1 * var(--grille-marge)); padding: var(--espace-3xl) var(--grille-marge); }
     .tracklist .titre-h3 { margin-bottom: var(--espace-xs); }
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }

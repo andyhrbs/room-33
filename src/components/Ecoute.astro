@@ -35,4 +35,6 @@ const { titre, artiste, type = 'titre' } = Astro.props;
   @keyframes pulse { 50% { opacity: 0.6; } }
   @media (prefers-reduced-motion: reduce) { [data-etat='chargement'] .lecture { animation: none; } }
   .infos { display: grid; margin-right: var(--espace-xs); }
+  /* mobile : lecture, texte et « Ouvrir l'app » sur une seule ligne quand ça tient (Figma) */
+  @media (max-width: 63.99rem) { .ecoute { gap: var(--espace-sm); } .infos { margin-right: 0; } .ecoute :global(.bouton) { padding-inline: var(--espace-md); } }
 </style>

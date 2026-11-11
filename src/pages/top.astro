@@ -19,14 +19,17 @@ const rang = (i: number) => String(i).padStart(2, '0');
     <HeroPage filAriane={['La pièce', 'Le Top de la Room']} recadrage={recadrages.top} surtitreMobile="Le Top de la Room" titre="Mes disques de chevet." titreMobile="Mes disques.">
       <div class="infos">
         <p class="texte-corps-l"><span class="seulement-ordi">Mon classement à moi. Il bouge quand un disque me retourne la tête.</span><span class="seulement-mobile">Mon classement à moi.</span></p>
-        <div class="bascule" role="group" aria-label="Afficher le classement des">
-          <button type="button" class="texte-corps" aria-pressed="true" data-vue="albums">Albums</button>
-          <button type="button" class="texte-corps" aria-pressed="false" data-vue="titres">Titres</button>
-        </div>
       </div>
     </HeroPage>
     <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
     <div class="rideau">
+    <!-- bascule Albums / Titres : sortie du hero, en tête du contenu (maquette Figma) -->
+    <div class="conteneur zone-bascule">
+      <div class="bascule" role="group" aria-label="Afficher le classement des">
+        <button type="button" class="texte-corps" aria-pressed="true" data-vue="albums">Albums</button>
+        <button type="button" class="texte-corps" aria-pressed="false" data-vue="titres">Titres</button>
+      </div>
+    </div>
 
     <!-- Albums -->
     <div data-panneau="albums">
@@ -112,6 +115,8 @@ const rang = (i: number) => String(i).padStart(2, '0');
 <style>
   .infos { display: grid; gap: var(--espace-md); }
   .bascule { display: flex; gap: var(--espace-lg); }
+  .zone-bascule { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
+  .zone-bascule ~ [data-panneau] > .section:first-child { padding-top: clamp(1rem, 0.4rem + 2.6vw, 2.5rem); }
   .bascule button { background: none; border: 0; padding: var(--espace-xs) 0; color: var(--couleur-texte-secondaire); text-underline-offset: 6px; min-height: 44px; }
   .bascule button:hover { color: var(--couleur-texte-principal); }
   .bascule button[aria-pressed='true'] { color: var(--couleur-texte-principal); text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
@@ -129,7 +134,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
   .titre:hover .nom { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 
   @media (max-width: 63.99rem) {
-    .numero-un { grid-template-columns: 1fr; gap: var(--espace-md); padding-top: var(--espace-md); }
+    .numero-un { grid-template-columns: 1fr; gap: var(--espace-md); }
     .rang-un { font-size: var(--taille-geant); }
     .rang { grid-template-columns: 2.75rem 3.5rem minmax(0, 1fr); gap: var(--espace-md); padding-block: var(--espace-sm); }
     .rang .numero { font-size: var(--taille-h2); }
