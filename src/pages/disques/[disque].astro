@@ -96,7 +96,7 @@ const bac = bacDuDisque(d);
   .ariane-zone { padding-top: calc(72px + var(--espace-xl)); padding-bottom: var(--espace-lg); }
   .ariane { display: flex; gap: var(--espace-xs); flex-wrap: wrap; }
   .ariane li + li::before { content: '/'; margin-right: var(--espace-xs); color: var(--couleur-texte-secondaire); }
-  .ariane a { display: inline-block; padding-block: var(--espace-2xs); color: var(--couleur-texte-secondaire); text-decoration: none; } /* zone de toucher ≥ 24 px */
+  .ariane a { padding-block: var(--espace-2xs); color: var(--couleur-texte-secondaire); text-decoration: none; } /* zone de toucher ≥ 24 px ; lien en ligne : le remplissage agrandit la zone sans décaler le texte */
   .ariane a:hover { color: var(--couleur-texte-principal); }
 
   /* Le disque : pochette + vinyle qui sort */
