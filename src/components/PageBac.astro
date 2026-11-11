@@ -104,11 +104,11 @@ const nb = bac.disques.length;
 
   // Ordi : section aimantée, renforcée.
   // - Dès que les 3/4 de la section sont à l'écran (en descendant comme en remontant), la page s'emboîte dessus, sous la nav.
-  // - Une fois emboîtée, les petits coups de molette sont absorbés : elle ne bouge pas.
-  // - Un vrai coup de molette (SEUIL) la libère et la page repart.
+  // - Une fois emboîtée, les micro-mouvements (trackpad effleuré) sont absorbés : elle ne bouge pas.
+  // - Un cran de molette (SEUIL) la libère et la page repart.
   // - Filet de sécurité : si le défilement s'arrête près d'elle (clavier, barre de défilement), elle se cale aussi.
   {
-    const NAV = 72, SEUIL = 180, VISIBLE = 0.75; // SEUIL : force du « vrai coup » (somme des deltaY d'un même geste), la même vers le haut et vers le bas
+    const NAV = 72, SEUIL = 90, VISIBLE = 0.75; // SEUIL : 1 cran de souris (≈ 100 px) suffit à repartir, vers le haut comme vers le bas ; les micro-mouvements (trackpad effleuré) restent absorbés
     let anim = false, cumul = 0, dernier = 0, libre = false, derniereMolette = 0, dernierY = window.scrollY;
     const actif = () => matchMedia('(min-width: 64rem)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.querySelector('dialog[open]');
     const lenis = () => (window as unknown as { room33Lenis?: { scrollTo: (y: number, o: object) => void } }).room33Lenis;
