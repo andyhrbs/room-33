@@ -60,8 +60,8 @@ const suivants = reste.slice(0, 4);
       </div>
     </section>
 
-    <!-- Ordi : bandeau des genres et aperçus des autres pièces -->
-    <div class="seulement-ordi">
+    <!-- Bandeau des genres et aperçus des autres pièces (même structure sur ordi et mobile) -->
+    <div class="apercus">
       <BandeauGenres genres={genres} />
 
       <section class="section conteneur apercu" aria-labelledby="titre-bacs">
@@ -147,7 +147,7 @@ const suivants = reste.slice(0, 4);
     .texte-morceau .titre-display { font-size: var(--taille-h1); }
   }
 
-  /* ---------- Aperçus (ordi) ---------- */
+  /* ---------- Aperçus (ordi et mobile) ---------- */
   .apercu { display: grid; gap: var(--espace-xl); }
   /* Rangée de bacs : défile avec les flèches sur ordi, au doigt sur mobile ; pas de barre de défilement */
   .rangee-bacs { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-md); scrollbar-width: none; }
@@ -160,5 +160,14 @@ const suivants = reste.slice(0, 4);
   .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
   .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
   .numero-un :global(.pochette) { width: min(100%, 23.75rem); }
+  @media (max-width: 63.99rem) {
+    /* mobile : les bacs défilent au doigt (une carte et un bout de la suivante), le Top passe en une colonne */
+    .apercu { gap: var(--espace-lg); }
+    .rangee-bacs { gap: var(--espace-md); margin-inline: calc(var(--grille-marge) * -1); padding-inline: var(--grille-marge); scroll-padding-inline: var(--grille-marge); }
+    .rangee-bacs > :global(*) { flex-basis: min(15.625rem, 72vw); }
+    .afficheurs { gap: var(--espace-md); }
+    .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
+    .numero-un :global(.pochette) { width: 100%; }
+  }
   .numero-un:hover .titre-h2 { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 </style>
