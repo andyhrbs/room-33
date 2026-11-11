@@ -41,7 +41,7 @@ function preparer() {
         const place = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--distance-apparition')) || 0;
         parent.style.paddingBottom = `${parseFloat(cs.paddingBottom) + place + 8}px`;
         parent.style.marginBottom = `${parseFloat(cs.marginBottom) - place - 8}px`;
-        parent.dataset.placeMontee = '';
+        parent.dataset.placeMontee = 'oui'; // « oui » et pas '' : une chaîne vide compte comme « faux » et la place était ajoutée une fois par pochette
       }
       el.dataset.apparition = '';
       aSurveiller.push(el);

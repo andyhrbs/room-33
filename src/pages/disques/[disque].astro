@@ -131,7 +131,7 @@ const bac = bacDuDisque(d);
   .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); scrollbar-width: none; } /* défile au doigt, sans barre de défilement */
   .rangee::-webkit-scrollbar { display: none; }
   .rangee > :global(*) { flex: 0 0 15.625rem; scroll-snap-align: start; }
-  .voisins { display: flex; gap: var(--espace-xl); margin-top: var(--espace-xl); }
+  .voisins { position: relative; z-index: 1; display: flex; gap: var(--espace-xl); margin-top: var(--espace-xl); } /* au-dessus de la rangée (sa place de montée ne doit jamais capter le toucher) */
 
   @media (max-width: 63.99rem) {
     .ariane-zone { padding-top: calc(60px + var(--espace-xl)); padding-bottom: var(--espace-md); }
