@@ -108,7 +108,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     if (!d || d.open) return;
     opener = depuis ?? (document.activeElement as HTMLElement);
     afficherVue('formulaire');
-    d.classList.remove('ferme');
+    d.classList.remove('ferme'); d.style.cssText = ''; // efface un éventuel glissé précédent
     d.showModal();
     document.documentElement.classList.add('tiroir-ouvert');
     const champ = $<HTMLInputElement>('[data-recherche]', d)!;
@@ -116,10 +116,15 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     if (requete) { champ.value = requete; chercher(requete, true); }
     focusChamp(d);
   }
+  // fin commune à toutes les fermetures (croix, fond, Échap, glisser vers le bas)
+  function terminer(d: HTMLDialogElement) {
+    d.close(); d.classList.remove('ferme'); d.style.cssText = '';
+    document.documentElement.classList.remove('tiroir-ouvert'); opener?.focus?.({ preventScroll: true });
+  }
   function fermer() {
     const d = $<HTMLDialogElement>('[data-tiroir]');
     if (!d?.open) return;
-    const fin = () => { d.close(); d.classList.remove('ferme'); document.documentElement.classList.remove('tiroir-ouvert'); opener?.focus?.({ preventScroll: true }); };
+    const fin = () => terminer(d);
     if (reduit()) return fin();
     d.classList.add('ferme');
     setTimeout(fin, 260);
@@ -230,6 +235,57 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     focusChamp();
   }
 
+  // ---------- Glisser la feuille vers le bas pour la fermer (mobile, comme le lecteur plein écran) ----------
+  // Seulement quand le contenu de la feuille est tout en haut (sinon on fait défiler la feuille normalement).
+  {
+    const feuille = () => matchMedia('(max-width: 40rem)').matches;
+    let d: HTMLDialogElement | null = null, y0 = 0, x0 = 0, dy = 0, decide = false, suivi = false, ignorerClic = false;
+    let points: { y: number; t: number }[] = [];
+    const vitesse = () => { const f = points[points.length - 1], deb = points.find((q) => f.t - q.t <= 80) ?? points[0]; return f && deb && f.t > deb.t ? (f.y - deb.y) / (f.t - deb.t) : 0; };
+    const poser = (el: HTMLDialogElement, y: number) => {
+      el.style.transform = `translateY(${y}px)`;
+      el.style.setProperty('--voile', String(Math.max(0, 1 - y / el.offsetHeight))); // le fond s'éclaircit à mesure
+    };
+    document.addEventListener('touchstart', (e) => {
+      const el = (e.target as Element).closest?.<HTMLDialogElement>('[data-tiroir]');
+      if (!el?.open || !feuille() || e.touches.length > 1 || reduit()) { d = null; return; }
+      d = el; y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0; decide = false; suivi = false; points = [{ y: y0, t: e.timeStamp }];
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => {
+      if (!d) return;
+      const t = e.touches[0], brut = t.clientY - y0;
+      points.push({ y: t.clientY, t: e.timeStamp }); if (points.length > 12) points.shift();
+      if (!decide) {
+        if (Math.abs(brut) < 8 && Math.abs(t.clientX - x0) < 8) return;
+        decide = true;
+        suivi = brut > 0 && d.scrollTop <= 0 && Math.abs(brut) > Math.abs(t.clientX - x0);
+        if (suivi) { d.style.animation = 'none'; d.style.transition = 'none'; (document.activeElement as HTMLElement)?.blur?.(); }
+      }
+      if (!suivi) return;
+      e.preventDefault(); // on glisse la feuille, pas la page
+      dy = Math.max(0, brut); poser(d, dy);
+    }, { passive: false });
+    const lacher = () => {
+      if (!d || !suivi) { d = null; return; }
+      const el = d; d = null; suivi = false;
+      ignorerClic = true; setTimeout(() => (ignorerClic = false), 80);
+      const v = vitesse(), h = el.offsetHeight;
+      const fermerLa = dy > h * 0.25 || (v > 0.5 && dy > 40);
+      const duree = fermerLa ? Math.round(Math.min(380, Math.max(200, (h - dy) / Math.max(v, 1.4)))) : 520;
+      const courbe = fermerLa ? 'cubic-bezier(0.25, 0.8, 0.3, 1)' : 'cubic-bezier(0.16, 1, 0.3, 1)';
+      el.style.transition = `transform ${duree}ms ${courbe}`;
+      if (fermerLa) { el.style.transform = `translateY(${h}px)`; el.style.setProperty('--voile', '0'); }
+      else { el.style.transform = 'translateY(0)'; el.style.setProperty('--voile', '1'); }
+      let fait = false;
+      const fin = () => { if (fait) return; fait = true; if (fermerLa) terminer(el); else { el.style.transition = ''; el.style.transform = ''; } };
+      el.addEventListener('transitionend', (ev) => { if (ev.target === el && ev.propertyName === 'transform') fin(); });
+      setTimeout(fin, duree + 150);
+    };
+    document.addEventListener('touchend', lacher);
+    document.addEventListener('touchcancel', lacher);
+    document.addEventListener('click', (e) => { if (ignorerClic) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
   // ---------- Écouteurs (délégués : marchent sur toutes les pages, même après navigation) ----------
   // Boutons « Recommandez-moi un son » : écoutés en phase de capture, AVANT la navigation fluide d'Astro,
   // pour ouvrir le tiroir sur place (sans changer de page ni descendre jusqu'à la section du bas).
@@ -291,7 +347,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .tiroir:focus, .tiroir:focus-visible { outline: none; }
   .tiroir[open] { display: grid; align-content: start; gap: var(--espace-lg); animation: entrer-droite 0.4s var(--courbe-sortie); }
   .tiroir.ferme { animation: sortir-droite 0.26s var(--courbe-entree-sortie) forwards; }
-  .tiroir::backdrop { background: rgb(18 11 7 / 0.7); animation: fondu 0.4s var(--courbe-standard); }
+  .tiroir::backdrop { background: rgb(18 11 7 / calc(0.7 * var(--voile, 1))); animation: fondu 0.4s var(--courbe-standard); } /* --voile : s'éclaircit quand on fait glisser la feuille */
   .tiroir.ferme::backdrop { animation: fondu 0.26s reverse forwards; }
   @keyframes entrer-droite { from { transform: translateX(100%); } }
   @keyframes sortir-droite { to { transform: translateX(100%); } }
