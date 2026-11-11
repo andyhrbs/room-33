@@ -225,7 +225,8 @@ const nb = bac.disques.length;
 
   .autres { background: var(--couleur-fond-ombre); }
   .autres .conteneur { display: grid; gap: var(--espace-xl); } /* 32 px ordi, 24 mobile */
-  .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); }
+  .rangee { display: flex; gap: var(--espace-lg); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--espace-sm); scrollbar-width: none; } /* défile au doigt, sans barre de défilement */
+  .rangee::-webkit-scrollbar { display: none; }
   .rangee > :global(*) { flex: 0 0 15.625rem; scroll-snap-align: start; }
 
   /* Ordi : la section tient dans la hauteur de l'écran sous la nav (72 px) ; la pile se dimensionne sur la place restante */
@@ -245,6 +246,7 @@ const nb = bac.disques.length;
   }
   @media (max-width: 63.99rem) {
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
+    .filtres ul::-webkit-scrollbar { display: none; }
     .zone-filtres { gap: var(--espace-sm); }
     .liste-bac:not(.deroulee) > :nth-child(n+7) { display: none; } /* 6 morceaux visibles sur mobile */
 
