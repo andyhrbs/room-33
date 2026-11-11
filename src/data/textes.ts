@@ -44,7 +44,7 @@ export const piedDePage = {
   reseaux: { instagram: 'Instagram', spotify: 'Spotify', dm: 'Écrivez-moi en DM' },
   copyright: '© 2026 Room 33 · Mentions légales',
   donnees: 'Données : Spotify · Extraits : Deezer',
-  signature: 'Fait main par Andyh',
+  signature: 'Fait par Andyh',
 };
 
 export const accueilProvisoire = {
