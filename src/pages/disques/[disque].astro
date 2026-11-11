@@ -8,6 +8,7 @@ import Pochette from '../../components/Pochette.astro';
 import Ecoute from '../../components/Ecoute.astro';
 import Bouton from '../../components/Bouton.astro';
 import CarteDisque from '../../components/CarteDisque.astro';
+import Icone from '../../components/Icone.astro';
 import { disques, fiche, bacDuDisque } from '../../data/disques';
 
 export function getStaticPaths() {
@@ -16,6 +17,13 @@ export function getStaticPaths() {
 const { disque: d } = Astro.props;
 const f = fiche(d);
 const bac = bacDuDisque(d);
+// Les titres de l'album (Spotify, au build) et le coup de cœur d'Andyh (admin)
+const simple = (t: string) => t.toLowerCase().normalize('NFD').replace(/\([^)]*\)|\[[^\]]*\]/g, '').replace(/[^a-z0-9]/g, '');
+const coeur = d.coupDeCoeur ? simple(d.coupDeCoeur) : '';
+const estCoeur = (t: string) => Boolean(coeur) && (simple(t) === coeur || simple(t).startsWith(coeur));
+const pistes = d.pistes ?? [];
+const secondes = pistes.reduce((s, p) => { const [m, sec] = p.duree.split(':').map(Number); return s + (m || 0) * 60 + (sec || 0); }, 0);
+const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.round((secondes % 3600) / 60)} min` : `${Math.round(secondes / 60)} min`;
 ---
 <Base title={`${d.titre} — ${d.artiste}`} description={`${d.titre} de ${d.artiste} (${d.annee}), dans le bac ${bac.nom} de Room 33.`}>
   <Nav />
@@ -48,6 +56,31 @@ const bac = bacDuDisque(d);
         </dl>
       </div>
     </section>
+
+    <!-- Les titres de l'album : chaque titre s'écoute (extrait Deezer) ; le coup de cœur d'Andyh est signalé -->
+    {pistes.length > 0 && (
+      <section class="bande titres-album" aria-labelledby="titre-titres">
+        <div class="conteneur deux-colonnes">
+          <div class="entete-titres">
+            <h2 id="titre-titres" class="titre-h1">Les titres</h2>
+            <p class="texte-petit texte-secondaire">{pistes.length} titre{pistes.length > 1 ? 's' : ''} · {dureeTotale}</p>
+          </div>
+          <ol role="list" class="pistes">
+            {pistes.map((p) => (
+              <li class:list={['piste', { coeur: estCoeur(p.titre) }]} data-ecoute data-titre={p.titre} data-artiste={d.artiste} data-type="titre">
+                <span class="num texte-label texte-secondaire">{String(p.numero).padStart(2, '0')}</span>
+                <span class="nom-piste">
+                  <span class="texte-corps nom">{p.titre}</span>
+                  {estCoeur(p.titre) && <span class="badge-coeur texte-legende"><Icone nom="coeur" taille={14} /> Mon coup de cœur</span>}
+                </span>
+                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${p.titre}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
+                <span class="texte-petit texte-secondaire duree">{p.duree}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )}
 
     <section class="bande avis" aria-labelledby="titre-avis">
       <div class="conteneur deux-colonnes">
@@ -141,6 +174,29 @@ const bac = bacDuDisque(d);
   .voisins :global(.icone-gauche) { color: var(--couleur-texte-principal); } /* flèche de « Précédent » en ivoire */
   .voisins { position: relative; z-index: 1; display: flex; gap: var(--espace-xl); margin-top: var(--espace-xl); } /* au-dessus de la rangée (sa place de montée ne doit jamais capter le toucher) */
 
+  /* Les titres de l'album (collés au haut de fiche : la bande du dessus a déjà sa marge) */
+  .titres-album { padding-top: 0; }
+  .entete-titres { display: grid; gap: var(--espace-xs); align-content: start; }
+  .pistes { display: grid; margin: 0; padding: 0; }
+  .piste { list-style: none; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto auto; align-items: center; gap: var(--espace-md); padding: var(--espace-xs) var(--espace-sm); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); border-radius: var(--rayon-pochette); }
+  .num { font-variant-numeric: tabular-nums; }
+  .nom-piste { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-2xs) var(--espace-sm); min-width: 0; }
+  .duree { font-variant-numeric: tabular-nums; }
+  /* coup de cœur : fond tonal + cœur ambre */
+  .piste.coeur { background: var(--couleur-fond-tonal); border-bottom-color: transparent; }
+  .badge-coeur { display: inline-flex; align-items: center; gap: var(--espace-2xs); color: var(--couleur-accent-defaut); white-space: nowrap; }
+  /* ▶ extrait (comme la tracklist des bacs) */
+  .lecture { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
+  .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
+  .lecture:hover .rond { background: var(--couleur-fond-tonal); }
+  .lecture:active .rond { transform: scale(0.96); }
+  .lecture :global(.i-pause) { display: none; }
+  .piste[data-etat='lecture'] .rond { background: var(--couleur-accent-defaut); border-color: var(--couleur-accent-defaut); }
+  .piste[data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
+  .piste[data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
+  .piste[data-etat='lecture'] .nom { color: var(--couleur-accent-defaut); }
+  .piste[data-etat='chargement'] .rond { border-color: var(--couleur-accent-defaut); }
+
   @media (max-width: 63.99rem) {
     .ariane-zone { padding-top: calc(60px + var(--espace-xl)); padding-bottom: var(--espace-md); }
     .ariane li.seulement-ordi + li::before { content: none; }
@@ -154,5 +210,7 @@ const bac = bacDuDisque(d);
     .photo-artiste { aspect-ratio: 350 / 300; }
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
     .voisins { justify-content: space-between; margin-top: 0; }
+    .titres-album .deux-colonnes { gap: var(--espace-lg); }
+    .piste { grid-template-columns: 1.75rem minmax(0, 1fr) auto auto; gap: var(--espace-sm); padding-inline: var(--espace-xs); }
   }
 </style>

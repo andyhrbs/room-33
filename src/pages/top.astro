@@ -8,7 +8,6 @@ import { recadrages } from '../data/images';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import Bouton from '../components/Bouton.astro';
-import Icone from '../components/Icone.astro';
 import { top, topTitres, pourquoiNumeroUn, pourquoiTitreUn } from '../data/disques';
 const [un, ...autres] = top;
 const [titreUn, ...autresTitres] = topTitres;
@@ -43,14 +42,14 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="texte-avis"><span class="seulement-ordi">{pourquoiNumeroUn.long}</span><span class="seulement-mobile">{pourquoiNumeroUn.court}</span></p>
           <div class="actions">
             <Ecoute titre={un.titre} artiste={un.artiste} type="album" liens={un.liens} upc={un.upc} />
-            <Bouton style="lien" href={`/disques/${un.slug}`}>Voir la fiche</Bouton>
+            <Bouton style="lien" href={`/disques/${un.slug}`}>Voir le disque</Bouton>
           </div>
         </div>
       </section>
       <section class="section conteneur classement-zone" aria-label="Du n° 2 au n° 10">
         <ol role="list" class="classement" start="2">
           {autres.map((d, i) => (
-            <li class="rang" data-ecoute data-titre={d.titre} data-artiste={d.artiste} data-type="album" data-liens={d.liens ? JSON.stringify(d.liens) : undefined} data-upc={d.upc}>
+            <li class="rang">
               <span class="numero titre-h1" aria-hidden="true">{rang(i + 2)}</span>
               <Pochette motif={d.motif} src={d.pochette} alt="" class="mini" />
               <a class="titre" href={`/disques/${d.slug}`}>
@@ -58,8 +57,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
                 <span class="titre-h3 nom">{d.titre}</span>
                 <span class="texte-petit texte-secondaire">{d.artiste} · {d.annee}</span>
               </a>
-              <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${d.titre}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
-              <Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi" aria-hidden="true" tabindex="-1">Voir la fiche</Bouton>
+              <Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi" aria-hidden="true" tabindex="-1">Voir le disque</Bouton>
             </li>
           ))}
         </ol>
@@ -77,14 +75,14 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="texte-avis"><span class="seulement-ordi">{pourquoiTitreUn.long}</span><span class="seulement-mobile">{pourquoiTitreUn.court}</span></p>
           <div class="actions">
             <Ecoute titre={titreUn.titre} artiste={titreUn.disque.artiste} />
-            <Bouton style="lien" href={`/disques/${titreUn.disque.slug}`}>Voir la fiche</Bouton>
+            <Bouton style="lien" href={`/disques/${titreUn.disque.slug}`}>Voir le disque</Bouton>
           </div>
         </div>
       </section>
       <section class="section conteneur classement-zone" aria-label="Du n° 2 au n° 10">
         <ol role="list" class="classement" start="2">
           {autresTitres.map((t, i) => (
-            <li class="rang" data-ecoute data-titre={t.titre} data-artiste={t.disque.artiste} data-type="titre">
+            <li class="rang">
               <span class="numero titre-h1" aria-hidden="true">{rang(i + 2)}</span>
               <Pochette motif={t.disque.motif} src={t.disque.pochette} alt="" class="mini" />
               <a class="titre" href={`/disques/${t.disque.slug}`}>
@@ -92,8 +90,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
                 <span class="titre-h3 nom">{t.titre}</span>
                 <span class="texte-petit texte-secondaire">{[t.disque.artiste, t.duree].filter(Boolean).join(' · ')}</span>
               </a>
-              <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${t.titre}, ${t.disque.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
-              <Bouton style="lien" href={`/disques/${t.disque.slug}`} class="seulement-ordi" aria-hidden="true" tabindex="-1">Voir la fiche</Bouton>
+              <Bouton style="lien" href={`/disques/${t.disque.slug}`} class="seulement-ordi" aria-hidden="true" tabindex="-1">Voir le disque</Bouton>
             </li>
           ))}
         </ol>
@@ -131,27 +128,15 @@ const rang = (i: number) => String(i).padStart(2, '0');
 
   .classement-zone { padding-top: 0; }
   .classement { display: grid; gap: var(--espace-2xs); }
-  .rang { display: grid; grid-template-columns: 6.875rem 6rem minmax(0, 1fr) auto auto; align-items: center; gap: var(--espace-xl); padding-block: var(--espace-md); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .rang { display: grid; grid-template-columns: 6.875rem 6rem minmax(0, 1fr) auto; align-items: center; gap: var(--espace-xl); padding-block: var(--espace-md); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .rang :global(.mini) { width: 6rem; }
   .titre { display: grid; gap: var(--espace-2xs); text-decoration: none; }
-  /* ▶ extrait sur chaque ligne (comme la tracklist des bacs) : zone 44 px, rond 32 px */
-  .lecture { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
-  .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
-  .lecture:hover .rond { background: var(--couleur-fond-tonal); }
-  .lecture:active .rond { transform: scale(0.96); }
-  .lecture :global(.i-pause) { display: none; }
-  .rang[data-etat='lecture'] .rond { background: var(--couleur-accent-defaut); border-color: var(--couleur-accent-defaut); }
-  .rang[data-etat='lecture'] .lecture:hover .rond { background: var(--couleur-accent-presse); border-color: var(--couleur-accent-presse); }
-  .rang[data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
-  .rang[data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
-  .rang[data-etat='lecture'] .nom { color: var(--couleur-accent-defaut); }
-  .rang[data-etat='chargement'] .rond { border-color: var(--couleur-accent-defaut); }
   .titre:hover .nom { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 
   @media (max-width: 63.99rem) {
     .numero-un { grid-template-columns: 1fr; gap: var(--espace-md); }
     .rang-un { font-size: var(--taille-geant); }
-    .rang { grid-template-columns: 2.75rem 3.5rem minmax(0, 1fr) auto; gap: var(--espace-md); padding-block: var(--espace-sm); }
+    .rang { grid-template-columns: 2.75rem 3.5rem minmax(0, 1fr); gap: var(--espace-md); padding-block: var(--espace-sm); }
     .rang .numero { font-size: var(--taille-h2); }
     .rang :global(.mini) { width: 3.5rem; }
     .titre .nom { font-family: var(--police-texte); font-size: var(--taille-corps); font-weight: 500; letter-spacing: var(--interlettre-texte); line-height: 1.4; }

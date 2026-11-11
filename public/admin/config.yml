@@ -57,6 +57,7 @@ collections:
       - { name: annee, label: Année (si Spotify ne la trouve pas), widget: number, value_type: int, required: false, min: 1900, max: 2100 }
       - { name: avis, label: Mon avis, widget: text, required: false, hint: "3 à 5 phrases, comme une note de pochette. Garde les guillemets « »." }
       - { name: avisCourt, label: Mon avis (version courte, mobile), widget: string, required: false, hint: Une phrase. Vide = le début de l'avis complet. }
+      - { name: coupDeCoeur, label: Mon coup de cœur (titre du morceau), widget: string, required: false, hint: "Écris le titre comme sur Spotify (ex. Many Times). Il est signalé par un cœur dans la liste des titres de la fiche." }
       - name: credits
         label: Crédits (notes de pochette)
         label_singular: crédit

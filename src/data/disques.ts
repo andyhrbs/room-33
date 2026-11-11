@@ -29,6 +29,7 @@ export interface Disque {
   upc?: string;          // code-barres de l'album (Spotify), pour retrouver le même disque sur chaque plateforme
   liens?: Record<string, string>; // liens « Ouvrir l'app » résolus au build (spotify, apple, deezer)
   pistes?: Piste[];
+  coupDeCoeur?: string;  // titre du morceau préféré d'Andyh sur l'album (admin), signalé dans la tracklist de la fiche
   ajoute: string;      // date d'ajout (ordre des disques, « mis à jour le » des bacs)
   textes: TextesDisque; // ce qu'Andyh écrit dans l'admin (peut être vide)
 }
@@ -39,7 +40,7 @@ export interface TextesDisque {
   bio?: string; bioCourte?: string;
 }
 
-type EntreeDisque = TextesDisque & { titre: string; artiste: string; genre: string; spotify?: string; annee?: number; ajoute?: string; motif?: Motif };
+type EntreeDisque = TextesDisque & { titre: string; artiste: string; genre: string; spotify?: string; annee?: number; ajoute?: string; motif?: Motif; coupDeCoeur?: string };
 const motifs: Motif[] = ['bandes', 'lune', 'arc', 'points', 'croix', 'cercles'];
 const fichiers = import.meta.glob<EntreeDisque>('./cms/disques/*.json', { eager: true, import: 'default' });
 
@@ -52,6 +53,7 @@ export const disques: Disque[] = Object.entries(fichiers)
     // lien d'album Spotify collé dans l'admin → identifiant (sinon Spotify le retrouve par titre + artiste)
     spotifyId: e.spotify?.match(/album\/([A-Za-z0-9]{22})/)?.[1],
     ajoute: e.ajoute ?? '1970-01-01',
+    coupDeCoeur: e.coupDeCoeur?.trim() || undefined,
     textes: { avis: e.avis, avisCourt: e.avisCourt, moment: e.moment, credits: e.credits, bio: e.bio, bioCourte: e.bioCourte },
   }))
   .sort((a, b) => a.ajoute.localeCompare(b.ajoute)); // du plus ancien au plus récent
