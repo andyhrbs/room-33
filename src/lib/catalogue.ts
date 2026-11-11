@@ -7,7 +7,7 @@
 import { jetonApplication } from './spotify';
 
 export interface Piste { numero: number; titre: string; duree: string }
-export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; pistes: Piste[] }
+export interface InfosSpotify { spotifyId: string; pochette?: string; annee?: number; label?: string; lienSpotify?: string; lienArtiste?: string; photoArtiste?: string; upc?: string; liens: Record<string, string>; pistes: Piste[] }
 
 const API = 'https://api.spotify.com/v1';
 const duree = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -28,6 +28,38 @@ async function chercherAlbum(jeton: string, titre: string, artiste: string): Pro
   return (exact ?? items.find((a) => a.artists.some((x: any) => normal(x.name) === normal(artiste))))?.id;
 }
 
+
+// ---------- Liens « Ouvrir l'app » résolus au build, par code-barres (UPC) ----------
+// Le code UPC identifie un album de façon unique dans tous les catalogues : Apple Music et Deezer
+// retrouvent exactement le même disque, sans dépendre d'une recherche par titre (fragile sur
+// les titres courts ou courants comme « Absolutely »).
+const variantesUpc = (upc: string) => [...new Set([upc, upc.replace(/^0+/, ''), upc.padStart(13, '0'), upc.padStart(12, '0')])];
+const sansSuivi = (u?: string) => u?.replace('itunes.apple.com', 'music.apple.com').replace(/[?&]uo=\d+/, '');
+async function appleParUpc(upc: string): Promise<string | undefined> {
+  for (const pays of ['fr', 'us']) {
+    for (const code of variantesUpc(upc)) {
+      try {
+        const r = await fetch(`https://itunes.apple.com/lookup?upc=${code}&country=${pays}&entity=album`, { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) continue;
+        const album = ((await r.json()).results ?? []).find((x: any) => x.wrapperType === 'collection' || x.collectionType === 'Album');
+        if (album?.collectionViewUrl) return sansSuivi(album.collectionViewUrl);
+      } catch { /* on essaie la variante suivante */ }
+    }
+  }
+  return undefined;
+}
+async function deezerParUpc(upc: string): Promise<string | undefined> {
+  for (const code of variantesUpc(upc)) {
+    try {
+      const r = await fetch(`https://api.deezer.com/album/upc:${code}`, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) continue;
+      const a = await r.json();
+      if (a?.link && !a.error) return a.link;
+    } catch { /* variante suivante */ }
+  }
+  return undefined;
+}
+
 export async function infosAlbums(liste: { cle: string; titre: string; artiste: string; spotifyId?: string }[]): Promise<Map<string, InfosSpotify>> {
   const resultat = new Map<string, InfosSpotify>();
   const jeton = await jetonApplication();
@@ -46,6 +78,17 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
       if (idArtiste && !photos.has(idArtiste)) {
         try { photos.set(idArtiste, (await appel(jeton.jeton, `/artists/${idArtiste}`)).images?.[0]?.url); } catch { photos.set(idArtiste, undefined); }
       }
+      // liens des apps, résolus une fois pour toutes ici (le visiteur n'attend rien, rien ne peut rater)
+      const upc: string | undefined = a.external_ids?.upc;
+      const liens: Record<string, string> = {};
+      if (a.external_urls?.spotify) liens.spotify = a.external_urls.spotify;
+      if (upc) {
+        const [ap, dz] = await Promise.all([appleParUpc(upc), deezerParUpc(upc)]);
+        if (ap) liens.apple = ap;
+        if (dz) liens.deezer = dz;
+      }
+      const manque = ['spotify', 'apple', 'deezer'].filter((k) => !liens[k]);
+      if (manque.length) console.warn(`[Liens] ${d.artiste} — ${d.titre} : lien introuvable au build pour ${manque.join(', ')} (recherche en direct au clic)`);
       resultat.set(d.cle, {
         spotifyId: id,
         pochette: a.images?.[0]?.url,
@@ -54,6 +97,8 @@ export async function infosAlbums(liste: { cle: string; titre: string; artiste: 
         lienSpotify: a.external_urls?.spotify,
         lienArtiste: a.artists?.[0]?.external_urls?.spotify,
         photoArtiste: idArtiste ? photos.get(idArtiste) : undefined,
+        upc,
+        liens,
         pistes: (a.tracks?.items ?? []).map((p: any) => ({ numero: p.track_number, titre: p.name, duree: duree(p.duration_ms) })),
       });
     } catch (e) {

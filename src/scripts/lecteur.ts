@@ -8,7 +8,7 @@
 //   (pas de mémorisation : un mauvais clic ne l'enferme pas dans une app).
 // ==========================================================================
 
-type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' | 'artiste' };
+type Morceau = { titre: string; artiste: string; type: 'titre' | 'album' | 'artiste'; liens?: Record<string, string>; upc?: string };
 type Etat = '' | 'chargement' | 'lecture' | 'pause' | 'erreur';
 
 const audio = new Audio();
@@ -26,7 +26,9 @@ const cle = (m: Morceau) => `${m.type}|${m.titre}|${m.artiste}`.toLowerCase();
 const lireMorceau = (el: Element | null): Morceau | null => {
   const c = el?.closest<HTMLElement>('[data-ecoute]');
   if (!c?.dataset.titre || !c.dataset.artiste) return null;
-  return { titre: c.dataset.titre, artiste: c.dataset.artiste, type: c.dataset.type === 'album' ? 'album' : 'titre' };
+  let liensConnus: Record<string, string> | undefined;
+  try { liensConnus = c.dataset.liens ? JSON.parse(c.dataset.liens) : undefined; } catch { liensConnus = undefined; }
+  return { titre: c.dataset.titre, artiste: c.dataset.artiste, type: c.dataset.type === 'album' ? 'album' : 'titre', liens: liensConnus, upc: c.dataset.upc || undefined };
 };
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
@@ -170,8 +172,18 @@ const cacheLiens = new Map<string, Promise<Record<string, string> | null>>();
 function liens(m: Morceau) {
   const k = cle(m);
   if (!cacheLiens.has(k)) {
-    cacheLiens.set(k, fetch(`/api/liens?${new URLSearchParams({ titre: m.titre, artiste: m.artiste, type: m.type })}`)
-      .then((r) => (r.ok ? r.json() : null)).then((d) => d?.liens ?? null).catch(() => null));
+    const connus = m.liens ?? {};
+    const youtube = `https://music.youtube.com/search?q=${encodeURIComponent(`${m.titre} ${m.artiste}`)}`;
+    // liens déjà résolus au build (albums) : rien à demander
+    if (connus.spotify && connus.apple && connus.deezer) cacheLiens.set(k, Promise.resolve({ youtube, ...connus }));
+    else {
+      const q = new URLSearchParams({ titre: m.titre, artiste: m.artiste, type: m.type });
+      if (m.upc) q.set('upc', m.upc);
+      if (connus.spotify) q.set('spotify', connus.spotify);
+      cacheLiens.set(k, fetch(`/api/liens?${q}`)
+        .then((r) => (r.ok ? r.json() : null)).then((d) => ({ youtube, ...(d?.liens ?? {}), ...connus }))
+        .catch(() => (Object.keys(connus).length ? { youtube, ...connus } : null)));
+    }
   }
   return cacheLiens.get(k)!;
 }

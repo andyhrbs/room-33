@@ -34,21 +34,51 @@ async function deezerArtiste(artiste) {
 async function spotify({ titre, artiste, type }) {
   const { access_token } = await demanderJeton({ grant_type: 'client_credentials' });
   const t = type === 'album' ? 'album' : 'track';
-  const q = encodeURIComponent(`${t}:${titre} artist:${artiste}`);
-  const r = await fetch(`https://api.spotify.com/v1/search?type=${t}&limit=5&market=FR&q=${q}`, { headers: { Authorization: `Bearer ${access_token}` }, ...delai });
-  if (!r.ok) return null;
-  const items = (await r.json())[`${t}s`]?.items ?? [];
-  const bon = items.find((x) => x.artists?.some((a) => memeArtiste(a.name, artiste))) ?? items[0];
-  return bon?.external_urls?.spotify ?? null;
+  // 1) recherche précise (champs) ; 2) recherche libre si rien ne correspond (titres courts ou courants)
+  for (const q of [`${t}:${titre} artist:${artiste}`, `${titre} ${artiste}`]) {
+    const r = await fetch(`https://api.spotify.com/v1/search?type=${t}&limit=10&market=FR&q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${access_token}` }, ...delai });
+    if (!r.ok) continue;
+    const items = (await r.json())[`${t}s`]?.items ?? [];
+    const bon = items.find((x) => x.artists?.some((a) => memeArtiste(a.name, artiste)) && normal(x.name).startsWith(normal(titre).slice(0, 10)))
+      ?? items.find((x) => x.artists?.some((a) => memeArtiste(a.name, artiste)));
+    if (bon?.external_urls?.spotify) return bon.external_urls.spotify;
+  }
+  return null;
+}
+
+// Par code-barres (UPC) : le même album, exactement, quel que soit son titre
+const variantesUpc = (upc) => [...new Set([upc, upc.replace(/^0+/, ''), upc.padStart(13, '0'), upc.padStart(12, '0')])];
+async function appleParUpc(upc) {
+  for (const pays of ['fr', 'us']) for (const code of variantesUpc(upc)) {
+    const r = await fetch(`https://itunes.apple.com/lookup?upc=${code}&country=${pays}&entity=album`, delai).catch(() => null);
+    if (!r?.ok) continue;
+    const album = ((await r.json()).results ?? []).find((x) => x.wrapperType === 'collection' || x.collectionType === 'Album');
+    if (album?.collectionViewUrl) return album.collectionViewUrl.replace('itunes.apple.com', 'music.apple.com').replace(/[?&]uo=\d+/, '');
+  }
+  return null;
+}
+async function deezerParUpc(upc) {
+  for (const code of variantesUpc(upc)) {
+    const r = await fetch(`https://api.deezer.com/album/upc:${code}`, delai).catch(() => null);
+    if (!r?.ok) continue;
+    const a = await r.json();
+    if (a?.link && !a.error) return a.link;
+  }
+  return null;
 }
 
 async function apple({ titre, artiste, type }) {
   const entite = type === 'album' ? 'album' : 'song';
-  const r = await fetch(`https://itunes.apple.com/search?country=fr&limit=10&entity=${entite}&term=${encodeURIComponent(`${artiste} ${titre}`)}`, delai);
-  if (!r.ok) return null;
-  const res = (await r.json()).results ?? [];
-  const bon = res.find((x) => memeArtiste(x.artistName, artiste) && normal(type === 'album' ? x.collectionName : x.trackName).startsWith(normal(titre).slice(0, 10))) ?? res.find((x) => memeArtiste(x.artistName, artiste));
-  return (type === 'album' ? bon?.collectionViewUrl : bon?.trackViewUrl)?.replace('itunes.apple.com', 'music.apple.com').replace(/[?&]uo=\d+/, '') ?? null;
+  // catalogue français d'abord, puis américain (certains disques n'y sont référencés que là)
+  for (const pays of ['fr', 'us']) {
+    const r = await fetch(`https://itunes.apple.com/search?country=${pays}&limit=25&entity=${entite}&term=${encodeURIComponent(`${artiste} ${titre}`)}`, delai).catch(() => null);
+    if (!r?.ok) continue;
+    const res = (await r.json()).results ?? [];
+    const bon = res.find((x) => memeArtiste(x.artistName, artiste) && normal(type === 'album' ? x.collectionName : x.trackName).startsWith(normal(titre).slice(0, 10))) ?? res.find((x) => memeArtiste(x.artistName, artiste));
+    const url = type === 'album' ? bon?.collectionViewUrl : bon?.trackViewUrl;
+    if (url) return url.replace('itunes.apple.com', 'music.apple.com').replace(/[?&]uo=\d+/, '');
+  }
+  return null;
 }
 
 const youtube = ({ titre, artiste }) => `https://music.youtube.com/search?q=${encodeURIComponent(`${titre} ${artiste}`)}`;
@@ -65,11 +95,18 @@ export default async (req) => {
     if (dz) liens.deezer = dz;
     return reponse({ artiste: p.artiste, liens }, 200, sp && ap && dz ? 604800 : 600);
   }
-  const [dz, sp, ap] = await Promise.all([sur(trouverMorceau(p)), sur(spotify(p)), sur(apple(p))]);
+  // album avec code-barres : correspondance exacte d'abord, recherche par titre en secours
+  const parUpc = (f, repli) => (p.upc ? f(p.upc).then((x) => x ?? repli()) : repli());
+  const [dz, sp, ap, dzAlbum] = await Promise.all([
+    sur(trouverMorceau(p)),
+    p.spotify ? Promise.resolve(p.spotify) : sur(spotify(p)),
+    sur(parUpc(appleParUpc, () => apple(p))),
+    p.upc ? sur(deezerParUpc(p.upc)) : Promise.resolve(null),
+  ]);
   const liens = { youtube: youtube(p) };
   if (sp) liens.spotify = sp;
   if (ap) liens.apple = ap;
-  if (dz?.lien) liens.deezer = dz.lien;
+  if (dzAlbum || dz?.lien) liens.deezer = dzAlbum || dz.lien;
   // tout trouvé → cache 1 semaine ; sinon 10 min pour réessayer bientôt
   return reponse({ titre: p.titre, artiste: p.artiste, liens }, 200, sp && ap && dz ? 604800 : 600);
 };

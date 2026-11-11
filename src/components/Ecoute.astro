@@ -4,10 +4,11 @@
 // type « titre » = ce morceau ; type « album » = le morceau le plus écouté de l'album.
 import Icone from './Icone.astro';
 import Bouton from './Bouton.astro';
-interface Props { titre: string; artiste: string; type?: 'titre' | 'album' }
-const { titre, artiste, type = 'titre' } = Astro.props;
+// liens / upc : pour un album, les liens des apps résolus au build (voir catalogue.ts) — « Ouvrir l'app » ne cherche plus rien
+interface Props { titre: string; artiste: string; type?: 'titre' | 'album'; liens?: Record<string, string>; upc?: string }
+const { titre, artiste, type = 'titre', liens, upc } = Astro.props;
 ---
-<div class="ecoute" data-ecoute data-titre={titre} data-artiste={artiste} data-type={type}>
+<div class="ecoute" data-ecoute data-titre={titre} data-artiste={artiste} data-type={type} data-liens={liens ? JSON.stringify(liens) : undefined} data-upc={upc}>
   <button class="lecture" type="button" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
     <Icone nom="lecture" taille={40} class="i-lecture" />
     <Icone nom="pause" taille={22} class="i-pause" />

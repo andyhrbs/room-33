@@ -95,7 +95,7 @@ const suivants = reste.slice(0, 4);
           </a>
           <ol role="list" class="suivants">
             {suivants.map((d, i) => (
-              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" />
+              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" liens={d.liens} upc={d.upc} />
             ))}
           </ol>
         </div>

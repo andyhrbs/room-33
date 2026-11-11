@@ -40,5 +40,8 @@ export const parametres = (req) => {
   const u = new URL(req.url).searchParams;
   const titre = (u.get('titre') || '').slice(0, 200), artiste = (u.get('artiste') || '').slice(0, 200);
   const type = u.get('type') === 'album' ? 'album' : u.get('type') === 'artiste' ? 'artiste' : 'titre';
-  return titre && artiste ? { titre, artiste, type } : null;
+  // facultatifs (albums) : code-barres UPC et lien Spotify déjà connus au build
+  const upc = /^\d{8,14}$/.test(u.get('upc') || '') ? u.get('upc') : undefined;
+  const spotify = /^https:\/\/open\.spotify\.com\/(album|track)\/[A-Za-z0-9]{22}$/.test(u.get('spotify') || '') ? u.get('spotify') : undefined;
+  return titre && artiste ? { titre, artiste, type, upc, spotify } : null;
 };

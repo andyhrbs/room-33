@@ -26,6 +26,8 @@ export interface Disque {
   lienSpotify?: string;
   lienArtiste?: string; // page de l'artiste sur Spotify (« Sa discographie »)
   photoArtiste?: string; // photo de l'artiste (Spotify, au build) pour « Découvrir l'artiste »
+  upc?: string;          // code-barres de l'album (Spotify), pour retrouver le même disque sur chaque plateforme
+  liens?: Record<string, string>; // liens « Ouvrir l'app » résolus au build (spotify, apple, deezer)
   pistes?: Piste[];
   ajoute: string;      // date d'ajout (ordre des disques, « mis à jour le » des bacs)
   textes: TextesDisque; // ce qu'Andyh écrit dans l'admin (peut être vide)
@@ -59,7 +61,7 @@ const infos = await infosAlbums(disques.map((d) => ({ cle: d.slug, titre: d.titr
 for (const d of disques) {
   const i = infos.get(d.slug);
   if (!i) continue;
-  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify }, i.lienArtiste && { lienArtiste: i.lienArtiste }, i.photoArtiste && { photoArtiste: i.photoArtiste });
+  Object.assign(d, { spotifyId: i.spotifyId, pistes: i.pistes }, i.pochette && { pochette: i.pochette }, i.annee && { annee: i.annee }, i.label && { label: i.label }, i.lienSpotify && { lienSpotify: i.lienSpotify }, i.lienArtiste && { lienArtiste: i.lienArtiste }, i.photoArtiste && { photoArtiste: i.photoArtiste }, i.upc && { upc: i.upc }, Object.keys(i.liens).length && { liens: i.liens });
 }
 
 export const parSlug = (slug: string) => disques.find((d) => d.slug === slug)!;

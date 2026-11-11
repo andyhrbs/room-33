@@ -41,7 +41,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="texte-corps-l texte-secondaire">{un.artiste} · {un.annee}</p>
           <p class="texte-avis"><span class="seulement-ordi">{pourquoiNumeroUn.long}</span><span class="seulement-mobile">{pourquoiNumeroUn.court}</span></p>
           <div class="actions">
-            <Ecoute titre={un.titre} artiste={un.artiste} type="album" />
+            <Ecoute titre={un.titre} artiste={un.artiste} type="album" liens={un.liens} upc={un.upc} />
             <Bouton style="lien" href={`/disques/${un.slug}`}>Voir la fiche</Bouton>
           </div>
         </div>

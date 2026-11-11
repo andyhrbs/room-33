@@ -4,11 +4,11 @@
 import Pochette from './Pochette.astro';
 import Icone from './Icone.astro';
 import type { Motif } from './types';
-interface Props { face: string; titre: string; artiste: string; duree?: string; src?: string; motif?: Motif; href?: string; ecoute?: 'titre' | 'album' }
-const { face, titre, artiste, duree, src, motif, href, ecoute } = Astro.props;
+interface Props { face: string; titre: string; artiste: string; duree?: string; src?: string; motif?: Motif; href?: string; ecoute?: 'titre' | 'album'; liens?: Record<string, string>; upc?: string }
+const { face, titre, artiste, duree, src, motif, href, ecoute, liens, upc } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
-<li class="ligne-piste" data-ecoute={ecoute ? '' : undefined} data-titre={ecoute ? titre : undefined} data-artiste={ecoute ? artiste : undefined} data-type={ecoute}>
+<li class="ligne-piste" data-ecoute={ecoute ? '' : undefined} data-titre={ecoute ? titre : undefined} data-artiste={ecoute ? artiste : undefined} data-type={ecoute} data-liens={ecoute && liens ? JSON.stringify(liens) : undefined} data-upc={ecoute ? upc : undefined}>
   <Tag class="contenu" href={href}>
     <span class="face texte-label texte-secondaire">{face}</span>
     <Pochette src={src} motif={motif} taille="48px" />
