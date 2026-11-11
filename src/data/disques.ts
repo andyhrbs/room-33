@@ -8,6 +8,7 @@
 // ==========================================================================
 import type { Motif } from '../components/types';
 import { infosAlbums, infosTitres, type Piste } from '../lib/catalogue';
+import { ecoutesDuMois } from '../lib/ecoutes';
 import donneesBacs from './cms/bacs.json';
 import donneesTop from './cms/top.json';
 import donneesMorceau from './cms/morceau.json';
@@ -197,10 +198,8 @@ export const morceauDuJour = {
   avisCourt: m0.avisCourt || m0.avis || '« Deux phrases d’avis : pourquoi ce son aujourd’hui. »',
 };
 
-// La platine (chiffres Spotify au Sprint 4)
-export const platine = [
-  { valeur: 'Artiste n° 1', legende: 'le plus écouté du mois' },
-  { valeur: 'Titre n° 1', legende: 'en boucle ce mois-ci' },
-];
+// Aperçu de la platine (accueil) : l'artiste et le titre les plus écoutés des 4 dernières semaines,
+// lus au build sur Spotify ; la page les remet à jour en direct (/api/spotify/ecoute). null = pas de clés au build.
+export const ecoutesMois = await ecoutesDuMois();
 
 export const genres = ['Soul & R&B', 'Jazz', 'Rap', 'Indie', 'Afro', 'Classique'];

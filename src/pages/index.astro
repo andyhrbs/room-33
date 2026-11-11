@@ -13,7 +13,7 @@ import BandeauGenres from '../components/BandeauGenres.astro';
 import Entree from '../components/Entree.astro';
 import LivesAccueil from '../components/LivesAccueil.astro';
 import { accueil } from '../data/textes';
-import { bacs, top, morceauDuJour, platine, genres, detailBac } from '../data/disques';
+import { bacs, top, morceauDuJour, ecoutesMois, genres, detailBac } from '../data/disques';
 import { images } from '../data/images';
 
 const m = morceauDuJour;
@@ -73,14 +73,27 @@ const suivants = reste.slice(0, 4);
       <section class="platine section" aria-labelledby="titre-platine">
         <div class="conteneur apercu">
           <EnTeteSection surtitre={accueil.platine.surtitre} titre={accueil.platine.titre} id="titre-platine" lien={{ texte: accueil.platine.lien, href: '/platine' }} />
-          <dl class="afficheurs">
-            {platine.map((a) => (
-              <div class="afficheur">
-                <dt class="texte-petit texte-secondaire">{a.legende}</dt>
-                <dd class="titre-h1">{a.valeur}</dd>
-              </div>
-            ))}
+          <!-- Valeurs lues au build sur Spotify, remises à jour en direct par le script en bas de page -->
+          <dl class="afficheurs" data-ecoutes-mois aria-live="polite" hidden={!ecoutesMois}>
+            <div class="afficheur">
+              <dt class="texte-petit texte-secondaire">{accueil.platine.legendeArtiste}</dt>
+              <dd class="valeur">
+                <span class="photo" data-photo-artiste aria-hidden="true" style={ecoutesMois?.artiste?.image ? `background-image: url("${ecoutesMois.artiste.image}")` : undefined}></span>
+                <span class="titre-h1 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
+              </dd>
+            </div>
+            <div class="afficheur">
+              <dt class="texte-petit texte-secondaire">{accueil.platine.legendeTitre}</dt>
+              <dd class="valeur">
+                <span class="vignette" data-pochette-titre aria-hidden="true" style={ecoutesMois?.titre?.pochette ? `background-image: url("${ecoutesMois.titre.pochette}")` : undefined}></span>
+                <span class="nom-titre">
+                  <span class="titre-h1 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
+                  <span class="texte-petit texte-secondaire" data-artiste-titre>{ecoutesMois?.titre?.artiste ?? ''}</span>
+                </span>
+              </dd>
+            </div>
           </dl>
+          <p class="texte-corps texte-secondaire" data-ecoutes-indispo hidden>{accueil.platine.indispo}</p>
         </div>
       </section>
 
@@ -109,6 +122,30 @@ const suivants = reste.slice(0, 4);
 
   <PiedDePage />
 </Base>
+
+<script>
+  // Aperçu de la platine : remet à jour l'artiste et le titre n° 1 du mois depuis Spotify (même Function que la page Platine).
+  // Si Spotify ne répond pas : on garde les valeurs du build ; s'il n'y en a pas, un message remplace les afficheurs.
+  type Reponse = { topTitres: { titre: string; artiste: string; pochette?: string | null }[]; topArtistes: { nom: string; image?: string | null }[]; erreur?: string };
+  document.addEventListener('astro:page-load', async () => {
+    const zone = document.querySelector<HTMLElement>('[data-ecoutes-mois]');
+    if (!zone) return;
+    const texte = (sel: string, v: string) => { const el = zone.querySelector(sel); if (el) el.textContent = v; };
+    const image = (sel: string, url?: string | null) => { const el = zone.querySelector<HTMLElement>(sel); if (el) el.style.backgroundImage = url ? `url("${url}")` : ''; };
+    try {
+      const rep = await fetch('/api/spotify/ecoute?periode=4-semaines');
+      const d: Reponse = await rep.json();
+      if (!rep.ok || d.erreur) throw new Error(d.erreur);
+      const [a] = d.topArtistes; const [t] = d.topTitres;
+      if (!a || !t) throw new Error('écoutes vides');
+      texte('[data-nom-artiste]', a.nom); image('[data-photo-artiste]', a.image);
+      texte('[data-nom-titre]', t.titre); texte('[data-artiste-titre]', t.artiste); image('[data-pochette-titre]', t.pochette);
+      zone.hidden = false;
+    } catch {
+      if (zone.hidden) document.querySelector<HTMLElement>('[data-ecoutes-indispo]')?.removeAttribute('hidden');
+    }
+  });
+</script>
 
 <style>
   /* ---------- Hero ---------- */
@@ -157,6 +194,15 @@ const suivants = reste.slice(0, 4);
   .afficheurs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--espace-lg); margin: 0; }
   .afficheur { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dd { margin: 0; }
+  /* artiste et titre n° 1 : photo ronde / pochette carrée + nom (les noms longs passent à la ligne) */
+  .afficheurs[hidden] { display: none; }
+  .valeur { display: flex; align-items: flex-start; gap: var(--espace-sm); min-width: 0; }
+  .photo, .vignette { margin-top: max(0px, calc((var(--taille-h1) * 1.2 - 48px) / 2)); } /* centrés sur la 1re ligne du nom */
+  .photo, .vignette { width: 48px; height: 48px; flex: none; background: var(--couleur-fond-image) center / cover no-repeat; }
+  .photo { border-radius: var(--rayon-pilule); }
+  .vignette { border-radius: var(--rayon-pochette); }
+  .nom-titre { display: grid; gap: var(--espace-2xs); min-width: 0; }
+  .nom { overflow-wrap: anywhere; text-wrap: balance; }
   .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
   .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
   .numero-un :global(.pochette) { width: min(100%, 23.75rem); }
@@ -166,6 +212,8 @@ const suivants = reste.slice(0, 4);
     .rangee-bacs { gap: var(--espace-md); margin-inline: calc(var(--grille-marge) * -1); padding-inline: var(--grille-marge); scroll-padding-inline: var(--grille-marge); }
     .rangee-bacs > :global(*) { flex-basis: min(15.625rem, 72vw); }
     .afficheurs { gap: var(--espace-md); }
+    .valeur { flex-direction: column; align-items: flex-start; gap: var(--espace-xs); }
+    .photo, .vignette { width: 40px; height: 40px; margin-top: 0; }
     .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
     .numero-un :global(.pochette) { width: 100%; }
   }
