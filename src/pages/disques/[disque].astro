@@ -60,7 +60,7 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
     <!-- Les titres de l'album : chaque titre s'écoute (extrait Deezer) ; le coup de cœur d'Andyh est signalé -->
     {pistes.length > 0 && (
       <section class="bande titres-album" aria-labelledby="titre-titres">
-        <div class="conteneur deux-colonnes">
+        <div class="conteneur pile-titres">
           <div class="entete-titres">
             <h2 id="titre-titres" class="titre-h1">Les titres</h2>
             <p class="texte-petit texte-secondaire">{pistes.length} titre{pistes.length > 1 ? 's' : ''} · {dureeTotale}</p>
@@ -71,7 +71,7 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
                 <span class="num texte-label texte-secondaire">{String(p.numero).padStart(2, '0')}</span>
                 <span class="nom-piste">
                   <span class="texte-corps nom">{p.titre || 'Sans titre'}</span>
-                  {estCoeur(p.titre) && <span class="badge-coeur texte-legende" title="Mon coup de cœur"><Icone nom="coeur" taille={14} /> <span class="libelle-coeur">Mon coup de cœur</span></span>}
+                  {estCoeur(p.titre) && <span class="badge-coeur texte-legende" title="Mon coup de cœur"><Icone nom="coeur" taille={16} /> <span class="libelle-coeur">Mon coup de cœur</span></span>}
                 </span>
                 <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${p.titre || "Sans titre"}, ${d.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
                 <span class="texte-petit texte-secondaire duree">{p.duree}</span>
@@ -185,8 +185,8 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
   /* coup de cœur : fond tonal + cœur ambre */
   .piste.coeur { background: var(--couleur-fond-tonal); border-bottom-color: transparent; }
   .badge-coeur { display: inline-flex; align-items: center; gap: var(--espace-2xs); color: var(--couleur-accent-defaut); white-space: nowrap; }
-  /* Figma ordi : le cœur seul (le libellé reste lu par les lecteurs d'écran) ; mobile : cœur + « Mon coup de cœur » */
-  @media (min-width: 64rem) { .libelle-coeur { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }
+  /* Figma : en-tête au-dessus de la liste, la liste sur toute la largeur (ordi et mobile) */
+  .pile-titres { display: grid; gap: var(--espace-lg); }
   /* ▶ extrait (comme la tracklist des bacs) */
   .lecture { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
   .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
@@ -209,10 +209,9 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
     /* Figma mobile : photo 350 × 300, 24 px sous la photo, 12 px dans le texte */
     .artiste-grille { grid-template-columns: 1fr; gap: var(--espace-lg); align-items: start; }
     .artiste-grille .texte, .nom-bio { gap: var(--espace-sm); }
-    .photo-artiste { aspect-ratio: 350 / 300; }
+    /* Figma mobile : photo carrée 350 × 350 (comme sur ordi) */
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
     .voisins { justify-content: space-between; margin-top: 0; }
-    .titres-album .deux-colonnes { gap: var(--espace-lg); }
     .piste { grid-template-columns: 1.75rem minmax(0, 1fr) auto auto; gap: var(--espace-sm); padding-inline: var(--espace-xs); }
   }
 </style>

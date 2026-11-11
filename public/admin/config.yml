@@ -26,7 +26,7 @@ collections:
   - name: disques
     label: Les disques
     label_singular: disque
-    description: "Un fichier par disque. Spotify ajoute tout seul la pochette, l'année, le label, les morceaux et le lien de l'artiste ; chaque morceau est relié à son extrait Deezer. Après avoir publié (2–3 min de construction), ouvre /rapport-extraits.json : « sansExtrait »: 0 = tous les titres s'écoutent. Sinon, la liste des titres concernés est dedans."
+    description: "Un fichier par disque. Deezer ajoute tout seul la pochette, l'année, le label, les titres, la photo de l'artiste et les extraits ; le lien Spotify (conseillé) garantit que c'est le bon album. Après avoir publié (2–3 min de construction), ouvre /rapport-extraits.json : « sansExtrait »: 0 = tous les titres s'écoutent. Sinon, la liste des titres concernés est dedans."
     folder: src/data/cms/disques
     extension: json
     format: json

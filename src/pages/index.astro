@@ -107,7 +107,7 @@ const suivants = reste.slice(0, 4);
           </a>
           <ol role="list" class="suivants">
             {suivants.map((d, i) => (
-              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} />
+              <LigneTracklist face={String(i + 2).padStart(2, '0')} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`}><Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi voir-disque" aria-hidden="true" tabindex="-1">{accueil.morceau.voirFiche}</Bouton></LigneTracklist>
             ))}
           </ol>
         </div>
@@ -213,13 +213,13 @@ const suivants = reste.slice(0, 4);
     .rangee-bacs { gap: var(--espace-md); margin-inline: calc(var(--grille-marge) * -1); padding-inline: var(--grille-marge); scroll-padding-inline: var(--grille-marge); }
     .rangee-bacs > :global(*) { flex-basis: min(15.625rem, 72vw); }
     .afficheurs { gap: var(--espace-md); }
-    .afficheur { flex-direction: column-reverse; justify-content: flex-end; gap: var(--espace-xs); }
+    /* Figma mobile : légende au-dessus (petit), visuel 60 px au-dessus du nom en H2 */
     .afficheur dt { font-size: var(--taille-petit); }
     .valeur { flex-direction: column; align-items: flex-start; gap: var(--espace-xs); }
-    .photo, .vignette { width: 40px; height: 40px; }
-    .nom { font-size: var(--taille-h1); line-height: normal; }
+    .photo, .vignette { width: 60px; height: 60px; }
     .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
     .numero-un :global(.pochette) { width: 100%; }
   }
+  .suivants :global(.voir-disque) { flex: none; margin-left: var(--espace-md); }
   .numero-un:hover .titre-h2 { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 </style>

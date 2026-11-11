@@ -23,6 +23,7 @@ const Tag = href ? 'a' : 'div';
     </button>
   )}
   {duree && <span class="texte-petit texte-secondaire duree">{duree}</span>}
+  <slot /> <!-- ex. « Voir le disque » (accueil, Top) -->
 </li>
 <style>
   .ligne-piste {
