@@ -18,15 +18,14 @@ const total = disques.length;
     ))}
   </div>
   <div class="controles">
-    <Bouton style="secondaire" iconeGauche="fleche-gauche" iconeDroite={null} data-precedent class="seulement-ordi">Précédent</Bouton>
+    <Bouton style="lien" iconeGauche="fleche-gauche" iconeDroite={null} data-precedent class="seulement-ordi">Précédent</Bouton>
     <button class="rond seulement-mobile" type="button" data-precedent aria-label="Disque précédent"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H4"/><path d="M10 6L4 12L10 18"/></svg></button>
-    <span class="texte-label" data-compteur><span class="seulement-ordi">Disque </span><span data-position>1</span> / {total}</span>
-    <Bouton style="secondaire" data-suivant class="seulement-ordi">Suivant</Bouton>
+    <span class="texte-label texte-secondaire" data-compteur><span class="seulement-ordi">Disque </span><span data-position>1</span> / {total}</span>
+    <Bouton style="lien" data-suivant class="seulement-ordi">Suivant</Bouton>
     <button class="rond seulement-mobile" type="button" data-suivant aria-label="Disque suivant"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg></button>
   </div>
   <a class="sortir" href={`/disques/${disques[0].slug}`} data-sortir data-slugs={disques.map((d) => d.slug).join(',')}>
-    <span class="texte-bouton seulement-ordi">Sortir ce disque (ouvrir la fiche)</span>
-    <span class="texte-bouton seulement-mobile">Sortir ce disque</span>
+    <span class="texte-bouton">Sortir ce disque</span>
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg>
   </a>
 </div>
@@ -76,6 +75,7 @@ const total = disques.length;
   }
   .feuille[aria-hidden='true'] { pointer-events: none; }
   .controles { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
+  .controles :global(.icone-gauche), .controles :global(.icone-droite) { color: var(--couleur-texte-principal); } /* flèches ivoire (Figma) */
   /* flèches seules (maquette Figma mobile), zone de toucher de 44 px */
   .rond {
     width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0;
@@ -83,12 +83,14 @@ const total = disques.length;
     transition: transform var(--duree-rapide) var(--courbe-standard), background-color var(--duree-rapide) var(--courbe-standard);
   }
   .rond:active { transform: scale(0.96); background: var(--couleur-fond-tonal); }
-  .sortir { display: inline-flex; align-items: center; gap: var(--espace-xs); text-decoration: none; min-height: 44px; justify-self: start; }
-  .sortir:hover .texte-bouton { text-decoration: underline; text-underline-offset: 0.3em; }
-  @media (max-width: 63.99rem) {
-    .sortir {
-      justify-self: stretch; justify-content: center; padding: var(--espace-md) var(--espace-lg);
-      border-radius: var(--rayon-pochette); background: var(--couleur-fond-tonal);
-    }
+  /* « Sortir ce disque » : bouton secondaire (Figma) — fond tonal ; pleine largeur sur mobile */
+  .sortir {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--espace-xs); justify-self: start;
+    min-height: 44px; padding: var(--espace-md) var(--espace-lg); border-radius: var(--rayon-pochette);
+    background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal); text-decoration: none;
+    transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard);
   }
+  .sortir:hover { background: var(--couleur-fond-tonal-survol); }
+  .sortir:active { background: var(--couleur-fond-tonal-presse); transform: scale(0.96); }
+  @media (max-width: 63.99rem) { .sortir { justify-self: stretch; } }
 </style>
