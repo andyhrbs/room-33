@@ -22,6 +22,7 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       Boolean(el.closest?.('dialog, [data-lenis-prevent], [data-entree]')) ||
       document.documentElement.classList.contains('entree-active'),
   });
+  (window as unknown as { room33Lenis?: Lenis }).room33Lenis = lenis; // utilisé par les sections aimantées (page d'un bac)
   // Changement de page (ClientRouter) : Lenis repart de la position que le navigateur vient de fixer
   document.addEventListener('astro:after-swap', () => { lenis.scrollTo(window.scrollY, { immediate: true, force: true }); lenis.resize(); });
   // Fenêtre modale ouverte (tiroir, menu mobile) : la page derrière ne bouge plus
