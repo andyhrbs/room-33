@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026 : maj figma « Top artistes » (Platine ordi : Voir l'artiste)
+# Empreintes Figma de référence — 12 nov. 2026 : Top artistes (Platine) : « Voir l’artiste » ordi + mobile
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -108,7 +108,7 @@
 25:1146 1wsrj8z
 110:2116 1xntfj9
 25:986 1pkl3cg
-25:1002 1q3h1ze
+25:1002 7fd3gx
 25:1113 lud025
 25:1136 1afyz7
 25:1129 p4phlg
