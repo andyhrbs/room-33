@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 15:20 : maj figma Bac des visiteurs (sous-titre sur une ligne)
+# Empreintes Figma de référence — 12 nov. 2026, 15:30 : maj figma Mon classement (albums) + composant Écoute (« 30 s »)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -124,17 +124,17 @@
 25:937 lluul1
 25:966 at63hf
 182:2280 tu08b2
-67:1637:cadre 1gle5iy
-67:1799 1v3an39
+67:1637:cadre 1qg5ufs
+67:1799 1eigyuz
 110:2136 1eiq7js
-67:1647 14qqjzt
-67:1671 c3zf9c
-67:1761 1bvu3le
+67:1647 kasb49
+67:1671 1am2ygp
+67:1761 1yonnlr
 67:1793 p4phlg
-67:1381:cadre 1mbub5d
+67:1381:cadre q8e31
 67:1636 1cd5p3y
 110:2146 z35unx
-67:1391 o2a5o4
+67:1391 1xuezws
 67:1425 z62qtu
 67:1587 1iooutq
 182:2296 tu08b2
@@ -199,7 +199,7 @@
 22:38 1xvjaio
 9:18 qumer5
 191:119 1ns9ga9
-205:154 ss854g
+205:154 1hpd4xm
 212:233 1axryq7
 266:2751 1y9mk8v
 12:24 ardhb3

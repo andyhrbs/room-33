@@ -48,7 +48,7 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
         <p class="titre-h3 artiste seulement-ordi">{d.artiste}</p>
         <p class="texte-petit texte-secondaire seulement-ordi">{[d.annee, d.genre, d.label].filter(Boolean).join(" · ")}</p>
         <p class="texte-corps seulement-mobile">{d.artiste} · {d.annee} · {d.genre}</p>
-        <Ecoute titre={d.titre} artiste={d.artiste} type="album" liens={d.liens} upc={d.upc} deezer={d.extraitAlbum} />
+        <Ecoute titre={d.titre} artiste={d.artiste} type="album" liens={d.liens} upc={d.upc} deezer={d.extraitAlbum} liste={pistes.length > 0 ? '.pistes' : undefined} />
         <dl class="credits seulement-ordi">
           {f.credits.slice(1).map(([role, nom]) => (
             <div><dt class="texte-avis">{role}</dt><dd class="texte-petit texte-secondaire">— {nom}</dd></div>

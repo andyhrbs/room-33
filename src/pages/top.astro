@@ -43,7 +43,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
           <p class="texte-corps-l texte-secondaire">{un.artiste} · {un.annee}</p>
           <p class="texte-avis"><span class="seulement-ordi">{pourquoiNumeroUn.long}</span><span class="seulement-mobile">{pourquoiNumeroUn.court}</span></p>
           <div class="actions">
-            <Ecoute titre={un.titre} artiste={un.artiste} type="album" liens={un.liens} upc={un.upc} deezer={un.extraitAlbum} />
+            <Ecoute titre={un.titre} artiste={un.artiste} type="album" liens={un.liens} upc={un.upc} extrait={false} /> <!-- albums : pas d'extrait ici, on écoute en ouvrant le disque -->
             <Bouton style="lien" href={`/disques/${un.slug}`}>Voir le disque</Bouton>
           </div>
         </div>
@@ -133,7 +133,8 @@ const rang = (i: number) => String(i).padStart(2, '0');
   .numero-un { display: grid; grid-template-columns: minmax(0, 32.5rem) minmax(0, 36.5rem); justify-content: space-between; gap: var(--espace-4xl); align-items: center; }
   .texte-un { display: grid; gap: var(--espace-md); justify-items: start; }
   .rang-un { line-height: 0.9; }
-  .actions { display: grid; gap: var(--espace-lg); justify-items: start; }
+  /* Figma : « Écouter un extrait » et « Voir le disque » côte à côte sur ordi (24 px), l'un sous l'autre sur mobile */
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-lg); }
 
   .classement-zone { padding-top: 0; }
   .classement { display: grid; gap: var(--espace-2xs); }
@@ -155,6 +156,9 @@ const rang = (i: number) => String(i).padStart(2, '0');
 
   @media (max-width: 63.99rem) {
     .numero-un { grid-template-columns: 1fr; gap: var(--espace-md); }
+    /* Figma mobile : 01, titre, artiste et avis à 8 px ; écoute et « Voir le disque » empilés à 16 px */
+    .texte-un { gap: var(--espace-xs); }
+    .actions { flex-direction: column; align-items: flex-start; gap: var(--espace-md); margin-top: var(--espace-xs); }
     .rang-un { font-size: var(--taille-geant); }
     .rang { grid-template-columns: 2.75rem 3.5rem minmax(0, 1fr); gap: var(--espace-md); padding-block: var(--espace-sm); }
     .rang .numero { font-size: var(--taille-h2); }

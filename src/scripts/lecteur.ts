@@ -39,16 +39,18 @@ function afficher() {
   // tous les conteneurs d'écoute de la page
   document.querySelectorAll<HTMLElement>('[data-ecoute]').forEach((c) => {
     const m = lireMorceau(c);
-    const actif = !!(m && courant && cle(m) === courant.cle);
+    const lanceur = c.dataset.lancerListe;
+    // ▶ d'album (fiche) : « en lecture » tant qu'un titre de sa liste joue
+    const actif = lanceur ? !!(courant && [...document.querySelectorAll(`${lanceur} [data-ecoute]`)].some((x) => { const t = lireMorceau(x); return t && cle(t) === courant!.cle; })) : !!(m && courant && cle(m) === courant.cle);
     const e = actif ? etat : '';
     if (e) c.dataset.etat = e; else delete c.dataset.etat;
     c.querySelectorAll<HTMLButtonElement>('[data-ecouter]').forEach((b) => {
       if (b.closest('[data-ecoute]') !== c) return;
       b.setAttribute('aria-pressed', String(e === 'lecture'));
-      if (m) b.setAttribute('aria-label', e === 'lecture' ? `Mettre en pause l’extrait de ${m.titre}, ${m.artiste}` : `Écouter un extrait de ${m.titre}, ${m.artiste}`);
+      if (m) b.setAttribute('aria-label', e === 'lecture' ? `Mettre en pause l’extrait de ${m.titre}, ${m.artiste}` : lanceur ? `Écouter les extraits de ${m.titre}, ${m.artiste}` : `Écouter un extrait de ${m.titre}, ${m.artiste}`);
     });
     const statut = c.querySelector<HTMLElement>('[data-statut]');
-    if (statut) { if (e === 'erreur' || e === 'chargement') statut.textContent = e === 'erreur' ? 'Extrait indisponible' : 'Chargement…'; else statut.innerHTML = '30 s<span class="seulement-ordi"> · aperçu Deezer</span>'; } // mobile : « 30 s » (Figma)
+    if (statut) { if (e === 'erreur' || e === 'chargement') statut.textContent = e === 'erreur' ? 'Extrait indisponible' : 'Chargement…'; else statut.textContent = '30 s'; } // Figma : « 30 s » (ordi et mobile)
   });
   // mini-platine
   const mini = document.querySelector<HTMLElement>('[data-mini-platine]');
@@ -108,7 +110,8 @@ function construireFile(depuis: Element) {
   const conteneur = depuis.closest<HTMLElement>('[data-ecoute]');
   let liste: Element | null = conteneur?.parentElement ?? null;
   while (liste && liste !== document.body && liste.querySelectorAll('[data-ecoute]').length < 2) liste = liste.parentElement;
-  const elements = [...(liste && liste !== document.body ? liste : document).querySelectorAll('[data-ecoute]')];
+  // seulement les vrais extraits (pas « Ouvrir l'app » seul, pas le ▶ d'album qui lance une liste)
+  const elements = [...(liste && liste !== document.body ? liste : document).querySelectorAll('[data-ecoute]')].filter((e) => !e.hasAttribute('data-lancer-liste') && e.querySelector('[data-ecouter]'));
   const vus = new Set<string>();
   file = elements.map((e) => lireMorceau(e)).filter((m): m is Morceau => !!m && !vus.has(cle(m)) && !!vus.add(cle(m)));
   const m = lireMorceau(depuis);
@@ -227,7 +230,20 @@ const prechauffer = (e: Event) => {
 document.addEventListener('click', async (e) => {
   const cible = e.target as Element;
   const ecouter = cible.closest('[data-ecouter]');
-  if (ecouter) { e.preventDefault(); const m = lireMorceau(ecouter); if (m) { construireFile(ecouter); basculer(m); } return; }
+  if (ecouter) {
+    e.preventDefault();
+    // ▶ d'album sur la fiche : comme Spotify, lance le 1er titre de « Les titres » puis enchaîne (ou met en pause si un de ces titres joue)
+    const lanceur = ecouter.closest<HTMLElement>('[data-lancer-liste]')?.dataset.lancerListe;
+    const premier = lanceur ? document.querySelector(`${lanceur} [data-ecoute] [data-ecouter]`) : null;
+    if (lanceur && premier) {
+      const dansListe = courant && [...document.querySelectorAll(`${lanceur} [data-ecoute]`)].some((x) => { const t = lireMorceau(x); return t && cle(t) === courant!.cle; });
+      if (dansListe && courant) { if (audio.paused) await jouer(); else audio.pause(); return; }
+      const m1 = lireMorceau(premier); if (m1) { construireFile(premier); basculer(m1); }
+      return;
+    }
+    const m = lireMorceau(ecouter); if (m) { construireFile(ecouter); basculer(m); }
+    return;
+  }
   if (cible.closest('[data-ouvrir-plein]')) { const d = document.querySelector<HTMLDialogElement>('[data-lecteur-plein]'); if (d && !d.open) { afficher(); progression(); d.showModal(); d.focus({ preventScroll: true }); } return; } // focus sur le lecteur, pas sur la croix (sinon contour au toucher)
   if (cible.closest('[data-fermer-plein]')) { fermerPlein(); return; }
   if (cible.closest('[data-precedent]')) { sauter(-1); return; }

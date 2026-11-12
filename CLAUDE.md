@@ -30,8 +30,9 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Coup de cœur : champ admin `coupDeCoeur` → cœur dans « Les titres » de la fiche.
 
 ## Règles d'interface
-- **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche, n° 1 du Top, morceau du moment) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres, top titres de la Platine) et ▶ discret calé à droite (titre n° 1 de l'aperçu platine de l'accueil, choix Figma).
-- Lignes d'albums (Top albums, accueil, « Dans ce bac ») : pas de ▶, « Voir le disque » sur ordi ; la ligne entière mène au disque.
+- **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche = lance le 1er titre de « Les titres » puis enchaîne, comme Spotify ; n° 1 du Top titres ; morceau du moment) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres, top titres de la Platine) et ▶ discret calé à droite (titre n° 1 de l'aperçu platine de l'accueil, choix Figma).
+- **Albums : pas d'extrait hors de la fiche** (n° 1 du Top albums : « Ouvrir l'app » + « Voir le disque »). Lignes d'albums (Top albums, accueil, « Dans ce bac ») : pas de ▶, « Voir le disque » sur ordi ; la ligne entière mène au disque.
+- Statut sous « Écouter un extrait » : « 30 s » (plus de « aperçu Deezer »).
 
 ## Figma
 - Fichier `rug9BnVFR2UBMfGUQH8kug` ; pages « 🖥 UI — Écrans » `1:4`, « 🧩 Kit UI » `1:3`.

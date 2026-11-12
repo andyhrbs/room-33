@@ -2,22 +2,26 @@
 // Écoute : extrait de 30 s joué sur le site (Deezer) + « Ouvrir l'app » (Spotify, Apple Music,
 // Deezer ou YouTube Music, choisie à chaque fois). Le son est géré par le lecteur global (src/scripts/lecteur.ts).
 // type « titre » = ce morceau ; type « album » = le morceau le plus écouté de l'album.
+// liste : sélecteur d'une liste de titres (ex. « Les titres » de la fiche) → comme Spotify, ▶ lance le 1er titre puis enchaîne la suite.
+// extrait={false} : seulement « Ouvrir l'app » (albums hors fiche : on n'écoute qu'en ouvrant le disque).
 import Icone from './Icone.astro';
 import Bouton from './Bouton.astro';
 // liens / upc : pour un album, les liens des apps résolus au build (voir catalogue.ts) — « Ouvrir l'app » ne cherche plus rien
 // deezer : id Deezer du morceau à jouer, trouvé au build (extrait exact, sans recherche par nom)
-interface Props { titre: string; artiste: string; type?: 'titre' | 'album'; liens?: Record<string, string>; upc?: string; deezer?: number }
-const { titre, artiste, type = 'titre', liens, upc, deezer } = Astro.props;
+interface Props { titre: string; artiste: string; type?: 'titre' | 'album'; liens?: Record<string, string>; upc?: string; deezer?: number; liste?: string; extrait?: boolean }
+const { titre, artiste, type = 'titre', liens, upc, deezer, liste, extrait = true } = Astro.props;
 ---
-<div class="ecoute" data-ecoute data-titre={titre} data-artiste={artiste} data-type={type} data-liens={liens ? JSON.stringify(liens) : undefined} data-upc={upc} data-deezer={deezer}>
-  <button class="lecture" type="button" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${titre}, ${artiste}`}>
+<div class="ecoute" data-ecoute data-titre={titre} data-artiste={artiste} data-type={type} data-liens={liens ? JSON.stringify(liens) : undefined} data-upc={upc} data-deezer={deezer} data-lancer-liste={liste}>
+  {extrait && <>
+  <button class="lecture" type="button" data-ecouter aria-pressed="false" aria-label={liste ? `Écouter les extraits de ${titre}, ${artiste}` : `Écouter un extrait de ${titre}, ${artiste}`}>
     <Icone nom="lecture" taille={40} class="i-lecture" />
     <Icone nom="pause" taille={22} class="i-pause" />
   </button>
   <div class="infos">
     <span class="texte-label">Écouter un extrait</span>
-    <span class="texte-legende texte-secondaire" data-statut>30 s<span class="seulement-ordi"> · aperçu Deezer</span></span>
+    <span class="texte-legende texte-secondaire" data-statut>30 s</span>
   </div>
+  </>}
   <Bouton style="secondaire" data-ouvrir-app>Ouvrir l’app</Bouton>
 </div>
 <style>
