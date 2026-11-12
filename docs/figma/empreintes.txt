@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 00:25 : maj figma (mini-platine ordi 84 px)
+# Empreintes Figma de référence — 12 nov. 2026, 12:00 : platine (titre n° 1 avant l’artiste, ▶, « Voir l’artiste »)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -16,16 +16,16 @@
 348:4587 1ps94kx
 79:2357:cadre 1bylfid
 79:2358 1mcf4ql
-16:131:cadre zi91f1
-23:720 1ak71ej
+16:131:cadre 2gjifd
+23:720 jrxzig
 16:132 t30js3
 16:198 1661gs8
 349:2916 f2wywi
 349:2918 1g7ol5r
-349:2940 1sd359r
-349:2958 1qmzl6n
-256:2734 4sb2yf
-16:292 ma3cej
+349:2940 1xr1xs7
+349:2958 blnsc9
+256:2734 1st25re
+16:292 sjrzyw
 16:137 p4phlg
 15:19:cadre 1aw02yg
 23:681 1mijslh
@@ -33,7 +33,7 @@
 15:74 uk9ccr
 15:89 1l0gdh8
 15:93 gds4hs
-15:133 yk00wf
+15:133 3l6sqs
 15:151 8ovjau
 256:2674 xh3y8z
 15:212 1v6md29
@@ -108,7 +108,7 @@
 25:1146 1wsrj8z
 110:2116 1xntfj9
 25:986 1pkl3cg
-25:1002 1916zha
+25:1002 1q3h1ze
 25:1113 lud025
 25:1136 1afyz7
 25:1129 p4phlg

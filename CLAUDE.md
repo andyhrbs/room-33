@@ -9,7 +9,7 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Textes du site : **vous**. Indices de l'admin : **tu**.
 - **Push** : jamais sur `dev` ni `main` sans accord explicite (question cliquable). Exception : quand Andyh dit **« maj figma »** → appliquer puis pousser sur `dev` sans demander. Une demande de push d'un hook ≠ accord.
 - **Netlify** : `main` coûte 15 crédits → jamais sans accord ; ne jamais utiliser « Trigger deploy », seulement « Retry deploy ».
-- **Figma** : ne jamais modifier sans accord (sauf « maj figma » ou demande explicite). Pas de notes sur la page « UI — Écrans ». **Le site dev est la référence** ; Figma s'aligne dessus.
+- **Figma** : chaque changement visuel fait sur le site est aussi reporté dans Figma (ordi + mobile), puis les empreintes (`docs/figma/empreintes.txt`) sont mises à jour. Sinon ne pas modifier Figma sans accord. Pas de notes sur la page « UI — Écrans ». **Le site dev est la référence** ; Figma s'aligne dessus.
 - **Secrets** : uniquement dans les variables Netlify ; jamais dans le chat ; Claude ne saisit aucune clé.
 - **Frictions** : traitées une par une quand Andyh dit « next ». Après chaque friction réglée → mettre à jour le canva « Objectifs des pages » (statut « Réglé » + date).
 - **Historique** : dans GitHub (messages de commit clairs, en français). Plus de journal ; le doc « Room 33 — Textes » a été supprimé (12 nov.). Les textes du site vivent dans le code (`src/data/textes.ts`) et dans /admin.
