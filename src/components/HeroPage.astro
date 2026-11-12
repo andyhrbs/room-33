@@ -16,7 +16,7 @@ const position = recadrage ? `${sx < 1 ? ((tx / (1 - sx)) * 100).toFixed(1) : 50
 ---
 <header class="hero-page hero-anime" style={image ? `--image: url('${image}'); --position: ${position}; --taille: ${taille}` : undefined}>
   <div class="conteneur contenu">
-    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour" data-retour-origine>{retour}</Bouton>
+    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour" data-retour-origine><span data-retour-texte>{retour}</span></Bouton>
     <div class="titres">
       <nav aria-label="Fil d’Ariane" class="seulement-ordi">
         <ol role="list" class="ariane texte-petit">

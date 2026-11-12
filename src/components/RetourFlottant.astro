@@ -10,7 +10,7 @@ const { href, texte } = Astro.props;
 ---
 <a class="retour-flottant texte-petit" href={href} data-retour-flottant aria-hidden="true" tabindex="-1" aria-label={texte}>
   <Icone nom="fleche-gauche" taille={20} />
-  <span class="libelle" aria-hidden="true"><span>{texte}</span></span>
+  <span class="libelle" aria-hidden="true"><span data-retour-texte>{texte}</span></span>
 </a>
 
 <script>

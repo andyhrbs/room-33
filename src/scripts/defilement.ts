@@ -23,8 +23,12 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.documentElement.classList.contains('entree-active'),
   });
   (window as unknown as { room33Lenis?: Lenis }).room33Lenis = lenis; // accès à Lenis pour les autres scripts
-  // Changement de page (ClientRouter) : Lenis repart de la position que le navigateur vient de fixer
-  document.addEventListener('astro:after-swap', () => { lenis.scrollTo(window.scrollY, { immediate: true, force: true }); lenis.resize(); });
+  // Changement de page (ClientRouter) : Lenis s'arrête pendant l'échange, puis repart de la position que la navigation
+  // vient de fixer (haut de page, ou position retrouvée au retour en arrière). Avant, il se recalait trop tôt (sur 0)
+  // et effaçait la position retrouvée au retour.
+  document.addEventListener('astro:before-swap', () => lenis.stop());
+  const recaler = () => { lenis.resize(); lenis.scrollTo(window.scrollY, { immediate: true, force: true }); if (!document.querySelector('dialog[open]')) lenis.start(); };
+  document.addEventListener('astro:page-load', () => requestAnimationFrame(recaler));
   // Fenêtre modale ouverte (tiroir, menu mobile) : la page derrière ne bouge plus
   new MutationObserver(() => {
     if (document.querySelector('dialog[open]')) lenis.stop(); else lenis.start();
