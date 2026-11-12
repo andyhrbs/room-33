@@ -85,7 +85,7 @@ const suivants = reste.slice(0, 4);
                   <span class="titre-h2 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
                   <span class="texte-petit texte-secondaire" data-artiste-titre>{ecoutesMois?.titre?.artiste ?? ''}</span>
                 </span>
-                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${ecoutesMois?.titre?.titre ?? 'ce titre'}`}><span class="rond"><Icone nom="lecture" taille={20} class="i-lecture" /><Icone nom="pause" taille={18} class="i-pause" /></span></button>
+                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${ecoutesMois?.titre?.titre ?? 'ce titre'}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
               </dd>
             </div>
             <!-- Artiste n° 1 : « Voir l'artiste » (choix de l'app, comme « Sa discographie » sur une fiche) -->
@@ -204,7 +204,7 @@ const suivants = reste.slice(0, 4);
   .platine { background: var(--couleur-fond-page); }
   /* Figma : le Top sur fond ombre, toute la largeur (section dans le conteneur : le fond déborde) */
   .apercu-top { background: var(--couleur-fond-ombre); box-shadow: 0 0 0 100vmax var(--couleur-fond-ombre); clip-path: inset(0 -100vmax); }
-  .afficheurs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--espace-lg); margin: 0; }
+  .afficheurs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--espace-2xl); margin: 0; }
   /* Figma ordi : légende au-dessus (corps 16), visuel 80 px, nom en H2 ; mobile : légende en dessous (voir plus bas) */
   .afficheur { display: flex; flex-direction: column; gap: var(--espace-md); padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dt { font-size: var(--taille-corps); }
@@ -219,15 +219,16 @@ const suivants = reste.slice(0, 4);
   .nom { overflow-wrap: anywhere; text-wrap: balance; }
   .nom-titre { flex: 0 1 auto; }
   .voir-artiste { justify-self: start; margin-top: var(--espace-2xs); }
-  /* ▶ du titre n° 1 : rond ambre 48 px (comme « Écouter un extrait »), zone de 48 px */
-  .lecture { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
-  .lecture .rond { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--rayon-pilule); background: var(--couleur-accent-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
-  .lecture:hover .rond { background: var(--couleur-accent-presse); }
+  /* ▶ du titre n° 1 (Figma) : rond à filet 32 px dans une zone de 44 px, calé à droite ; ambre quand ça joue */
+  .lecture { flex: none; margin-left: auto; width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
+  .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
+  .lecture:hover .rond { background: var(--couleur-fond-tonal); }
   .lecture:active .rond { transform: scale(0.96); }
   .lecture :global(.i-pause) { display: none; }
+  [data-etat='lecture'] .lecture .rond { background: var(--couleur-accent-defaut); border-color: var(--couleur-accent-defaut); }
   [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
   [data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
-  [data-etat='chargement'] .lecture .rond { opacity: 0.7; }
+  [data-etat='chargement'] .lecture .rond { border-color: var(--couleur-accent-defaut); }
   .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
   .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
   .numero-un :global(.pochette) { width: min(100%, 23.75rem); }
@@ -236,10 +237,10 @@ const suivants = reste.slice(0, 4);
     .apercu { gap: var(--espace-lg); }
     .rangee-bacs { gap: var(--espace-md); margin-inline: calc(var(--grille-marge) * -1); padding-inline: var(--grille-marge); scroll-padding-inline: var(--grille-marge); }
     .rangee-bacs > :global(*) { flex-basis: min(15.625rem, 72vw); }
-    .afficheurs { gap: var(--espace-md); }
-    /* Figma mobile : légende au-dessus (petit), visuel 60 px au-dessus du nom en H2 */
+    /* Figma mobile : afficheurs l'un sous l'autre, légende petit, visuel 60 px à gauche du nom en H2, ▶ à droite */
+    .afficheurs { grid-template-columns: 1fr; gap: var(--espace-md); }
     .afficheur dt { font-size: var(--taille-petit); }
-    .valeur { flex-direction: column; align-items: flex-start; gap: var(--espace-xs); }
+    .valeur { gap: var(--espace-sm); }
     .photo, .vignette { width: 60px; height: 60px; }
     .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
     .numero-un :global(.pochette) { width: 100%; }

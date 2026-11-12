@@ -30,7 +30,7 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Coup de cœur : champ admin `coupDeCoeur` → cœur dans « Les titres » de la fiche.
 
 ## Règles d'interface
-- **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche, n° 1 du Top, morceau du moment, titre n° 1 de l'aperçu platine) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres, top titres de la Platine).
+- **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche, n° 1 du Top, morceau du moment) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres, top titres de la Platine) et ▶ discret calé à droite (titre n° 1 de l'aperçu platine de l'accueil, choix Figma).
 - Lignes d'albums (Top albums, accueil, « Dans ce bac ») : pas de ▶, « Voir le disque » sur ordi ; la ligne entière mène au disque.
 
 ## Figma
