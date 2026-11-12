@@ -1,7 +1,7 @@
 ---
 // Bouton « retour » qui reste à portée de main : dès que le retour de la page (dans le hero, ou le fil
-// d'Ariane de la fiche disque) sort de l'écran par le haut, une pastille fixe apparaît sous la nav,
-// alignée sur la grille. Ordi et mobile. Elle disparaît quand on remonte jusqu'au retour d'origine.
+// d'Ariane de la fiche disque) sort de l'écran par le haut, une pastille fixe apparaît : sous la nav sur ordi,
+// en bas à gauche sur mobile (sous le pouce), alignée sur la grille. Elle disparaît quand on remonte jusqu'au retour d'origine.
 // Sur les pages à hero, le retour reste collé dans le hero : la pastille apparaît quand le rideau le recouvre.
 // L'élément d'origine porte [data-retour-origine].
 import Icone from './Icone.astro';
@@ -29,7 +29,7 @@ const { href, texte } = Astro.props;
     const oui = o.bottom < 80 || (!!rideau && rideau.top < o.bottom);
     if (flottant.classList.contains('visible') === oui) return;
     flottant.classList.toggle('visible', oui);
-    document.documentElement.classList.toggle('retour-visible', oui); // mobile : le logo se décale pour lui faire place dans la barre
+    document.documentElement.classList.toggle('retour-visible', oui); // (classe gardée pour d’éventuels réglages de la page)
     // visible = vrai lien pour le clavier et les lecteurs d'écran ; caché = ignoré (pas de doublon)
     flottant.setAttribute('aria-hidden', String(!oui));
     flottant.tabIndex = oui ? 0 : -1;
@@ -74,13 +74,13 @@ const { href, texte } = Astro.props;
   .retour-flottant:focus-visible .libelle { grid-template-columns: 1fr; }
   .retour-flottant:focus-visible .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); }
   .retour-flottant:active { transform: scale(0.96); }
-  /* mobile : la nav fait 60 px (68 px une fois défilée) */
-  /* mobile : dans la barre du haut, à gauche du logo (qui se décale) : ne recouvre jamais le contenu */
+  /* mobile : en bas à gauche, sous le pouce (comme les boutons flottants des applis) ;
+     juste au-dessus de la mini-platine quand un extrait a été lancé (69 px) */
   @media (max-width: 63.99rem) {
-    .retour-flottant { z-index: 60; top: max(12px, calc(env(safe-area-inset-top) + 12px)); left: var(--grille-marge); }
-    :global(html.retour-visible .nav .gauche) { transform: translateX(52px); } /* 44 px de pastille + 8 px d’écart */
+    .retour-flottant { z-index: 45; top: auto; bottom: calc(var(--espace-md) + env(safe-area-inset-bottom)); left: var(--grille-marge); transform: translateY(8px); transition-property: opacity, transform, bottom, background-color, border-color; }
+    .retour-flottant.visible { transform: none; }
+    :global(body.avec-lecteur) .retour-flottant { bottom: calc(69px + var(--espace-md)); }
   }
-  :global(.nav .gauche) { transition: transform var(--duree-normal) var(--courbe-sortie); }
   @media (prefers-reduced-motion: reduce) {
     .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; }
     .libelle, .libelle > span, .retour-flottant :global(.icone) { transition: none; }
