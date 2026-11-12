@@ -11,8 +11,9 @@
 // Rien avec « réduire les animations ».
 // ==========================================================================
 type LenisMini = { scrollTo: (y: number, o: object) => void };
-const DUREE = 0.9; // s : glissement doux, comme la section d'un bac
-const courbe = (t: number) => 1 - Math.pow(1 - t, 4);
+const DUREE = 1.3; // s : glissement très doux
+// démarrage et arrivée en douceur (accélère puis ralentit), pour un mouvement plus naturel
+const courbe = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 let anim = false, dernierY = window.scrollY, sens = 0, minuteur = 0, debutDoigt = 0, yDoigt = 0;
 
