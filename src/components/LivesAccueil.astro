@@ -60,6 +60,7 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
 )}
 
 <script>
+  import { typo } from '../scripts/typo';
   // « À suivre » → grand lecteur : on échange les deux lives, puis on lance la vidéo (comme sur YouTube)
   type L = { youtube: string; nom: string; infos: string; mot: string; chaine: { nom: string; sous: string } };
   // Photos des chaînes « À suivre » chargées en avance (quelques Ko) : elles s'affichent tout de suite au changement de live
@@ -75,15 +76,15 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
     b.dataset.suivant = JSON.stringify(ancien);
     b.setAttribute('aria-label', `Lire : ${ancien.nom}`);
     b.querySelector('img')!.src = `/lives/vignettes/${ancien.youtube}.jpg`;
-    b.querySelector('.nom')!.textContent = ancien.nom;
-    b.querySelector('.texte-legende')!.textContent = ancien.infos;
+    b.querySelector('.nom')!.textContent = typo(ancien.nom);
+    b.querySelector('.texte-legende')!.textContent = typo(ancien.infos);
     // le grand lecteur prend le live choisi
     p.dataset.principal = JSON.stringify(nouveau);
-    p.querySelector('[data-champ="nom"]')!.textContent = nouveau.nom;
+    p.querySelector('[data-champ="nom"]')!.textContent = typo(nouveau.nom);
     p.querySelector<HTMLImageElement>('[data-champ="avatar"]')!.src = `/lives/avatars/${nouveau.youtube}.jpg`;
-    p.querySelector('[data-champ="chaine"]')!.textContent = nouveau.chaine.nom;
+    p.querySelector('[data-champ="chaine"]')!.textContent = typo(nouveau.chaine.nom);
     p.querySelector('[data-champ="chaine-sous"]')!.textContent = nouveau.chaine.sous;
-    p.querySelector('[data-champ="mot"]')!.textContent = nouveau.mot;
+    p.querySelector('[data-champ="mot"]')!.textContent = typo(nouveau.mot);
     p.querySelector<HTMLAnchorElement>('[data-champ="youtube"]')!.href = `https://www.youtube.com/watch?v=${nouveau.youtube}`;
     const lecteur = p.querySelector<HTMLElement>('[data-video]')!;
     lecteur.dataset.video = nouveau.youtube;

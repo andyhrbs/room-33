@@ -1,3 +1,4 @@
+import { typo } from './typo';
 // ==========================================================================
 // Room 33 — Lecteur d'extraits (un seul son à la fois, jamais d'autoplay).
 // - Tout bouton [data-ecouter] lance l'extrait de 30 s (Deezer, via /api/extrait)
@@ -54,8 +55,8 @@ function afficher() {
   if (mini && courant) {
     mini.hidden = false;
     mini.dataset.etat = etat;
-    mini.querySelector('[data-titre]')!.textContent = courant.titre;
-    mini.querySelector('[data-artiste]')!.textContent = courant.artiste;
+    mini.querySelector('[data-titre]')!.textContent = typo(courant.titre);
+    mini.querySelector('[data-artiste]')!.textContent = typo(courant.artiste);
     mini.querySelector('[data-mini-statut]')!.textContent = etat === 'erreur' ? 'Extrait indisponible' : 'Extrait';
     mini.querySelector('[data-lecture-pause]')!.setAttribute('aria-label', etat === 'lecture' ? 'Mettre en pause' : 'Reprendre l’extrait');
     const prec = mini.querySelector<HTMLButtonElement>('[data-precedent]'), suiv = mini.querySelector<HTMLButtonElement>('[data-suivant]');
@@ -64,8 +65,8 @@ function afficher() {
     // lecteur plein écran (mobile)
     const plein = mini.querySelector<HTMLElement>('[data-lecteur-plein]');
     if (plein) {
-      plein.querySelector('[data-plein-titre]')!.textContent = courant.titre;
-      plein.querySelector('[data-plein-artiste]')!.textContent = courant.artiste;
+      plein.querySelector('[data-plein-titre]')!.textContent = typo(courant.titre);
+      plein.querySelector('[data-plein-artiste]')!.textContent = typo(courant.artiste);
       plein.querySelector('[data-plein-statut]')!.textContent = etat === 'erreur' ? 'Extrait indisponible' : etat === 'chargement' ? 'Chargement…' : 'Extrait · 30 s';
       plein.querySelector('[data-plein-lecture]')!.setAttribute('aria-label', etat === 'lecture' ? 'Mettre en pause' : 'Reprendre l’extrait');
       plein.querySelector<HTMLButtonElement>('[data-plein-precedent]')!.disabled = !courant;
@@ -200,7 +201,7 @@ async function choisirApp(m: Morceau) {
   morceauChoix = m;
   // « Sa discographie » : la fenêtre propose la page de l'artiste sur chaque app
   dialogue.querySelector('#titre-choix-app')!.textContent = m.type === 'artiste' ? 'Sa discographie sur…' : 'Écouter en entier sur…';
-  dialogue.querySelector('[data-choix-morceau]')!.textContent = m.type === 'artiste' ? m.artiste : `${m.titre} — ${m.artiste}`;
+  dialogue.querySelector('[data-choix-morceau]')!.textContent = typo(m.type === 'artiste' ? m.artiste : `${m.titre} — ${m.artiste}`);
   const boutons = dialogue.querySelectorAll<HTMLButtonElement>('[data-app]');
   boutons.forEach((b) => (b.disabled = true));
   dialogue.setAttribute('aria-busy', 'true'); // pendant la recherche des liens : boutons inactifs mais pas assombris

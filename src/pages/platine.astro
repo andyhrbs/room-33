@@ -99,6 +99,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
 </Base>
 
 <script>
+  import { typo } from '../scripts/typo';
   // ==========================================================================
   // Données en direct : la Function Netlify /api/spotify/ecoute lit le compte
   // Spotify d'Andyh côté serveur et ne renvoie que ce qui s'affiche ici.
@@ -118,8 +119,6 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     if (min < 60 * 24) return rtf.format(-Math.round(min / 60), 'hour');
     return rtf.format(-Math.round(min / 1440), 'day');
   };
-  // apostrophe droite ' → apostrophe typographique ’ (en Gilda, la droite fait une tache collée à la lettre : « 'Til »)
-  const typo = (s = '') => s.replace(/'/g, '’');
   const detail = (m: Morceau) => [m.artiste, m.album && `${m.album}${m.annee ? ` (${m.annee})` : ''}`].filter(Boolean).join(' — ');
 
   function afficherEnCours(d: Reponse) {

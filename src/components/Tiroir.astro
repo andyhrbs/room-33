@@ -80,6 +80,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
 </template>
 
 <script>
+  import { typo } from '../scripts/typo';
   import { tiroir as t } from '../data/textes';
   type Son = { type?: 'morceau' | 'album'; id?: string; titre: string; artiste: string; annee?: string; pochette?: string | null; lien?: string | null };
 
@@ -181,10 +182,10 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       b.dataset.index = String(i);
       b.setAttribute('aria-pressed', String(actif));
       b.classList.toggle('est-choisi', actif);
-      li.querySelector('.titre')!.textContent = s.titre;
+      li.querySelector('.titre')!.textContent = typo(s.titre);
       const etiquette = li.querySelector<HTMLElement>('.etiquette')!;
       if (s.type) etiquette.textContent = s.type === 'album' ? t.album : t.morceau; else etiquette.remove();
-      li.querySelector('.meta')!.textContent = [s.artiste, s.annee].filter(Boolean).join(' · ');
+      li.querySelector('.meta')!.textContent = typo([s.artiste, s.annee].filter(Boolean).join(' · '));
       li.querySelector('.action')!.innerHTML = actif ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 14L9 17L18 6"/></svg> ${t.choisi}` : t.choisir;
       b.setAttribute('aria-label', `${actif ? t.choisi : t.choisir} : ${s.type === 'album' ? `${t.album} ` : ''}${s.titre}, ${s.artiste}`);
       const img = li.querySelector('img')!;
