@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 13:32 : maj figma « Mes écoutes » (Platine ordi)
+# Empreintes Figma de référence — 12 nov. 2026, 13:34 : maj figma Top ordi (« Mon classement » en H1)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -131,12 +131,12 @@
 67:1671 c3zf9c
 67:1761 1bvu3le
 67:1793 p4phlg
-67:1381:cadre rqtqig
-67:1636 7sn72x
+67:1381:cadre 1mbub5d
+67:1636 1cd5p3y
 110:2146 z35unx
-67:1391 18vkyc7
-67:1425 7wa6a4
-67:1587 1fdu9cc
+67:1391 o2a5o4
+67:1425 z62qtu
+67:1587 1iooutq
 182:2296 tu08b2
 268:2764:cadre 1v1acay
 268:2765 az4s3d
