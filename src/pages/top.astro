@@ -25,7 +25,8 @@ const rang = (i: number) => String(i).padStart(2, '0');
     <div class="rideau">
     <!-- bascule Albums / Titres : sortie du hero, en tête du contenu (maquette Figma) -->
     <div class="conteneur zone-bascule">
-      <div class="bascule" role="group" aria-label="Afficher le classement des">
+      <p class="texte-label texte-secondaire titre-bascule" id="titre-bascule">Mon classement</p>
+      <div class="bascule" role="group" aria-labelledby="titre-bascule">
         <button type="button" class="texte-corps" aria-pressed="true" data-vue="albums">Albums</button>
         <button type="button" class="texte-corps" aria-pressed="false" data-vue="titres">Titres</button>
       </div>
@@ -114,6 +115,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
 
 <style>
   .infos { display: grid; gap: var(--espace-md); }
+  .titre-bascule { margin: 0 0 var(--espace-2xs); }
   .bascule { display: flex; gap: var(--espace-lg); }
   .zone-bascule { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
   .zone-bascule ~ [data-panneau] > .section:first-child { padding-top: clamp(1rem, 0.4rem + 2.6vw, 2.5rem); }
