@@ -26,7 +26,10 @@ const donnees = await Promise.all(lives.map(async (l) => {
 <aside class="pv" data-pv hidden aria-label="Vidéo en cours" data-lenis-prevent>
   <script type="application/json" data-pv-lives set:html={JSON.stringify(donnees)} />
   <!-- bande de gauche (ordi) : se montre au survol du panneau ; un clic rétracte. Rétracté, il ne reste qu'elle au bord droit (comme Spotify) -->
-  <button type="button" class="pv-bord seulement-ordi" data-pv-retracter aria-label="Rétracter le panneau vidéo"><Icone nom="fleche-droite" taille={20} class="i-retracter" /><Icone nom="fleche-gauche" taille={20} class="i-rouvrir" /></button>
+  <button type="button" class="pv-bord seulement-ordi" data-pv-retracter aria-label="Masquer la vidéo">
+    <span class="pv-bord-icone" aria-hidden="true"><Icone nom="chevron" taille={24} /></span>
+    <span class="pv-bulle" aria-hidden="true"><span class="b-masquer">Masquer la vidéo</span><span class="b-afficher">Afficher la vidéo</span></span>
+  </button>
   <div class="pv-tete" data-pv-poignee>
     <span class="pv-poignee-trait seulement-mobile" aria-hidden="true"></span>
     <p class="texte-label pv-etiquette">Vidéo en cours</p>
@@ -158,7 +161,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
     if (c.closest('[data-pv-retracter]')) {
       const r = p.classList.toggle('retracte'); p.classList.remove('grand');
-      c.closest('[data-pv-retracter]')!.setAttribute('aria-label', r ? 'Rouvrir le panneau vidéo' : 'Rétracter le panneau vidéo');
+      c.closest('[data-pv-retracter]')!.setAttribute('aria-label', r ? 'Afficher la vidéo' : 'Masquer la vidéo');
       etatPage(); return;
     }
     if (c.closest('[data-pv-reduire]')) { reduire(p); return; }
@@ -283,19 +286,37 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.visible:not(.grand):not(.retracte) { transition: transform var(--pv-entree), width var(--pv-sortie), background-color var(--pv-sortie), box-shadow var(--pv-sortie); }
   }
   .pv.visible.retracte { transform: translateX(calc(100% - var(--pv-bande))); }
-  /* bande sur toute la hauteur, fond sombre un peu transparent (on devine la vidéo derrière) */
+  /* Bande façon Spotify (relevé sur open.spotify.com) :
+     - rétracté, au repos : bande pleine (fond du panneau), chevron ‹ gris ;
+     - au survol : le panneau sort de 12 px de plus, on devine son contenu sous un voile sombre, le chevron passe en blanc
+       avec un petit rebond, et une info-bulle s'affiche au-dessus, à gauche ;
+     - ouvert : la même bande (chevron ›) apparaît au survol du panneau, sur le contenu voilé. */
   .pv-bord {
     position: absolute; z-index: 3; top: 0; bottom: 0; left: 0; width: var(--pv-bande);
     display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
-    background: rgb(12 8 5 / 0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--couleur-texte-principal);
-    opacity: 0; transition: opacity var(--duree-rapide) var(--courbe-standard), background-color var(--duree-rapide) var(--courbe-standard);
+    background: rgb(0 0 0 / 0.55); color: var(--couleur-texte-secondaire);
+    opacity: 0; transition: opacity var(--duree-rapide) var(--courbe-standard), background-color 0.2s var(--courbe-standard), color 0.2s var(--courbe-standard), width 0.3s var(--courbe-douce);
   }
-  .pv:hover .pv-bord, .pv-bord:focus-visible, .pv.retracte .pv-bord { opacity: 1; }
-  .pv-bord:hover { background: rgb(12 8 5 / 0.75); }
-  .pv.retracte .pv-bord { background: rgb(12 8 5 / 0.7); }
-  .pv.retracte .pv-bord:hover { background: rgb(12 8 5 / 0.85); }
-  .pv-bord :global(.i-rouvrir), .pv.retracte .pv-bord :global(.i-retracter) { display: none; }
-  .pv.retracte .pv-bord :global(.i-rouvrir) { display: block; }
+  .pv:hover .pv-bord, .pv-bord:focus-visible { opacity: 1; }
+  .pv-bord:is(:hover, :focus-visible) { color: var(--couleur-texte-principal); }
+  .pv-bord-icone { display: grid; translate: 0 0; transition: translate 0.5s cubic-bezier(0.47, 0, 0.23, 1.38); }
+  .pv-bord:is(:hover, :focus-visible) .pv-bord-icone { translate: 3px 0; } /* le chevron pointe vers où ira le panneau */
+  .pv.retracte .pv-bord { opacity: 1; background: var(--couleur-fond-bloc); }
+  .pv.retracte .pv-bord-icone { rotate: 180deg; }
+  .pv.retracte .pv-bord:is(:hover, :focus-visible) { width: calc(var(--pv-bande) + 12px); background: rgb(0 0 0 / 0.6); }
+  .pv.retracte .pv-bord:is(:hover, :focus-visible) .pv-bord-icone { translate: -3px 0; }
+  .pv.visible.retracte:has(.pv-bord:is(:hover, :focus-visible)) { transform: translateX(calc(100% - var(--pv-bande) - 12px)); }
+  /* info-bulle : au-dessus du chevron, calée à droite, après un court délai */
+  .pv-bulle {
+    position: absolute; right: 4px; bottom: calc(50% + 24px); white-space: nowrap; pointer-events: none;
+    padding: 6px 10px; border-radius: 4px;
+    background: linear-gradient(var(--couleur-fond-tonal-survol), var(--couleur-fond-tonal-survol)), var(--couleur-fond-bloc);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.5); color: var(--couleur-texte-principal); font-size: var(--taille-petit); line-height: 1.3;
+    opacity: 0; transition: opacity 0.15s var(--courbe-standard);
+  }
+  .pv-bord:is(:hover, :focus-visible) .pv-bulle { opacity: 1; transition-delay: 0.4s; }
+  .b-afficher, .pv.retracte .b-masquer { display: none; }
+  .pv.retracte .b-afficher { display: inline; }
   .pv.grand .pv-bord { display: none; }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
