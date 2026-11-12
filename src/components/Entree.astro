@@ -2,7 +2,7 @@
 // 00 · L'entrée : « Allumez la lampe ». Écran noir, sans texte visible : l'abat-jour de la lampe à arc
 // est suspendu au centre de l'écran, la tige chromée descend tout droit (on ne voit pas le pied). Au clic,
 // la lampe s'allume puis la pièce s'éclaire en cercle depuis son ouverture. Échap = entrer directement.
-// Une fois par visite (sessionStorage : revient à chaque nouvelle visite, pas en changeant de page ; ?entree pour la revoir). Animations réduites :
+// Seulement au vrai chargement de l'accueil (arrivée par l'accueil ou actualisation), jamais en naviguant dans le site (Base.astro). Animations réduites :
 // pas de pulsation ni de cercle, la lampe s'allume puis la pièce apparaît.
 // Maquette Figma « 00 · L'entrée » + composant « Lampe d'entrée — lampe à arc » (Éteinte / Allumée).
 // abat-jour : dôme bombé à flancs presque droits, lèvre arrondie (même tracé que Figma, centré sur x = 160)
@@ -63,9 +63,9 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
 </div>
 
 <script>
-  // Relancé à chaque arrivée sur l'accueil (navigation fluide) ; ne fait rien si l'entrée a déjà été vue.
-  const CLE = 'room33-entree';
-  const vue = () => { try { sessionStorage.setItem(CLE, '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active', 'entree-ouverte'); };
+  // Relancé à chaque arrivée sur l'accueil ; ne fait rien si on y arrive en naviguant dans le site (classe entree-vue).
+  // plus de mémoire « une fois par visite » : la lampe revient à chaque vrai chargement de l'accueil (Base.astro décide)
+  const vue = () => { document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active', 'entree-ouverte'); };
   document.addEventListener('astro:page-load', () => {
     const e = document.querySelector<HTMLElement>('[data-entree]');
     if (!e || document.documentElement.classList.contains('entree-vue')) { e?.remove(); return; }

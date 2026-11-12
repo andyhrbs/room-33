@@ -26,18 +26,19 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     {imagePrioritaire && <link rel="preload" as="image" href={imagePrioritaire} fetchpriority="high" />}
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
-    <!-- Entrée « Allumez la lampe » : une fois par visite (sessionStorage : revient dans un nouvel onglet / une nouvelle session, pas en changeant de page) ; déjà vue → pas de flash.
-         Test : ajouter ?entree à l'adresse pour la revoir à chaque fois. -->
+    <!-- Entrée « Allumez la lampe » : seulement quand l'accueil est vraiment chargé (arrivée sur le site par l'accueil, ou actualisation de l'accueil).
+         Jamais en naviguant dans le site (logo, liens, retour) : la navigation fluide marque l'entrée comme vue.
+         Tests : sessionStorage['room33-entree'] = '1' la saute ; ?entree la force. -->
     <script is:inline>
       (function () {
-        var marquer = function () {
-          try {
-            if (/[?&]entree\b/.test(location.search)) { sessionStorage.removeItem('room33-entree'); document.documentElement.classList.remove('entree-vue'); return; }
-            if (sessionStorage.getItem('room33-entree')) document.documentElement.classList.add('entree-vue');
-          } catch (e) { /* mémoire du navigateur bloquée (navigation privée stricte, navigateur intégré à une appli) : on montre l'entrée */ }
-        };
-        marquer();
-        document.addEventListener('astro:after-swap', marquer);
+        var vue = function () { document.documentElement.classList.add('entree-vue'); };
+        try {
+          var forcee = /[?&]entree\b/.test(location.search);
+          if (!forcee && sessionStorage.getItem('room33-entree')) vue();
+        } catch (e) { /* mémoire du navigateur bloquée : on garde la règle du chargement réel */ }
+        // navigation dans le site (ClientRouter) : jamais de lampe
+        document.addEventListener('astro:before-swap', function (ev) { ev.newDocument.documentElement.classList.add('entree-vue'); });
+        document.addEventListener('astro:after-swap', vue);
       })();
     </script>
   </head>
