@@ -109,8 +109,10 @@ const suivants = reste.slice(0, 4);
         <div class="classement">
           <a class="numero-un" href={`/disques/${premier.slug}`}>
             <Pochette motif={premier.motif} src={premier.pochette} alt="" />
-            <span class="titre-h2">N° 1 · {premier.titre}</span>
-            <span class="texte-corps texte-secondaire">{premier.artiste}</span>
+            <span class="legende-un">
+              <span class="titre-h2">N° 1 · {premier.titre}</span>
+              <span class="texte-corps texte-secondaire">{premier.artiste}</span>
+            </span>
           </a>
           <ol role="list" class="suivants">
             {suivants.map((d, i) => (
@@ -233,8 +235,10 @@ const suivants = reste.slice(0, 4);
   [data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
   [data-etat='chargement'] .lecture .rond { border-color: var(--couleur-accent-defaut); }
   .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
-  .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
-  .numero-un :global(.pochette) { width: min(100%, 23.75rem); }
+  /* Figma : pochette 340 px, 24 px jusqu'au titre ; titre et artiste à 4 px (8 sur mobile) */
+  .numero-un { display: grid; gap: var(--espace-lg); align-content: start; text-decoration: none; }
+  .numero-un :global(.pochette) { width: min(100%, 21.25rem); }
+  .legende-un { display: grid; gap: var(--espace-2xs); }
   @media (max-width: 63.99rem) {
     /* mobile : les bacs défilent au doigt (une carte et un bout de la suivante), le Top passe en une colonne */
     .apercu { gap: var(--espace-lg); }
@@ -247,6 +251,7 @@ const suivants = reste.slice(0, 4);
     .photo, .vignette { width: 60px; height: 60px; }
     .classement { grid-template-columns: 1fr; gap: var(--espace-xl); }
     .numero-un :global(.pochette) { width: 100%; }
+    .legende-un { gap: var(--espace-xs); }
   }
   .suivants :global(.voir-disque) { flex: none; margin-left: var(--espace-md); }
   .numero-un:hover .titre-h2 { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
