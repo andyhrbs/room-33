@@ -79,6 +79,8 @@ const { href, texte } = Astro.props;
   @media (max-width: 63.99rem) {
     .retour-flottant { z-index: 45; top: auto; bottom: calc(var(--espace-md) + env(safe-area-inset-bottom)); left: var(--grille-marge); transform: translateY(8px); transition-property: opacity, transform, bottom, background-color, border-color; }
     .retour-flottant.visible { transform: none; }
+    /* zone de toucher agrandie à 60 × 60 px (8 px tout autour), sans changer la taille de la pastille (44 px) */
+    .retour-flottant::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
     :global(body.avec-lecteur) .retour-flottant { bottom: calc(69px + var(--espace-md)); }
   }
   @media (prefers-reduced-motion: reduce) {
