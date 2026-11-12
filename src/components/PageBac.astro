@@ -109,6 +109,7 @@ const nb = bac.disques.length;
     const lien = (e.target as Element).closest<HTMLAnchorElement>('[data-zone-bac] .filtres a');
     if (!lien || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
     e.preventDefault(); e.stopImmediatePropagation(); // avant la navigation fluide d'Astro
+    const auClavier = (e as MouseEvent).detail === 0; // Entrée / Espace : detail = 0 ; doigt ou souris : 1
     if (lien.getAttribute('aria-current') === 'page') return;
     const z = zone(); if (!z) return;
     z.setAttribute('aria-busy', 'true'); z.classList.add('change');
@@ -124,7 +125,9 @@ const nb = bac.disques.length;
       history.replaceState(history.state, '', lien.href); // garde l'historique d'Astro intact
       document.dispatchEvent(new CustomEvent('room33:bac-change'));
       document.dispatchEvent(new CustomEvent('room33:ecoutes'));
-      (neuve.querySelector<HTMLElement>(`.filtres a[href="${lien.getAttribute('href')}"]`))?.focus({ preventScroll: true });
+      // au clavier seulement : on redonne le focus au genre choisi (au doigt, ça affichait un contour blanc)
+      if (auClavier) (neuve.querySelector<HTMLElement>(`.filtres a[href="${lien.getAttribute('href')}"]`))?.focus({ preventScroll: true });
+      else (document.activeElement as HTMLElement | null)?.blur();
     } catch {
       location.href = lien.href; // en cas de souci : navigation classique
     }
