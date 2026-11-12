@@ -7,12 +7,15 @@
 // - Sans JavaScript : tout reste visible (rien n'est caché d'avance dans le HTML).
 // - « Réduire les animations » : simple fondu court (voir global.css).
 // Pour exclure un bloc : data-sans-apparition sur lui ou sur un parent.
+// Liste à faire arriver d'un bloc (ex. les titres d'un album) : data-apparition-groupe sur la liste ;
+// dès qu'une ligne entre à l'écran, toutes les lignes arrivent, en cascade (12 au maximum).
 // ==========================================================================
 const BLOCS = [
   'article', '.textes', '.pochette', 'h2', 'h3', 'p', 'blockquote', 'figure', 'table', 'form', 'dl',
   '.actions', '[role="list"] > li', 'ul > li', 'ol > li', '.pochette-un', '.poch', 'img', 'iframe', '[data-video]',
 ].join(',');
 const MAX_CASCADE = 6;
+const MAX_CASCADE_GROUPE = 12;
 
 let observateur: IntersectionObserver | undefined;
 
@@ -29,9 +32,12 @@ function preparer() {
       if (el.closest('[data-sans-apparition], dialog')) continue;
       choisis.push(el);
     }
+    const visibleAuChargement = (el: HTMLElement) => { const r = el.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0 && r.height > 0; };
     for (const el of choisis) {
-      const r = el.getBoundingClientRect();
-      if (r.top < innerHeight && r.bottom > 0 && r.height > 0) continue; // déjà visible au chargement
+      if (visibleAuChargement(el)) continue; // déjà visible au chargement
+      // groupe dont une ligne est déjà à l'écran : tout le groupe reste visible (pas de lignes qui arrivent après coup)
+      const g = el.closest<HTMLElement>('[data-apparition-groupe]');
+      if (g && [...g.children].some((x) => visibleAuChargement(x as HTMLElement))) continue;
       // dans une rangée qui défile à l'horizontale (bacs de l'accueil, « Les autres bacs », fiche disque),
       // les pochettes montent aussi : on donne à la rangée la place de la montée en bas (padding compensé
       // par une marge négative, la mise en page ne bouge pas), sinon une barre de défilement verticale apparaît
@@ -50,10 +56,16 @@ function preparer() {
   if (!aSurveiller.length) return;
   observateur = new IntersectionObserver((entrees) => {
     // ceux qui entrent ensemble arrivent en cascade, dans l'ordre de la page
-    const visibles = entrees.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement)
-      .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+    const entres = new Set(entrees.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement));
+    // une ligne d'un groupe entre : tout le groupe arrive avec elle (même les lignes encore sous l'écran)
+    let groupe = false;
+    for (const el of [...entres]) {
+      const g = el.closest('[data-apparition-groupe]');
+      if (g) { groupe = true; g.querySelectorAll<HTMLElement>('[data-apparition]:not(.apparu)').forEach((x) => entres.add(x)); }
+    }
+    const visibles = [...entres].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
     visibles.forEach((el, i) => {
-      el.style.setProperty('--rang', String(Math.min(i, MAX_CASCADE)));
+      el.style.setProperty('--rang', String(Math.min(i, groupe ? MAX_CASCADE_GROUPE : MAX_CASCADE)));
       el.classList.add('apparu');
       observateur!.unobserve(el);
       // une fois arrivé, l'élément redevient normal (ses propres effets de survol reprennent la main)

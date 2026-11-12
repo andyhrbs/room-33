@@ -65,7 +65,7 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
             <h2 id="titre-titres" class="titre-h1">Les titres</h2>
             <p class="texte-petit texte-secondaire">{pistes.length} titre{pistes.length > 1 ? 's' : ''} · {dureeTotale}</p>
           </div>
-          <ol role="list" class="pistes">
+          <ol role="list" class="pistes" data-apparition-groupe>
             {pistes.map((p) => (
               <li class:list={['piste', { coeur: estCoeur(p.titre) }]} data-ecoute data-titre={p.titre || 'Sans titre'} data-artiste={d.artiste} data-type="titre" data-deezer={p.deezer}>
                 <span class="num texte-label texte-secondaire">{String(p.numero).padStart(2, '0')}</span>
