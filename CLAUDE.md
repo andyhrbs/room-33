@@ -29,6 +29,10 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Lecteur global : `src/scripts/lecteur.ts` (conteneurs `[data-ecoute]` : `data-titre`, `data-artiste`, `data-type`, `data-deezer`, `data-isrc`, `data-upc`).
 - Coup de cœur : champ admin `coupDeCoeur` → cœur dans « Les titres » de la fiche.
 
+## Règles d'interface
+- **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche, n° 1 du Top, morceau du moment, titre n° 1 de l'aperçu platine) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres, top titres de la Platine).
+- Lignes d'albums (Top albums, accueil, « Dans ce bac ») : pas de ▶, « Voir le disque » sur ordi ; la ligne entière mène au disque.
+
 ## Figma
 - Fichier `rug9BnVFR2UBMfGUQH8kug` ; pages « 🖥 UI — Écrans » `1:4`, « 🧩 Kit UI » `1:3`.
 - **« maj figma »** : procédure dans `docs/figma/README.md` (scan → diff avec `docs/figma/empreintes.txt` → détail → appliquer ordi + mobile → tester → push dev → mettre à jour les empreintes → lister chaque changement). Si Andyh précise les écrans touchés, ne scanner que ceux-là.
