@@ -12,7 +12,7 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - **Figma** : ne jamais modifier sans accord (sauf « maj figma » ou demande explicite). Pas de notes sur la page « UI — Écrans ». **Le site dev est la référence** ; Figma s'aligne dessus.
 - **Secrets** : uniquement dans les variables Netlify ; jamais dans le chat ; Claude ne saisit aucune clé.
 - **Frictions** : traitées une par une quand Andyh dit « next ». Après chaque friction réglée → mettre à jour le canva « Objectifs des pages » (statut « Réglé » + date).
-- **Journal arrêté** (12 nov.) : plus de ligne par changement ; l'historique est dans GitHub (messages de commit clairs, en français). Le doc « Room 33 — Textes » reste la référence des textes du site (conversation « Contenus »).
+- **Historique** : dans GitHub (messages de commit clairs, en français). Plus de journal ; le doc « Room 33 — Textes » a été supprimé (12 nov.). Les textes du site vivent dans le code (`src/data/textes.ts`) et dans /admin.
 
 ## Pile technique
 - Astro 5 (ClientRouter, styles scopés), Lenis (défilement doux), Netlify (Functions + Forms), Decap CMS sur `/admin` (`public/admin/config.yml`).
@@ -35,7 +35,6 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Limite connue : le scan ne voit pas les retouches faites à l'intérieur d'une instance (calque masqué, texte modifié directement).
 
 ## Outils et liens
-- Doc « Room 33 — Textes » (référence des textes du site) : projet Claude Docs `3e8557fb-914a-429d-81d0-42d65bdbfe64`.
 - Claude Design : « Room 33 — Objectifs des pages » `J4HSWbuuiLy4qJrs7UwLdM` ; « Charte du mouvement » `FrZxnXQfWE6pGc6L8c3Wk5` ; « Récap technique » `1XkRkhm13uoAwxrTqVN6C6`.
 
 ## État (12 nov. 2026)
