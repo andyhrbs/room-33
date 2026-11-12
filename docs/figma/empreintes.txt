@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 16:05 : nouveaux écrans « Le Top de la Room — Titres » (ordi 440:3191, mobile 440:3465)
+# Empreintes Figma de référence — 12 nov. 2026, 16:08 : ▶ de La platine (accueil) en 40 px (15:74 « Le morceau du moment » encore à l’ancienne empreinte)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -22,7 +22,7 @@
 16:198 1661gs8
 349:2916 l1z603
 349:2918 1g7ol5r
-349:2940 4gvzbe
+349:2940 1mjsh3y
 349:2958 14nnr4n
 256:2734 edn3pc
 16:292 14vq11r
@@ -33,7 +33,7 @@
 15:74 uk9ccr
 15:89 1t67no8
 15:93 gds4hs
-15:133 12w7typ
+15:133 je3v7l
 15:151 hli0z8
 256:2674 t652tu
 15:212 1wy2uzw
