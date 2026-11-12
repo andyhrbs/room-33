@@ -1,4 +1,6 @@
 ---
+// apostrophe droite → typographique (la droite fait une tache collée à la lettre en Gilda : « 'Til »)
+const typo = (s = '') => s.replace(/\u0027/g, '\u2019');
 // 01 · La pièce (accueil)
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
@@ -82,8 +84,8 @@ const suivants = reste.slice(0, 4);
               <dd class="valeur">
                 <span class="vignette" data-pochette-titre aria-hidden="true" style={ecoutesMois?.titre?.pochette ? `background-image: url("${ecoutesMois.titre.pochette}")` : undefined}></span>
                 <span class="nom-titre">
-                  <span class="titre-h2 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
-                  <span class="texte-petit texte-secondaire" data-artiste-titre>{ecoutesMois?.titre?.artiste ?? ''}</span>
+                  <span class="titre-h2 nom" data-nom-titre>{typo(ecoutesMois?.titre?.titre)}</span>
+                  <span class="texte-petit texte-secondaire" data-artiste-titre>{typo(ecoutesMois?.titre?.artiste)}</span>
                 </span>
                 <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${ecoutesMois?.titre?.titre ?? 'ce titre'}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
               </dd>
@@ -94,7 +96,7 @@ const suivants = reste.slice(0, 4);
               <dd class="valeur valeur-artiste">
                 <span class="photo" data-photo-artiste aria-hidden="true" style={ecoutesMois?.artiste?.image ? `background-image: url("${ecoutesMois.artiste.image}")` : undefined}></span>
                 <span class="nom-titre">
-                  <span class="titre-h2 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
+                  <span class="titre-h2 nom" data-nom-artiste>{typo(ecoutesMois?.artiste?.nom)}</span>
                   <Bouton style="lien" href={ecoutesMois?.artiste?.lien ?? '/platine'} data-ouvrir-artiste data-artiste={ecoutesMois?.artiste?.nom} data-lien-artiste class="voir-artiste">{accueil.platine.voirArtiste}</Bouton>
                 </span>
               </dd>
@@ -139,7 +141,7 @@ const suivants = reste.slice(0, 4);
   document.addEventListener('astro:page-load', async () => {
     const zone = document.querySelector<HTMLElement>('[data-ecoutes-mois]');
     if (!zone) return;
-    const texte = (sel: string, v: string) => { const el = zone.querySelector(sel); if (el) el.textContent = v; };
+    const texte = (sel: string, v: string) => { const el = zone.querySelector(sel); if (el) el.textContent = v.replace(/'/g, '’'); }; // apostrophe typographique ’ (la droite fait une tache en Gilda)
     const image = (sel: string, url?: string | null) => { const el = zone.querySelector<HTMLElement>(sel); if (el) el.style.backgroundImage = url ? `url("${url}")` : ''; };
     try {
       const rep = await fetch('/api/spotify/ecoute?periode=4-semaines');

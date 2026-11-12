@@ -118,6 +118,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     if (min < 60 * 24) return rtf.format(-Math.round(min / 60), 'hour');
     return rtf.format(-Math.round(min / 1440), 'day');
   };
+  // apostrophe droite ' → apostrophe typographique ’ (en Gilda, la droite fait une tache collée à la lettre : « 'Til »)
+  const typo = (s = '') => s.replace(/'/g, '’');
   const detail = (m: Morceau) => [m.artiste, m.album && `${m.album}${m.annee ? ` (${m.annee})` : ''}`].filter(Boolean).join(' — ');
 
   function afficherEnCours(d: Reponse) {
@@ -128,8 +130,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     // on garde le point (stylé par la page) et on change seulement les textes ordi / mobile
     if (libelle) etat.querySelectorAll('span:not(.point)').forEach((x) => (x.textContent = libelle));
     etat.classList.toggle('a-larret', !d.enCours);
-    $('[data-titre]').textContent = m.titre;
-    $('[data-detail]').textContent = detail(m);
+    $('[data-titre]').textContent = typo(m.titre);
+    $('[data-detail]').textContent = typo(detail(m));
     const macaron = $('[data-macaron]');
     if (m.pochette) macaron.style.backgroundImage = `url("${m.pochette}")`;
     $('[data-vinyle]').classList.toggle('a-larret', !d.enCours);
@@ -140,12 +142,12 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   function afficherClassements(d: Reponse) {
     const [a1] = d.topArtistes; const [t1] = d.topTitres;
     if (a1) {
-      $('[data-artiste-un]').textContent = a1.nom;
+      $('[data-artiste-un]').textContent = typo(a1.nom);
       const photo = $('[data-artiste-photo]');
       photo.style.backgroundImage = a1.image ? `url("${a1.image}")` : '';
     }
     if (t1) {
-      $('[data-titre-un]').textContent = t1.titre;
+      $('[data-titre-un]').textContent = typo(t1.titre);
       const img = document.querySelector<HTMLImageElement>('[data-titre-pochette] img');
       const conteneur = $('[data-titre-pochette] .pochette');
       if (t1.pochette) {
@@ -161,7 +163,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       if (t.lien) { a.href = t.lien; a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('aria-label', `${t.titre}, ${t.artiste} (ouvre Spotify)`); } else a.removeAttribute('href');
       li.querySelector('.face')!.textContent = rang(i);
       const [titre, artiste] = li.querySelectorAll('.infos > span');
-      titre.textContent = t.titre; artiste.textContent = t.artiste;
+      titre.textContent = typo(t.titre); artiste.textContent = typo(t.artiste);
       li.dataset.titre = t.titre; li.dataset.artiste = t.artiste; li.dataset.type = 'titre';
       delete li.dataset.deezer; if (t.isrc) li.dataset.isrc = t.isrc; else delete li.dataset.isrc; // morceau exact sur Deezer (code ISRC)
       li.querySelector('.duree')!.textContent = t.duree ?? '';
@@ -175,7 +177,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     listeArtistes.replaceChildren(...d.topArtistes.map((a, i) => {
       const li = modeleArtiste.content.firstElementChild!.cloneNode(true) as HTMLElement;
       li.querySelector('.num')!.textContent = rang(i);
-      li.querySelector('.nom')!.textContent = a.nom;
+      li.querySelector('.nom')!.textContent = typo(a.nom);
       // « Voir l'artiste » (et toute la ligne) : ouvre la fenêtre de choix de l'app (Spotify, Apple Music, Deezer) sur la page de l'artiste
       const ouvrir = li.querySelector<HTMLAnchorElement>('[data-ouvrir-artiste]')!;
       ouvrir.dataset.artiste = a.nom; li.dataset.artiste = a.nom;
