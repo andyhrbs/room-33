@@ -17,8 +17,12 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     syncTouch: false,
     anchors: true,
     autoRaf: true,
-    // garde des sections aimantées (page d'un bac) : peut absorber un coup de molette
-    virtualScroll: (d) => { const g = (window as unknown as { room33Garde?: (x: typeof d) => boolean }).room33Garde; return g ? g(d) : true; },
+    // gardes des sections aimantées (hero, page d'un bac) : peuvent absorber un coup de molette
+    virtualScroll: (d) => {
+      const w = window as unknown as { room33GardeHero?: (x: typeof d) => boolean; room33Garde?: (x: typeof d) => boolean };
+      if (w.room33GardeHero && !w.room33GardeHero(d)) return false;
+      return w.room33Garde ? w.room33Garde(d) : true;
+    },
     // laisser le navigateur faire dans les fenêtres par-dessus la page, et pendant l'écran d'entrée
     prevent: (el: HTMLElement) =>
       Boolean(el.closest?.('dialog, [data-lenis-prevent], [data-entree]')) ||
