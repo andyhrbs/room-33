@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 12:35 : Top « Mon classement » au-dessus de la bascule
+# Empreintes Figma de référence — 12 nov. 2026, 12:55 : hero « Un bac — Ordi » remis comme le site, mini-platine 84
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -47,13 +47,13 @@
 17:494 j3kw65
 17:517 12ew7vw
 17:510 p4phlg
-17:235:cadre tqq949
-23:740 1bvfljb
-110:2106 wa1qan
-338:4236 mc4di7
+17:235:cadre j9wp9g
+23:740 1mfwm54
+110:2106 1g1ie5z
+338:4236 1tbc9z9
 17:330 1efsnh
 17:353 1wsj48f
-17:382 1hqklmg
+17:382 jszzbj
 182:2248 tu08b2
 18:574:cadre i7y54l
 23:863 n1otcf
