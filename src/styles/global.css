@@ -194,6 +194,10 @@ html:not(.entree-vue):not(.entree-ouverte) .hero-accueil *, html:not(.entree-vue
 /* Fixe « fill » (comme Forma Studio) : le hero fait exactement la hauteur de l'écran et ne bouge plus du tout ;
    svh = hauteur avec les barres du navigateur affichées (pas de saut quand elles se replient sur iPhone) */
 .hero-accueil, .hero-page { position: sticky !important; top: 0 !important; z-index: 0; height: 100vh; height: 100svh; min-height: 0 !important; }
+/* Mini-platine ouverte (fixe en bas) : le hero s'arrête au-dessus d'elle, son texte n'est plus caché */
+:root { --h-lecteur: 84px; }
+@media (max-width: 63.99rem) { :root { --h-lecteur: 69px; } }
+body.avec-lecteur .hero-accueil, body.avec-lecteur .hero-page { height: calc(100vh - var(--h-lecteur)); height: calc(100svh - var(--h-lecteur)); }
 .hero-accueil::after, .hero-page::after {
   content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: var(--brun-950); opacity: calc(var(--couvert, 0) * 0.75);
