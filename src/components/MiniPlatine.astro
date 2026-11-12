@@ -114,6 +114,7 @@ const apps = [
      La page garde une place équivalente en bas (pied de page rallongé, global.css) : rien n'est jamais caché. */
   .fixe {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    view-transition-name: lecteur; /* changement de page : la barre reste en place, sans fondu (global.css) */
     border-radius: 0;
     border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
     box-shadow: 0 -12px 32px rgb(0 0 0 / 0.35);

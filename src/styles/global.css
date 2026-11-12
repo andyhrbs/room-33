@@ -150,6 +150,11 @@ body.avec-lecteur .pied { padding-bottom: 5.5rem; }
 ::view-transition { background: var(--couleur-fond-page); }
 ::view-transition-old(root) { animation: r33-page-sort 500ms var(--courbe-entree-sortie) both; }
 ::view-transition-new(root) { animation: r33-page-pose var(--duree-page) var(--courbe-douce) 200ms both; }
+/* Mini-platine : comme Spotify, elle ne bouge pas quand on change de page — pas de fondu, et on montre
+   directement la nouvelle (vivante) : le vinyle continue de tourner, la barre de progression avance */
+::view-transition-group(lecteur) { animation: none; }
+::view-transition-old(lecteur) { display: none; }
+::view-transition-new(lecteur) { animation: none; }
 @keyframes r33-page-sort { to { opacity: 0; } }
 @keyframes r33-page-pose { from { opacity: 0; transform: translateY(28px); } }
 

@@ -374,5 +374,7 @@ document.addEventListener('click', (e) => {
 
 // Après chaque navigation : remettre les bons états sur la nouvelle page
 document.addEventListener('astro:page-load', afficher);
+// le nouveau <body> arrive sans la classe « avec-lecteur » : on la remet tout de suite (sinon le hero et le pied de page sautent)
+document.addEventListener('astro:after-swap', () => { if (courant) document.body.classList.add('avec-lecteur'); });
 document.addEventListener('room33:ecoutes', afficher); // listes remplies en direct (page Platine)
 document.addEventListener('room33:video', () => { if (!audio.paused) audio.pause(); }); // une vidéo démarre : on coupe l'extrait
