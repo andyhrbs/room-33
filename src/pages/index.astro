@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
 import Bouton from '../components/Bouton.astro';
+import Icone from '../components/Icone.astro';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import CarteDisque from '../components/CarteDisque.astro';
@@ -75,20 +76,26 @@ const suivants = reste.slice(0, 4);
           <EnTeteSection surtitre={accueil.platine.surtitre} titre={accueil.platine.titre} id="titre-platine" lien={{ texte: accueil.platine.lien, href: '/platine' }} />
           <!-- Valeurs lues au build sur Spotify, remises à jour en direct par le script en bas de page -->
           <dl class="afficheurs" data-ecoutes-mois aria-live="polite" hidden={!ecoutesMois}>
-            <div class="afficheur">
-              <dt class="texte-petit texte-secondaire">{accueil.platine.legendeArtiste}</dt>
-              <dd class="valeur">
-                <span class="photo" data-photo-artiste aria-hidden="true" style={ecoutesMois?.artiste?.image ? `background-image: url("${ecoutesMois.artiste.image}")` : undefined}></span>
-                <span class="titre-h2 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
-              </dd>
-            </div>
-            <div class="afficheur">
+            <!-- Titre n° 1 (d'abord) : extrait de 30 s -->
+            <div class="afficheur" data-ecoute data-titre-un data-titre={ecoutesMois?.titre?.titre} data-artiste={ecoutesMois?.titre?.artiste} data-type="titre" data-isrc={ecoutesMois?.titre?.isrc}>
               <dt class="texte-petit texte-secondaire">{accueil.platine.legendeTitre}</dt>
               <dd class="valeur">
                 <span class="vignette" data-pochette-titre aria-hidden="true" style={ecoutesMois?.titre?.pochette ? `background-image: url("${ecoutesMois.titre.pochette}")` : undefined}></span>
                 <span class="nom-titre">
                   <span class="titre-h2 nom" data-nom-titre>{ecoutesMois?.titre?.titre ?? ''}</span>
                   <span class="texte-petit texte-secondaire" data-artiste-titre>{ecoutesMois?.titre?.artiste ?? ''}</span>
+                </span>
+                <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${ecoutesMois?.titre?.titre ?? 'ce titre'}`}><span class="rond"><Icone nom="lecture" taille={20} class="i-lecture" /><Icone nom="pause" taille={18} class="i-pause" /></span></button>
+              </dd>
+            </div>
+            <!-- Artiste n° 1 : « Voir l'artiste » (choix de l'app, comme « Sa discographie » sur une fiche) -->
+            <div class="afficheur">
+              <dt class="texte-petit texte-secondaire">{accueil.platine.legendeArtiste}</dt>
+              <dd class="valeur">
+                <span class="photo" data-photo-artiste aria-hidden="true" style={ecoutesMois?.artiste?.image ? `background-image: url("${ecoutesMois.artiste.image}")` : undefined}></span>
+                <span class="nom-titre">
+                  <span class="titre-h2 nom" data-nom-artiste>{ecoutesMois?.artiste?.nom ?? ''}</span>
+                  <Bouton style="lien" href={ecoutesMois?.artiste?.lien ?? '/platine'} data-ouvrir-artiste data-artiste={ecoutesMois?.artiste?.nom} data-lien-artiste class="voir-artiste">{accueil.platine.voirArtiste}</Bouton>
                 </span>
               </dd>
             </div>
@@ -126,7 +133,7 @@ const suivants = reste.slice(0, 4);
 <script>
   // Aperçu de la platine : remet à jour l'artiste et le titre n° 1 du mois depuis Spotify (même Function que la page Platine).
   // Si Spotify ne répond pas : on garde les valeurs du build ; s'il n'y en a pas, un message remplace les afficheurs.
-  type Reponse = { topTitres: { titre: string; artiste: string; pochette?: string | null }[]; topArtistes: { nom: string; image?: string | null }[]; erreur?: string };
+  type Reponse = { topTitres: { titre: string; artiste: string; pochette?: string | null; isrc?: string }[]; topArtistes: { nom: string; image?: string | null; lien?: string }[]; erreur?: string };
   document.addEventListener('astro:page-load', async () => {
     const zone = document.querySelector<HTMLElement>('[data-ecoutes-mois]');
     if (!zone) return;
@@ -140,6 +147,12 @@ const suivants = reste.slice(0, 4);
       if (!a || !t) throw new Error('écoutes vides');
       texte('[data-nom-artiste]', a.nom); image('[data-photo-artiste]', a.image);
       texte('[data-nom-titre]', t.titre); texte('[data-artiste-titre]', t.artiste); image('[data-pochette-titre]', t.pochette);
+      // le bouton ▶ joue le vrai titre n° 1 (code ISRC = le morceau exact sur Deezer)
+      const ecoute = zone.querySelector<HTMLElement>('[data-titre-un]');
+      if (ecoute) { ecoute.dataset.titre = t.titre; ecoute.dataset.artiste = t.artiste; if (t.isrc) ecoute.dataset.isrc = t.isrc; else delete ecoute.dataset.isrc; ecoute.querySelector('[data-ecouter]')?.setAttribute('aria-label', `Écouter un extrait de ${t.titre}, ${t.artiste}`); }
+      const voir = zone.querySelector<HTMLAnchorElement>('[data-lien-artiste]');
+      if (voir) { voir.dataset.artiste = a.nom; if (a.lien) voir.href = a.lien; }
+      document.dispatchEvent(new Event('room33:ecoutes')); // le lecteur remet l'état « en lecture » si besoin
       zone.hidden = false;
     } catch {
       if (zone.hidden) document.querySelector<HTMLElement>('[data-ecoutes-indispo]')?.removeAttribute('hidden');
@@ -204,6 +217,17 @@ const suivants = reste.slice(0, 4);
   .vignette { border-radius: var(--rayon-pochette); }
   .nom-titre { display: grid; gap: var(--espace-2xs); min-width: 0; }
   .nom { overflow-wrap: anywhere; text-wrap: balance; }
+  .nom-titre { flex: 0 1 auto; }
+  .voir-artiste { justify-self: start; margin-top: var(--espace-2xs); }
+  /* ▶ du titre n° 1 : rond ambre 48 px (comme « Écouter un extrait »), zone de 48 px */
+  .lecture { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
+  .lecture .rond { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--rayon-pilule); background: var(--couleur-accent-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
+  .lecture:hover .rond { background: var(--couleur-accent-presse); }
+  .lecture:active .rond { transform: scale(0.96); }
+  .lecture :global(.i-pause) { display: none; }
+  [data-etat='lecture'] .lecture :global(.i-pause) { display: block; }
+  [data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
+  [data-etat='chargement'] .lecture .rond { opacity: 0.7; }
   .classement { display: grid; grid-template-columns: minmax(0, 26.375rem) minmax(0, 1fr); gap: var(--espace-3xl); align-items: start; }
   .numero-un { display: grid; gap: var(--espace-sm); text-decoration: none; }
   .numero-un :global(.pochette) { width: min(100%, 23.75rem); }

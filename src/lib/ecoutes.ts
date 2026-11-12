@@ -5,8 +5,8 @@
 // à jour en direct via /api/spotify/ecoute. Sans clés ou si Spotify ne répond pas : null.
 // ==========================================================================
 export interface EcoutesDuMois {
-  artiste: { nom: string; image?: string } | null;
-  titre: { titre: string; artiste: string; pochette?: string; lien?: string } | null;
+  artiste: { nom: string; image?: string; lien?: string } | null;
+  titre: { titre: string; artiste: string; pochette?: string; lien?: string; isrc?: string } | null;
 }
 
 const image = (images: { url: string; width: number }[] = []) => (images.find((i) => i.width === 300) || images[0])?.url;
@@ -32,8 +32,8 @@ export async function ecoutesDuMois(): Promise<EcoutesDuMois | null> {
     const a = artistes?.items?.[0];
     const t = titres?.items?.[0];
     return {
-      artiste: a ? { nom: a.name, image: image(a.images) } : null,
-      titre: t ? { titre: t.name, artiste: t.artists.map((x: { name: string }) => x.name).join(', '), pochette: image(t.album?.images), lien: t.external_urls?.spotify } : null,
+      artiste: a ? { nom: a.name, image: image(a.images), lien: a.external_urls?.spotify } : null,
+      titre: t ? { titre: t.name, artiste: t.artists.map((x: { name: string }) => x.name).join(', '), pochette: image(t.album?.images), lien: t.external_urls?.spotify, isrc: t.external_ids?.isrc } : null,
     };
   } catch (e) {
     console.warn(`[Platine] écoutes du mois indisponibles au build : ${(e as Error).message}`);
