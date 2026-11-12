@@ -84,6 +84,8 @@ const { href, texte } = Astro.props;
     .retour-flottant :global(svg) { width: 24px; height: 24px; }
     .retour-flottant::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
     :global(body.avec-lecteur) .retour-flottant { bottom: calc(69px + var(--espace-md)); }
+    :global(html.pv-barre) .retour-flottant { bottom: calc(72px + var(--espace-md) + env(safe-area-inset-bottom)); }
+    :global(html.pv-barre body.avec-lecteur) .retour-flottant { bottom: calc(141px + var(--espace-md)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .retour-flottant { transform: none; transition: opacity var(--duree-rapide) linear; }

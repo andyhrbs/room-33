@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import { site } from '../data/textes';
 import MiniPlatine from '../components/MiniPlatine.astro';
 import Tiroir from '../components/Tiroir.astro';
+import PanneauVideo from '../components/PanneauVideo.astro';
 
 interface Props {
   title?: string;
@@ -62,6 +63,10 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <Tiroir />
     <div transition:persist="lecteur">
       <MiniPlatine />
+    </div>
+    <!-- Vidéo des lives (panneau à droite / grande vue / feuille mobile) : continue d'une page à l'autre -->
+    <div transition:persist="video">
+      <PanneauVideo />
     </div>
     <script>import '../scripts/lecteur'; import '../scripts/apparitions'; import '../scripts/defilement'; import '../scripts/retour';</script>
   </body>

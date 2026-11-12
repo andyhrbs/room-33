@@ -1,6 +1,7 @@
 ---
 // Vidéo YouTube en « façade » : on affiche la vignette (servie par Room 33) et un bouton lecture.
-// YouTube n'est chargé qu'au clic (youtube-nocookie), puis la vidéo se lance. Jamais deux sons à la fois (vidéo ↔ extrait).
+// Au clic, la vidéo s'ouvre dans le panneau vidéo (PanneauVideo.astro : panneau à droite / grande vue / feuille mobile).
+// Le script ci-dessous (vidéo jouée dans la page) ne sert plus qu'en secours, si le panneau est absent.
 import Icone from './Icone.astro';
 interface Props { youtube: string; titre: string; grand?: boolean; class?: string }
 const { youtube, titre, grand = false, class: cls } = Astro.props;

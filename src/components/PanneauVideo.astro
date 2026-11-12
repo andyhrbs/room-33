@@ -1,0 +1,306 @@
+---
+// Lecteur vidéo des lives, inspiré du panneau de droite de Spotify (« En cours de lecture ») :
+// - Ordi : panneau à droite, sur toute la hauteur, qui pousse la page. Vidéo en haut, puis titre, chaîne, mot,
+//   et « À suivre ». Il se rétracte vers la droite (un onglet reste au bord, la vidéo continue) et s'agrandit
+//   en grande vue façon YouTube, par-dessus la page (mode cinéma : la pièce s'assombrit).
+// - Mobile : feuille plein écran qui monte du bas ; glissée vers le bas (ou ⌄), elle se réduit en barre.
+// - Il reste ouvert quand on change de page (transition:persist dans Base). L'iframe YouTube ne bouge jamais
+//   dans la page (sinon elle se recharge) : seules les mises en page changent (panneau / grand / replié).
+// - Ouvert par les vignettes des lives ([data-lire-video], voir VideoLive.astro).
+import Icone from './Icone.astro';
+import { lives } from '../data/lives';
+import { infosVideo, dateFr, photoChaine } from '../lib/youtube';
+
+const donnees = await Promise.all(lives.map(async (l) => {
+  const yt = await infosVideo(l.youtube);
+  return {
+    id: l.youtube,
+    nom: `${l.artiste} — ${l.titre}`,
+    chaine: yt.chaine ?? l.lieu,
+    date: dateFr(yt.date) ?? String(l.annee),
+    mot: l.mot,
+    photo: (await photoChaine(l.youtube)) ?? `/lives/avatars/${l.youtube}.jpg`,
+  };
+}));
+---
+<aside class="pv" data-pv hidden aria-label="Vidéo en cours" data-lenis-prevent>
+  <script type="application/json" data-pv-lives set:html={JSON.stringify(donnees)} />
+  <div class="pv-tete" data-pv-poignee>
+    <span class="pv-poignee-trait seulement-mobile" aria-hidden="true"></span>
+    <p class="texte-label pv-etiquette">Vidéo en cours</p>
+    <div class="pv-actions">
+      <button type="button" class="pv-bouton seulement-ordi" data-pv-agrandir aria-label="Agrandir la vidéo"><Icone nom="agrandir" taille={20} class="i-agrandir" /><Icone nom="contracter" taille={20} class="i-contracter" /></button>
+      <button type="button" class="pv-bouton seulement-ordi" data-pv-retracter aria-label="Rétracter le panneau vidéo"><Icone nom="fleche-droite" taille={20} /></button>
+      <button type="button" class="pv-bouton seulement-mobile" data-pv-reduire aria-label="Réduire la vidéo"><Icone nom="chevron-bas" taille={22} /></button>
+      <button type="button" class="pv-bouton" data-pv-fermer aria-label="Fermer la vidéo"><Icone nom="fermer" taille={20} /></button>
+    </div>
+  </div>
+  <div class="pv-corps">
+    <div class="pv-ecran" data-pv-ecran></div>
+    <div class="pv-infos">
+      <h2 class="titre-h3 pv-titre" data-pv-titre></h2>
+      <div class="pv-chaine">
+        <span class="pv-avatar" aria-hidden="true">R<img data-pv-photo alt="" width="40" height="40" /></span>
+        <span class="pv-qui"><span class="texte-label" data-pv-nom-chaine></span><span class="texte-legende texte-secondaire" data-pv-date></span></span>
+      </div>
+      <p class="texte-avis pv-mot" data-pv-mot></p>
+      <a class="texte-petit pv-youtube" data-pv-youtube target="_blank" rel="noopener">Voir sur YouTube<span class="visuellement-cache"> (nouvel onglet)</span></a>
+    </div>
+    <!-- barre réduite (mobile) : lecture / pause -->
+    <button type="button" class="pv-lecture seulement-mobile" data-pv-lecture aria-label="Mettre en pause"><Icone nom="pause" taille={22} class="i-pause" /><Icone nom="lecture" taille={22} class="i-lecture" /></button>
+    <div class="pv-suite">
+      <h3 class="texte-label texte-secondaire pv-suite-titre">À suivre</h3>
+      <ol role="list" class="pv-liste" data-pv-liste></ol>
+    </div>
+  </div>
+</aside>
+<button type="button" class="pv-onglet seulement-ordi" data-pv-onglet hidden aria-label="Rouvrir la vidéo">
+  <Icone nom="fleche-gauche" taille={20} />
+  <span class="pv-onglet-texte">Vidéo</span>
+</button>
+
+<script>
+  import { typo } from '../scripts/typo';
+  type Live = { id: string; nom: string; chaine: string; date: string; mot: string; photo: string };
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s);
+  let lives: Live[] = [];
+  let courant: Live | null = null;
+  let enLecture = false;
+  const ORDI = matchMedia('(min-width: 64rem)');
+
+  const pv = () => $<HTMLElement>('[data-pv]');
+  const iframe = () => pv()?.querySelector<HTMLIFrameElement>('iframe') ?? null;
+  const commande = (func: string) => iframe()?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*');
+
+  // état de la page : la page laisse la place au panneau (ordi), ou se bloque (grande vue / feuille mobile)
+  function etatPage() {
+    const p = pv(); const html = document.documentElement;
+    const ouvert = !!p && !p.hidden;
+    html.classList.toggle('pv-ouvert', ouvert && ORDI.matches && !p!.classList.contains('retracte'));
+    html.classList.toggle('pv-barre', ouvert && !ORDI.matches && p!.classList.contains('reduit'));
+    html.classList.toggle('pv-bloque', ouvert && (p!.classList.contains('grand') || (!ORDI.matches && !p!.classList.contains('reduit'))));
+    const lenis = (window as unknown as { room33Lenis?: { stop(): void; start(): void } }).room33Lenis;
+    if (html.classList.contains('pv-bloque')) lenis?.stop(); else if (!document.querySelector('dialog[open]')) lenis?.start();
+    const onglet = $<HTMLButtonElement>('[data-pv-onglet]');
+    if (onglet) onglet.hidden = !(ouvert && p!.classList.contains('retracte'));
+  }
+
+  function afficherInfos(l: Live) {
+    const p = pv()!;
+    p.querySelector('[data-pv-titre]')!.textContent = typo(l.nom);
+    p.querySelector('[data-pv-nom-chaine]')!.textContent = typo(l.chaine);
+    p.querySelector('[data-pv-date]')!.textContent = l.date;
+    p.querySelector('[data-pv-mot]')!.textContent = typo(l.mot);
+    (p.querySelector('[data-pv-photo]') as HTMLImageElement).src = l.photo;
+    (p.querySelector('[data-pv-youtube]') as HTMLAnchorElement).href = `https://www.youtube.com/watch?v=${l.id}`;
+    const liste = p.querySelector('[data-pv-liste]')!;
+    liste.replaceChildren(...lives.filter((x) => x.id !== l.id).map((x) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<button type="button" class="pv-suivant" data-pv-suivant="${x.id}"><img src="/lives/vignettes/${x.id}.jpg" alt="" width="160" height="90" loading="lazy" /><span class="pv-suivant-textes"><span class="texte-label pv-suivant-nom"></span><span class="texte-legende texte-secondaire"></span></span></button>`;
+      li.querySelector('.pv-suivant-nom')!.textContent = typo(x.nom);
+      li.querySelector('.texte-legende')!.textContent = typo(`${x.chaine} · ${x.date}`);
+      li.querySelector('button')!.setAttribute('aria-label', `Lire : ${x.nom}`);
+      return li;
+    }));
+  }
+
+  // ouvrir (ou changer de) vidéo
+  function lire(id: string) {
+    const p = pv(); if (!p) return;
+    if (!lives.length) { try { lives = JSON.parse(p.querySelector('[data-pv-lives]')!.textContent || '[]'); } catch { lives = []; } }
+    const l = lives.find((x) => x.id === id);
+    if (!l) return;
+    courant = l;
+    const ecran = p.querySelector<HTMLElement>('[data-pv-ecran]')!;
+    const f = document.createElement('iframe');
+    // enablejsapi : on peut mettre en pause / relancer, et savoir quand la vidéo joue
+    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}`;
+    f.title = l.nom;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.addEventListener('load', () => f.contentWindow?.postMessage(JSON.stringify({ event: 'listening', id, channel: 'widget' }), '*'));
+    ecran.replaceChildren(f);
+    afficherInfos(l);
+    p.hidden = false;
+    p.classList.remove('retracte', 'reduit');
+    requestAnimationFrame(() => p.classList.add('visible'));
+    enLecture = true; majLecture();
+    document.dispatchEvent(new Event('room33:video')); // l'extrait de la mini-platine s'arrête
+    etatPage();
+  }
+
+  function fermer() {
+    const p = pv(); if (!p) return;
+    p.classList.remove('visible', 'grand');
+    p.querySelector('[data-pv-ecran]')!.replaceChildren(); // coupe la vidéo
+    courant = null; enLecture = false;
+    setTimeout(() => { if (!p.classList.contains('visible')) { p.hidden = true; p.classList.remove('retracte', 'reduit'); etatPage(); } }, 350);
+    document.documentElement.classList.remove('pv-ouvert', 'pv-bloque', 'pv-barre');
+    etatPage();
+  }
+
+  function majLecture() {
+    const b = $<HTMLButtonElement>('[data-pv-lecture]');
+    if (!b) return;
+    b.classList.toggle('en-pause', !enLecture);
+    b.setAttribute('aria-label', enLecture ? 'Mettre en pause' : 'Reprendre la vidéo');
+  }
+
+  document.addEventListener('click', (e) => {
+    const c = e.target as Element;
+    const facade = c.closest<HTMLElement>('[data-lire-video]');
+    if (facade) { e.preventDefault(); e.stopImmediatePropagation(); const id = facade.closest<HTMLElement>('[data-video]')?.dataset.video; if (id) lire(id); return; }
+    const suivant = c.closest<HTMLElement>('[data-pv-suivant]');
+    if (suivant) { lire(suivant.dataset.pvSuivant!); return; }
+    const p = pv(); if (!p) return;
+    if (c.closest('[data-pv-fermer]')) { fermer(); return; }
+    if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
+    if (c.closest('[data-pv-retracter]')) { p.classList.add('retracte'); p.classList.remove('grand'); etatPage(); return; }
+    if (c.closest('[data-pv-onglet]')) { p.classList.remove('retracte'); etatPage(); return; }
+    if (c.closest('[data-pv-reduire]')) { p.classList.add('reduit'); etatPage(); return; }
+    if (c.closest('[data-pv-lecture]')) { commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture(); return; }
+    // mobile, barre réduite : un toucher sur la barre (hors bouton) rouvre la feuille
+    if (p.classList.contains('reduit') && c.closest('[data-pv]') && !c.closest('button, a, iframe')) { p.classList.remove('reduit'); etatPage(); }
+  }, true);
+
+  // Échap : grande vue → panneau ; feuille mobile → barre
+  document.addEventListener('keydown', (e) => {
+    const p = pv(); if (e.key !== 'Escape' || !p || p.hidden) return;
+    if (p.classList.contains('grand')) { p.classList.remove('grand'); etatPage(); }
+    else if (!ORDI.matches && !p.classList.contains('reduit')) { p.classList.add('reduit'); etatPage(); }
+  });
+
+  // mobile : glisser la feuille vers le bas depuis sa poignée → barre réduite
+  let y0 = 0, glisse = false;
+  document.addEventListener('pointerdown', (e) => {
+    const t = (e.target as Element).closest?.('[data-pv-poignee]'); const p = pv();
+    if (!t || !p || ORDI.matches || p.classList.contains('reduit') || (e.target as Element).closest('button')) return;
+    y0 = e.clientY; glisse = true; p.style.transition = 'none';
+  });
+  document.addEventListener('pointermove', (e) => { const p = pv(); if (!glisse || !p) return; const dy = Math.max(0, e.clientY - y0); p.style.transform = `translateY(${dy}px)`; });
+  const lacher = (e: PointerEvent) => { const p = pv(); if (!glisse || !p) return; glisse = false; p.style.transition = ''; p.style.transform = ''; if (e.clientY - y0 > 90) { p.classList.add('reduit'); etatPage(); } };
+  document.addEventListener('pointerup', lacher); document.addEventListener('pointercancel', lacher);
+
+  // état de lecture donné par YouTube (1 = lecture, 2 = pause, 0 = fin)
+  addEventListener('message', (e) => {
+    let h = ''; try { h = new URL(e.origin).hostname; } catch { return; }
+    if (!/youtube(-nocookie)?\.com$/.test(h)) return;
+    let d: { info?: { playerState?: number } } = {};
+    try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+    const s = d?.info?.playerState;
+    if (s === 1) { enLecture = true; majLecture(); } else if (s === 2 || s === 0) { enLecture = false; majLecture(); }
+  });
+  // un extrait démarre : la vidéo se met en pause
+  document.addEventListener('room33:extrait', () => { if (courant) { commande('pauseVideo'); enLecture = false; majLecture(); } });
+
+  // changement de page : le nouveau <html> arrive sans nos classes → on les remet tout de suite
+  document.addEventListener('astro:before-swap', (e) => {
+    const nd = (e as Event & { newDocument: Document }).newDocument.documentElement; const html = document.documentElement;
+    ['pv-ouvert', 'pv-bloque', 'pv-barre'].forEach((k) => nd.classList.toggle(k, html.classList.contains(k)));
+  });
+  document.addEventListener('astro:page-load', etatPage);
+  ORDI.addEventListener('change', etatPage);
+</script>
+
+<style>
+  /* ---------- Ordi : panneau à droite (pousse la page) ---------- */
+  :global(:root) { --pv-largeur: 25rem; } /* 400 px */
+  :global(html.pv-ouvert body) { padding-right: var(--pv-largeur); }
+  :global(html.pv-ouvert .nav.fixe), :global(html.pv-ouvert .mini-platine.fixe) { right: var(--pv-largeur); }
+  :global(html.pv-bloque) { overflow: hidden; }
+  :global(body) { transition: padding-right var(--duree-normal) var(--courbe-sortie); }
+
+  .pv {
+    position: fixed; z-index: 55; top: 0; right: 0; bottom: 0; width: var(--pv-largeur);
+    display: grid; grid-template-rows: auto minmax(0, 1fr);
+    background: var(--couleur-fond-bloc); border-left: var(--trait-filet) solid var(--couleur-bordure-discrete);
+    box-shadow: -16px 0 40px rgb(0 0 0 / 0.35);
+    transform: translateX(100%);
+    transition: transform var(--duree-normal) var(--courbe-sortie), inset var(--duree-normal) var(--courbe-sortie), width var(--duree-normal) var(--courbe-sortie), background-color var(--duree-normal) var(--courbe-standard);
+  }
+  .pv[hidden] { display: none; }
+  .pv.visible { transform: none; }
+  .pv.visible.retracte { transform: translateX(100%); }
+  .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
+  .pv-etiquette { margin: 0; }
+  .pv-actions { display: flex; gap: var(--espace-2xs); }
+  .pv-bouton { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; border-radius: var(--rayon-pilule); background: none; color: var(--couleur-texte-principal); cursor: pointer; transition: background-color var(--duree-rapide) var(--courbe-standard); }
+  .pv-bouton:hover { background: var(--couleur-fond-tonal); }
+  [data-pv-agrandir] :global(.i-contracter), .pv.grand [data-pv-agrandir] :global(.i-agrandir) { display: none; }
+  .pv.grand [data-pv-agrandir] :global(.i-contracter) { display: block; }
+  .pv-corps { overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: var(--espace-lg); padding: var(--espace-lg); }
+  .pv-ecran { flex: none; }
+  .pv-ecran { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); overflow: hidden; background: #000; }
+  .pv-ecran :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .pv-infos { display: grid; gap: var(--espace-md); }
+  .pv-titre { margin: 0; overflow-wrap: anywhere; }
+  .pv-chaine { display: flex; align-items: center; gap: var(--espace-sm); }
+  .pv-avatar { position: relative; width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: var(--noyer-500); font-family: var(--police-lettrine); font-size: 1.5rem; color: var(--couleur-texte-principal); }
+  .pv-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pv-qui { display: grid; }
+  .pv-mot { margin: 0; }
+  .pv-youtube { justify-self: start; color: var(--couleur-texte-secondaire); text-underline-offset: 4px; }
+  .pv-youtube:hover { color: var(--couleur-texte-principal); }
+  .pv-suite { display: grid; gap: var(--espace-sm); }
+  .pv-suite-titre { margin: 0; }
+  .pv-liste { display: grid; gap: var(--espace-sm); margin: 0; padding: 0; list-style: none; }
+  .pv-liste :global(.pv-suivant) { width: 100%; display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: var(--espace-sm); align-items: center; padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; }
+  .pv-liste :global(.pv-suivant img) { width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; border-radius: var(--rayon-pochette); }
+  .pv-liste :global(.pv-suivant-textes) { display: grid; gap: var(--espace-2xs); min-width: 0; }
+  .pv-liste :global(.pv-suivant-nom) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pv-liste :global(.pv-suivant:hover .pv-suivant-nom) { text-decoration: underline; text-underline-offset: 3px; }
+  .pv-lecture { display: none; }
+
+  /* onglet au bord droit quand le panneau est rétracté */
+  .pv-onglet {
+    position: fixed; z-index: 55; right: 0; top: 50%; translate: 0 -50%;
+    display: grid; justify-items: center; gap: var(--espace-xs); padding: var(--espace-md) var(--espace-xs);
+    border: var(--trait-filet) solid var(--couleur-bordure-discrete); border-right: 0; border-radius: var(--rayon-bloc) 0 0 var(--rayon-bloc);
+    background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal); box-shadow: -8px 0 24px rgb(0 0 0 / 0.35); cursor: pointer;
+  }
+  .pv-onglet[hidden] { display: none; }
+  .pv-onglet-texte { writing-mode: vertical-rl; font-size: var(--taille-petit); }
+  .pv-onglet:hover { background: var(--couleur-fond-tonal); }
+
+  /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
+  @media (min-width: 64rem) {
+    .pv.grand { width: 100vw; background: rgb(12 8 5 / 0.97); border-left: 0; }
+    .pv.grand .pv-tete { border-bottom: 0; padding-inline: var(--grille-marge); }
+    .pv.grand .pv-corps {
+      display: grid;
+      width: min(100%, 90rem); margin-inline: auto; padding: 0 var(--grille-marge) var(--espace-3xl);
+      grid-template-columns: minmax(0, 1fr) 25rem; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-2xl); align-items: start;
+    }
+    .pv.grand .pv-ecran { grid-area: ecran; }
+    .pv.grand .pv-infos { grid-area: infos; }
+    .pv.grand .pv-titre { font-size: var(--taille-h2); }
+    .pv.grand .pv-suite { grid-area: suite; }
+  }
+
+  /* ---------- Mobile : feuille qui monte du bas, réductible en barre ---------- */
+  @media (max-width: 63.99rem) {
+    .pv { top: 0; left: 0; width: auto; border-left: 0; transform: translateY(100%); box-shadow: 0 -12px 32px rgb(0 0 0 / 0.4); }
+    .pv.visible { transform: none; }
+    .pv-tete { min-height: 60px; padding: var(--espace-sm) var(--grille-marge); position: relative; touch-action: none; }
+    .pv-poignee-trait { position: absolute; top: 6px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 2px; background: var(--couleur-bordure-defaut); }
+    .pv-corps { padding: var(--espace-md) var(--grille-marge) calc(var(--espace-xl) + env(safe-area-inset-bottom)); }
+    /* barre réduite : petite vidéo · titre · lecture/pause · fermer */
+    .pv.reduit { top: auto; height: calc(72px + env(safe-area-inset-bottom)); grid-template-rows: 1fr; border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); cursor: pointer; }
+    .pv.reduit .pv-tete { position: absolute; right: var(--espace-xs); top: 14px; min-height: 0; padding: 0; border: 0; }
+    .pv.reduit .pv-etiquette, .pv.reduit .pv-poignee-trait, .pv.reduit [data-pv-reduire] { display: none; }
+    .pv.reduit .pv-corps { overflow: hidden; display: flex; flex-direction: row; align-items: center; gap: var(--espace-sm); padding: 12px calc(44px + var(--espace-xs)) env(safe-area-inset-bottom) var(--grille-marge); }
+    .pv.reduit .pv-ecran { width: 85px; flex: none; border-radius: var(--rayon-pochette); }
+    .pv.reduit .pv-infos { min-width: 0; flex: 1; gap: 0; }
+    .pv.reduit .pv-titre { font-family: var(--police-texte); font-size: var(--taille-petit); font-weight: 500; letter-spacing: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pv.reduit :is(.pv-chaine, .pv-mot, .pv-youtube, .pv-suite) { display: none; }
+    .pv.reduit .pv-lecture { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 0; padding: 0; border-radius: 50%; background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal); }
+    .pv-lecture :global(.i-lecture) { display: none; }
+    .pv-lecture.en-pause :global(.i-lecture) { display: block; }
+    .pv-lecture.en-pause :global(.i-pause) { display: none; }
+    /* la page garde la place de la barre en bas (rien n'est caché dessous) */
+    :global(html.pv-barre body) { padding-bottom: 72px; }
+    /* la barre réduite passe au-dessus de la mini-platine (si un extrait a été lancé avant) */
+    :global(body.avec-lecteur) .pv.reduit { bottom: 69px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pv { transition: none; } }
+</style>
