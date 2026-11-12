@@ -63,7 +63,7 @@ const nb = bac.disques.length;
           <!-- tous les disques ; ordi : 4 visibles (la section tient dans l'écran), mobile : 6 ; « Voir les N disques » déroule le reste -->
           <ol role="list" class="liste-bac" data-liste-bac>
             {bac.disques.map((d, i) => (
-              <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`} ecoute="album" liens={d.liens} upc={d.upc} deezer={d.extraitAlbum} />
+              <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`}><Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi voir-disque" aria-hidden="true" tabindex="-1">Voir le disque</Bouton></LigneTracklist>
             ))}
           </ol>
           {nb > 4 && <button type="button" class={`voir-tout texte-bouton${nb <= 6 ? ' seulement-ordi' : ''}`} aria-expanded="false" data-voir-tout>Voir les {nb} disques <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg></button>}
@@ -135,6 +135,7 @@ const nb = bac.disques.length;
   .infos-bac { display: grid; gap: var(--espace-2xs); min-width: 0; } /* Figma : 4 px */
   /* Figma « Bac — pile + tracklist » : 120 px en haut (64 mobile), 24 px entre filtres, infos et pile (12 mobile) */
   .zone-filtres { display: grid; gap: var(--espace-lg); }
+  .liste-bac :global(.voir-disque) { flex: none; margin-left: var(--espace-sm); }
   .titre-zone { margin: 0; } /* « Choisissez dans les bacs » (H1, ordi et mobile) */
   .infos-genre { display: grid; gap: var(--espace-2xs); }
   /* changement de genre : la nouvelle zone apparaît en fondu */
