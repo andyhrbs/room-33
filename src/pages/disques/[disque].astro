@@ -206,10 +206,11 @@ const dureeTotale = secondes >= 3600 ? `${Math.floor(secondes / 3600)} h ${Math.
     .visuel { aspect-ratio: 350 / 280; }
     .infos .titre-display { font-size: var(--taille-display); }
     .deux-colonnes { grid-template-columns: 1fr; gap: var(--espace-sm); }
-    /* Figma mobile : photo 350 × 300, 24 px sous la photo, 12 px dans le texte */
+    /* Figma mobile : 24 px sous la photo, 12 px dans le texte */
     .artiste-grille { grid-template-columns: 1fr; gap: var(--espace-lg); align-items: start; }
     .artiste-grille .texte, .nom-bio { gap: var(--espace-sm); }
-    /* Figma mobile : photo carrée 350 × 350 (comme sur ordi) */
+    /* Figma mobile : photo carrée 350 × 350, jamais plus grande (grands téléphones, tablettes) */
+    .photo-artiste { width: min(100%, 350px); height: auto; aspect-ratio: 1; }
     .rangee { gap: var(--espace-md); margin-right: calc(-1 * var(--grille-marge)); }
     .voisins { justify-content: space-between; margin-top: 0; }
     .piste { grid-template-columns: 1.75rem minmax(0, 1fr) auto auto; gap: var(--espace-sm); padding-inline: var(--espace-xs); }
