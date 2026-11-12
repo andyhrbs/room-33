@@ -51,7 +51,7 @@ const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day:
 
 <style>
   .infos { display: grid; gap: var(--espace-md); justify-items: start; }
-  .infos .texte-corps-l { max-width: 45rem; }
+  /* Figma : sous-titre sur une seule ligne sur ordi (plus de largeur max) */
   .recos { display: grid; gap: var(--espace-xl); justify-items: start; }
   .grille { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--espace-xl) var(--grille-gouttiere); }
   .reco { display: grid; gap: var(--espace-xs); align-content: start; }

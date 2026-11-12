@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 14:45 : maj figma accueil, La platine (ordi + mobile)
+# Empreintes Figma de référence — 12 nov. 2026, 15:20 : maj figma Bac des visiteurs (sous-titre sur une ligne)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -144,20 +144,21 @@
 268:2769:cadre oa63yi
 268:2770 icoigk
 268:2771 1flqgfl
-68:1820:cadre dll9bd
-68:1969 154vw65
+68:1820:cadre 1maie1v
+68:1969 1r2pfrn
 110:2156 9a9z3p
 68:1835 j8n3bq
 68:1920 a0d7jp
-68:1931 1gy9bc8
+68:1931 1b1h3o1
 68:1963 p4phlg
-68:1623:cadre 1r99jy1
+68:1623:cadre nh8top
 68:1819 wai2e9
-110:2166 150cznh
+110:2166 vlets8
 68:1641 gcxtjo
 68:1749 jfwid
 68:1770 17tkp5l
 182:2312 tu08b2
+422:4918 jhtl5q
 69:1988:cadre 19ethf7
 69:2124 16rkfee
 112:2141 wokm6d
