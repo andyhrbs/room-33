@@ -203,14 +203,24 @@ async function choisirApp(m: Morceau) {
   dialogue.querySelector('[data-choix-morceau]')!.textContent = m.type === 'artiste' ? m.artiste : `${m.titre} — ${m.artiste}`;
   const boutons = dialogue.querySelectorAll<HTMLButtonElement>('[data-app]');
   boutons.forEach((b) => (b.disabled = true));
+  dialogue.setAttribute('aria-busy', 'true'); // pendant la recherche des liens : boutons inactifs mais pas assombris
   dialogue.classList.remove('ferme');
   dialogue.showModal();
   dialogue.focus({ preventScroll: true }); // pas de contour sur la croix à l'ouverture au doigt
   const l = await liens(m);
   if (morceauChoix !== m) return;
+  dialogue.removeAttribute('aria-busy');
   boutons.forEach((b) => (b.disabled = !l?.[b.dataset.app!]));
   if (!l) dialogue.querySelector('[data-choix-morceau]')!.textContent = 'Liens indisponibles pour le moment.';
 }
+
+// Liens demandés dès que le visiteur s'approche de « Ouvrir l'app » (survol, focus, doigt posé) : la fenêtre s'ouvre déjà prête
+const prechauffer = (e: Event) => {
+  const el = (e.target as Element)?.closest?.('[data-ouvrir-app]');
+  if (!el || el.closest('[data-mini-platine]')) { if (el && courant) liens(courant); return; }
+  const m = lireMorceau(el); if (m) liens(m);
+};
+['pointerover', 'focusin', 'touchstart'].forEach((t) => document.addEventListener(t, prechauffer, { passive: true }));
 
 // ---------- Clics (délégués : marchent sur toutes les pages, même après navigation) ----------
 document.addEventListener('click', async (e) => {

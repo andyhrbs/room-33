@@ -261,6 +261,7 @@ const apps = [
   .logo-app img { width: 100%; height: 100%; object-fit: contain; }
   .app-choix:hover:not(:disabled) { color: var(--couleur-accent-defaut); }
   .app-choix:disabled { opacity: 0.4; cursor: default; }
+  .choix-app[aria-busy='true'] .app-choix:disabled { opacity: 1; cursor: progress; } /* liens en cours : rien d'assombri */
 
   /* Animations de la fenêtre (charte « feutré ») : elle monte doucement en grandissant un peu, le fond s'assombrit,
      puis le contenu arrive en cascade (titre, morceau, chaque app). Les apps s'« allument » quand leurs liens arrivent. */
