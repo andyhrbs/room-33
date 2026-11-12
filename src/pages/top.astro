@@ -116,6 +116,14 @@ const rang = (i: number) => String(i).padStart(2, '0');
 <style>
   .infos { display: grid; gap: var(--espace-md); }
   .titre-bascule { margin: 0 0 var(--espace-2xs); }
+  /* Figma mobile : « Mon classement » en titre H1 (ivoire), la bascule en dessous */
+  @media (max-width: 63.99rem) {
+    .titre-bascule { font-family: var(--police-titre); font-weight: 400; font-size: var(--taille-h1); line-height: normal; letter-spacing: var(--interlettre-titre); color: var(--couleur-texte-principal); }
+  }
+  /* changement de classement : le panneau arrive en fondu + légère montée */
+  [data-panneau]:not([hidden]) { animation: panneau-entre var(--duree-apparition) var(--courbe-douce); }
+  @keyframes panneau-entre { from { opacity: 0; transform: translateY(var(--distance-apparition)); } }
+  @media (prefers-reduced-motion: reduce) { [data-panneau]:not([hidden]) { animation-duration: 300ms; } }
   .bascule { display: flex; gap: var(--espace-lg); }
   .zone-bascule { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
   .zone-bascule ~ [data-panneau] > .section:first-child { padding-top: clamp(1rem, 0.4rem + 2.6vw, 2.5rem); }

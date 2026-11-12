@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 12:55 : hero « Un bac — Ordi » remis comme le site, mini-platine 84
+# Empreintes Figma de référence — 12 nov. 2026, 13:16 : maj figma Top mobile (« Mon classement » en H1)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -124,12 +124,12 @@
 25:937 lluul1
 25:966 at63hf
 182:2280 tu08b2
-67:1637:cadre 1fio9cw
-67:1799 1wloetr
+67:1637:cadre 1gle5iy
+67:1799 1v3an39
 110:2136 1eiq7js
-67:1647 eri5h5
-67:1671 dt022a
-67:1761 1qz9lag
+67:1647 14qqjzt
+67:1671 c3zf9c
+67:1761 1bvu3le
 67:1793 p4phlg
 67:1381:cadre rqtqig
 67:1636 7sn72x

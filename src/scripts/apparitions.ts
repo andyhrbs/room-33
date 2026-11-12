@@ -29,7 +29,9 @@ function preparer() {
     for (const el of section.querySelectorAll<HTMLElement>(BLOCS)) {
       // on garde le bloc le plus haut : pas d'animation dans une animation
       if (choisis.some((c) => c.contains(el))) continue;
-      if (el.closest('[data-sans-apparition], dialog')) continue;
+      // dans un panneau caché (bascule Albums / Titres du Top) : jamais caché d'avance — Safari ne prévient pas
+      // toujours quand il réapparaît, et les lignes restaient invisibles
+      if (el.closest('[data-sans-apparition], dialog, [hidden]')) continue;
       choisis.push(el);
     }
     const visibleAuChargement = (el: HTMLElement) => { const r = el.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0 && r.height > 0; };
