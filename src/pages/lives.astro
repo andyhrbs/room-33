@@ -10,12 +10,13 @@ import AppelReco from '../components/AppelReco.astro';
 import { recadrages } from '../data/images';
 import { livesTextes as t } from '../data/textes';
 import { lives } from '../data/lives';
-import { infosVideo, dateFr } from '../lib/youtube';
+import { infosVideo, dateFr, photoChaine } from '../lib/youtube';
 // « Voir sur YouTube » : ouvre la vidéo sur YouTube (pour l'enregistrer, la partager, s'abonner)
 const surYoutube = (l: { youtube: string }) => `https://www.youtube.com/watch?v=${l.youtube}`;
 // comme sur l'accueil : nom de la chaîne YouTube + date de publication, lus sur YouTube au build
 // (sans réponse de YouTube : le lieu et l'année saisis dans l'admin)
-const avecYt = await Promise.all(lives.map(async (l) => ({ ...l, yt: await infosVideo(l.youtube) })));
+// photo de la chaîne écrite dans la page (data URI) : elle s'affiche tout de suite ; sinon l'image servie par le site
+const avecYt = await Promise.all(lives.map(async (l) => ({ ...l, yt: await infosVideo(l.youtube), photo: (await photoChaine(l.youtube)) ?? `/lives/avatars/${l.youtube}.jpg` })));
 const chaine = (l: (typeof avecYt)[number]) => ({ nom: l.yt.chaine ?? l.lieu, sous: dateFr(l.yt.date) ?? String(l.annee) });
 const [une, ...autres] = avecYt;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
@@ -37,7 +38,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
           <p class="texte-label">{t.une}</p>
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
           <div class="chaine">
-            <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" fetchpriority="high" /></span>
+            <span class="avatar" aria-hidden="true">R<img src={une.photo} alt="" width="44" height="44" /></span>
             <span class="qui"><span class="texte-label">{chaine(une).nom}</span><span class="texte-legende texte-secondaire">{chaine(une).sous}</span></span>
           </div>
           <p class="texte-avis">{une.mot}</p>
@@ -57,7 +58,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
               <div class="texte-carte">
                 <h3 class="texte-label">{nom(l)}</h3>
                 <div class="chaine petite">
-                  <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${l.youtube}.jpg`} alt="" width="28" height="28" loading="lazy" /></span>
+                  <span class="avatar" aria-hidden="true">R<img src={l.photo} alt="" width="28" height="28" /></span>
                   <span class="texte-petit texte-secondaire">{[chaine(l).nom, chaine(l).sous].filter(Boolean).join(' · ')}</span>
                 </div>
                 <p class="texte-petit">{l.mot}</p>

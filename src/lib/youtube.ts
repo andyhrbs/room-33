@@ -61,3 +61,22 @@ export const dateFr = (brut?: string) => {
   // texte relatif (« il y a 3 ans ») ou illisible : rien, le site affiche alors l'année saisie dans l'admin
   return undefined;
 };
+
+// Photo de la chaîne, réduite à 96 px et écrite DANS la page (image en « data URI », ~3 Ko) :
+// elle s'affiche en même temps que le texte, sans attendre un second téléchargement.
+// Pas de photo : null (la lettrine R reste visible).
+const cachePhotos = new Map<string, Promise<string | null>>();
+export const photoChaine = (id: string) => {
+  if (!cachePhotos.has(id)) cachePhotos.set(id, (async () => {
+    const { avatar } = await infosVideo(id);
+    if (!avatar) return null;
+    try {
+      const r = await fetch(avatar, delai());
+      if (!r.ok) return null;
+      const { default: sharp } = await import('sharp');
+      const petite = await sharp(Buffer.from(await r.arrayBuffer())).resize(96, 96, { fit: 'cover' }).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
+      return `data:image/jpeg;base64,${petite.toString('base64')}`;
+    } catch { return null; }
+  })());
+  return cachePhotos.get(id)!;
+};

@@ -8,10 +8,10 @@ import VideoLive from './VideoLive.astro';
 import Bouton from './Bouton.astro';
 import { accueil } from '../data/textes';
 import { lives } from '../data/lives';
-import { infosVideo, dateFr } from '../lib/youtube';
+import { infosVideo, dateFr, photoChaine } from '../lib/youtube';
 const t = accueil.lives;
 // nom de la chaîne et date de publication lus sur YouTube au build (voir src/lib/youtube.ts)
-const affiches = await Promise.all(lives.slice(0, 4).map(async (l) => ({ ...l, yt: await infosVideo(l.youtube) })));
+const affiches = await Promise.all(lives.slice(0, 4).map(async (l) => ({ ...l, yt: await infosVideo(l.youtube), photo: (await photoChaine(l.youtube)) ?? `/lives/avatars/${l.youtube}.jpg` })));
 const [une, ...suivants] = affiches;
 const nom = (l: { artiste: string; titre: string }) => `${l.artiste} — ${l.titre}`;
 const infos = (l: { lieu: string; annee: number }) => [l.lieu, l.annee].filter(Boolean).join(' · ');
@@ -22,7 +22,7 @@ type Affiche = (typeof affiches)[number];
 const chaine = (l: Affiche) => ({ nom: l.yt.chaine ?? (l.lieu || t.chaine), sous: dateFr(l.yt.date) ?? String(l.annee) });
 const meta = (l: Affiche) => { const c = chaine(l); return [c.nom, c.sous].filter(Boolean).join(' · '); };
 const yt = (id: string) => `https://www.youtube.com/watch?v=${id}`;
-const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: meta(l), mot: l.mot, chaine: chaine(l) });
+const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l), infos: meta(l), mot: l.mot, chaine: chaine(l), photo: l.photo });
 ---
 {une && (
 <section class="section conteneur lives-accueil" aria-labelledby="titre-lives-accueil" data-lives-accueil>
@@ -33,7 +33,7 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
       <VideoLive youtube={une.youtube} titre={nom(une)} grand class="lecteur" />
       <h3 class="titre-h3" data-champ="nom">{nom(une)}</h3>
       <div class="chaine">
-        <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" data-champ="avatar" /></span>
+        <span class="avatar" aria-hidden="true">R<img src={une.photo} alt="" width="44" height="44" data-champ="avatar" /></span>
         <span class="qui"><span class="texte-label" data-champ="chaine">{chaine(une).nom}</span><span class="texte-legende texte-secondaire" data-champ="chaine-sous">{chaine(une).sous}</span></span>
         <Bouton style="lien" href={yt(une.youtube)} target="_blank" rel="noopener" data-champ="youtube">{t.voirYoutube}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
       </div>
@@ -62,10 +62,8 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
 <script>
   import { typo } from '../scripts/typo';
   // « À suivre » → grand lecteur : on échange les deux lives, puis on lance la vidéo (comme sur YouTube)
-  type L = { youtube: string; nom: string; infos: string; mot: string; chaine: { nom: string; sous: string } };
-  // Photos des chaînes « À suivre » chargées en avance (quelques Ko) : elles s'affichent tout de suite au changement de live
-  const precharger = () => document.querySelectorAll<HTMLElement>('[data-lives-accueil] [data-suivant]').forEach((b) => { new Image().src = `/lives/avatars/${(JSON.parse(b.dataset.suivant!) as L).youtube}.jpg`; });
-  document.addEventListener('astro:page-load', () => setTimeout(precharger, 1500));
+  type L = { youtube: string; nom: string; infos: string; mot: string; chaine: { nom: string; sous: string }; photo?: string };
+  // Photos des chaînes : déjà dans la page (data URI, voir src/lib/youtube.ts), rien à précharger
   document.addEventListener('click', (e) => {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-lives-accueil] [data-suivant]');
     if (!b) return;
@@ -81,7 +79,7 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
     // le grand lecteur prend le live choisi
     p.dataset.principal = JSON.stringify(nouveau);
     p.querySelector('[data-champ="nom"]')!.textContent = typo(nouveau.nom);
-    p.querySelector<HTMLImageElement>('[data-champ="avatar"]')!.src = `/lives/avatars/${nouveau.youtube}.jpg`;
+    p.querySelector<HTMLImageElement>('[data-champ="avatar"]')!.src = nouveau.photo ?? `/lives/avatars/${nouveau.youtube}.jpg`;
     p.querySelector('[data-champ="chaine"]')!.textContent = typo(nouveau.chaine.nom);
     p.querySelector('[data-champ="chaine-sous"]')!.textContent = nouveau.chaine.sous;
     p.querySelector('[data-champ="mot"]')!.textContent = typo(nouveau.mot);
