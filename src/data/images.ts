@@ -5,6 +5,7 @@
 // ==========================================================================
 export const images: Record<string, string | null> = {
   pieceOrdi: '/images/piece-ordi.jpg', // photo de la pièce, 16:9 (hero accueil ordi + gros plans recadrés des autres pages)
+  pieceEteinteOrdi: null, // photo de la pièce éteinte (fond de l'entrée « Allumez la lampe », ordi) ; en attendant : la pièce, assombrie
   pieceMobile: null,    // photo de la pièce, vraie photo verticale 9:16 (hero accueil mobile)
   pianoGrosPlan: null,  // gros plan du piano (hero du comptoir)
   andyhPiano: null,     // vraie photo d'Andyh au piano, 4:5 (comptoir)

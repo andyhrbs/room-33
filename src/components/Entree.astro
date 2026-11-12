@@ -1,14 +1,17 @@
 ---
-// 00 · L'entrée : « Allumez la lampe ». Écran noir, sans texte visible : l'abat-jour de la lampe à arc
-// est suspendu au centre de l'écran, la tige chromée descend tout droit (on ne voit pas le pied). Au clic,
-// la lampe s'allume puis la pièce s'éclaire en cercle depuis son ouverture. Échap = entrer directement.
+// 00 · L'entrée : « Allumez la lampe ». La pièce éteinte (ordi : photo assombrie ; mobile : noir), l'abat-jour de la lampe à arc
+// suspendu au centre de l'écran, la tige chromée descend tout droit (on ne voit pas le pied). Au clic,
+// la lampe s'allume puis la pièce éteinte s'efface en fondu sur la pièce allumée (le hero). Échap = entrer directement.
 // Seulement au vrai chargement de l'accueil (arrivée par l'accueil ou actualisation), jamais en naviguant dans le site (Base.astro). Animations réduites :
 // pas de pulsation ni de cercle, la lampe s'allume puis la pièce apparaît.
 // Maquette Figma « 00 · L'entrée » + composant « Lampe d'entrée — lampe à arc » (Éteinte / Allumée).
 // abat-jour : dôme bombé à flancs presque droits, lèvre arrondie (même tracé que Figma, centré sur x = 160)
+import Bouton from './Bouton.astro';
+import { images } from '../data/images';
+const fondPiece = images.pieceEteinteOrdi ?? images.pieceOrdi;
 const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 356 302 360 292 360 L 28 360 C 18 360 10 356 10 344 Z';
 ---
-<div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree">
+<div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={fondPiece ? `--fond-piece: url('${fondPiece}')` : undefined}>
   <div class="halo" aria-hidden="true"></div>
   <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer">
     <svg viewBox="0 0 320 430" overflow="visible" aria-hidden="true" focusable="false">
@@ -55,6 +58,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       </g>
     </svg>
   </button>
+  <!-- Figma ordi : invitation sous la lampe (le clic allume, comme sur la lampe) -->
+  <Bouton style="lien" class="invitation seulement-ordi" data-allumer-lien tabindex="-1" aria-hidden="true">Cliquez pour allumer la pièce</Bouton>
   <!-- textes retirés à l'écran pour une entrée plus immersive : seuls les lecteurs d'écran les lisent -->
   <div class="visuellement-cache">
     <h2 id="titre-entree">Allumez la lampe</h2>
@@ -75,18 +80,13 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     const finir = () => { e.remove(); vue(); document.querySelector<HTMLElement>('#titre-accueil')?.setAttribute('tabindex', '-1'); document.querySelector<HTMLElement>('#titre-accueil')?.focus({ preventScroll: true }); };
     // La lampe s'allume, puis la pièce s'éclaire en cercle depuis l'ouverture de l'abat-jour
     lampe.addEventListener('click', () => {
-      const r = lampe.querySelector('.ouverture')!.getBoundingClientRect();
-      e.style.setProperty('--cx', `${r.left + r.width / 2}px`);
-      e.style.setProperty('--cy', `${r.top + r.height / 2}px`);
-      // rayon juste suffisant pour couvrir l'écran (coin le plus éloigné) : sur téléphone, plus de temps mort une fois la pièce éclairée
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      e.style.setProperty('--rmax', `${Math.ceil(Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy))) + 2}px`);
       e.classList.add('allumee');
       // animations réduites : la lampe s'allume, puis on entre sans le grand cercle
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 700); return; }
-      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 350); // le temps de voir la lampe s'allumer ; le hero s'anime pendant l'ouverture
-      e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
-      setTimeout(finir, 1800); // filet de sécurité
+      // le temps de voir la lampe s'allumer, puis la pièce éteinte s'efface en fondu sur la pièce allumée (le hero s'anime pendant le fondu)
+      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 350);
+      e.addEventListener('transitionend', (ev) => { if (ev.target === e && (ev as TransitionEvent).propertyName === 'opacity') finir(); });
+      setTimeout(finir, 2000); // filet de sécurité
     }, { once: true });
     // un toucher n'importe où sur l'écran allume aussi la lampe (sur téléphone, on ne vise pas forcément l'abat-jour)
     e.addEventListener('click', (ev) => { if (!lampe.contains(ev.target as Node) && !e.classList.contains('allumee')) lampe.click(); });
@@ -97,7 +97,6 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
 </script>
 
 <style>
-  @property --r { syntax: '<length>'; inherits: false; initial-value: 0px; }
   :global(html.entree-vue) .entree { display: none; }
   :global(html.entree-active) { overflow: hidden; }
   .entree {
@@ -107,21 +106,28 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.3), transparent 100%),
       radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
       var(--brun-950);
-    /* trou circulaire qui grandit depuis la lampe = la pièce s'éclaire */
-    --r: 0px;
-    transition: --r 1.1s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
+    /* au clic : la pièce éteinte s'efface en fondu sur la pièce allumée (le hero de l'accueil, juste dessous) */
+    transition: opacity var(--duree-rapide) var(--courbe-standard);
     /* lampe suspendue, abat-jour centré sur l'écran dans les deux sens (centre du verre : y = 284 dans le dessin) ;
        échelle : ordi 1, mobile 0,75 */
     --k: 1; --haut: calc(50dvh - 284px * var(--k));
   }
-  /* le masque n'existe qu'après le clic : avant, l'écran reste plein (Safari/iOS rendait tout l'écran
-     transparent avec un masque de rayon nul : on voyait la page, sans lampe, mais on ne pouvait pas cliquer) */
-  .entree.allumee {
-    -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
-    mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
+  /* Figma ordi : la pièce éteinte en fond (photo assombrie à 90 %), sous la lueur de la lampe */
+  @media (min-width: 64rem) {
+    .entree {
+      background:
+        radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.22), transparent 100%),
+        radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
+        linear-gradient(rgb(7 4 3 / 0.9), rgb(7 4 3 / 0.9)),
+        var(--fond-piece, none) center / cover no-repeat,
+        var(--brun-950);
+    }
   }
-  .entree.allumage { --r: var(--rmax, 150vmax); }
+  .entree.allumage { opacity: 0; transition: opacity 1.1s var(--courbe-entree-sortie); }
   .entree.fondu { opacity: 0; }
+  /* invitation sous la lampe (Figma ordi) : juste sous le bas du dessin (y = 430) */
+  .invitation { position: absolute; left: 50%; top: calc(var(--haut) + 430px * var(--k)); translate: -50% 0; transition: opacity 0.35s var(--courbe-standard); }
+  .allumee .invitation { opacity: 0; }
 
   /* halo qui pulse, centré sur l'abat-jour (même centre : y = 284 dans le dessin) */
   .halo {

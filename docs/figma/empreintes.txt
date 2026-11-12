@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 16:08 : ▶ de La platine (accueil) en 40 px (15:74 « Le morceau du moment » encore à l’ancienne empreinte)
+# Empreintes Figma de référence — 12 nov. 2026, 16:25 : maj figma 00 · L'entrée ordi (pièce éteinte en fond + « Cliquez pour allumer la pièce ») ; 15:74 encore à l’ancienne empreinte
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -6,13 +6,14 @@
 14:11 1mw7i8k
 14:12 49zweq
 227:2759 vuzgy7
-14:27:cadre j5jn46
+14:27:cadre 1cgjp1a
 23:678 gjlxju
 14:28 1skbp9o
 14:31 qjrcj8
 14:32 134qe0h
 14:33 122w6d7
 227:2748 du0tp0
+443:5185 c6gafs
 348:4587 1ps94kx
 79:2357:cadre 1bylfid
 79:2358 1mcf4ql
