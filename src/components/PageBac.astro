@@ -37,7 +37,7 @@ const nb = bac.disques.length;
 
     <!-- Zone du bac : changée sur place quand on choisit un autre genre (on reste à cet endroit de la page) -->
     <div class="zone-bac" data-zone-bac>
-    <!-- Ordi : titre + genres + pile + « Dans ce bac » tiennent dans l'écran (sous la nav) et la section est aimantée -->
+    <!-- Ordi : titre + genres + pile + « Dans ce bac » tiennent dans l'écran (sous la nav) -->
     <div class="ecran-bac" data-ecran-bac>
     <!-- filtres des genres : sortis du hero, en tête du contenu (maquette Figma) -->
     <div class="conteneur zone-filtres">
@@ -101,67 +101,6 @@ const nb = bac.disques.length;
     b.closest('.tracklist')?.querySelector('[data-liste-bac]')?.classList.toggle('deroulee', ouvert);
     b.firstChild!.textContent = ouvert ? 'Réduire la liste ' : `Voir les ${b.closest('.tracklist')!.querySelectorAll('[data-liste-bac] > *').length} disques `;
   });
-
-  // Ordi : section aimantée, renforcée.
-  // - Dès que les 3/4 de la section sont à l'écran (en descendant comme en remontant), la page s'emboîte dessus, sous la nav.
-  // - Une fois emboîtée, les micro-mouvements (trackpad effleuré) sont absorbés : elle ne bouge pas.
-  // - Un cran de molette (SEUIL) la libère et la page repart.
-  // - Filet de sécurité : si le défilement s'arrête près d'elle (clavier, barre de défilement), elle se cale aussi.
-  {
-    const NAV = 72, SEUIL = 90, VISIBLE = 0.75; // SEUIL : 1 cran de souris (≈ 100 px) suffit à repartir, vers le haut comme vers le bas ; les micro-mouvements (trackpad effleuré) restent absorbés
-    let anim = false, cumul = 0, dernier = 0, libre = false, derniereMolette = 0, dernierY = window.scrollY;
-    const actif = () => matchMedia('(min-width: 64rem)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.querySelector('dialog[open]');
-    const lenis = () => (window as unknown as { room33Lenis?: { scrollTo: (y: number, o: object) => void } }).room33Lenis;
-    const section = () => document.querySelector<HTMLElement>('[data-ecran-bac]');
-    const ecartDe = (el: HTMLElement) => el.getBoundingClientRect().top - NAV;
-    // écart max pour que les 3/4 de la section soient visibles sous la nav
-    const zone = (el: HTMLElement) => el.offsetHeight * (1 - VISIBLE);
-    const emboiter = (el: HTMLElement) => {
-      const cible = window.scrollY + ecartDe(el);
-      anim = true; cumul = 0;
-      const l = lenis();
-      if (l) l.scrollTo(cible, { duration: 0.75, easing: (t: number) => 1 - Math.pow(1 - t, 4), lock: true, force: true, onComplete: () => { anim = false; } });
-      else { window.scrollTo({ top: cible, behavior: 'smooth' }); setTimeout(() => (anim = false), 750); }
-    };
-
-    // appelé par Lenis pour chaque mouvement de molette (voir defilement.ts) ; false = Lenis ne fait rien
-    (window as unknown as { room33Garde?: (d: { deltaY: number; event: Event }) => boolean }).room33Garde = ({ deltaY, event }) => {
-      const el = section(); if (!el || !actif() || event.type !== 'wheel') return true;
-      derniereMolette = performance.now();
-      const bloquer = () => { event.preventDefault(); return false; };
-      if (anim) return bloquer();
-      const ecart = ecartDe(el), z = zone(el);
-      const emboitee = Math.abs(ecart) < 3;
-      if (emboitee && !libre) {
-        const t = performance.now(); if (t - dernier > 350) cumul = 0; dernier = t;
-        cumul += deltaY;
-        if (Math.abs(cumul) < SEUIL) return bloquer(); // petit coup : on reste
-        libre = true; cumul = 0; return true;            // vrai coup : on laisse partir
-      }
-      if (!emboitee) {
-        if (Math.abs(ecart) > z) libre = false; // sortie au-delà des 3/4 : la prochaine approche ré-emboîte
-        if (!libre && Math.abs(ecart) <= z) { emboiter(el); return bloquer(); }
-        const versElle = (deltaY > 0 && ecart > 0) || (deltaY < 0 && ecart < 0);
-        if (libre && Math.abs(ecart) > 40 && versElle) { libre = false; emboiter(el); return bloquer(); } // on revient dessus
-      }
-      return true;
-    };
-    let minuteur = 0;
-    addEventListener('scroll', () => {
-      const y = window.scrollY, sens = Math.sign(y - dernierY); dernierY = y;
-      if (anim) return; clearTimeout(minuteur);
-      const el = section(); if (!el || !actif()) return;
-      // pendant l'élan de la molette (Lenis continue après le dernier cran) : on s'emboîte dès que les 3/4 sont visibles
-      const ecart = ecartDe(el);
-      const versElle = (sens > 0 && ecart > 0) || (sens < 0 && ecart < 0);
-      if (!libre && versElle && performance.now() - derniereMolette < 600 && Math.abs(ecart) >= 3 && Math.abs(ecart) <= zone(el)) { emboiter(el); return; }
-      if (libre && Math.abs(ecart) > zone(el)) libre = false;
-      minuteur = window.setTimeout(() => {
-        const el2 = section(); if (!el2 || !actif() || libre) return;
-        const e2 = ecartDe(el2); if (Math.abs(e2) >= 3 && Math.abs(e2) <= zone(el2)) emboiter(el2);
-      }, 160);
-    }, { passive: true });
-  }
 
   // Choisir un autre genre : on charge la page de ce bac et on remplace seulement la zone du bac,
   // sans remonter au hero. L'adresse change (/bacs/jazz) pour pouvoir partager le bac.

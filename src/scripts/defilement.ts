@@ -17,18 +17,12 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     syncTouch: false,
     anchors: true,
     autoRaf: true,
-    // gardes des sections aimantées (hero, page d'un bac) : peuvent absorber un coup de molette
-    virtualScroll: (d) => {
-      const w = window as unknown as { room33GardeHero?: (x: typeof d) => boolean; room33Garde?: (x: typeof d) => boolean };
-      if (w.room33GardeHero && !w.room33GardeHero(d)) return false;
-      return w.room33Garde ? w.room33Garde(d) : true;
-    },
     // laisser le navigateur faire dans les fenêtres par-dessus la page, et pendant l'écran d'entrée
     prevent: (el: HTMLElement) =>
       Boolean(el.closest?.('dialog, [data-lenis-prevent], [data-entree]')) ||
       document.documentElement.classList.contains('entree-active'),
   });
-  (window as unknown as { room33Lenis?: Lenis }).room33Lenis = lenis; // utilisé par les sections aimantées (page d'un bac)
+  (window as unknown as { room33Lenis?: Lenis }).room33Lenis = lenis; // accès à Lenis pour les autres scripts
   // Changement de page (ClientRouter) : Lenis repart de la position que le navigateur vient de fixer
   document.addEventListener('astro:after-swap', () => { lenis.scrollTo(window.scrollY, { immediate: true, force: true }); lenis.resize(); });
   // Fenêtre modale ouverte (tiroir, menu mobile) : la page derrière ne bouge plus
