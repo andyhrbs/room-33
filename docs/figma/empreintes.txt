@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 15:55 : sous-titres des heros ordi sur une ligne (15:74 « Le morceau du moment » laissé à l'ancienne empreinte : modifié dans Figma, pas encore reporté)
+# Empreintes Figma de référence — 12 nov. 2026, 16:05 : nouveaux écrans « Le Top de la Room — Titres » (ordi 440:3191, mobile 440:3465)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -139,6 +139,20 @@
 67:1425 z62qtu
 67:1587 1iooutq
 182:2296 tu08b2
+440:3465:cadre 1cnkq0o
+440:3466 1eigyuz
+440:3467 1eiq7js
+440:3476 1p820sf
+440:3490 1f2b7ev
+440:3545 1yonnlr
+440:3546 p4phlg
+440:3191:cadre 1avk4ye
+440:3192 1cd5p3y
+440:3193 zxtij
+440:3201 xrmd7o
+440:3217 287fhg
+440:3281 1iooutq
+440:3282 tu08b2
 268:2764:cadre 1v1acay
 268:2765 az4s3d
 268:2766 vm4ocs
