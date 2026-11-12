@@ -89,7 +89,7 @@ function progression() {
   if (courant) courant.textContent = mmss(audio.currentTime);
   if (fin) fin.textContent = mmss(total);
   const barre = mini.querySelector<HTMLElement>('[data-progression]')!;
-  barre.setAttribute('aria-valuenow', String(Math.round(pct)));
+  mini.querySelectorAll<HTMLElement>('[data-barre]').forEach((b) => { b.setAttribute('aria-valuenow', String(Math.round(pct))); b.setAttribute('aria-valuetext', `${mmss(audio.currentTime)} sur ${mmss(total)}`); });
   (barre.firstElementChild as HTMLElement).style.width = `${pct}%`;
   const plein = mini.querySelector<HTMLElement>('[data-lecteur-plein]');
   if (plein) {
@@ -136,7 +136,7 @@ async function basculer(m: Morceau) {
   audio.pause();
   courant = { ...m, cle: k };
   etat = 'chargement';
-  afficher();
+  afficher(); memoriser(true);
   try {
     const q = new URLSearchParams({ titre: m.titre, artiste: m.artiste, type: m.type });
     if (m.deezer) q.set('deezer', m.deezer);
@@ -153,6 +153,7 @@ async function basculer(m: Morceau) {
     pochetteCourante = (d.pochetteGrande || d.pochette || '') as string;
     audio.src = d.extrait;
     await jouer();
+    memoriser(true);
     annoncer(`Lecture de l’extrait : ${m.titre}, ${m.artiste}`);
   } catch {
     if (n !== demande) return;
@@ -173,7 +174,68 @@ audio.addEventListener('ended', () => {
   if (position >= 0 && position < file.length - 1) { sauter(1); return; }
   etat = 'pause'; audio.currentTime = 0; afficher(); progression();
 });
-audio.addEventListener('timeupdate', progression);
+audio.addEventListener('timeupdate', () => { progression(); memoriser(); });
+
+// ---------- Barres de lecture cliquables (comme Spotify) ----------
+function regler(barre: HTMLElement, x: number) {
+  if (!courant || !Number.isFinite(audio.duration)) return;
+  const r = barre.getBoundingClientRect();
+  audio.currentTime = Math.min(1, Math.max(0, (x - r.left) / r.width)) * audio.duration;
+  progression();
+}
+document.addEventListener('pointerdown', (e) => {
+  const barre = (e.target as Element).closest?.<HTMLElement>('[data-barre]');
+  if (!barre || !courant || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  e.preventDefault(); e.stopPropagation(); // pas de glissé « fermer » du lecteur plein écran
+  barre.classList.add('glisse');
+  regler(barre, e.clientX);
+  const bouger = (ev: PointerEvent) => regler(barre, ev.clientX);
+  const lacher = () => { barre.classList.remove('glisse'); removeEventListener('pointermove', bouger); removeEventListener('pointerup', lacher); removeEventListener('pointercancel', lacher); memoriser(true); };
+  addEventListener('pointermove', bouger); addEventListener('pointerup', lacher); addEventListener('pointercancel', lacher);
+}, true);
+document.addEventListener('keydown', (e) => {
+  const barre = (e.target as Element).closest?.('[data-barre]');
+  if (barre && courant && Number.isFinite(audio.duration)) {
+    const pas: Record<string, number> = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5 };
+    if (e.key in pas) { e.preventDefault(); audio.currentTime = Math.min(audio.duration, Math.max(0, audio.currentTime + pas[e.key])); progression(); return; }
+    if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); audio.currentTime = e.key === 'Home' ? 0 : audio.duration - 0.5; progression(); return; }
+  }
+  // Espace = lecture / pause (comme Spotify), sauf quand on écrit ou qu'un bouton / lien a le focus
+  if (e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey || !courant) return;
+  const t = e.target as HTMLElement;
+  if (t.closest('input, textarea, select, button, a, [contenteditable], [role="slider"], summary') || t.isContentEditable) return;
+  e.preventDefault();
+  if (etat === 'erreur' || !audio.getAttribute('src')) { etat = 'erreur'; basculer({ ...courant }); } else if (audio.paused) jouer(); else audio.pause();
+});
+
+// ---------- Reprendre après une actualisation (comme Spotify) ----------
+// Le dernier son (et sa liste, sa position) est gardé pour l'onglet ; au rechargement, la mini-platine revient en pause.
+const MEMOIRE = 'room33-lecteur';
+let derniereMemoire = 0;
+function memoriser(maintenant = false) {
+  if (!courant || (!maintenant && Date.now() - derniereMemoire < 2000)) return;
+  derniereMemoire = Date.now();
+  try { sessionStorage.setItem(MEMOIRE, JSON.stringify({ courant, file, position, src: audio.src, temps: audio.currentTime, pochette: pochetteCourante, vinyle: document.querySelector<HTMLElement>('[data-mini-platine] .vinyle')?.style.backgroundImage ?? '' })); } catch { /* stockage indisponible */ }
+}
+function reprendre() {
+  try {
+    const m = JSON.parse(sessionStorage.getItem(MEMOIRE) ?? 'null');
+    if (!m?.courant) return;
+    courant = m.courant; file = m.file ?? []; position = m.position ?? -1; pochetteCourante = m.pochette ?? '';
+    const vinyle = document.querySelector<HTMLElement>('[data-mini-platine] .vinyle');
+    if (vinyle && m.vinyle) vinyle.style.backgroundImage = m.vinyle;
+    etat = 'pause';
+    if (m.src) {
+      audio.preload = 'metadata'; audio.src = m.src;
+      audio.addEventListener('loadedmetadata', () => { audio.currentTime = Math.min(m.temps ?? 0, (audio.duration || 30) - 0.5); progression(); }, { once: true });
+      // lien d'extrait expiré : on oublie le lien, ▶ ira en chercher un neuf (pas de « indisponible » au rechargement)
+      audio.addEventListener('error', () => { audio.removeAttribute('src'); etat = 'pause'; afficher(); }, { once: true });
+    }
+    afficher(); progression();
+  } catch { /* mémoire illisible : on repart de zéro */ }
+}
+reprendre();
+addEventListener('pagehide', () => memoriser(true));
 audio.addEventListener('error', () => { if (courant && audio.src) { etat = 'erreur'; afficher(); } });
 
 // ---------- Ouvrir l'app ----------
@@ -249,7 +311,7 @@ document.addEventListener('click', async (e) => {
   if (cible.closest('[data-precedent]')) { sauter(-1); return; }
   if (cible.closest('[data-suivant]')) { sauter(1); return; }
 
-  if (cible.closest('[data-lecture-pause]')) { if (!courant) return; if (etat === 'erreur') basculer({ ...courant }); else if (audio.paused) jouer(); else audio.pause(); return; }
+  if (cible.closest('[data-lecture-pause]')) { if (!courant) return; if (etat === 'erreur' || !audio.getAttribute('src')) { etat = 'erreur'; basculer({ ...courant }); } else if (audio.paused) jouer(); else audio.pause(); return; }
 
   const app = cible.closest('[data-ouvrir-app]');
   if (app) { e.preventDefault(); const m = app.closest('[data-mini-platine]') ? courant : lireMorceau(app); if (m) choisirApp(m); return; }

@@ -37,7 +37,7 @@ const apps = [
     </div>
     <div class="ligne-temps texte-legende texte-secondaire">
       <span class="temps" data-temps-courant>{temps.split(' / ')[0]}</span>
-      <span class="progression" role="progressbar" aria-label="Avancement de l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progression} data-progression>
+      <span class="progression" role="slider" tabindex="0" aria-label="Avancer ou reculer dans l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progression} aria-valuetext="0:00 sur 0:30" data-progression data-barre>
         <span style={`width: ${progression}%`}></span>
       </span>
       <span class="temps" data-temps-total>{temps.split(' / ')[1] ?? '0:30'}</span>
@@ -66,7 +66,7 @@ const apps = [
         <p class="texte-corps-l texte-secondaire" data-plein-artiste>{artiste}</p>
       </div>
       <div class="plein-avancement">
-        <span class="plein-barre" aria-hidden="true"><span data-plein-progression></span></span>
+        <span class="plein-barre" role="slider" tabindex="0" aria-label="Avancer ou reculer dans l’extrait" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-barre><span data-plein-progression></span></span>
         <span class="plein-temps texte-legende texte-secondaire"><span data-plein-courant>0:00</span><span data-plein-total>0:30</span></span>
       </div>
       <div class="plein-commandes">
@@ -139,8 +139,8 @@ const apps = [
   .ligne-temps { width: 100%; display: grid; grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem; align-items: center; gap: var(--espace-sm); }
   .temps { font-variant-numeric: tabular-nums; }
   .temps:first-child { text-align: right; }
-  .progression { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
-  .progression span { display: block; height: 100%; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
+  .progression { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); }
+  .progression span { display: block; height: 100%; border-radius: inherit; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
   /* Droite */
   .droite { display: flex; align-items: center; justify-content: flex-end; gap: var(--espace-md); min-width: 0; }
   .statut { white-space: nowrap; }
@@ -200,8 +200,16 @@ const apps = [
   .plein-titre { margin: 0; overflow-wrap: anywhere; }
   .plein-textes p { margin: 0; }
   .plein-avancement { width: 100%; display: grid; gap: var(--espace-xs); }
-  .plein-barre { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); overflow: hidden; }
-  .plein-barre span { display: block; height: 100%; width: 0; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
+  .plein-barre { display: block; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); }
+  .plein-barre span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--couleur-accent-defaut); transition: width 0.25s linear; }
+  /* Barres de lecture cliquables (comme Spotify) : zone de clic de 24 px, pastille au survol / en glissant */
+  [data-barre] { position: relative; cursor: pointer; touch-action: none; }
+  [data-barre]::before { content: ''; position: absolute; inset: -10px 0; }
+  [data-barre] > span { position: relative; }
+  [data-barre] > span::after { content: ''; position: absolute; right: -6px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: var(--couleur-texte-principal); opacity: 0; transition: opacity var(--duree-rapide) var(--courbe-standard); }
+  [data-barre]:is(:hover, :focus-visible, .glisse) > span::after { opacity: 1; }
+  [data-barre].glisse > span { transition: none; }
+  [data-barre]:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 6px; }
   .plein-temps { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
   .plein-commandes { display: flex; align-items: center; justify-content: center; gap: var(--espace-xl); }
   .plein-saut { width: 56px; height: 56px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); border-radius: 50%; transition: transform var(--duree-rapide) var(--courbe-standard); }
@@ -234,7 +242,8 @@ const apps = [
     .centre { position: static; z-index: 1; }
     .centre .commandes { position: relative; z-index: 1; }
     .ligne-temps { position: absolute; left: 0; right: 0; top: 0; display: block; }
-    .progression { height: 2px; border-radius: 0; }
+    .progression { height: 2px; border-radius: 0; pointer-events: none; } /* mobile : simple trait en haut de la barre ; on avance dans le lecteur plein écran */
+    .progression::before { display: none; }
   }
 
   /* Fenêtre « Écouter en entier sur… » */
