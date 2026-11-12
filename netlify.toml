@@ -4,3 +4,14 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Photos des chaînes et vignettes des lives : le nom du fichier = l'id de la vidéo (ne change pas),
+# le navigateur les garde 7 jours au lieu de les redemander à chaque visite
+[[headers]]
+  for = "/lives/avatars/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+[[headers]]
+  for = "/lives/vignettes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"

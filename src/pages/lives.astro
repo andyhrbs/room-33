@@ -37,7 +37,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
           <p class="texte-label">{t.une}</p>
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
           <div class="chaine">
-            <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" loading="lazy" /></span>
+            <span class="avatar" aria-hidden="true">R<img src={`/lives/avatars/${une.youtube}.jpg`} alt="" width="44" height="44" fetchpriority="high" /></span>
             <span class="qui"><span class="texte-label">{chaine(une).nom}</span><span class="texte-legende texte-secondaire">{chaine(une).sous}</span></span>
           </div>
           <p class="texte-avis">{une.mot}</p>

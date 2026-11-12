@@ -62,6 +62,9 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
 <script>
   // « À suivre » → grand lecteur : on échange les deux lives, puis on lance la vidéo (comme sur YouTube)
   type L = { youtube: string; nom: string; infos: string; mot: string; chaine: { nom: string; sous: string } };
+  // Photos des chaînes « À suivre » chargées en avance (quelques Ko) : elles s'affichent tout de suite au changement de live
+  const precharger = () => document.querySelectorAll<HTMLElement>('[data-lives-accueil] [data-suivant]').forEach((b) => { new Image().src = `/lives/avatars/${(JSON.parse(b.dataset.suivant!) as L).youtube}.jpg`; });
+  document.addEventListener('astro:page-load', () => setTimeout(precharger, 1500));
   document.addEventListener('click', (e) => {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-lives-accueil] [data-suivant]');
     if (!b) return;
