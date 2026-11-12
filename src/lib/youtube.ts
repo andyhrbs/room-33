@@ -9,15 +9,22 @@ export interface InfosVideo { chaine?: string; avatar?: string; date?: string }
 
 const cache = new Map<string, Promise<InfosVideo>>();
 const delai = () => ({ signal: AbortSignal.timeout(8000) });
+// en-têtes « navigateur » + accord cookies déjà donné : sinon YouTube peut renvoyer sa page de consentement (UE) sans données
+const ENTETES = { 'Accept-Language': 'fr-FR,fr;q=0.9', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36', Cookie: 'SOCS=CAI; CONSENT=YES+1' };
+const plusGrande = (json?: string) => {
+  if (!json) return undefined;
+  try { return (JSON.parse(json) as { url: string; width?: number }[]).sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]?.url?.replace(/^\/\//, 'https://'); } catch { return undefined; }
+};
 
 async function lire(id: string): Promise<InfosVideo> {
   const infos: InfosVideo = {};
+  let pageChaine: string | undefined;
   try {
     const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}&format=json`, delai());
-    if (r.ok) infos.chaine = (await r.json()).author_name || undefined;
+    if (r.ok) { const o = await r.json(); infos.chaine = o.author_name || undefined; pageChaine = o.author_url || undefined; }
   } catch { /* pas de réseau */ }
   try {
-    const r = await fetch(`https://www.youtube.com/watch?v=${id}&hl=fr`, { ...delai(), headers: { 'Accept-Language': 'fr-FR,fr;q=0.9' } });
+    const r = await fetch(`https://www.youtube.com/watch?v=${id}&hl=fr`, { ...delai(), headers: ENTETES });
     if (r.ok) {
       const html = await r.text();
       // la date apparaît sous plusieurs formes selon la version de page que YouTube renvoie
@@ -28,13 +35,24 @@ async function lire(id: string): Promise<InfosVideo> {
         /"dateText":\{"simpleText":"([^"]+)"\}/,
       ].map((re) => html.match(re)?.[1]).find(Boolean);
       if (!infos.date) console.warn(`[YouTube] date introuvable pour ${id}`);
-      const vignettes = html.match(/"videoOwnerRenderer":\{"thumbnail":\{"thumbnails":(\[[^\]]+\])/)?.[1];
-      if (vignettes) {
-        const liste = JSON.parse(vignettes) as { url: string; width?: number }[];
-        infos.avatar = liste.sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]?.url?.replace(/^\/\//, 'https://');
-      }
+      // photo de la chaîne : les 1res vignettes qui suivent « videoOwnerRenderer » (l'ordre des clés change selon les pages)
+      const i = html.indexOf('"videoOwnerRenderer"');
+      const vignettes = i >= 0 ? html.slice(i, i + 4000).match(/"thumbnails":(\[[^\]]+\])/)?.[1] : undefined;
+      if (vignettes) infos.avatar = plusGrande(vignettes);
     }
   } catch { /* page illisible : on garde le reste */ }
+  // secours : la page de la chaîne (lien donné par oEmbed) → sa photo de profil (og:image)
+  if (!infos.avatar && pageChaine) {
+    try {
+      const r = await fetch(pageChaine, { ...delai(), headers: ENTETES });
+      if (r.ok) {
+        const html = await r.text();
+        infos.avatar = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1]?.replace(/&amp;/g, '&')
+          ?? (() => { const cle = '"avatar":{"thumbnails":'; const j = html.indexOf(cle); return j >= 0 ? plusGrande(html.slice(j + cle.length).match(/^(\[[^\]]+\])/)?.[1]) : undefined; })();
+      }
+    } catch { /* on garde la lettrine */ }
+  }
+  if (!infos.avatar) console.warn(`[YouTube] photo de la chaîne introuvable pour ${id}`);
   return infos;
 }
 
