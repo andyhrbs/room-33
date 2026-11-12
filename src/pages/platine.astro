@@ -8,6 +8,7 @@ import { recadrages } from '../data/images';
 import Pochette from '../components/Pochette.astro';
 import Ecoute from '../components/Ecoute.astro';
 import LigneTracklist from '../components/LigneTracklist.astro';
+import Bouton from '../components/Bouton.astro';
 import { platineDetail as p, topTitres, deezerDe } from '../data/disques';
 const enCours = p.enCours;
 const rang = (i: number) => String(i + 1).padStart(2, '0');
@@ -72,18 +73,20 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
             <h3 class="titre-h3">Top artistes</h3>
             <ol role="list" data-top-artistes>
               {p.topArtistes.map((a, i) => (
-                <li class="artiste">
+                <li class="artiste" data-ouvrir-artiste data-artiste={a.nom}>
                   <span class="texte-label texte-secondaire num">{rang(i)}</span>
                   <span class="photo" aria-hidden="true"></span>
                   <span class="texte-label nom">{a.nom}</span>
+                  <Bouton style="lien" href={`https://open.spotify.com/search/${encodeURIComponent(a.nom)}/artists`} target="_blank" rel="noopener" data-ouvrir-artiste data-artiste={a.nom} aria-haspopup="dialog" aria-label={`Voir ${a.nom} dans une app de musique`} class="seulement-ordi ouvrir-artiste">Voir l’artiste</Bouton>
                 </li>
               ))}
             </ol>
             <template data-modele-artiste>
-              <li class="artiste">
+              <li class="artiste" data-ouvrir-artiste>
                 <span class="texte-label texte-secondaire num"></span>
                 <span class="photo" aria-hidden="true"></span>
                 <span class="texte-label nom"></span>
+                <Bouton style="lien" href="#" target="_blank" rel="noopener" data-ouvrir-artiste aria-haspopup="dialog" class="seulement-ordi ouvrir-artiste">Voir l’artiste</Bouton>
               </li>
             </template>
           </div>
@@ -173,6 +176,11 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       const li = modeleArtiste.content.firstElementChild!.cloneNode(true) as HTMLElement;
       li.querySelector('.num')!.textContent = rang(i);
       li.querySelector('.nom')!.textContent = a.nom;
+      // « Voir l'artiste » (et toute la ligne) : ouvre la fenêtre de choix de l'app (Spotify, Apple Music, Deezer) sur la page de l'artiste
+      const ouvrir = li.querySelector<HTMLAnchorElement>('[data-ouvrir-artiste]')!;
+      ouvrir.dataset.artiste = a.nom; li.dataset.artiste = a.nom;
+      ouvrir.href = a.lien ?? `https://open.spotify.com/search/${encodeURIComponent(a.nom)}/artists`;
+      ouvrir.setAttribute('aria-label', `Voir ${a.nom} dans une app de musique`);
       if (a.image) (li.querySelector('.photo') as HTMLElement).style.backgroundImage = `url("${a.image}")`;
       return li;
     }));
@@ -340,7 +348,10 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .artiste { display: flex; align-items: center; gap: var(--espace-md); padding-block: var(--espace-sm); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .num { width: 1.5rem; }
   .photo { width: 48px; height: 48px; border-radius: 50%; flex: none; background: var(--couleur-fond-image); }
-  .nom { flex: 1; }
+  .nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Figma : « Voir l'artiste » au bout de chaque ligne (ordi) ; toute la ligne ouvre le choix de l'app (Spotify, Apple Music, Deezer) */
+  .ouvrir-artiste { flex: none; }
+  .artiste[data-ouvrir-artiste] { cursor: pointer; }
   .photo { background-size: cover; background-position: center; }
   .macaron { background-size: cover; background-position: center; }
   /* Chargement : valeurs de démo atténuées jusqu'à l'arrivée des vraies données */

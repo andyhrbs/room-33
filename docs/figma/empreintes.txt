@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026 : pile de pochettes agrandie (Bac ordi)
+# Empreintes Figma de référence — 12 nov. 2026 : maj figma « Top artistes » (Platine ordi : Voir l'artiste)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -120,7 +120,7 @@
 25:979 fb5ptc
 110:2126 1x0ajtu
 25:781 1xswbqz
-25:798 sqk3sc
+25:798 t1xxw6
 25:937 lluul1
 25:966 at63hf
 182:2280 tu08b2
