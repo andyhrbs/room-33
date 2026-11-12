@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 15:30 : maj figma Mon classement (albums) + composant Écoute (« 30 s »)
+# Empreintes Figma de référence — 12 nov. 2026, 15:55 : sous-titres des heros ordi sur une ligne (15:74 « Le morceau du moment » laissé à l'ancienne empreinte : modifié dans Figma, pas encore reporté)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -29,7 +29,7 @@
 16:137 p4phlg
 15:19:cadre 1b2fqnt
 23:681 i762ao
-15:20 ne1dse
+15:20 f4w2bm
 15:74 uk9ccr
 15:89 1t67no8
 15:93 gds4hs
@@ -38,6 +38,7 @@
 256:2674 t652tu
 15:212 1wy2uzw
 182:2232 tu08b2
+422:4883 jhtl5q
 17:395:cadre dr2x2e
 23:799 15uz760
 110:2096 9cba0j
@@ -47,9 +48,9 @@
 17:494 j3kw65
 17:517 12ew7vw
 17:510 p4phlg
-17:235:cadre 19mjip1
+17:235:cadre onen99
 23:740 vg2uff
-110:2106 1g1ie5z
+110:2106 kl74s2
 338:4236 15xum8
 17:330 1g4oqeo
 17:353 121ephq
@@ -133,7 +134,7 @@
 67:1793 p4phlg
 67:1381:cadre q8e31
 67:1636 1cd5p3y
-110:2146 z35unx
+110:2146 zxtij
 67:1391 1xuezws
 67:1425 z62qtu
 67:1587 1iooutq

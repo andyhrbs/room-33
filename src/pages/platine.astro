@@ -250,7 +250,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
 
 <style>
   /* Figma : une seule ligne sur ordi (la police web est un peu plus large que dans Figma) */
-  .intro { max-width: 40rem; }
+  .intro { max-width: none; } /* sous-titre du hero sur une ligne (ordi) */
   .en-cours { display: grid; grid-template-columns: minmax(0, 27.3rem) minmax(0, 41.7rem); justify-content: space-between; gap: var(--espace-4xl); align-items: center; }
   /* ---------- Platine (CSS) ---------- */
   .platine {

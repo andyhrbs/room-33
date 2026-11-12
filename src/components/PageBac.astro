@@ -150,7 +150,7 @@ const nb = bac.disques.length;
   /* filtres en tête du contenu : 72 px sous le hero (ordi), puis la pile */
   .zone-filtres { padding-top: clamp(4rem, 2.59rem + 6.01vw, 7.5rem); }
   .zone-filtres + .section { padding-top: var(--espace-lg); }
-  .description { max-width: 45rem; }
+  .description { max-width: none; } /* sous-titre sur une ligne (ordi) */
   .filtres ul { display: flex; flex-wrap: wrap; gap: var(--espace-xs) 1.25rem; } /* Figma : 8 px + 12 px de marge par filtre */
   .filtres a { display: inline-block; padding: var(--espace-xs) 0; text-decoration: none; text-underline-offset: 6px; text-decoration-thickness: 2px; white-space: nowrap; }
   .filtres a:hover { text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
