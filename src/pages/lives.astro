@@ -38,7 +38,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
           <p class="texte-label">{t.une}</p>
           <h2 id="titre-une" class="titre-h2">{nom(une)}</h2>
           <div class="chaine">
-            <span class="avatar" aria-hidden="true">R<img src={une.photo} alt="" width="44" height="44" /></span>
+            <span class="avatar" aria-hidden="true" data-sans-apparition>R<img src={une.photo} alt="" width="44" height="44" /></span>
             <span class="qui"><span class="texte-label">{chaine(une).nom}</span><span class="texte-legende texte-secondaire">{chaine(une).sous}</span></span>
           </div>
           <p class="texte-avis">{une.mot}</p>
@@ -58,7 +58,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
               <div class="texte-carte">
                 <h3 class="texte-label">{nom(l)}</h3>
                 <div class="chaine petite">
-                  <span class="avatar" aria-hidden="true">R<img src={l.photo} alt="" width="28" height="28" /></span>
+                  <span class="avatar" aria-hidden="true" data-sans-apparition>R<img src={l.photo} alt="" width="28" height="28" /></span>
                   <span class="texte-petit texte-secondaire">{[chaine(l).nom, chaine(l).sous].filter(Boolean).join(' · ')}</span>
                 </div>
                 <p class="texte-petit">{l.mot}</p>

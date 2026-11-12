@@ -33,7 +33,7 @@ const donnees = (l: Affiche) => JSON.stringify({ youtube: l.youtube, nom: nom(l)
       <VideoLive youtube={une.youtube} titre={nom(une)} grand class="lecteur" />
       <h3 class="titre-h3" data-champ="nom">{nom(une)}</h3>
       <div class="chaine">
-        <span class="avatar" aria-hidden="true">R<img src={une.photo} alt="" width="44" height="44" data-champ="avatar" /></span>
+        <span class="avatar" aria-hidden="true" data-sans-apparition>R<img src={une.photo} alt="" width="44" height="44" data-champ="avatar" /></span>
         <span class="qui"><span class="texte-label" data-champ="chaine">{chaine(une).nom}</span><span class="texte-legende texte-secondaire" data-champ="chaine-sous">{chaine(une).sous}</span></span>
         <Bouton style="lien" href={yt(une.youtube)} target="_blank" rel="noopener" data-champ="youtube">{t.voirYoutube}<span class="visuellement-cache"> (nouvel onglet)</span></Bouton>
       </div>
