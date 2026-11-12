@@ -11,7 +11,7 @@
 // Rien avec « réduire les animations ».
 // ==========================================================================
 type LenisMini = { scrollTo: (y: number, o: object) => void };
-const DUREE = 1.3; // s : glissement très doux
+const DUREE = 2; // s : glissement très doux
 // démarrage et arrivée en douceur (accélère puis ralentit), pour un mouvement plus naturel
 const courbe = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
