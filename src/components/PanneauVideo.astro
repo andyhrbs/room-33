@@ -230,7 +230,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv.grand [data-pv-agrandir] :global(.i-contracter) { display: block; }
   .pv-corps { overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: var(--espace-lg); padding: var(--espace-lg); }
   .pv-ecran { flex: none; }
-  .pv-ecran { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); overflow: hidden; background: #000; }
+  /* 16:9 par la hauteur en % de la largeur (plus sûr que aspect-ratio dans une grille : la vidéo débordait sur le titre en grande vue) */
+  .pv-ecran { position: relative; height: 0; padding-bottom: 56.25%; border-radius: var(--rayon-bloc); overflow: hidden; background: #000; }
   .pv-ecran :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .pv-infos { display: grid; gap: var(--espace-md); }
   .pv-titre { margin: 0; overflow-wrap: anywhere; }
@@ -264,12 +265,12 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
   @media (min-width: 64rem) {
-    .pv.grand { width: 100vw; background: rgb(12 8 5 / 0.97); border-left: 0; }
+    .pv.grand { width: 100vw; background: rgb(12 8 5); border-left: 0; } /* opaque : la page derrière ne transparaît plus sous le texte */
     .pv.grand .pv-tete { border-bottom: 0; padding-inline: var(--grille-marge); }
     .pv.grand .pv-corps {
       display: grid;
       width: min(100%, 90rem); margin-inline: auto; padding: 0 var(--grille-marge) var(--espace-3xl);
-      grid-template-columns: minmax(0, 1fr) 25rem; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-2xl); align-items: start;
+      grid-template-columns: minmax(0, 1fr) 25rem; grid-template-rows: auto 1fr; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-2xl); align-items: start;
     }
     .pv.grand .pv-ecran { grid-area: ecran; }
     .pv.grand .pv-infos { grid-area: infos; }
@@ -289,7 +290,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.reduit .pv-tete { position: absolute; right: var(--espace-xs); top: 14px; min-height: 0; padding: 0; border: 0; }
     .pv.reduit .pv-etiquette, .pv.reduit .pv-poignee-trait, .pv.reduit [data-pv-reduire] { display: none; }
     .pv.reduit .pv-corps { overflow: hidden; display: flex; flex-direction: row; align-items: center; gap: var(--espace-sm); padding: 12px calc(44px + var(--espace-xs)) env(safe-area-inset-bottom) var(--grille-marge); }
-    .pv.reduit .pv-ecran { width: 85px; flex: none; border-radius: var(--rayon-pochette); }
+    .pv.reduit .pv-ecran { width: 85px; padding-bottom: 48px; flex: none; border-radius: var(--rayon-pochette); }
     .pv.reduit .pv-infos { min-width: 0; flex: 1; gap: 0; }
     .pv.reduit .pv-titre { font-family: var(--police-texte); font-size: var(--taille-petit); font-weight: 500; letter-spacing: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pv.reduit :is(.pv-chaine, .pv-mot, .pv-youtube, .pv-suite) { display: none; }
