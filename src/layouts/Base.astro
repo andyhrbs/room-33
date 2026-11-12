@@ -39,7 +39,8 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
         window.addEventListener('load', function () { enHaut(); requestAnimationFrame(enHaut); });
       })();
     </script>
-    <!-- Entrée « Allumez la lampe » : seulement quand l'accueil est vraiment chargé (arrivée sur le site par l'accueil, ou actualisation de l'accueil).
+    <!-- Entrée « Allumez la lampe » : une seule fois par visite, quand on arrive sur le site par l'accueil.
+         Une fois allumée, elle ne revient plus (même en actualisant) jusqu'à la prochaine visite (nouvel onglet / fenêtre).
          Jamais en naviguant dans le site (logo, liens, retour) : la navigation fluide marque l'entrée comme vue.
          Tests : sessionStorage['room33-entree'] = '1' la saute ; ?entree la force. -->
     <script is:inline>

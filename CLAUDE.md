@@ -17,7 +17,7 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 ## Pile technique
 - Astro 5 (ClientRouter, styles scopés), Lenis (défilement doux), Netlify (Functions + Forms), Decap CMS sur `/admin` (`public/admin/config.yml`).
 - Dépôt `andyhrbs/room-33`, branche de travail `dev` → `dev--room-33.netlify.app`. `main` = production.
-- Commandes : `npm run build` (build + garde-fou secrets), `npx astro preview --port 4329` (tests Playwright : ordi 1440, mobile 390 ; mettre `sessionStorage['room33-entree']='1'` pour sauter la lampe ; `?entree` pour la revoir).
+- Commandes : `npm run build` (build + garde-fou secrets), `npx astro preview --port 4329` (tests Playwright : ordi 1440, mobile 390 ; mettre `sessionStorage['room33-entree']='1'` pour sauter la lampe ; `?entree` pour la revoir). Lampe : une fois par visite (onglet), seulement en arrivant par l'accueil ; jamais en naviguant ni en actualisant après.
 - Le bac à sable n'atteint ni Deezer, ni Spotify, ni iTunes : tester avec des réponses simulées, vérifier en ligne sur le site dev.
 
 ## Données
