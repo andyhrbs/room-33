@@ -23,4 +23,5 @@ const insta = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .grille-appel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-lg) var(--espace-xl); }
   .texte { display: grid; gap: var(--espace-sm); max-width: 56rem; }
   .actions { display: grid; gap: var(--espace-md); justify-items: start; }
+  @media (min-width: 64rem) { .actions { justify-items: end; } } /* ordi : le lien Insta se cale à droite, sous le bouton */
 </style>

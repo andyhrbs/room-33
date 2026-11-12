@@ -1,7 +1,7 @@
 ---
 // Lecteur vidéo des lives, inspiré du panneau de droite de Spotify (« En cours de lecture ») :
 // - Ordi : panneau à droite, sur toute la hauteur, qui pousse la page. Vidéo en haut, puis titre, chaîne, mot,
-//   et « À suivre ». Il se rétracte vers la droite (un onglet reste au bord, la vidéo continue) et s'agrandit
+//   et « À suivre ». Il s'agrandit
 //   en grande vue façon YouTube, par-dessus la page (mode cinéma : la pièce s'assombrit).
 // - Mobile : feuille plein écran qui monte du bas ; glissée vers le bas (ou ⌄), elle se réduit en barre.
 // - Il reste ouvert quand on change de page (transition:persist dans Base). L'iframe YouTube ne bouge jamais
@@ -30,7 +30,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
     <p class="texte-label pv-etiquette">Vidéo en cours</p>
     <div class="pv-actions">
       <button type="button" class="pv-bouton seulement-ordi" data-pv-agrandir aria-label="Agrandir la vidéo"><Icone nom="agrandir" taille={20} class="i-agrandir" /><Icone nom="contracter" taille={20} class="i-contracter" /></button>
-      <button type="button" class="pv-bouton seulement-ordi" data-pv-retracter aria-label="Rétracter le panneau vidéo"><Icone nom="fleche-droite" taille={20} /></button>
       <button type="button" class="pv-bouton seulement-mobile" data-pv-reduire aria-label="Réduire la vidéo"><Icone nom="chevron-bas" taille={22} /></button>
       <button type="button" class="pv-bouton" data-pv-fermer aria-label="Fermer la vidéo"><Icone nom="fermer" taille={20} /></button>
     </div>
@@ -54,10 +53,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
     </div>
   </div>
 </aside>
-<button type="button" class="pv-onglet seulement-ordi" data-pv-onglet hidden aria-label="Rouvrir la vidéo">
-  <Icone nom="fleche-gauche" taille={20} />
-  <span class="pv-onglet-texte">Vidéo</span>
-</button>
 
 <script>
   import { typo } from '../scripts/typo';
@@ -81,8 +76,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
     html.classList.toggle('pv-bloque', ouvert && (p!.classList.contains('grand') || (!ORDI.matches && !p!.classList.contains('reduit'))));
     const lenis = (window as unknown as { room33Lenis?: { stop(): void; start(): void } }).room33Lenis;
     if (html.classList.contains('pv-bloque')) lenis?.stop(); else if (!document.querySelector('dialog[open]')) lenis?.start();
-    const onglet = $<HTMLButtonElement>('[data-pv-onglet]');
-    if (onglet) onglet.hidden = !(ouvert && p!.classList.contains('retracte'));
   }
 
   function afficherInfos(l: Live) {
@@ -160,8 +153,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
     const p = pv(); if (!p) return;
     if (c.closest('[data-pv-fermer]')) { fermer(); return; }
     if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
-    if (c.closest('[data-pv-retracter]')) { p.classList.add('retracte'); p.classList.remove('grand'); etatPage(); return; }
-    if (c.closest('[data-pv-onglet]')) { p.classList.remove('retracte'); etatPage(); return; }
     if (c.closest('[data-pv-reduire]')) { reduire(p); return; }
     if (c.closest('[data-pv-lecture]')) { commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture(); return; }
     // mobile, barre réduite : un toucher sur la barre (hors bouton) rouvre la feuille
@@ -274,7 +265,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     background: var(--couleur-fond-bloc); border-left: var(--trait-filet) solid var(--couleur-bordure-discrete);
     box-shadow: -16px 0 40px rgb(0 0 0 / 0.35);
     transform: translateX(100%);
-    /* entrée (ouverture, retour depuis l'onglet) : lente et douce ; agrandissement en grande vue : 0,6 s doux */
+    /* entrée (ouverture) : lente et douce ; agrandissement en grande vue : 0,6 s doux */
     transition: transform var(--pv-entree), width 0.6s var(--courbe-douce), background-color 0.6s var(--courbe-standard), box-shadow 0.6s var(--courbe-standard);
   }
   .pv[hidden] { display: none; }
@@ -316,18 +307,12 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv-liste :global(.pv-suivant:hover .pv-suivant-nom) { text-decoration: underline; text-underline-offset: 3px; }
   .pv-lecture { display: none; }
 
-  /* onglet au bord droit quand le panneau est rétracté */
-  .pv-onglet {
-    position: fixed; z-index: 55; right: 0; top: 50%; translate: 0 -50%;
-    display: grid; justify-items: center; gap: var(--espace-xs); padding: var(--espace-md) var(--espace-xs);
-    border: var(--trait-filet) solid var(--couleur-bordure-discrete); border-right: 0; border-radius: var(--rayon-bloc) 0 0 var(--rayon-bloc);
-    background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal); box-shadow: -8px 0 24px rgb(0 0 0 / 0.35); cursor: pointer;
+  /* Ordi, panneau : la vidéo prend toute la largeur (bord à bord), le texte garde ses 24 px */
+  @media (min-width: 64rem) {
+    .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
+    .pv:not(.grand) .pv-ecran { border-radius: 0; }
+    .pv:not(.grand) :is(.pv-infos, .pv-suite) { padding-inline: var(--espace-lg); }
   }
-  .pv-onglet[hidden] { display: none; }
-  .pv-onglet:not([hidden]) { animation: pv-onglet 0.45s var(--courbe-douce) 0.2s both; }
-  @keyframes pv-onglet { from { transform: translateX(100%); opacity: 0; } }
-  .pv-onglet-texte { writing-mode: vertical-rl; font-size: var(--taille-petit); }
-  .pv-onglet:hover { background: var(--couleur-fond-tonal); }
 
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
   @media (min-width: 64rem) {
