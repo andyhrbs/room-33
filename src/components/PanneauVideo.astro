@@ -266,16 +266,18 @@ const donnees = await Promise.all(lives.map(async (l) => {
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
   @media (min-width: 64rem) {
     .pv.grand { width: 100vw; background: rgb(12 8 5); border-left: 0; } /* opaque : la page derrière ne transparaît plus sous le texte */
-    .pv.grand .pv-tete { border-bottom: 0; padding-inline: var(--grille-marge); }
+    /* mesures de la page vidéo de YouTube : 24 px sur les côtés et entre les colonnes, colonne « À suivre » de 402 px */
+    .pv.grand .pv-tete { border-bottom: 0; padding-inline: var(--espace-lg); }
     .pv.grand .pv-corps {
       display: grid;
-      width: min(100%, 90rem); margin-inline: auto; padding: 0 var(--grille-marge) var(--espace-3xl);
-      grid-template-columns: minmax(0, 1fr) 25rem; grid-template-rows: auto 1fr; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-2xl); align-items: start;
+      width: min(100%, 110rem); margin-inline: auto; padding: 0 var(--espace-lg) var(--espace-3xl);
+      grid-template-columns: minmax(0, 1fr) 25.125rem; grid-template-rows: auto 1fr; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-md); align-items: start;
     }
     .pv.grand .pv-ecran { grid-area: ecran; }
     .pv.grand .pv-infos { grid-area: infos; }
     .pv.grand .pv-titre { font-size: var(--taille-h2); }
     .pv.grand .pv-suite { grid-area: suite; }
+    .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: 10.5rem minmax(0, 1fr); } /* vignettes de 168 px, comme YouTube */
   }
 
   /* ---------- Mobile : feuille qui monte du bas, réductible en barre ---------- */
