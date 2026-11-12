@@ -1,6 +1,6 @@
 ---
 // Vidéo YouTube en « façade » : on affiche la vignette (servie par Room 33) et un bouton lecture.
-// YouTube n'est chargé qu'au clic (youtube-nocookie), puis la vidéo se lance. Coupe l'extrait en cours.
+// YouTube n'est chargé qu'au clic (youtube-nocookie), puis la vidéo se lance. Jamais deux sons à la fois (vidéo ↔ extrait).
 import Icone from './Icone.astro';
 interface Props { youtube: string; titre: string; grand?: boolean; class?: string }
 const { youtube, titre, grand = false, class: cls } = Astro.props;
@@ -20,13 +20,27 @@ const { youtube, titre, grand = false, class: cls } = Astro.props;
     if (!bouton) return;
     const bloc = bouton.closest<HTMLElement>('[data-video]')!;
     const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    // enablejsapi : on peut mettre la vidéo en pause quand un extrait démarre, et savoir quand elle (re)part
+    iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}`;
+    iframe.addEventListener('load', () => iframe.contentWindow?.postMessage(JSON.stringify({ event: 'listening', id: bloc.dataset.video, channel: 'widget' }), '*'));
     iframe.title = bloc.dataset.titre ?? 'Vidéo YouTube';
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
     bloc.replaceChildren(iframe);
     iframe.focus();
     document.dispatchEvent(new Event('room33:video')); // le lecteur d'extraits se met en pause
+  });
+  // Jamais deux sons à la fois :
+  // - une vidéo (re)démarre (YouTube nous prévient : état 1 = lecture) → l'extrait de la mini-platine s'arrête ;
+  // - un extrait démarre → toutes les vidéos ouvertes se mettent en pause.
+  addEventListener('message', (e) => {
+    if (!/youtube(-nocookie)?\.com$/.test(new URL(e.origin).hostname)) return;
+    let d: { event?: string; info?: { playerState?: number } } = {};
+    try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+    if (d?.info?.playerState === 1) document.dispatchEvent(new Event('room33:video'));
+  });
+  document.addEventListener('room33:extrait', () => {
+    document.querySelectorAll<HTMLIFrameElement>('[data-video] iframe').forEach((f) => f.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*'));
   });
 </script>
 <style>

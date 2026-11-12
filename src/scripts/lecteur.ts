@@ -167,7 +167,7 @@ async function jouer() {
   try { await audio.play(); } catch { etat = 'pause'; afficher(); }
 }
 
-audio.addEventListener('play', () => { etat = 'lecture'; afficher(); });
+audio.addEventListener('play', () => { etat = 'lecture'; afficher(); document.dispatchEvent(new Event('room33:extrait')); }); // les vidéos ouvertes se mettent en pause
 audio.addEventListener('pause', () => { if (etat === 'lecture') { etat = 'pause'; afficher(); } });
 audio.addEventListener('ended', () => {
   // extrait fini : le suivant de la liste démarre, sinon on s'arrête au début
