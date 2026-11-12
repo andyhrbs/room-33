@@ -44,6 +44,9 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
   outline-offset: 3px;
   border-radius: var(--rayon-pochette);
 }
+/* Titres qui reçoivent le focus par le script (ex. « Bienvenue chez moi » après la lampe, pour les lecteurs d'écran) :
+   ce ne sont pas des boutons, donc pas de contour */
+[tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 
 /* Texte lu uniquement par les lecteurs d'écran */
 .visuellement-cache {
