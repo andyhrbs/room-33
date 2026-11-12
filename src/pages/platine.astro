@@ -324,6 +324,15 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .afficheur dd { margin: 0; }
   /* Ordi : les deux valeurs sur la même hauteur, centrées (Figma) */
   @media (min-width: 64rem) { .afficheur dd { min-height: var(--taille-display); display: flex; align-items: center; } }
+  /* Figma ordi (maj du 12 nov.) : 48 px entre les afficheurs, visuel 80 px à 24 px du nom, 48 px entre les deux classements */
+  @media (min-width: 64rem) {
+    .afficheurs { gap: var(--espace-2xl); }
+    .afficheur .avec-pochette { gap: var(--espace-lg); }
+    .afficheur [data-titre-pochette] :global(.pochette) { --taille: 80px !important; width: 80px; }
+    .afficheur .photo { width: 80px; height: 80px; }
+    .grille-ecoutes .classements { gap: var(--espace-2xl); }
+  }
+  [data-titre-pochette] { flex: none; line-height: 0; }
   .avec-pochette { display: flex; align-items: center; gap: var(--espace-sm); min-width: 0; }
   .avec-pochette .titre-h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .classements { display: grid; grid-template-columns: 1fr 1fr; gap: var(--espace-3xl); }
