@@ -70,7 +70,7 @@ const total = disques.length;
   .feuilles { position: relative; height: var(--h-pile, clamp(21.875rem, 22rem + 10vw, 32.5rem)); display: grid; place-items: center; } /* --h-pile : fixé par la page du bac sur ordi pour tenir dans l'écran */
   .feuille {
     --rang: var(--i);
-    position: absolute; width: min(28rem, 82%, calc(var(--h-pile, 40rem) * 0.95));
+    position: absolute; width: min(var(--l-pile, 28rem), 82%, calc(var(--h-pile, 40rem) * 0.95)); /* --l-pile : largeur max, élargie sur la page du bac (ordi) */
     transform: translateX(calc(var(--rang) * -1.6rem)) rotate(calc(var(--rang) * -4deg)) scale(calc(1 - var(--rang) * 0.03));
     z-index: calc(20 - var(--rang));
     opacity: calc(1 - min(var(--rang), 4) * 0.2 + 0.2);

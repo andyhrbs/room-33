@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026 : maj figma accueil, aperçu platine (ordi + mobile)
+# Empreintes Figma de référence — 12 nov. 2026 : pile de pochettes agrandie (Bac ordi)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -47,13 +47,13 @@
 17:494 j3kw65
 17:517 12ew7vw
 17:510 p4phlg
-17:235:cadre j9wp9g
-23:740 1mfwm54
+17:235:cadre 19mjip1
+23:740 vg2uff
 110:2106 1g1ie5z
-338:4236 1tbc9z9
-17:330 1efsnh
-17:353 1wsj48f
-17:382 jszzbj
+338:4236 15xum8
+17:330 1g4oqeo
+17:353 121ephq
+17:382 12pi92j
 182:2248 tu08b2
 18:574:cadre i7y54l
 23:863 n1otcf

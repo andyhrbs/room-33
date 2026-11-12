@@ -175,8 +175,10 @@ const nb = bac.disques.length;
   /* Ordi : la pile se dimensionne sur la hauteur de l'écran (sous la nav de 72 px) */
   @media (min-width: 64rem) {
     .ecran-bac {
-      /* 64 px en haut et en bas ; la pile prend la place restante : écran − nav − marges − titre/genres/infos − contrôles */
-      --h-pile: clamp(10rem, calc(100svh - 72px - 30.25rem), 34rem); /* 484 px autour : marges 128 + titre/genres/infos 212 + 24 + contrôles 120 */
+      /* 64 px en haut et en bas */
+      /* pile plus grande : elle peut dépasser l'écran (environ 480 px de haut sur un écran de 900 px) */
+      --h-pile: clamp(28rem, calc(100svh - 72px - 20rem), 36rem);
+      --l-pile: 34rem;
       padding-block: var(--espace-3xl);
     }
     .ecran-bac .contenu-bac { grid-template-columns: minmax(0, 37.5rem) minmax(0, 33.5rem); } /* Figma : pile 600, liste 536 */
