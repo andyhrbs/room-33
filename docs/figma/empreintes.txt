@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 17:00 : entrée mobile, « Touchez pour allumer la pièce » sous la lampe ; 15:74 encore à l’ancienne empreinte
+# Empreintes Figma de référence — 12 nov. 2026, 22:55 : nouveaux écrans du lecteur vidéo (panneau, grande vue, feuille et barre mobile) ; 15:74 encore à l’ancienne empreinte
 14:6:cadre yzc48v
 23:674 17e0a18
 14:7 1oruz9z
@@ -206,6 +206,21 @@
 217:2572 i50cdr
 217:2579 90kwkt
 217:2580 tu08b2
+458:3450:cadre dv86ss
+458:3451 vvodid
+458:3461 1fzxmmw
+458:3462 l05925
+458:3502:cadre trm9k1
+458:3503 13q9w3t
+458:3511 p4phlg
+458:3517 ukg8yy
+456:3421:cadre 1fa68te
+456:3422 1x59lz9
+456:3448 1aiu063
+456:3506:cadre sfeqcq
+456:3507 13sqo7t
+456:3524 4c9zqh
+456:3538 l3v8m
 70:2026 17nccj2
 80:2406 13i2k3t
 41:20 krbpfw
