@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026, 16:25 : maj figma 00 · L'entrée ordi (pièce éteinte en fond + « Cliquez pour allumer la pièce ») ; 15:74 encore à l’ancienne empreinte
+# Empreintes Figma de référence — 12 nov. 2026, 17:00 : entrée mobile, « Touchez pour allumer la pièce » sous la lampe ; 15:74 encore à l’ancienne empreinte
 14:6:cadre yzc48v
 23:674 17e0a18
 14:7 1oruz9z
@@ -6,6 +6,7 @@
 14:11 1mw7i8k
 14:12 49zweq
 227:2759 vuzgy7
+451:3416 tvpvm
 14:27:cadre 1cgjp1a
 23:678 gjlxju
 14:28 1skbp9o
