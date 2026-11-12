@@ -24,9 +24,9 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
 
     <section class="en-cours section conteneur" aria-labelledby="titre-en-cours">
       <!-- Platine dessinée en CSS : socle en noyer, plateau métal, vinyle qui tourne, reflet fixe, bras qui se pose -->
-      <div class="platine" aria-hidden="true">
+      <div class="platine" aria-hidden="true" data-platine>
         <div class="plateau">
-          <div class="vinyle" data-vinyle><div class="macaron" data-macaron style={`--motif: var(--ambre-500)`}></div></div>
+          <div class="vinyle a-larret" data-vinyle><div class="macaron" data-macaron style={`--motif: var(--ambre-500)`}></div></div>
           <span class="reflet"></span>
           <span class="axe"></span>
         </div>
@@ -121,7 +121,22 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   };
   const detail = (m: Morceau) => [m.artiste, m.album && `${m.album}${m.annee ? ` (${m.annee})` : ''}`].filter(Boolean).join(' — ');
 
-  function afficherEnCours(d: Reponse) {
+  // Platine : bras levé et disque arrêté tant qu'on attend Spotify (et si rien ne joue).
+  // Quand un son joue : le bras se pose (1,2 s), puis le disque tourne. anime = false : tout est déjà en place.
+  let minuterie = 0;
+  function poserBras(joue: boolean, anime = true) {
+    const platine = $('[data-platine]'), vinyle = $('[data-vinyle]');
+    clearTimeout(minuterie);
+    platine.classList.toggle('sans-anim', !anime);
+    if (!joue) { platine.classList.remove('bras-pose'); vinyle.classList.add('a-larret'); return; }
+    if (platine.classList.contains('bras-pose') && !vinyle.classList.contains('a-larret')) return; // déjà en place
+    platine.classList.add('bras-pose');
+    const lent = anime && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (lent) minuterie = window.setTimeout(() => vinyle.classList.remove('a-larret'), 1200);
+    else vinyle.classList.remove('a-larret');
+  }
+
+  function afficherEnCours(d: Reponse, anime = true) {
     const m = d.enCours ?? d.derniere;
     if (!m) return;
     const etat = $('[data-etat]');
@@ -133,7 +148,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     $('[data-detail]').textContent = typo(detail(m));
     const macaron = $('[data-macaron]');
     if (m.pochette) macaron.style.backgroundImage = `url("${m.pochette}")`;
-    $('[data-vinyle]').classList.toggle('a-larret', !d.enCours);
+    poserBras(Boolean(d.enCours), anime);
     const ecoute = document.querySelector<HTMLElement>('.morceau [data-ecoute]');
     if (ecoute) { ecoute.dataset.titre = m.titre; ecoute.dataset.artiste = m.artiste; ecoute.dataset.type = 'titre'; delete ecoute.dataset.deezer; if (m.isrc) ecoute.dataset.isrc = m.isrc; else delete ecoute.dataset.isrc; ecoute.querySelector('[data-ecouter]')?.setAttribute('aria-label', `Écouter un extrait de ${m.titre}, ${m.artiste}`); }
   }
@@ -196,7 +211,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       const d: Reponse = await rep.json();
       if (n !== demande) return; // une autre période a été demandée entre-temps
       if (!rep.ok || d.erreur) throw new Error(d.erreur);
-      if (premiere) afficherEnCours(d);
+      if (premiere) { afficherEnCours(d); memoriser(d); }
       afficherClassements(d);
       $('[data-indispo]').hidden = true;
       zones.forEach((z) => z.classList.remove('demo'));
@@ -204,7 +219,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       if (n !== demande) return;
       $('[data-indispo]').hidden = false;
       zones.forEach((z) => z.classList.add('demo'));
-      $('[data-vinyle]').classList.add('a-larret');
+      if (premiere) poserBras(false);
     } finally {
       if (n === demande) zones.forEach((z) => z.setAttribute('aria-busy', 'false'));
     }
@@ -219,8 +234,18 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
       charger(b.dataset.periode!);
     }));
+    // Réponse récente déjà en mémoire (retour sur la page) : tout est en place dès l'affichage, sans animation
+    const recente = relire();
+    if (recente) { afficherEnCours(recente, false); afficherClassements(recente); zones.forEach((z) => { z.classList.remove('demo'); z.setAttribute('aria-busy', 'false'); }); }
     charger('4-semaines', true);
   });
+
+  // Mémoire de la dernière réponse (60 s, comme le cache de la Function) : évite l'attente au retour sur la page
+  const CLE = 'room33-platine';
+  function memoriser(d: Reponse) { try { sessionStorage.setItem(CLE, JSON.stringify({ le: Date.now(), d })); } catch { /* stockage indisponible */ } }
+  function relire(): Reponse | null {
+    try { const m = JSON.parse(sessionStorage.getItem(CLE) ?? 'null'); return m && Date.now() - m.le < 60_000 ? m.d : null; } catch { return null; }
+  }
 </script>
 
 <style>
@@ -293,7 +318,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
     filter: drop-shadow(6px 10px 6px rgb(0 0 0 / 0.5));
     transition: transform 1.2s var(--courbe-sortie);
   }
-  .platine:has(.vinyle:not(.a-larret)) .bras { transform: rotate(24deg); }
+  .platine.bras-pose .bras { transform: rotate(24deg); } /* bras posé sur le disque (le disque tourne une fois le bras arrivé) */
+  .platine.sans-anim .bras { transition: none; }
   .bras::before { /* contrepoids */
     content: ''; position: absolute; left: 50%; top: -16%; width: 240%; height: 14%; transform: translateX(-50%);
     border-radius: 3px; background: linear-gradient(90deg, #2a221b, #6b5f50 45%, #2a221b); box-shadow: 0 2px 4px rgb(0 0 0 / 0.5);
