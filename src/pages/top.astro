@@ -93,7 +93,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
                 <span class="texte-petit texte-secondaire">{[t.disque.artiste, t.duree].filter(Boolean).join(' · ')}</span>
               </span>
               <!-- le titre s'écoute directement (extrait de 30 s), sans passer par l'album -->
-              <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${t.titre}, ${t.disque.artiste}`}><span class="rond"><Icone nom="lecture" taille={16} class="i-lecture" /><Icone nom="pause" taille={14} class="i-pause" /></span></button>
+              <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${t.titre}, ${t.disque.artiste}`}><span class="rond"><Icone nom="lecture" taille={20} class="i-lecture" /><Icone nom="pause" taille={18} class="i-pause" /></span></button>
             </li>
           ))}
         </ol>
@@ -140,9 +140,9 @@ const rang = (i: number) => String(i).padStart(2, '0');
   .classement { display: grid; gap: var(--espace-2xs); }
   .rang { display: grid; grid-template-columns: 6.875rem 6rem minmax(0, 1fr) auto; align-items: center; gap: var(--espace-xl); padding-block: var(--espace-md); border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .rang :global(.mini) { width: 6rem; }
-  /* Top titres : ▶ « en liste » = rond à filet 32 px dans une zone de 44 px (règle : plein ambre = une seule écoute principale par bloc) */
+  /* Top titres : ▶ « en liste » = rond à filet 40 px (plus grand ici, demande d'Andyh) dans une zone de 44 px (règle : plein ambre = une seule écoute principale par bloc) */
   .lecture { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
-  .lecture .rond { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
+  .lecture .rond { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-defaut); transition: background-color var(--duree-rapide) var(--courbe-standard), border-color var(--duree-rapide) var(--courbe-standard), transform var(--duree-rapide) var(--courbe-standard); }
   .lecture:hover .rond { background: var(--couleur-fond-tonal); }
   .lecture:active .rond { transform: scale(0.96); }
   .lecture :global(.i-pause) { display: none; }
