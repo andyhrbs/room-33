@@ -124,6 +124,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     p.hidden = false;
     p.classList.remove('retracte', 'reduit');
     requestAnimationFrame(() => p.classList.add('visible'));
+    if (!ORDI.matches && !calme()) animer(p, 'monte'); // mobile : la feuille monte comme le lecteur plein écran
     enLecture = true; majLecture();
     document.dispatchEvent(new Event('room33:video')); // l'extrait de la mini-platine s'arrête
     etatPage();
@@ -131,10 +132,14 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
   function fermer() {
     const p = pv(); if (!p) return;
-    p.classList.remove('visible', 'grand');
+    // mobile : la feuille (ou la barre) redescend comme le lecteur plein écran avant de disparaître
+    if (!ORDI.matches && !calme() && !p.classList.contains('ferme-fini')) { animer(p, 'descend', () => { p.classList.add('ferme-fini'); fermer(); }); return; }
+    const fini = p.classList.contains('ferme-fini');
+    p.classList.remove('visible', 'grand', 'ferme-fini');
+    if (fini) { p.hidden = true; p.classList.remove('retracte', 'reduit'); }
     p.querySelector('[data-pv-ecran]')!.replaceChildren(); // coupe la vidéo
     courant = null; enLecture = false;
-    setTimeout(() => { if (!p.classList.contains('visible')) { p.hidden = true; p.classList.remove('retracte', 'reduit'); etatPage(); } }, 350);
+    setTimeout(() => { if (!p.classList.contains('visible')) { p.hidden = true; p.classList.remove('retracte', 'reduit'); etatPage(); } }, ORDI.matches ? 350 : 0);
     document.documentElement.classList.remove('pv-ouvert', 'pv-bloque', 'pv-barre');
     etatPage();
   }
@@ -157,29 +162,77 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
     if (c.closest('[data-pv-retracter]')) { p.classList.add('retracte'); p.classList.remove('grand'); etatPage(); return; }
     if (c.closest('[data-pv-onglet]')) { p.classList.remove('retracte'); etatPage(); return; }
-    if (c.closest('[data-pv-reduire]')) { p.classList.add('reduit'); etatPage(); return; }
+    if (c.closest('[data-pv-reduire]')) { reduire(p); return; }
     if (c.closest('[data-pv-lecture]')) { commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture(); return; }
     // mobile, barre réduite : un toucher sur la barre (hors bouton) rouvre la feuille
-    if (p.classList.contains('reduit') && c.closest('[data-pv]') && !c.closest('button, a, iframe')) { p.classList.remove('reduit'); etatPage(); }
+    if (p.classList.contains('reduit') && c.closest('[data-pv]') && !c.closest('button, a, iframe')) deplier(p);
   }, true);
 
   // Échap : grande vue → panneau ; feuille mobile → barre
   document.addEventListener('keydown', (e) => {
     const p = pv(); if (e.key !== 'Escape' || !p || p.hidden) return;
     if (p.classList.contains('grand')) { p.classList.remove('grand'); etatPage(); }
-    else if (!ORDI.matches && !p.classList.contains('reduit')) { p.classList.add('reduit'); etatPage(); }
+    else if (!ORDI.matches && !p.classList.contains('reduit')) reduire(p);
   });
 
-  // mobile : glisser la feuille vers le bas depuis sa poignée → barre réduite
-  let y0 = 0, glisse = false;
-  document.addEventListener('pointerdown', (e) => {
-    const t = (e.target as Element).closest?.('[data-pv-poignee]'); const p = pv();
-    if (!t || !p || ORDI.matches || p.classList.contains('reduit') || (e.target as Element).closest('button')) return;
-    y0 = e.clientY; glisse = true; p.style.transition = 'none';
-  });
-  document.addEventListener('pointermove', (e) => { const p = pv(); if (!glisse || !p) return; const dy = Math.max(0, e.clientY - y0); p.style.transform = `translateY(${dy}px)`; });
-  const lacher = (e: PointerEvent) => { const p = pv(); if (!glisse || !p) return; glisse = false; p.style.transition = ''; p.style.transform = ''; if (e.clientY - y0 > 90) { p.classList.add('reduit'); etatPage(); } };
-  document.addEventListener('pointerup', lacher); document.addEventListener('pointercancel', lacher);
+  // ---------- Mobile : mêmes animations que le lecteur plein écran de la mini-platine ----------
+  // montée lente (0,85 s, courbe douce), descente rapide (0,3 s) ; glissé au doigt façon feuille iOS :
+  // elle suit le doigt en rétrécissant un peu, coins arrondis, résiste vers le haut ; au lâcher, elle part
+  // avec l'élan (→ barre réduite) ou revient en douceur.
+  const calme = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const animer = (el: HTMLElement, classe: string, fin?: () => void) => {
+    el.classList.add(classe);
+    let fait = false; const une = () => { if (fait) return; fait = true; fin?.(); el.classList.remove(classe); }; // fin avant de retirer la classe : pas d'image intermédiaire
+    el.addEventListener('animationend', une, { once: true }); setTimeout(une, 1000);
+  };
+  function deplier(p: HTMLElement) { p.classList.remove('reduit'); etatPage(); if (!calme() && !ORDI.matches) animer(p, 'monte'); }
+  function reduire(p: HTMLElement) {
+    if (ORDI.matches || calme()) { p.classList.add('reduit'); etatPage(); return; }
+    animer(p, 'descend', () => { p.classList.add('reduit'); etatPage(); animer(p, 'arrive'); });
+  }
+  {
+    let el: HTMLElement | null = null, id = -1, y0 = 0, dy = 0, appuye = false, glisse = false;
+    let points: { y: number; t: number }[] = [];
+    const SEUIL = 8;
+    const poser = (y: number) => {
+      const q = Math.min(1, Math.max(0, y / innerHeight));
+      el!.style.transform = `translateY(${y}px) scale(${1 - Math.min(q, 0.5) * 0.12})`;
+      el!.style.borderRadius = `${Math.min(28, Math.max(0, y) * 0.35)}px`;
+    };
+    const vitesse = () => { const f = points[points.length - 1], d = points.find((q) => f.t - q.t <= 80) ?? points[0]; return f && d && f.t > d.t ? (f.y - d.y) / (f.t - d.t) : 0; };
+    document.addEventListener('pointerdown', (e) => {
+      const p = pv(); const t = e.target as Element;
+      if (!p || p.hidden || ORDI.matches || p.classList.contains('reduit') || !t.closest?.('[data-pv]') || t.closest('iframe')) return;
+      const corps = p.querySelector<HTMLElement>('.pv-corps');
+      if (t.closest('.pv-corps') && corps && corps.scrollTop > 0) return; // on fait défiler la liste, pas la feuille
+      el = p; id = e.pointerId; y0 = e.clientY; dy = 0; points = [{ y: e.clientY, t: e.timeStamp }]; appuye = true; glisse = false;
+    });
+    document.addEventListener('pointermove', (e) => {
+      if (!appuye || e.pointerId !== id || !el) return;
+      const brut = e.clientY - y0;
+      points.push({ y: e.clientY, t: e.timeStamp }); if (points.length > 12) points.shift();
+      if (!glisse && brut > SEUIL) { glisse = true; el.style.transition = 'none'; el.style.transformOrigin = '50% 0'; }
+      if (!glisse) return;
+      dy = brut >= 0 ? brut : -Math.min(24, Math.sqrt(-brut) * 3);
+      poser(dy);
+    });
+    const relacher = (e: PointerEvent) => {
+      if (!appuye || e.pointerId !== id || !el) return;
+      appuye = false; if (!glisse) return;
+      const p = el; const v = vitesse();
+      const vers = e.type !== 'pointercancel' && (dy > innerHeight * 0.25 || (v > 0.5 && dy > 40));
+      const nettoyer = () => { p.style.transition = ''; p.style.transform = ''; p.style.borderRadius = ''; p.style.transformOrigin = ''; };
+      if (calme()) { nettoyer(); if (vers) { p.classList.add('reduit'); etatPage(); } return; }
+      let duree: number, courbe: string;
+      if (vers) { duree = Math.round(Math.min(380, Math.max(200, (innerHeight - dy) / Math.max(v, 1.4)))); courbe = 'cubic-bezier(0.25, 0.8, 0.3, 1)'; }
+      else { duree = 520; courbe = 'cubic-bezier(0.16, 1, 0.3, 1)'; }
+      p.style.transition = `transform ${duree}ms ${courbe}, border-radius ${duree}ms ${courbe}`;
+      if (vers) { p.style.transform = `translateY(${innerHeight}px) scale(0.92)`; p.style.borderRadius = '28px'; }
+      else { p.style.transform = 'translateY(0) scale(1)'; p.style.borderRadius = '0px'; }
+      setTimeout(() => { nettoyer(); if (vers) { p.classList.add('reduit'); etatPage(); animer(p, 'arrive'); } }, duree + 20);
+    };
+    document.addEventListener('pointerup', relacher); document.addEventListener('pointercancel', relacher);
+  }
 
   // état de lecture donné par YouTube (1 = lecture, 2 = pause, 0 = fin)
   addEventListener('message', (e) => {
@@ -282,8 +335,11 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
   /* ---------- Mobile : feuille qui monte du bas, réductible en barre ---------- */
   @media (max-width: 63.99rem) {
-    .pv { top: 0; left: 0; width: auto; border-left: 0; transform: translateY(100%); box-shadow: 0 -12px 32px rgb(0 0 0 / 0.4); }
-    .pv.visible { transform: none; }
+    .pv { top: 0; left: 0; width: auto; border-left: 0; transform: none; transition: none; box-shadow: 0 -12px 32px rgb(0 0 0 / 0.4); }
+    /* animations du lecteur plein écran de la mini-platine : montée 0,85 s (douce), descente 0,3 s */
+    .pv.monte { animation: pv-monte 0.85s var(--courbe-douce); }
+    .pv.descend { animation: pv-descend 0.3s var(--courbe-entree-sortie) forwards; }
+    .pv.arrive { animation: pv-monte 0.45s var(--courbe-douce); } /* la barre réduite arrive par le bas */
     .pv-tete { min-height: 60px; padding: var(--espace-sm) var(--grille-marge); position: relative; touch-action: none; }
     .pv-poignee-trait { position: absolute; top: 6px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 2px; background: var(--couleur-bordure-defaut); }
     .pv-corps { padding: var(--espace-md) var(--grille-marge) calc(var(--espace-xl) + env(safe-area-inset-bottom)); }
@@ -305,5 +361,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     /* la barre réduite passe au-dessus de la mini-platine (si un extrait a été lancé avant) */
     :global(body.avec-lecteur) .pv.reduit { bottom: 69px; }
   }
-  @media (prefers-reduced-motion: reduce) { .pv { transition: none; } }
+  @keyframes pv-monte { from { transform: translateY(100%); } }
+  @keyframes pv-descend { to { transform: translateY(100%); } }
+  @media (prefers-reduced-motion: reduce) { .pv { transition: none; animation: none !important; } }
 </style>
