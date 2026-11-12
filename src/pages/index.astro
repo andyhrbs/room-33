@@ -20,7 +20,7 @@ const m = morceauDuJour;
 const [premier, ...reste] = top;
 const suivants = reste.slice(0, 4);
 ---
-<Base>
+<Base imagePrioritaire={images.pieceMobile ?? images.pieceOrdi ?? undefined}>
   <Entree />
   <Nav />
 

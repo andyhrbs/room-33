@@ -7,10 +7,11 @@ import Tiroir from '../components/Tiroir.astro';
 
 interface Props {
   title?: string;
+  imagePrioritaire?: string; // image du hero à télécharger en premier (accueil)
   description?: string;
   noindex?: boolean;
 }
-const { title, description = site.descriptionParDefaut, noindex = false } = Astro.props;
+const { title, description = site.descriptionParDefaut, noindex = false, imagePrioritaire } = Astro.props;
 const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
 ---
 <!doctype html>
@@ -22,6 +23,7 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <meta name="theme-color" content="#1F150E" />
     {noindex && <meta name="robots" content="noindex" />}
     <title>{fullTitle}</title>
+    {imagePrioritaire && <link rel="preload" as="image" href={imagePrioritaire} fetchpriority="high" />}
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
     <!-- Entrée « Allumez la lampe » : une fois par visite (sessionStorage : revient dans un nouvel onglet / une nouvelle session, pas en changeant de page) ; déjà vue → pas de flash.

@@ -176,7 +176,8 @@ body.avec-lecteur .pied { padding-bottom: 5.5rem; }
 /* accueil : tout attend que la lampe soit allumée */
 .hero-accueil .accroche > * { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 800ms both; }
 .hero-accueil .accroche > * + * { animation-delay: 920ms; }
-html:not(.entree-vue) .hero-accueil *, html:not(.entree-vue) .hero-accueil *::before { animation-play-state: paused !important; }
+/* … et démarre dès que la lumière s'ouvre (pas à la fin du cercle) : le titre arrive pendant que la pièce s'éclaire */
+html:not(.entree-vue):not(.entree-ouverte) .hero-accueil *, html:not(.entree-vue):not(.entree-ouverte) .hero-accueil *::before { animation-play-state: paused !important; }
 /* fiche disque : la pochette se pose, le vinyle sort de la pochette en tournant, les infos suivent */
 .hero-disque .pochette-fiche { animation: r33-monte var(--duree-apparition) var(--courbe-douce) 100ms both; }
 .hero-disque .vinyle { animation: r33-vinyle 1.8s var(--courbe-douce) 650ms both; }

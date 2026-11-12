@@ -65,7 +65,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
 <script>
   // Relancé à chaque arrivée sur l'accueil (navigation fluide) ; ne fait rien si l'entrée a déjà été vue.
   const CLE = 'room33-entree';
-  const vue = () => { try { sessionStorage.setItem(CLE, '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active'); };
+  const vue = () => { try { sessionStorage.setItem(CLE, '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active', 'entree-ouverte'); };
   document.addEventListener('astro:page-load', () => {
     const e = document.querySelector<HTMLElement>('[data-entree]');
     if (!e || document.documentElement.classList.contains('entree-vue')) { e?.remove(); return; }
@@ -78,12 +78,15 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       const r = lampe.querySelector('.ouverture')!.getBoundingClientRect();
       e.style.setProperty('--cx', `${r.left + r.width / 2}px`);
       e.style.setProperty('--cy', `${r.top + r.height / 2}px`);
+      // rayon juste suffisant pour couvrir l'écran (coin le plus éloigné) : sur téléphone, plus de temps mort une fois la pièce éclairée
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      e.style.setProperty('--rmax', `${Math.ceil(Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy))) + 2}px`);
       e.classList.add('allumee');
       // animations réduites : la lampe s'allume, puis on entre sans le grand cercle
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 700); return; }
-      setTimeout(() => e.classList.add('allumage'), 350); // le temps de voir la lampe s'allumer
+      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 350); // le temps de voir la lampe s'allumer ; le hero s'anime pendant l'ouverture
       e.addEventListener('transitionend', (ev) => { if ((ev as TransitionEvent).propertyName === '--r') finir(); });
-      setTimeout(finir, 2200); // filet de sécurité
+      setTimeout(finir, 1800); // filet de sécurité
     }, { once: true });
     // un toucher n'importe où sur l'écran allume aussi la lampe (sur téléphone, on ne vise pas forcément l'abat-jour)
     e.addEventListener('click', (ev) => { if (!lampe.contains(ev.target as Node) && !e.classList.contains('allumee')) lampe.click(); });
@@ -106,7 +109,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       var(--brun-950);
     /* trou circulaire qui grandit depuis la lampe = la pièce s'éclaire */
     --r: 0px;
-    transition: --r 1.4s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
+    transition: --r 1.1s var(--courbe-entree-sortie), opacity var(--duree-rapide) var(--courbe-standard);
     /* lampe suspendue, abat-jour centré sur l'écran dans les deux sens (centre du verre : y = 284 dans le dessin) ;
        échelle : ordi 1, mobile 0,75 */
     --k: 1; --haut: calc(50dvh - 284px * var(--k));
@@ -117,7 +120,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
     mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 40%), transparent var(--r), #000 calc(var(--r) + 1px));
   }
-  .entree.allumage { --r: 150vmax; }
+  .entree.allumage { --r: var(--rmax, 150vmax); }
   .entree.fondu { opacity: 0; }
 
   /* halo qui pulse, centré sur l'abat-jour (même centre : y = 284 dans le dessin) */
