@@ -75,7 +75,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   // état de la page : la page laisse la place au panneau (ordi), ou se bloque (grande vue / feuille mobile)
   function etatPage() {
     const p = pv(); const html = document.documentElement;
-    const ouvert = !!p && !p.hidden;
+    const ouvert = !!p && !p.hidden && p.classList.contains('visible'); // en train de se fermer : la page reprend sa place tout de suite
     html.classList.toggle('pv-ouvert', ouvert && ORDI.matches && !p!.classList.contains('retracte'));
     html.classList.toggle('pv-barre', ouvert && !ORDI.matches && p!.classList.contains('reduit'));
     html.classList.toggle('pv-bloque', ouvert && (p!.classList.contains('grand') || (!ORDI.matches && !p!.classList.contains('reduit'))));
@@ -123,7 +123,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     afficherInfos(l);
     p.hidden = false;
     p.classList.remove('retracte', 'reduit');
-    requestAnimationFrame(() => p.classList.add('visible'));
+    requestAnimationFrame(() => { p.classList.add('visible'); etatPage(); });
     if (!ORDI.matches && !calme()) animer(p, 'monte'); // mobile : la feuille monte comme le lecteur plein écran
     enLecture = true; majLecture();
     document.dispatchEvent(new Event('room33:video')); // l'extrait de la mini-platine s'arrête
@@ -257,11 +257,16 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
 <style>
   /* ---------- Ordi : panneau à droite (pousse la page) ---------- */
-  :global(:root) { --pv-largeur: 25rem; } /* 400 px */
+  /* Mouvements comme le lecteur plein écran de la mini-platine : on entre lentement (0,85 s, courbe douce),
+     on sort vite (0,3 s). La page, la barre du haut et la mini-platine se resserrent au même rythme que le panneau. */
+  :global(:root) { --pv-largeur: 25rem; --pv-entree: 0.85s var(--courbe-douce); --pv-sortie: 0.3s var(--courbe-entree-sortie); } /* 400 px */
   :global(html.pv-ouvert body) { padding-right: var(--pv-largeur); }
   :global(html.pv-ouvert .nav.fixe), :global(html.pv-ouvert .mini-platine.fixe) { right: var(--pv-largeur); }
   :global(html.pv-bloque) { overflow: hidden; }
-  :global(body) { transition: padding-right var(--duree-normal) var(--courbe-sortie); }
+  :global(body) { transition: padding-right var(--pv-sortie); }
+  :global(.nav.fixe), :global(.mini-platine.fixe) { transition: right var(--pv-sortie); }
+  :global(html.pv-ouvert body) { transition: padding-right var(--pv-entree); }
+  :global(html.pv-ouvert .nav.fixe), :global(html.pv-ouvert .mini-platine.fixe) { transition: right var(--pv-entree); }
 
   .pv {
     position: fixed; z-index: 55; top: 0; right: 0; bottom: 0; width: var(--pv-largeur);
@@ -269,10 +274,16 @@ const donnees = await Promise.all(lives.map(async (l) => {
     background: var(--couleur-fond-bloc); border-left: var(--trait-filet) solid var(--couleur-bordure-discrete);
     box-shadow: -16px 0 40px rgb(0 0 0 / 0.35);
     transform: translateX(100%);
-    transition: transform var(--duree-normal) var(--courbe-sortie), inset var(--duree-normal) var(--courbe-sortie), width var(--duree-normal) var(--courbe-sortie), background-color var(--duree-normal) var(--courbe-standard);
+    /* entrée (ouverture, retour depuis l'onglet) : lente et douce ; agrandissement en grande vue : 0,6 s doux */
+    transition: transform var(--pv-entree), width 0.6s var(--courbe-douce), background-color 0.6s var(--courbe-standard), box-shadow 0.6s var(--courbe-standard);
   }
   .pv[hidden] { display: none; }
   .pv.visible { transform: none; }
+  /* sortie (rétracter, fermer, revenir de la grande vue au panneau) : rapide — ordi seulement (mobile : animations, plus bas) */
+  @media (min-width: 64rem) {
+    .pv.retracte, .pv:not(.visible) { transition: transform var(--pv-sortie), width var(--pv-sortie), background-color var(--pv-sortie); }
+    .pv.visible:not(.grand):not(.retracte) { transition: transform var(--pv-entree), width var(--pv-sortie), background-color var(--pv-sortie), box-shadow var(--pv-sortie); }
+  }
   .pv.visible.retracte { transform: translateX(100%); }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
@@ -313,6 +324,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
     background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal); box-shadow: -8px 0 24px rgb(0 0 0 / 0.35); cursor: pointer;
   }
   .pv-onglet[hidden] { display: none; }
+  .pv-onglet:not([hidden]) { animation: pv-onglet 0.45s var(--courbe-douce) 0.2s both; }
+  @keyframes pv-onglet { from { transform: translateX(100%); opacity: 0; } }
   .pv-onglet-texte { writing-mode: vertical-rl; font-size: var(--taille-petit); }
   .pv-onglet:hover { background: var(--couleur-fond-tonal); }
 
