@@ -26,6 +26,19 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     {imagePrioritaire && <link rel="preload" as="image" href={imagePrioritaire} fetchpriority="high" />}
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
+    <!-- Actualisation : on repart toujours du haut de la page (le navigateur ne remet plus l'ancienne position).
+         Les retours en arrière dans le site gardent leur position (gérés par la navigation fluide). -->
+    <script is:inline>
+      (function () {
+        var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        if (!nav || nav.type !== 'reload') return;
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        var enHaut = function () { window.scrollTo(0, 0); if (window.room33Lenis) window.room33Lenis.scrollTo(0, { immediate: true, force: true }); };
+        enHaut();
+        document.addEventListener('DOMContentLoaded', enHaut);
+        window.addEventListener('load', function () { enHaut(); requestAnimationFrame(enHaut); });
+      })();
+    </script>
     <!-- Entrée « Allumez la lampe » : seulement quand l'accueil est vraiment chargé (arrivée sur le site par l'accueil, ou actualisation de l'accueil).
          Jamais en naviguant dans le site (logo, liens, retour) : la navigation fluide marque l'entrée comme vue.
          Tests : sessionStorage['room33-entree'] = '1' la saute ; ?entree la force. -->
