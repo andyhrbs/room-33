@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 12 nov. 2026 : Top artistes (Platine) : « Voir l’artiste » ordi + mobile
+# Empreintes Figma de référence — 12 nov. 2026, 14:45 : maj figma accueil, La platine (ordi + mobile)
 14:6:cadre 13y8gh0
 23:674 17e0a18
 14:7 1oruz9z
@@ -16,27 +16,27 @@
 348:4587 1ps94kx
 79:2357:cadre 1bylfid
 79:2358 1mcf4ql
-16:131:cadre d4w8ct
-23:720 3f0470
+16:131:cadre 2gjifd
+23:720 jrxzig
 16:132 t30js3
 16:198 1661gs8
 349:2916 l1z603
 349:2918 1g7ol5r
-349:2940 1f20exj
-349:2958 g92hnx
-256:2734 1q23xkv
-16:292 1b35kss
+349:2940 4gvzbe
+349:2958 14nnr4n
+256:2734 edn3pc
+16:292 14vq11r
 16:137 p4phlg
-15:19:cadre k6nyaj
-23:681 1sudlmm
+15:19:cadre 1b2fqnt
+23:681 i762ao
 15:20 ne1dse
 15:74 uk9ccr
 15:89 1t67no8
 15:93 gds4hs
-15:133 1e3v1lx
-15:151 etxgte
-256:2674 ip9rw1
-15:212 1g3hf1l
+15:133 12w7typ
+15:151 hli0z8
+256:2674 t652tu
+15:212 1wy2uzw
 182:2232 tu08b2
 17:395:cadre dr2x2e
 23:799 15uz760
