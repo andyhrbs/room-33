@@ -241,7 +241,11 @@ const donnees = await Promise.all(lives.map(async (l) => {
     } else {
       // on mesure la mise en page du panneau sans l'afficher (le navigateur ne peint pas entre ces deux lignes)
       const avant = mesurer(p);
-      p.classList.remove('grand'); const cible = mesurer(p); const gauche = p.getBoundingClientRect().left; const fondCible = getComputedStyle(p).backgroundColor; p.classList.add('grand');
+      // (sans « pv-bloque » : la barre de défilement de la page revient en panneau et décale tout ce qui est calé à droite)
+      const html = document.documentElement; const bloque = html.classList.contains('pv-bloque');
+      p.classList.remove('grand'); html.classList.remove('pv-bloque');
+      const cible = mesurer(p); const gauche = p.getBoundingClientRect().left; const fondCible = getComputedStyle(p).backgroundColor;
+      p.classList.add('grand'); html.classList.toggle('pv-bloque', bloque);
       const anims = avant.map(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: 'none' }, { transformOrigin: '0 0', transform: ecart(cible[i].r, r, el.matches('.pv-ecran')) }], { ...opts, fill: 'forwards' }));
       const a = p.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondPanneau }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
       a.finished.finally(() => { appliquer(); anims.forEach((x) => x.cancel()); a.cancel(); fin(); });
