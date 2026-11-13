@@ -390,6 +390,9 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv.retracte .pv-bord:is(:hover, :focus-visible) .pv-bord-icone { translate: -3px 0; }
   .pv.visible.retracte:has(.pv-bord:is(:hover, :focus-visible)) { transform: translateX(calc(100% - var(--pv-bande) - 12px)); }
   .pv.grand .pv-bord { display: none; }
+  /* ouvert, au survol de la bande : le contenu glisse un peu vers la droite (il annonce où le panneau va partir) */
+  .pv :is(.pv-tete, .pv-corps) { transition: translate 0.35s var(--courbe-douce); }
+  .pv.visible:not(.retracte):not(.grand):has(.pv-bord:is(:hover, :focus-visible)) :is(.pv-tete, .pv-corps) { translate: 12px 0; }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
   .pv-actions { display: flex; gap: var(--espace-2xs); }
