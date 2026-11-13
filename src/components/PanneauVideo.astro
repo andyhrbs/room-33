@@ -354,6 +354,13 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
     .pv:not(.grand) .pv-ecran { border-radius: 0; }
     .pv:not(.grand) :is(.pv-infos, .pv-suite) { padding-inline: var(--espace-lg); }
+    /* la tête passe par-dessus le haut de la vidéo, sur un dégradé sombre → transparent ; elle reste au-dessus de la bande */
+    .pv:not(.grand) { grid-template-rows: minmax(0, 1fr); }
+    .pv:not(.grand) .pv-tete {
+      position: absolute; z-index: 4; top: 0; left: 0; right: 0; min-height: 73px; padding: 14px var(--espace-lg);
+      background: linear-gradient(rgb(18 10 8), rgb(18 10 8 / 0)); pointer-events: none; /* les clics passent à la vidéo… */
+    }
+    .pv:not(.grand) .pv-tete :is(button, a) { pointer-events: auto; } /* …sauf sur les boutons */
   }
 
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
