@@ -393,15 +393,18 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.grand { width: 100vw; background: rgb(12 8 5); border-left: 0; } /* opaque : la page derrière ne transparaît plus sous le texte */
     /* mesures de la page vidéo de YouTube : 24 px sur les côtés et entre les colonnes, colonne « À suivre » de 402 px */
     .pv.grand .pv-tete { border-bottom: 0; padding-inline: var(--espace-lg); }
+    /* « Vidéo + infos » tient en entier dans l'écran : la colonne de gauche a la hauteur de la fenêtre (moins la tête),
+       les infos prennent leur place et la vidéo prend le reste, en 16:9 (elle rétrécit si l'écran est bas) */
     .pv.grand .pv-corps {
-      display: grid;
-      width: min(100%, 110rem); margin-inline: auto; padding: 0 var(--espace-lg) var(--espace-3xl);
-      grid-template-columns: minmax(0, 1fr) 25.125rem; grid-template-rows: auto 1fr; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-md); align-items: start;
+      display: grid; height: 100%; overflow: hidden;
+      width: min(100%, 110rem); margin-inline: auto; padding: 0 var(--espace-lg) var(--espace-lg);
+      grid-template-columns: minmax(0, 1fr) 25.125rem; grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-md);
     }
-    .pv.grand .pv-ecran { grid-area: ecran; }
+    .pv.grand .pv-ecran { grid-area: ecran; height: auto; padding: 0; background: none; border-radius: 0; overflow: visible; container-type: size; }
+    .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; width: min(100cqw, 100cqh * 16 / 9); height: auto; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); background: #000; }
     .pv.grand .pv-infos { grid-area: infos; }
     .pv.grand .pv-titre { font-size: var(--taille-h2); }
-    .pv.grand .pv-suite { grid-area: suite; }
+    .pv.grand .pv-suite { grid-area: suite; align-self: stretch; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; }
     .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: 10.5rem minmax(0, 1fr); } /* vignettes de 168 px, comme YouTube */
   }
 
