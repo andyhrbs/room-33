@@ -66,6 +66,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   let lives: Live[] = [];
   let courant: Live | null = null;
   let enLecture = false;
+  let instant = 0; // où en est la vidéo (s), donné par YouTube : sert de secours si l'iframe doit se recharger
   const ORDI = matchMedia('(min-width: 64rem)');
 
   const pv = () => $<HTMLElement>('[data-pv]');
@@ -240,8 +241,9 @@ const donnees = await Promise.all(lives.map(async (l) => {
   addEventListener('message', (e) => {
     let h = ''; try { h = new URL(e.origin).hostname; } catch { return; }
     if (!/youtube(-nocookie)?\.com$/.test(h)) return;
-    let d: { info?: { playerState?: number } } = {};
+    let d: { info?: { playerState?: number; currentTime?: number } } = {};
     try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+    if (typeof d?.info?.currentTime === 'number') instant = d.info.currentTime;
     const s = d?.info?.playerState;
     if (s === 1) { enLecture = true; majLecture(); } else if (s === 2 || s === 0) { enLecture = false; majLecture(); }
   });
@@ -250,8 +252,31 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
   // changement de page : le nouveau <html> arrive sans nos classes → on les remet tout de suite
   document.addEventListener('astro:before-swap', (e) => {
-    const nd = (e as Event & { newDocument: Document }).newDocument.documentElement; const html = document.documentElement;
+    const ev = e as Event & { newDocument: Document; swap: () => void };
+    const nd = ev.newDocument.documentElement; const html = document.documentElement;
     ['pv-ouvert', 'pv-retracte', 'pv-bloque', 'pv-barre'].forEach((k) => nd.classList.toggle(k, html.classList.contains(k)));
+
+    // La vidéo continue pendant la navigation. Astro garde bien le panneau (transition:persist), mais il le sort de la page
+    // le temps de changer le <body> : une iframe sortie de la page se recharge (la vidéo repartait de zéro).
+    // On le « gare » donc à côté du <body> avec moveBefore (déplacement sans rechargement), puis on le remet à sa place.
+    if (!courant) return;
+    const vieux = document.querySelector<HTMLElement>('[data-astro-transition-persist="video"]');
+    if (!vieux) return;
+    if ('moveBefore' in Element.prototype) {
+      const defaut = ev.swap;
+      ev.swap = () => {
+        type Deplacable = { moveBefore(n: Node, ref: Node | null): void };
+        (html as unknown as Deplacable).moveBefore(vieux, null);
+        defaut();
+        const neuf = document.querySelector<HTMLElement>('[data-astro-transition-persist="video"]');
+        if (neuf && neuf !== vieux) { (neuf.parentNode as unknown as Deplacable).moveBefore(vieux, neuf); neuf.remove(); }
+        else if (!neuf) document.body.append(vieux);
+      };
+    } else {
+      // navigateur sans moveBefore (Safari…) : l'iframe se recharge, mais repart là où on en était
+      const f = iframe();
+      if (f) { const u = new URL(f.src); u.searchParams.set('start', String(Math.floor(instant))); u.searchParams.set('autoplay', enLecture ? '1' : '0'); f.src = u.toString(); }
+    }
   });
   document.addEventListener('astro:page-load', etatPage);
   ORDI.addEventListener('change', etatPage);
