@@ -28,7 +28,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
   <!-- bande de gauche (ordi) : se montre au survol du panneau ; un clic rétracte. Rétracté, il ne reste qu'elle au bord droit (comme Spotify) -->
   <button type="button" class="pv-bord seulement-ordi" data-pv-retracter aria-label="Masquer la vidéo">
     <span class="pv-bord-icone" aria-hidden="true"><Icone nom="chevron" taille={24} /></span>
-    <span class="pv-bulle" aria-hidden="true"><span class="b-masquer">Masquer la vidéo</span><span class="b-afficher">Afficher la vidéo</span></span>
   </button>
   <div class="pv-tete" data-pv-poignee>
     <span class="pv-poignee-trait seulement-mobile" aria-hidden="true"></span>
@@ -314,7 +313,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   /* Bande façon Spotify (relevé sur open.spotify.com) :
      - rétracté, au repos : bande pleine (fond du panneau), chevron ‹ gris ;
      - au survol : le panneau sort de 12 px de plus, on devine son contenu sous un voile sombre, le chevron passe en blanc
-       avec un petit rebond, et une info-bulle s'affiche au-dessus, à gauche ;
+       avec un petit rebond ;
      - ouvert : la même bande (chevron ›) apparaît au survol du panneau, sur le contenu voilé. */
   .pv-bord {
     position: absolute; z-index: 3; top: 0; bottom: 0; left: 0; width: var(--pv-bande);
@@ -331,17 +330,6 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv.retracte .pv-bord:is(:hover, :focus-visible) { width: calc(var(--pv-bande) + 12px); background: rgb(0 0 0 / 0.6); }
   .pv.retracte .pv-bord:is(:hover, :focus-visible) .pv-bord-icone { translate: -3px 0; }
   .pv.visible.retracte:has(.pv-bord:is(:hover, :focus-visible)) { transform: translateX(calc(100% - var(--pv-bande) - 12px)); }
-  /* info-bulle : au-dessus du chevron, calée à droite, après un court délai */
-  .pv-bulle {
-    position: absolute; right: 4px; bottom: calc(50% + 24px); white-space: nowrap; pointer-events: none;
-    padding: 6px 10px; border-radius: 4px;
-    background: linear-gradient(var(--couleur-fond-tonal-survol), var(--couleur-fond-tonal-survol)), var(--couleur-fond-bloc);
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.5); color: var(--couleur-texte-principal); font-size: var(--taille-petit); line-height: 1.3;
-    opacity: 0; transition: opacity 0.15s var(--courbe-standard);
-  }
-  .pv-bord:is(:hover, :focus-visible) .pv-bulle { opacity: 1; transition-delay: 0.4s; }
-  .b-afficher, .pv.retracte .b-masquer { display: none; }
-  .pv.retracte .b-afficher { display: inline; }
   .pv.grand .pv-bord { display: none; }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
@@ -379,13 +367,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
     .pv:not(.grand) .pv-ecran { border-radius: 0; }
     .pv:not(.grand) :is(.pv-infos, .pv-suite) { padding-inline: var(--espace-lg); }
-    /* la tête passe par-dessus le haut de la vidéo, sur un dégradé sombre → transparent ; elle reste au-dessus de la bande */
-    .pv:not(.grand) { grid-template-rows: minmax(0, 1fr); }
-    .pv:not(.grand) .pv-tete {
-      position: absolute; z-index: 4; top: 0; left: 0; right: 0; min-height: 73px; padding: 14px var(--espace-lg);
-      background: linear-gradient(rgb(18 10 8), rgb(18 10 8 / 0)); pointer-events: none; /* les clics passent à la vidéo… */
-    }
-    .pv:not(.grand) .pv-tete :is(button, a) { pointer-events: auto; } /* …sauf sur les boutons */
+    /* tête au-dessus de la vidéo, sans trait, sur un dégradé sombre → transparent (la bande passe par-dessus) */
+    .pv:not(.grand) .pv-tete { padding: 14px var(--espace-lg); border-bottom: 0; background: linear-gradient(rgb(18 10 8), rgb(18 10 8 / 0)); }
   }
 
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
