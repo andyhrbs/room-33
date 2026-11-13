@@ -207,6 +207,15 @@ const donnees = await Promise.all(lives.map(async (l) => {
   const mesurer = (p: HTMLElement) => ANIMES.map((s) => { const el = p.querySelector<HTMLElement>(s)!; return { el, r: el.getBoundingClientRect() }; });
   const ecart = (de: DOMRect, vers: DOMRect, taille: boolean) =>
     `translate(${de.left - vers.left}px, ${de.top - vers.top}px)` + (taille && vers.width && vers.height ? ` scale(${de.width / vers.width}, ${de.height / vers.height})` : '');
+  // hauteur réelle des infos → variable --pv-infos-h (quelques passes : la largeur dépend de la hauteur et inversement)
+  function caleInfos(p: HTMLElement) {
+    const infos = p.querySelector<HTMLElement>('.pv-infos'); if (!infos) return;
+    for (let i = 0; i < 3; i++) {
+      const h = `${infos.offsetHeight}px`;
+      if (p.style.getPropertyValue('--pv-infos-h') === h) break;
+      p.style.setProperty('--pv-infos-h', h);
+    }
+  }
   let enBascule = false;
   function basculerGrand(p: HTMLElement, grand: boolean) {
     const appliquer = () => {
@@ -225,6 +234,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (grand) {
       const avant = mesurer(p); const gauche = p.getBoundingClientRect().left;
       appliquer();
+      caleInfos(p); // la taille de la vidéo dépend de la hauteur des infos : on la fixe AVANT de mesurer (sinon tout se recale après coup)
       const fondGrand = getComputedStyle(p).backgroundColor;
       mesurer(p).forEach(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: ecart(avant[i].r, r, el.matches('.pv-ecran')) }, { transformOrigin: '0 0', transform: 'none' }], opts));
       p.animate([{ clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondPanneau }, { clipPath: 'inset(0 0 0 0)', backgroundColor: fondGrand }], opts).finished.finally(fin);
