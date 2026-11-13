@@ -198,22 +198,44 @@ const donnees = await Promise.all(lives.map(async (l) => {
     etatPage();
   }
 
-  // panneau ⇄ grande vue, en douceur : le contenu s'efface (0,15 s), la fenêtre change de taille sans que rien ne se
-  // réorganise sous les yeux, puis le contenu réapparaît à sa nouvelle place
-  let bascule = 0;
+  // Panneau ⇄ grande vue (ordi) : tout le contenu grandit ou rétrécit AVEC la fenêtre.
+  // Technique « FLIP » : on mesure où sont les éléments avant, on calcule leur place après, puis on les fait
+  // glisser (et la vidéo changer de taille) de l'un à l'autre. La fenêtre, elle, s'ouvre ou se referme par un
+  // découpage (clip-path) depuis le bord gauche du panneau. L'animation se joue toujours dans la mise en page
+  // la plus grande (grande vue), pour que rien ne soit coupé en route.
+  const ANIMES = ['.pv-etiquette', '.pv-actions', '.pv-ecran', '.pv-infos', '.pv-suite'];
+  const mesurer = (p: HTMLElement) => ANIMES.map((s) => { const el = p.querySelector<HTMLElement>(s)!; return { el, r: el.getBoundingClientRect() }; });
+  const ecart = (de: DOMRect, vers: DOMRect, taille: boolean) =>
+    `translate(${de.left - vers.left}px, ${de.top - vers.top}px)` + (taille && vers.width && vers.height ? ` scale(${de.width / vers.width}, ${de.height / vers.height})` : '');
+  let enBascule = false;
   function basculerGrand(p: HTMLElement, grand: boolean) {
     const appliquer = () => {
       p.classList.toggle('grand', grand);
       p.querySelector('[data-pv-agrandir]')!.setAttribute('aria-label', grand ? 'Réduire en panneau' : 'Agrandir la vidéo');
       etatPage();
     };
-    clearTimeout(bascule);
-    if (calme()) { appliquer(); return; }
-    p.classList.add('bascule');
-    bascule = window.setTimeout(() => {
+    if (calme() || !ORDI.matches || enBascule) { if (!enBascule) appliquer(); return; }
+    enBascule = true;
+    const D = 600;
+    const courbe = getComputedStyle(document.documentElement).getPropertyValue('--courbe-douce').trim() || 'cubic-bezier(0.22, 1, 0.36, 1)';
+    const fondPanneau = getComputedStyle(p).backgroundColor;
+    p.style.transition = 'none'; // la largeur ne s'anime plus en CSS : c'est le découpage qui fait le mouvement
+    const opts = { duration: D, easing: courbe };
+    const fin = () => { p.style.transition = ''; enBascule = false; };
+    if (grand) {
+      const avant = mesurer(p); const gauche = p.getBoundingClientRect().left;
       appliquer();
-      bascule = window.setTimeout(() => p.classList.remove('bascule'), grand ? 480 : 260); // une fois la fenêtre à sa taille
-    }, 150);
+      const fondGrand = getComputedStyle(p).backgroundColor;
+      mesurer(p).forEach(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: ecart(avant[i].r, r, el.matches('.pv-ecran')) }, { transformOrigin: '0 0', transform: 'none' }], opts));
+      p.animate([{ clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondPanneau }, { clipPath: 'inset(0 0 0 0)', backgroundColor: fondGrand }], opts).finished.finally(fin);
+    } else {
+      // on mesure la mise en page du panneau sans l'afficher (le navigateur ne peint pas entre ces deux lignes)
+      const avant = mesurer(p);
+      p.classList.remove('grand'); const cible = mesurer(p); const gauche = p.getBoundingClientRect().left; const fondCible = getComputedStyle(p).backgroundColor; p.classList.add('grand');
+      const anims = avant.map(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: 'none' }, { transformOrigin: '0 0', transform: ecart(cible[i].r, r, el.matches('.pv-ecran')) }], { ...opts, fill: 'forwards' }));
+      const a = p.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondPanneau }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
+      a.finished.finally(() => { appliquer(); anims.forEach((x) => x.cancel()); a.cancel(); fin(); });
+    }
   }
 
   function majLecture() {
@@ -409,8 +431,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv.visible.retracte:has(.pv-bord:is(:hover, :focus-visible)) { transform: translateX(calc(100% - var(--pv-bande) - 12px)); }
   .pv.grand .pv-bord { display: none; }
   /* ouvert, au survol de la bande : le contenu glisse un peu vers la droite (il annonce où le panneau va partir) */
-  .pv :is(.pv-tete, .pv-corps) { transition: translate 0.35s var(--courbe-douce), opacity 0.35s var(--courbe-douce); }
-  .pv.bascule :is(.pv-tete, .pv-corps) { opacity: 0; transition: opacity 0.15s var(--courbe-standard); }
+  .pv :is(.pv-tete, .pv-corps) { transition: translate 0.35s var(--courbe-douce); }
   .pv.visible:not(.retracte):not(.grand):has(.pv-bord:is(:hover, :focus-visible)) :is(.pv-tete, .pv-corps) { translate: 12px 0; }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
