@@ -478,13 +478,15 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv-liste :global(.pv-suivant:hover .pv-suivant-nom) { text-decoration: underline; text-underline-offset: 3px; }
   .pv-lecture { display: none; }
 
-  /* Ordi, panneau (maquette) : 436 px de large, 20 px de marge de chaque côté ; vidéo aux coins de 4 px, textes alignés sur ses bords ;
-     tête sans fond ni trait ; mot en 16 px */
+  /* Ordi, panneau (maquette) : 436 px de large, fond de page, 20 px de marge de chaque côté ; vidéo aux coins de 4 px, textes
+     (et « Vidéo en cours ») alignés sur ses bords ; tête sans fond ni trait, sans bouton Fermer ; mot en 16 px */
   @media (min-width: 64rem) {
     .pv:not(.grand) { padding-inline: 20px; }
     .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
     .pv:not(.grand) .pv-ecran { border-radius: var(--rayon-pochette); }
-    .pv:not(.grand) .pv-tete { padding: 14px var(--espace-lg); border-bottom: 0; background: none; }
+    .pv:not(.grand) { background: var(--couleur-fond-page); }
+    .pv:not(.grand) .pv-tete { padding: 14px 0; border-bottom: 0; background: none; } /* « Vidéo en cours » aligné sur la vidéo */
+    .pv:not(.grand) .pv-bouton[data-pv-fermer] { display: none; } /* panneau : seulement Agrandir ; on ferme depuis la grande vue */
     .pv:not(.grand) .pv-mot { font-size: var(--taille-corps); }
   }
 
@@ -523,6 +525,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv-tete { min-height: 60px; padding: 14px 20px 8px; position: relative; touch-action: none; } /* maquette : 20 px sur les côtés */
     .pv-poignee-trait { position: absolute; top: 6px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 2px; background: var(--couleur-bordure-defaut); }
     .pv-corps { padding: var(--espace-md) 20px calc(var(--espace-xl) + env(safe-area-inset-bottom)); }
+    .pv:not(.reduit) .pv-bouton[data-pv-fermer] { display: none; } /* feuille : seulement Réduire ; on ferme depuis la barre réduite */
     .pv:not(.reduit) .pv-ecran { border-radius: var(--rayon-pochette); } /* vidéo aux coins de 4 px, comme le panneau ordi */
     /* barre réduite : petite vidéo · titre · lecture/pause · fermer */
     .pv.reduit { top: auto; height: calc(72px + env(safe-area-inset-bottom)); grid-template-rows: 1fr; background: var(--couleur-fond-ombre); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); cursor: pointer; } /* fond le plus sombre (brun 950), comme la maquette */
