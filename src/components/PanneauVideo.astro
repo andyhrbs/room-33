@@ -198,6 +198,24 @@ const donnees = await Promise.all(lives.map(async (l) => {
     etatPage();
   }
 
+  // panneau ⇄ grande vue, en douceur : le contenu s'efface (0,15 s), la fenêtre change de taille sans que rien ne se
+  // réorganise sous les yeux, puis le contenu réapparaît à sa nouvelle place
+  let bascule = 0;
+  function basculerGrand(p: HTMLElement, grand: boolean) {
+    const appliquer = () => {
+      p.classList.toggle('grand', grand);
+      p.querySelector('[data-pv-agrandir]')!.setAttribute('aria-label', grand ? 'Réduire en panneau' : 'Agrandir la vidéo');
+      etatPage();
+    };
+    clearTimeout(bascule);
+    if (calme()) { appliquer(); return; }
+    p.classList.add('bascule');
+    bascule = window.setTimeout(() => {
+      appliquer();
+      bascule = window.setTimeout(() => p.classList.remove('bascule'), grand ? 480 : 260); // une fois la fenêtre à sa taille
+    }, 150);
+  }
+
   function majLecture() {
     const b = $<HTMLButtonElement>('[data-pv-lecture]');
     if (!b) return;
@@ -214,7 +232,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     const p = pv(); if (!p) return;
     if (c.closest('[data-pv-fermer]')) { fermer(); return; }
     if (c.closest('[data-pv-like]')) { basculerLike(); return; }
-    if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
+    if (c.closest('[data-pv-agrandir]')) { basculerGrand(p, !p.classList.contains('grand')); return; }
     if (c.closest('[data-pv-retracter]')) {
       const r = p.classList.toggle('retracte'); p.classList.remove('grand');
       c.closest('[data-pv-retracter]')!.setAttribute('aria-label', r ? 'Afficher la vidéo' : 'Masquer la vidéo');
@@ -229,7 +247,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   // Échap : grande vue → panneau ; feuille mobile → barre
   document.addEventListener('keydown', (e) => {
     const p = pv(); if (e.key !== 'Escape' || !p || p.hidden) return;
-    if (p.classList.contains('grand')) { p.classList.remove('grand'); etatPage(); }
+    if (p.classList.contains('grand')) basculerGrand(p, false);
     else if (!ORDI.matches && !p.classList.contains('reduit')) reduire(p);
   });
 
@@ -391,7 +409,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv.visible.retracte:has(.pv-bord:is(:hover, :focus-visible)) { transform: translateX(calc(100% - var(--pv-bande) - 12px)); }
   .pv.grand .pv-bord { display: none; }
   /* ouvert, au survol de la bande : le contenu glisse un peu vers la droite (il annonce où le panneau va partir) */
-  .pv :is(.pv-tete, .pv-corps) { transition: translate 0.35s var(--courbe-douce); }
+  .pv :is(.pv-tete, .pv-corps) { transition: translate 0.35s var(--courbe-douce), opacity 0.35s var(--courbe-douce); }
+  .pv.bascule :is(.pv-tete, .pv-corps) { opacity: 0; transition: opacity 0.15s var(--courbe-standard); }
   .pv.visible:not(.retracte):not(.grand):has(.pv-bord:is(:hover, :focus-visible)) :is(.pv-tete, .pv-corps) { translate: 12px 0; }
   .pv-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-sm); padding: var(--espace-md) var(--espace-lg); min-height: 72px; border-bottom: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .pv-etiquette { margin: 0; }
