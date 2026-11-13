@@ -373,14 +373,14 @@ const donnees = await Promise.all(lives.map(async (l) => {
      - rétracté, au repos : bande pleine (fond du panneau), chevron ‹ gris ;
      - au survol : le panneau sort de 12 px de plus, on devine son contenu sous un voile sombre, le chevron passe en blanc
        avec un petit rebond ;
-     - ouvert : la même bande (chevron ›) apparaît au survol du panneau, sur le contenu voilé. */
+     - ouvert : la même bande (chevron ›) apparaît quand le curseur arrive sur sa zone, sur le contenu voilé. */
   .pv-bord {
     position: absolute; z-index: 3; top: 0; bottom: 0; left: 0; width: var(--pv-bande);
     display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
     background: rgb(0 0 0 / 0.55); color: var(--couleur-texte-secondaire);
     opacity: 0; transition: opacity var(--duree-rapide) var(--courbe-standard), background-color 0.2s var(--courbe-standard), color 0.2s var(--courbe-standard), width 0.3s var(--courbe-douce);
   }
-  .pv:hover .pv-bord, .pv-bord:focus-visible { opacity: 1; }
+  .pv-bord:is(:hover, :focus-visible) { opacity: 1; } /* ouvert : la bande n'apparaît que quand le curseur arrive sur sa zone (40 px à gauche du panneau) */
   .pv-bord:is(:hover, :focus-visible) { color: var(--couleur-texte-principal); }
   .pv-bord-icone { display: grid; translate: 0 0; transition: translate 0.5s cubic-bezier(0.47, 0, 0.23, 1.38); }
   .pv-bord:is(:hover, :focus-visible) .pv-bord-icone { translate: 3px 0; } /* le chevron pointe vers où ira le panneau */
