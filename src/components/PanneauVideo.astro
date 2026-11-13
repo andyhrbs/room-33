@@ -420,6 +420,9 @@ const donnees = await Promise.all(lives.map(async (l) => {
   [data-pv-agrandir] :global(.i-contracter), .pv.grand [data-pv-agrandir] :global(.i-agrandir) { display: none; }
   .pv.grand [data-pv-agrandir] :global(.i-contracter) { display: block; }
   .pv-corps { overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: var(--espace-lg); padding: var(--espace-lg); }
+  /* on défile sans barre de défilement visible (panneau, feuille mobile, colonne « À suivre » de la grande vue) */
+  :is(.pv-corps, .pv-suite) { scrollbar-width: none; }
+  :is(.pv-corps, .pv-suite)::-webkit-scrollbar { display: none; }
   .pv-ecran { flex: none; }
   /* 16:9 par la hauteur en % de la largeur (plus sûr que aspect-ratio dans une grille : la vidéo débordait sur le titre en grande vue) */
   .pv-ecran { position: relative; height: 0; padding-bottom: 56.25%; border-radius: var(--rayon-bloc); overflow: hidden; background: #000; }
