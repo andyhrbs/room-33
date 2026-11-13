@@ -44,11 +44,29 @@ async function appel(jeton: string, chemin: string, essai = 0): Promise<any> {
 // (même disque, même ordre de pistes), puis le code ISRC du morceau (identifiant unique d'un enregistrement).
 type PisteDeezer = { id: number; title: string; title_short?: string; preview?: string; track_position?: number; disk_number?: number; rank?: number; readable?: boolean };
 const simple = (s = '') => s.toLowerCase().normalize('NFD').replace(/\([^)]*\)|\[[^\]]*\]| - .*$/g, '').replace(/[^a-z0-9]/g, '');
-async function deezerJson(chemin: string) {
-  const r = await fetch('https://api.deezer.com' + chemin, { signal: AbortSignal.timeout(8000) });
+// Deezer limite à 50 demandes toutes les 5 s. Avec la mémoire du build précédent on en fait peu ; mais quand elle est
+// perdue (ex. dépendances réinstallées sur Netlify), on redemande tout le catalogue d'un coup : on espace donc les
+// demandes (≈ 8 par seconde) et on réessaie après une pause si Deezer répond « quota dépassé » ou se plaint.
+let derniereDemande = 0;
+let echecsReseau = 0; // Deezer injoignable (ex. bac à sable sans réseau) : on arrête vite d'insister
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+async function deezerJson(chemin: string, essai = 0): Promise<any> {
+  if (echecsReseau >= 5) throw new Error('Deezer injoignable');
+  const attente = derniereDemande + 125 - Date.now();
+  derniereDemande = Math.max(Date.now(), derniereDemande + 125);
+  if (attente > 0) await pause(attente);
+  let r: Response;
+  try { r = await fetch('https://api.deezer.com' + chemin, { signal: AbortSignal.timeout(8000) }); }
+  catch (e) { echecsReseau++; if (essai < 1 && echecsReseau < 5) { await pause(1000); return deezerJson(chemin, essai + 1); } throw e; }
+  echecsReseau = 0;
+  if ((r.status === 429 || r.status >= 500) && essai < 4) { await pause(5000); return deezerJson(chemin, essai + 1); }
   if (!r.ok) throw new Error(`Deezer ${r.status}`);
   const d = await r.json();
-  if (d?.error) throw new Error('Deezer : ' + (d.error.message || 'erreur'));
+  if (d?.error) {
+    // code 4 = « Quota limit exceeded » : on attend que la fenêtre de 5 s se vide, puis on réessaie
+    if ((d.error.code === 4 || /quota/i.test(d.error.message ?? '')) && essai < 4) { console.warn('[Deezer] quota atteint : pause de 5 s'); await pause(5000); return deezerJson(chemin, essai + 1); }
+    throw new Error('Deezer : ' + (d.error.message || 'erreur'));
+  }
   return d;
 }
 async function pistesDeezerParUpc(upc: string): Promise<PisteDeezer[]> {
@@ -107,10 +125,8 @@ async function appleParUpc(upc: string): Promise<string | undefined> {
 async function deezerParUpc(upc: string): Promise<string | undefined> {
   for (const code of variantesUpc(upc)) {
     try {
-      const r = await fetch(`https://api.deezer.com/album/upc:${code}`, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) continue;
-      const a = await r.json();
-      if (a?.link && !a.error) return a.link;
+      const a = await deezerJson(`/album/upc:${code}`);
+      if (a?.link) return a.link;
     } catch { /* variante suivante */ }
   }
   return undefined;
