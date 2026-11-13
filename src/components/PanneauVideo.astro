@@ -499,9 +499,10 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.monte { animation: pv-monte 0.85s var(--courbe-douce); }
     .pv.descend { animation: pv-descend 0.3s var(--courbe-entree-sortie) forwards; }
     .pv.arrive { animation: pv-monte 0.45s var(--courbe-douce); } /* la barre réduite arrive par le bas */
-    .pv-tete { min-height: 60px; padding: var(--espace-sm) var(--grille-marge); position: relative; touch-action: none; }
+    .pv-tete { min-height: 60px; padding: 14px 20px 8px; position: relative; touch-action: none; } /* maquette : 20 px sur les côtés */
     .pv-poignee-trait { position: absolute; top: 6px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 2px; background: var(--couleur-bordure-defaut); }
-    .pv-corps { padding: var(--espace-md) var(--grille-marge) calc(var(--espace-xl) + env(safe-area-inset-bottom)); }
+    .pv-corps { padding: var(--espace-md) 20px calc(var(--espace-xl) + env(safe-area-inset-bottom)); }
+    .pv:not(.reduit) .pv-ecran { border-radius: var(--rayon-pochette); } /* vidéo aux coins de 4 px, comme le panneau ordi */
     /* barre réduite : petite vidéo · titre · lecture/pause · fermer */
     .pv.reduit { top: auto; height: calc(72px + env(safe-area-inset-bottom)); grid-template-rows: 1fr; border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); cursor: pointer; }
     .pv.reduit .pv-tete { position: absolute; right: var(--espace-xs); top: 14px; min-height: 0; padding: 0; border: 0; }
