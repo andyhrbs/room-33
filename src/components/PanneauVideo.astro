@@ -45,6 +45,11 @@ const donnees = await Promise.all(lives.map(async (l) => {
       <div class="pv-chaine">
         <span class="pv-avatar" aria-hidden="true">R<img data-pv-photo alt="" width="40" height="40" /></span>
         <span class="pv-qui"><span class="texte-label" data-pv-nom-chaine></span><span class="texte-legende texte-secondaire" data-pv-date></span></span>
+        <!-- « J'aime » des visiteurs (grande vue seulement), comme le bouton J'aime de YouTube sous la vidéo -->
+        <button type="button" class="pv-like" data-pv-like aria-pressed="false" aria-label="J'aime ce live">
+          <span class="pv-like-icone" aria-hidden="true"><Icone nom="coeur-vide" taille={20} class="i-vide" /><Icone nom="coeur" taille={20} class="i-plein" /></span>
+          <span class="texte-label pv-like-total" data-pv-like-total></span>
+        </button>
       </div>
       <p class="texte-avis pv-mot" data-pv-mot></p>
       <a class="texte-petit pv-youtube" data-pv-youtube target="_blank" rel="noopener">Voir sur YouTube<span class="visuellement-cache"> (nouvel onglet)</span></a>
@@ -103,6 +108,53 @@ const donnees = await Promise.all(lives.map(async (l) => {
     }));
   }
 
+  // ---------- « J'aime » des visiteurs (Netlify Function /api/likes, un j'aime par navigateur) ----------
+  const likes = new Map<string, number>();            // total par live
+  let aimes = new Set<string>();                       // lives aimés dans ce navigateur
+  try { aimes = new Set(JSON.parse(localStorage.getItem('room33-aimes') || '[]')); } catch { /* stockage indisponible */ }
+  const garderAimes = () => { try { localStorage.setItem('room33-aimes', JSON.stringify([...aimes])); } catch { /* rien */ } };
+  function visiteur() {
+    let v = ''; try { v = localStorage.getItem('room33-visiteur') || ''; } catch { /* rien */ }
+    if (!v) { v = crypto.randomUUID(); try { localStorage.setItem('room33-visiteur', v); } catch { /* rien */ } }
+    return v;
+  }
+  let totauxCharges = false;
+  async function chargerLikes() {
+    if (totauxCharges || !lives.length) return; totauxCharges = true;
+    try {
+      const r = await fetch(`/api/likes?ids=${lives.map((l) => l.id).join(',')}&visiteur=${encodeURIComponent(visiteur())}`);
+      if (!r.ok) throw new Error(String(r.status));
+      const d = await r.json() as { totaux: Record<string, number>; aimes: string[] };
+      Object.entries(d.totaux).forEach(([id, n]) => likes.set(id, n));
+      aimes = new Set(d.aimes); garderAimes();
+      majLike();
+    } catch { totauxCharges = false; }
+  }
+  function majLike() {
+    const b = $<HTMLButtonElement>('[data-pv-like]'); if (!b || !courant) return;
+    const aime = aimes.has(courant.id); const n = likes.get(courant.id) ?? 0;
+    b.setAttribute('aria-pressed', String(aime));
+    b.setAttribute('aria-label', aime ? `Retirer votre j'aime (${n})` : `J'aime ce live${n ? ` (${n})` : ''}`);
+    b.querySelector('[data-pv-like-total]')!.textContent = n ? n.toLocaleString('fr-FR') : '';
+  }
+  async function basculerLike() {
+    if (!courant) return;
+    const id = courant.id; const aime = !aimes.has(id); const avant = likes.get(id) ?? 0;
+    // tout de suite à l'écran, puis on enregistre ; en cas d'échec on revient en arrière
+    if (aime) aimes.add(id); else aimes.delete(id);
+    likes.set(id, Math.max(0, avant + (aime ? 1 : -1))); garderAimes(); majLike();
+    const b = $<HTMLElement>('[data-pv-like]'); if (aime && b) animer(b, 'pop');
+    try {
+      const r = await fetch('/api/likes', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id, visiteur: visiteur(), aime }) });
+      if (!r.ok) throw new Error(String(r.status));
+      const d = await r.json() as { total: number };
+      likes.set(id, d.total); majLike();
+    } catch {
+      if (aime) aimes.delete(id); else aimes.add(id);
+      likes.set(id, avant); garderAimes(); majLike();
+    }
+  }
+
   // ouvrir (ou changer de) vidéo
   function lire(id: string) {
     const p = pv(); if (!p) return;
@@ -120,6 +172,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     f.addEventListener('load', () => f.contentWindow?.postMessage(JSON.stringify({ event: 'listening', id, channel: 'widget' }), '*'));
     ecran.replaceChildren(f);
     afficherInfos(l);
+    majLike(); chargerLikes();
     p.hidden = false;
     p.classList.remove('retracte', 'reduit');
     requestAnimationFrame(() => { p.classList.add('visible'); etatPage(); });
@@ -158,6 +211,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (suivant) { lire(suivant.dataset.pvSuivant!); return; }
     const p = pv(); if (!p) return;
     if (c.closest('[data-pv-fermer]')) { fermer(); return; }
+    if (c.closest('[data-pv-like]')) { basculerLike(); return; }
     if (c.closest('[data-pv-agrandir]')) { p.classList.toggle('grand'); const b = p.querySelector('[data-pv-agrandir]')!; b.setAttribute('aria-label', p.classList.contains('grand') ? 'Réduire en panneau' : 'Agrandir la vidéo'); etatPage(); return; }
     if (c.closest('[data-pv-retracter]')) {
       const r = p.classList.toggle('retracte'); p.classList.remove('grand');
@@ -349,6 +403,17 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv-avatar { position: relative; width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: var(--noyer-500); font-family: var(--police-lettrine); font-size: 1.5rem; color: var(--couleur-texte-principal); }
   .pv-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .pv-qui { display: grid; }
+  /* J'aime : seulement en grande vue (plus bas) ; pilule à droite de la chaîne, cœur ambre quand on aime */
+  .pv-like { display: none; margin-left: auto; align-items: center; gap: var(--espace-xs); height: 40px; padding: 0 var(--espace-md); border: 0; border-radius: var(--rayon-pilule); background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal); cursor: pointer; transition: background-color var(--duree-rapide) var(--courbe-standard); }
+  .pv-like:hover { background: var(--couleur-fond-tonal-survol); }
+  .pv-like:active { background: var(--couleur-fond-tonal-presse); }
+  .pv-like-icone { display: grid; }
+  .pv-like-icone > :global(svg) { grid-area: 1 / 1; }
+  .pv-like :global(.i-plein), .pv-like[aria-pressed='true'] :global(.i-vide) { display: none; }
+  .pv-like[aria-pressed='true'] :global(.i-plein) { display: block; color: var(--couleur-accent-defaut); }
+  .pv-like-total:empty { display: none; }
+  .pv-like.pop .pv-like-icone { animation: pv-pop 0.4s cubic-bezier(0.47, 0, 0.23, 1.38); }
+  @keyframes pv-pop { 40% { transform: scale(1.3); } }
   .pv-mot { margin: 0; }
   .pv-youtube { justify-self: start; color: var(--couleur-texte-secondaire); text-underline-offset: 4px; }
   .pv-youtube:hover { color: var(--couleur-texte-principal); }
@@ -387,6 +452,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; width: min(100cqw, 100cqh * 16 / 9); height: auto; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); background: #000; }
     .pv.grand .pv-infos { grid-area: infos; }
     .pv.grand .pv-titre { font-size: var(--taille-h2); }
+    .pv.grand .pv-like { display: inline-flex; }
     .pv.grand .pv-suite { grid-area: suite; align-self: stretch; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; }
     .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: 10.5rem minmax(0, 1fr); } /* vignettes de 168 px, comme YouTube */
   }

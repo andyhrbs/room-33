@@ -28,6 +28,7 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - Écoutes perso (platine, aperçu accueil) : Spotify `spotify-ecoute.mjs` (refresh token) + valeurs du build (`src/lib/ecoutes.ts`).
 - Lecteur global : `src/scripts/lecteur.ts` (conteneurs `[data-ecoute]` : `data-titre`, `data-artiste`, `data-type`, `data-deezer`, `data-isrc`, `data-upc`).
 - Coup de cœur : champ admin `coupDeCoeur` → cœur dans « Les titres » de la fiche.
+- J'aime des lives (visiteurs, grande vue vidéo) : `netlify/functions/likes.mjs` → Netlify Blobs (magasin `likes-lives`, un j'aime par navigateur, identifiant haché).
 
 ## Règles d'interface
 - **Deux boutons ▶** : **plein ambre 48 px** = l'écoute principale d'un bloc, une seule fois (« Écouter un extrait » de la fiche = lance le 1er titre de « Les titres » puis enchaîne, comme Spotify ; n° 1 du Top titres ; morceau du moment) ; **rond à filet 32 px** (zone 44 px, sans fond, ambre quand ça joue) = répété sur chaque ligne d'une liste (« Les titres » de la fiche, Top titres — en 40 px, top titres de la Platine) et ▶ discret calé à droite (titre n° 1 de l'aperçu platine de l'accueil, en 40 px comme le Top titres).
