@@ -217,6 +217,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     }
   }
   let enBascule = false;
+  let largeurBarre = 0;
   function basculerGrand(p: HTMLElement, grand: boolean) {
     const appliquer = () => {
       p.classList.toggle('grand', grand);
@@ -232,6 +233,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     const opts = { duration: D, easing: courbe };
     const fin = () => { p.style.transition = ''; enBascule = false; };
     if (grand) {
+      largeurBarre = window.innerWidth - document.documentElement.clientWidth; // barre de défilement de la page (souvent 0 ou 15 px)
       const avant = mesurer(p); const gauche = p.getBoundingClientRect().left;
       appliquer();
       caleInfos(p); // la taille de la vidéo dépend de la hauteur des infos : on la fixe AVANT de mesurer (sinon tout se recale après coup)
@@ -241,11 +243,13 @@ const donnees = await Promise.all(lives.map(async (l) => {
     } else {
       // on mesure la mise en page du panneau sans l'afficher (le navigateur ne peint pas entre ces deux lignes)
       const avant = mesurer(p);
-      // (sans « pv-bloque » : la barre de défilement de la page revient en panneau et décale tout ce qui est calé à droite)
-      const html = document.documentElement; const bloque = html.classList.contains('pv-bloque');
-      p.classList.remove('grand'); html.classList.remove('pv-bloque');
-      const cible = mesurer(p); const gauche = p.getBoundingClientRect().left; const fondCible = getComputedStyle(p).backgroundColor;
-      p.classList.add('grand'); html.classList.toggle('pv-bloque', bloque);
+      p.classList.remove('grand');
+      const cible = mesurer(p); const fondCible = getComputedStyle(p).backgroundColor; let gauche = p.getBoundingClientRect().left;
+      p.classList.add('grand');
+      // en grande vue la page ne défile pas : sa barre de défilement est cachée. Elle revient en panneau et pousse
+      // tout ce qui est calé à droite de sa largeur (15 px sur Mac avec une souris) : on en tient compte d'avance
+      const barre = largeurBarre - (window.innerWidth - document.documentElement.clientWidth);
+      if (barre > 0) { cible.forEach((c) => { c.r = new DOMRect(c.r.left - barre, c.r.top, c.r.width, c.r.height); }); gauche -= barre; }
       const anims = avant.map(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: 'none' }, { transformOrigin: '0 0', transform: ecart(cible[i].r, r, el.matches('.pv-ecran')) }], { ...opts, fill: 'forwards' }));
       const a = p.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondPanneau }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
       a.finished.finally(() => { appliquer(); anims.forEach((x) => x.cancel()); a.cancel(); fin(); });
