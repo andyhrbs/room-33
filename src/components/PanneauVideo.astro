@@ -344,7 +344,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   /* ---------- Ordi : panneau à droite (par-dessus la page) ---------- */
   /* Mouvements comme le lecteur plein écran de la mini-platine : on entre lentement (0,85 s, courbe douce),
      on sort vite (0,3 s). La barre du haut et la mini-platine se resserrent au même rythme que le panneau. */
-  :global(:root) { --pv-bande: 2.5rem; --pv-largeur: 25rem; --pv-entree: 0.85s var(--courbe-douce); --pv-sortie: 0.3s var(--courbe-entree-sortie); } /* 400 px */
+  :global(:root) { --pv-bande: 2.5rem; --pv-largeur: 27.25rem; --pv-entree: 0.85s var(--courbe-douce); --pv-sortie: 0.3s var(--courbe-entree-sortie); } /* 436 px */
   /* ordi : le panneau passe par-dessus la page (elle ne se resserre plus) ; seuls la barre du haut et la mini-platine lui laissent la place, pour garder leurs boutons utilisables */
   :global(html.pv-ouvert .nav.fixe), :global(html.pv-ouvert .mini-platine.fixe) { right: var(--pv-largeur); }
   :global(html.pv-retracte .nav.fixe), :global(html.pv-retracte .mini-platine.fixe) { right: var(--pv-bande); }
@@ -435,14 +435,16 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv-liste :global(.pv-suivant:hover .pv-suivant-nom) { text-decoration: underline; text-underline-offset: 3px; }
   .pv-lecture { display: none; }
 
-  /* Ordi, panneau : la vidéo prend toute la largeur (bord à bord), le texte garde ses 24 px */
+  /* Ordi, panneau (maquette) : 436 px de large, 20 px de marge de chaque côté ; vidéo aux coins de 4 px, textes alignés sur ses bords ;
+     tête sans fond ni trait ; mot en 16 px */
   @media (min-width: 64rem) {
+    .pv:not(.grand) { padding-inline: 20px; }
     .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
-    .pv:not(.grand) .pv-ecran { border-radius: 0; }
-    .pv:not(.grand) :is(.pv-infos, .pv-suite) { padding-inline: var(--espace-lg); }
-    /* tête au-dessus de la vidéo, sans trait, sur un dégradé sombre → transparent (la bande passe par-dessus) */
-    .pv:not(.grand) .pv-tete { padding: 14px var(--espace-lg); border-bottom: 0; background: linear-gradient(rgb(18 10 8), rgb(18 10 8 / 0)); }
+    .pv:not(.grand) .pv-ecran { border-radius: var(--rayon-pochette); }
+    .pv:not(.grand) .pv-tete { padding: 14px var(--espace-lg); border-bottom: 0; background: none; }
+    .pv:not(.grand) .pv-mot { font-size: var(--taille-corps); }
   }
+
 
   /* ---------- Ordi : grande vue façon YouTube (mode cinéma) ---------- */
   @media (min-width: 64rem) {
