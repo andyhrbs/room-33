@@ -173,6 +173,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
     ecran.replaceChildren(f);
     afficherInfos(l);
     majLike(); chargerLikes();
+    // nouvelle vidéo : on remonte tout en haut (panneau, feuille mobile, colonne « À suivre » de la grande vue)
+    p.querySelectorAll<HTMLElement>('.pv-corps, .pv-suite').forEach((el) => el.scrollTo({ top: 0, behavior: calme() ? 'auto' : 'smooth' }));
     p.hidden = false;
     p.classList.remove('retracte', 'reduit');
     requestAnimationFrame(() => { p.classList.add('visible'); etatPage(); });
