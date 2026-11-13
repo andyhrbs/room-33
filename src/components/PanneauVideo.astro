@@ -453,7 +453,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     }
     .pv.grand .pv-ecran { grid-area: ecran; height: auto; padding: 0; background: none; border-radius: 0; overflow: visible; }
     /* largeur de la vidéo = la plus petite entre la colonne et ce que permet la hauteur : fenêtre − haut de la vidéo (76) − écart (24) − infos (mesurées) − marge du bas (24) */
-    .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; display: block; width: min(100%, (100dvh - 124px - var(--pv-infos-h, 180px)) * 16 / 9); height: auto; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); background: #000; }
+    .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; display: block; width: min(100%, (100dvh - 124px - var(--pv-infos-h, 180px)) * 966 / 551); height: auto; aspect-ratio: 966 / 551; border-radius: var(--rayon-bloc); background: #000; } /* proportions de la maquette (966 × 551) */
     .pv.grand .pv-infos { grid-area: infos; align-self: start; }
     .pv.grand .pv-mot { font-size: var(--taille-corps); } /* titre en H3 et mot en 16 px : les infos prennent moins de place, la vidéo plus */
     .pv.grand .pv-like { display: inline-flex; }
