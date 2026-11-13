@@ -332,6 +332,9 @@ const donnees = await Promise.all(lives.map(async (l) => {
     }
   });
   document.addEventListener('astro:page-load', etatPage);
+  // grande vue : la hauteur des infos (titre sur 1 ou 2 lignes…) décide de la taille de la vidéo
+  { const p = pv(); const infos = p?.querySelector<HTMLElement>('.pv-infos');
+    if (p && infos) new ResizeObserver(() => p.style.setProperty('--pv-infos-h', `${infos.offsetHeight}px`)).observe(infos); }
   ORDI.addEventListener('change', etatPage);
 </script>
 
@@ -446,12 +449,13 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.grand .pv-corps {
       display: grid; height: 100%; overflow: hidden;
       width: min(100%, 110rem); margin-inline: auto; padding: 0 var(--espace-lg) var(--espace-lg);
-      grid-template-columns: minmax(0, 1fr) 25.125rem; grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-md);
+      grid-template-columns: minmax(0, 1fr) 25.125rem; grid-template-rows: auto minmax(0, 1fr); align-content: start; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-lg);
     }
-    .pv.grand .pv-ecran { grid-area: ecran; height: auto; padding: 0; background: none; border-radius: 0; overflow: visible; container-type: size; }
-    .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; width: min(100cqw, 100cqh * 16 / 9); height: auto; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); background: #000; }
-    .pv.grand .pv-infos { grid-area: infos; }
-    .pv.grand .pv-titre { font-size: var(--taille-h2); }
+    .pv.grand .pv-ecran { grid-area: ecran; height: auto; padding: 0; background: none; border-radius: 0; overflow: visible; }
+    /* largeur de la vidéo = la plus petite entre la colonne et ce que permet la hauteur : fenêtre − haut de la vidéo (76) − écart (24) − infos (mesurées) − marge du bas (24) */
+    .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; display: block; width: min(100%, (100dvh - 124px - var(--pv-infos-h, 180px)) * 16 / 9); height: auto; aspect-ratio: 16 / 9; border-radius: var(--rayon-bloc); background: #000; }
+    .pv.grand .pv-infos { grid-area: infos; align-self: start; }
+    .pv.grand .pv-mot { font-size: var(--taille-corps); } /* titre en H3 et mot en 16 px : les infos prennent moins de place, la vidéo plus */
     .pv.grand .pv-like { display: inline-flex; }
     .pv.grand .pv-suite { grid-area: suite; align-self: stretch; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; }
     .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: 10.5rem minmax(0, 1fr); } /* vignettes de 168 px, comme YouTube */
