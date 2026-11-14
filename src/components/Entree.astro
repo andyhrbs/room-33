@@ -77,9 +77,9 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     lampe.addEventListener('click', () => {
       e.classList.add('allumee'); // la lampe s'allume et la pièce passe en fondu vers la photo allumée
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 600); return; }
-      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 1100);
+      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 1400);
       e.addEventListener('transitionend', (ev) => { if (ev.target === e && (ev as TransitionEvent).propertyName === 'opacity') finir(); });
-      setTimeout(finir, 3000); // filet de sécurité
+      setTimeout(finir, 3500); // filet de sécurité
     }, { once: true });
     e.addEventListener('click', (ev) => { if (!lampe.contains(ev.target as Node) && !e.classList.contains('allumee')) lampe.click(); });
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
@@ -113,7 +113,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     width: calc(320px * var(--k)); height: calc(200px * var(--k));
     border: 0; background: none; padding: 0; cursor: pointer;
   }
-  .lampe svg { position: absolute; left: 0; top: calc(-170px * var(--k)); width: 100%; height: auto; aspect-ratio: 320 / 430; overflow: visible; pointer-events: none; transform-origin: 50% calc(-1 * var(--haut)); }
+  .lampe svg { position: absolute; left: 0; top: calc(-170px * var(--k)); width: 100%; height: auto; aspect-ratio: 320 / 430; overflow: visible; pointer-events: none; transform-origin: 50% calc(-1 * var(--haut)); will-change: transform; }
   .on { opacity: 0; transition: opacity 0.35s var(--courbe-standard); }
   .allumee .on { opacity: 1; }
   .dome-allume { filter: drop-shadow(0 0 22px rgb(240 122 34 / 0.6)); }
@@ -132,8 +132,8 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
 
   /* Après le clic : la lampe s'allume, puis remonte et sort par le haut de l'écran (ease-out : part vite, ralentit en sortant) */
-  .allumee .lampe svg { animation: lp-sortie 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards; }
-  @keyframes lp-sortie { to { translate: 0 calc(-1 * (var(--haut) + 580px * var(--k))); } }
+  .allumee .lampe svg { animation: lp-sortie 1.5s cubic-bezier(0.3, 0.5, 0.2, 1) 0.35s forwards; }
+  @keyframes lp-sortie { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, calc(-1 * (var(--haut) + 580px * var(--k))), 0); } }
 
   .lampe:focus-visible { outline: none; }
   .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
