@@ -5,23 +5,23 @@
 
 :root {
   /* ---------- Primitives (collection « Primitives ») ---------- */
-  --brun-950: #120B07;
-  --brun-900: #1F150E;
-  --brun-800: #2B1E15;
-  --brun-700: #3A2A1E;
-  --brun-600: #4A3626;
-  --noyer-500: #5A2E16;
+  --brun-950: #0F0704;
+  --brun-900: #1C0D07;
+  --brun-800: #2A150C;
+  --brun-700: #3A2014;
+  --brun-600: #4C2B1B;
+  --noyer-500: #5E2410;
   --ambre-600: #CF6418;
   --ambre-500: #F07A22;
   --ambre-300: #F5A060;
   --sunset-600: #C2361B;
   --sunset-400: #EC6A50;
-  --ivoire-100: #EFE6D2;
-  --ivoire-100-62: rgb(239 230 210 / 0.62);
-  --ivoire-100-20: rgb(239 230 210 / 0.20);
-  --ivoire-100-14: rgb(239 230 210 / 0.14);
-  --ivoire-100-08: rgb(239 230 210 / 0.04); /* Figma : 4 % (nom gardé pour rester aligné sur la variable Figma) */
-  --sable-400: #B9AC94;
+  --ivoire-100: #F0E3CC;
+  --ivoire-100-62: rgb(240 227 204 / 0.62);
+  --ivoire-100-20: rgb(240 227 204 / 0.20);
+  --ivoire-100-14: rgb(240 227 204 / 0.14);
+  --ivoire-100-08: rgb(240 227 204 / 0.04); /* Figma : 4 % (nom gardé pour rester aligné sur la variable Figma) */
+  --sable-400: #B9A58A;
 
   /* ---------- Thème « Disquaire » (rôles des couleurs) ---------- */
   --couleur-fond-page: var(--brun-900);

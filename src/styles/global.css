@@ -123,7 +123,7 @@ a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: var
     radial-gradient(45% 22% at 57% 24%, rgb(240 122 34 / 0.22), transparent 100%),
     radial-gradient(48% 18% at 47% 6%, rgb(194 54 27 / 0.13), transparent 100%),
     radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.10), transparent 100%),
-    radial-gradient(45% 16% at 40% 78%, rgb(239 230 210 / 0.05), transparent 100%),
+    radial-gradient(45% 16% at 40% 78%, rgb(240 227 204 / 0.05), transparent 100%),
     var(--couleur-fond-page);
 }
 
@@ -216,7 +216,7 @@ body.avec-lecteur .hero-accueil, body.avec-lecteur .hero-page { height: calc(100
   background:
     radial-gradient(45% 22% at 57% 24%, rgb(240 122 34 / 0.18), transparent 100%),
     radial-gradient(60% 25% at 26% 42%, rgb(240 122 34 / 0.08), transparent 100%),
-    radial-gradient(45% 16% at 40% 78%, rgb(239 230 210 / 0.05), transparent 100%),
+    radial-gradient(45% 16% at 40% 78%, rgb(240 227 204 / 0.05), transparent 100%),
     var(--couleur-fond-page);
 }
 

@@ -188,11 +188,11 @@ const apps = [
   .plein-motif { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, var(--couleur-accent-defaut) 0 12%, var(--brun-950) 12.5% 15%, transparent 15.5%), repeating-radial-gradient(circle at 50% 45%, var(--brun-950) 0 2px, #1a110b 2px 4px); }
   .plein-visuel:has(img:not([hidden])) .plein-motif { display: none; }
   /* la pochette se fond dans la page vers le bas */
-  .plein-visuel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(31 21 14 / 0) 45%, var(--couleur-fond-page) 100%); }
+  .plein-visuel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(28 13 7 / 0) 45%, var(--couleur-fond-page) 100%); }
   .plein-fermer {
     position: absolute; top: max(var(--espace-md), env(safe-area-inset-top)); left: var(--grille-marge); z-index: 2;
     width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; padding: 0;
-    border: 0; background: rgb(18 11 7 / 0.45); color: var(--couleur-texte-principal);
+    border: 0; background: rgb(15 7 4 / 0.45); color: var(--couleur-texte-principal);
     backdrop-filter: blur(8px);
   }
   .plein-bas { grid-row: 2; display: grid; gap: var(--espace-lg); justify-items: center; text-align: center; padding: 0 var(--grille-marge) max(var(--espace-xl), env(safe-area-inset-bottom)); margin-top: calc(-1 * var(--espace-2xl)); position: relative; }
@@ -256,7 +256,7 @@ const apps = [
   /* hauteur = son contenu, lignes collées en haut : Safari (iOS) étirait d'abord la fenêtre sur toute la hauteur
      et répartissait les lignes dans le vide pendant l'ouverture */
   .choix-app[open] { display: grid; gap: var(--espace-md); align-content: start; height: fit-content; max-height: calc(100dvh - 2 * var(--espace-md)); inset: 0; margin: auto; overflow-y: auto; }
-  .choix-app::backdrop { background: rgb(18 11 7 / 0.7); }
+  .choix-app::backdrop { background: rgb(15 7 4 / 0.7); }
   .entete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-md); }
   .fermer { width: 44px; height: 44px; margin-right: -10px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: inherit; }
   .apps { display: grid; }

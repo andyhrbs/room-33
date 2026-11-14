@@ -52,7 +52,7 @@ const { href, texte } = Astro.props;
     display: inline-flex; align-items: center;
     height: 44px; min-width: 44px; padding: 0 11px; /* flèche de 20 px centrée dans un rond de 44 px */
     border-radius: var(--rayon-pilule); border: var(--trait-filet) solid var(--couleur-bordure-discrete);
-    background: rgb(31 21 14 / 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgb(28 13 7 / 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
     color: var(--couleur-texte-principal); text-decoration: none;
     opacity: 0; transform: translateY(-8px); pointer-events: none;
@@ -65,7 +65,7 @@ const { href, texte } = Astro.props;
   .libelle { display: grid; grid-template-columns: 0fr; transition: grid-template-columns var(--duree-normal) var(--courbe-sortie); }
   .libelle > span { overflow: hidden; white-space: nowrap; opacity: 0; transform: translateX(-6px); transition: opacity var(--duree-rapide) var(--courbe-standard), transform var(--duree-normal) var(--courbe-sortie); }
   @media (hover: hover) {
-    .retour-flottant:hover { padding-right: var(--espace-md); background: rgb(43 30 21 / 0.94); border-color: var(--couleur-bordure-defaut); } /* fond bloc, presque opaque : le texte reste net sur les pochettes */
+    .retour-flottant:hover { padding-right: var(--espace-md); background: rgb(42 21 12 / 0.94); border-color: var(--couleur-bordure-defaut); } /* fond bloc, presque opaque : le texte reste net sur les pochettes */
     .retour-flottant:hover .libelle { grid-template-columns: 1fr; }
     .retour-flottant:hover .libelle > span { opacity: 1; transform: none; padding-left: var(--espace-xs); transition-delay: 80ms; }
     .retour-flottant:hover :global(.icone) { transform: translateX(-2px); }

@@ -348,7 +348,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .tiroir:focus, .tiroir:focus-visible { outline: none; }
   .tiroir[open] { display: grid; align-content: start; gap: var(--espace-lg); animation: entrer-droite 0.4s var(--courbe-sortie); }
   .tiroir.ferme { animation: sortir-droite 0.26s var(--courbe-entree-sortie) forwards; }
-  .tiroir::backdrop { background: rgb(18 11 7 / calc(0.7 * var(--voile, 1))); animation: fondu 0.4s var(--courbe-standard); } /* --voile : s'éclaircit quand on fait glisser la feuille */
+  .tiroir::backdrop { background: rgb(15 7 4 / calc(0.7 * var(--voile, 1))); animation: fondu 0.4s var(--courbe-standard); } /* --voile : s'éclaircit quand on fait glisser la feuille */
   .tiroir.ferme::backdrop { animation: fondu 0.26s reverse forwards; }
   @keyframes entrer-droite { from { transform: translateX(100%); } }
   @keyframes sortir-droite { to { transform: translateX(100%); } }
