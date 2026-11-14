@@ -77,7 +77,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
     lampe.addEventListener('click', () => {
       e.classList.add('allumee'); // la lampe s'allume et la pièce passe en fondu vers la photo allumée
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 600); return; }
-      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 1400);
+      setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 1500);
       e.addEventListener('transitionend', (ev) => { if (ev.target === e && (ev as TransitionEvent).propertyName === 'opacity') finir(); });
       setTimeout(finir, 3500); // filet de sécurité
     }, { once: true });
@@ -131,9 +131,14 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
   .clavier:not(.allumee) .lampe:focus-visible svg { animation: balancier 1.8s var(--courbe-standard); }
   .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
 
-  /* Après le clic : la lampe s'allume, puis remonte et sort par le haut de l'écran (ease-out : part vite, ralentit en sortant) */
-  .allumee .lampe svg { animation: lp-sortie 1.5s cubic-bezier(0.3, 0.5, 0.2, 1) 0.35s forwards; }
-  @keyframes lp-sortie { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, calc(-1 * (var(--haut) + 580px * var(--k))), 0); } }
+  /* Après le clic : la lampe s'allume, puis remonte et sort par le haut de l'écran (petit élan vers le bas, puis envol ease-out) */
+  .allumee .lampe svg { animation: lp-sortie 1.6s linear 0.35s forwards; }
+  /* petit élan vers le bas (comme tirée par un fil), puis envol qui part vite et freine en sortant */
+  @keyframes lp-sortie {
+    0% { transform: translate3d(0, 0, 0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+    20% { transform: translate3d(0, calc(14px * var(--k)), 0); animation-timing-function: cubic-bezier(0.3, 0.9, 0.25, 1); }
+    100% { transform: translate3d(0, calc(-1 * (var(--haut) + 580px * var(--k))), 0); }
+  }
 
   .lampe:focus-visible { outline: none; }
   .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
