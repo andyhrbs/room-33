@@ -1,24 +1,64 @@
 ---
-// 00 · L'entrée : « Allumez la lampe ». La vraie photo de la pièce éteinte (nuit bleutée, ordi et mobile) en plein écran,
-// sans dessin ni lueur ajoutés. On clique sur la lampe à arc de la photo (zone invisible calée sur son abat-jour, qui suit
-// le recadrage de la photo) — ou n'importe où : la pièce s'allume (fondu vers la même photo, lampes allumées), puis l'écran
-// d'entrée s'efface sur l'accueil, qui montre cette même pièce allumée. Échap = entrer directement.
+// 00 · L'entrée : « Allumez la lampe » — VERSION TEST avec la lampe dessinée.
+// La photo de la pièce éteinte en plein écran ; la lampe à arc du Kit UI suspendue au centre (couleurs de la lampe de la photo
+// éteinte : métal acajou sombre, reflets froids de lune, métal noir bleuté). Apparition « filament qui s'amorce ».
+// Au clic (sur la lampe ou n'importe où) : la lampe s'allume, la pièce passe en fondu vers la photo allumée, puis l'entrée
+// s'efface sur l'accueil. Échap = entrer directement. Pas de halo ni de dégradé derrière la lampe.
 // Une seule fois par visite, au vrai chargement de l'accueil ; jamais en naviguant dans le site ni en actualisant après (Base.astro).
-// Animations réduites : la pièce s'allume d'un coup, puis on entre.
 import Bouton from './Bouton.astro';
 import { fonds } from '../data/images';
 const style = [
   `--eteinte: ${fonds.pieceEteinteOrdi}`, `--eteinte-mobile: ${fonds.pieceEteinteMobile}`,
   `--allumee: ${fonds.pieceOrdi}`, `--allumee-mobile: ${fonds.pieceMobile}`,
 ].join('; ');
+// abat-jour : même tracé que Figma, centré sur x = 160
+const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 356 302 360 292 360 L 28 360 C 18 360 10 356 10 344 Z';
 ---
 <div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={style}>
   <div class="piece eteinte" aria-hidden="true"></div>
   <div class="piece allumee-photo" aria-hidden="true"></div>
-  <!-- zone cliquable sur l'abat-jour de la lampe à arc de la photo (placée par le script) -->
-  <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer"><span class="prechauffe" aria-hidden="true"></span></button>
+  <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer">
+    <svg viewBox="0 0 320 430" overflow="visible" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="lp-dome-eteint" cx="0.47" cy="0.42" r="0.56">
+          <stop offset="0" stop-color="#33263a"/><stop offset="0.38" stop-color="#2b120c"/><stop offset="0.78" stop-color="#170805"/><stop offset="1" stop-color="#090302"/>
+        </radialGradient>
+        <radialGradient id="lp-dome-allume" cx="0.47" cy="0.42" r="0.56">
+          <stop offset="0" stop-color="#ffc27a"/><stop offset="0.32" stop-color="#f8953c"/><stop offset="0.62" stop-color="#f07a22"/><stop offset="1" stop-color="#b4480f"/>
+        </radialGradient>
+        <radialGradient id="lp-ouv-eteinte"><stop offset="0" stop-color="#0b0707"/><stop offset="1" stop-color="#040303"/></radialGradient>
+        <radialGradient id="lp-ouv-allumee"><stop offset="0" stop-color="#fff"/><stop offset="0.55" stop-color="#fff3dc"/><stop offset="1" stop-color="#ffc27a"/></radialGradient>
+        <linearGradient id="lp-metal-eteint" x1="0" x2="1"><stop offset="0" stop-color="#07080b"/><stop offset="0.45" stop-color="#3b414d"/><stop offset="1" stop-color="#0d0f13"/></linearGradient>
+        <linearGradient id="lp-metal-allume" x1="0" x2="1"><stop offset="0" stop-color="#4a3a2e"/><stop offset="0.45" stop-color="#f2e6d4"/><stop offset="1" stop-color="#8a7562"/></linearGradient>
+        <linearGradient id="lp-faisceau" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#ffe2b0" stop-opacity="0.38"/><stop offset="0.4" stop-color="#ffb766" stop-opacity="0.12"/><stop offset="1" stop-color="#f07a22" stop-opacity="0"/>
+        </linearGradient>
+        <!-- reflets : lumière froide de la lune (fenêtre), comme sur la photo éteinte -->
+        <radialGradient id="lp-reflet"><stop offset="0" stop-color="#a9b6d6" stop-opacity="0.9"/><stop offset="1" stop-color="#a9b6d6" stop-opacity="0"/></radialGradient>
+        <linearGradient id="lp-reflet-flanc" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a9b6d6" stop-opacity="0"/><stop offset="0.5" stop-color="#a9b6d6" stop-opacity="0.8"/><stop offset="1" stop-color="#a9b6d6" stop-opacity="0"/></linearGradient>
+        <filter id="lp-flou-faisceau" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+        <filter id="lp-flou-reflet" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2"/></filter>
+      </defs>
+      <path class="on" d="M 24 354 L 296 354 L 400 560 L -80 560 Z" fill="url(#lp-faisceau)" filter="url(#lp-flou-faisceau)"/>
+      <rect x="157" y="-2000" width="6" height="2184" fill="url(#lp-metal-eteint)"/>
+      <rect class="on" x="157" y="-2000" width="6" height="2184" fill="url(#lp-metal-allume)"/>
+      <rect class="reflets" x="158" y="-2000" width="1.2" height="2184" fill="#a9b6d6" fill-opacity="0.25"/>
+      <rect x="147" y="178" width="26" height="16" rx="3" fill="url(#lp-metal-eteint)"/>
+      <rect class="on" x="147" y="178" width="26" height="16" rx="3" fill="url(#lp-metal-allume)"/>
+      <ellipse cx="160" cy="197" rx="26" ry="7" fill="url(#lp-metal-eteint)"/>
+      <ellipse class="on" cx="160" cy="197" rx="26" ry="7" fill="url(#lp-metal-allume)"/>
+      <path d={dome} fill="url(#lp-dome-eteint)"/>
+      <ellipse cx="160" cy="360" rx="140" ry="10" fill="url(#lp-ouv-eteinte)"/>
+      <path class="on dome-allume" d={dome} fill="url(#lp-dome-allume)"/>
+      <ellipse class="on ouverture-allumee" cx="160" cy="360" rx="140" ry="13" fill="url(#lp-ouv-allumee)"/>
+      <g class="reflets" filter="url(#lp-flou-reflet)">
+        <ellipse cx="93" cy="226" rx="35" ry="12" transform="rotate(14 93 226)" fill="url(#lp-reflet)"/>
+        <rect x="26" y="274" width="7" height="46" rx="4" transform="rotate(-8 29 297)" fill="url(#lp-reflet-flanc)"/>
+        <circle cx="281" cy="253" r="5" fill="url(#lp-reflet)"/>
+      </g>
+    </svg>
+  </button>
   <Bouton style="lien" class="invitation" data-allumer-lien tabindex="-1" aria-hidden="true"><span class="seulement-ordi">Cliquez pour allumer la pièce</span><span class="seulement-mobile">Touchez pour allumer la pièce</span></Bouton>
-  <!-- textes retirés à l'écran pour une entrée plus immersive : seuls les lecteurs d'écran les lisent -->
   <div class="visuellement-cache">
     <h2 id="titre-entree">Allumez la lampe</h2>
     <p>Activez la lampe pour entrer dans le disquaire, ou appuyez sur Échap pour entrer directement.</p>
@@ -26,45 +66,22 @@ const style = [
 </div>
 
 <script>
-  // Position de l'abat-jour dans chaque photo (fractions de l'image : gauche, haut, droite, bas), un peu élargie pour viser facilement
-  const PHOTOS = {
-    ordi: { l: 2560, h: 1442, zone: [0.232, 0.33, 0.322, 0.44] },
-    mobile: { l: 1440, h: 2559, zone: [0.03, 0.31, 0.235, 0.39] },
-  };
-  const ORDI = matchMedia('(min-width: 64rem)');
-  // la photo est en « cover » centrée : on refait le même calcul pour poser la zone pile sur la lampe
-  function placer(lampe: HTMLElement) {
-    const p = ORDI.matches ? PHOTOS.ordi : PHOTOS.mobile;
-    const W = innerWidth, H = innerHeight, k = Math.max(W / p.l, H / p.h);
-    const ox = (W - p.l * k) / 2, oy = (H - p.h * k) / 2;
-    const [x1, y1, x2, y2] = p.zone;
-    // sur mobile la lampe touche le bord gauche du recadrage : on garde la zone dans l'écran
-    const g = Math.max(8, ox + x1 * p.l * k), d = Math.min(W - 8, ox + x2 * p.l * k);
-    Object.assign(lampe.style, { left: `${g}px`, top: `${oy + y1 * p.h * k}px`, width: `${Math.max(44, d - g)}px`, height: `${(y2 - y1) * p.h * k}px` });
-  }
-
-  // une seule fois par visite : une fois la pièce allumée, l'entrée ne revient plus (même en actualisant l'accueil) jusqu'à la prochaine visite
   const vue = () => { try { sessionStorage.setItem('room33-entree', '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active', 'entree-ouverte'); };
   document.addEventListener('astro:page-load', () => {
     const e = document.querySelector<HTMLElement>('[data-entree]');
     if (!e || document.documentElement.classList.contains('entree-vue')) { e?.remove(); return; }
     document.documentElement.classList.add('entree-active');
     const lampe = e.querySelector<HTMLButtonElement>('[data-allumer]')!;
-    const caler = () => placer(lampe);
-    caler(); addEventListener('resize', caler);
     lampe.focus({ preventScroll: true });
-    const finir = () => { removeEventListener('resize', caler); e.remove(); vue(); document.querySelector<HTMLElement>('#titre-accueil')?.setAttribute('tabindex', '-1'); document.querySelector<HTMLElement>('#titre-accueil')?.focus({ preventScroll: true }); };
+    const finir = () => { e.remove(); vue(); document.querySelector<HTMLElement>('#titre-accueil')?.setAttribute('tabindex', '-1'); document.querySelector<HTMLElement>('#titre-accueil')?.focus({ preventScroll: true }); };
     lampe.addEventListener('click', () => {
-      e.classList.add('allumee'); // la pièce s'allume (fondu vers la photo allumée)
+      e.classList.add('allumee'); // la lampe s'allume et la pièce passe en fondu vers la photo allumée
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(finir, 600); return; }
-      // le temps de voir la pièce s'allumer, puis l'écran d'entrée s'efface sur l'accueil (même pièce, allumée)
       setTimeout(() => { e.classList.add('allumage'); document.documentElement.classList.add('entree-ouverte'); }, 1100);
       e.addEventListener('transitionend', (ev) => { if (ev.target === e && (ev as TransitionEvent).propertyName === 'opacity') finir(); });
       setTimeout(finir, 3000); // filet de sécurité
     }, { once: true });
-    // un toucher n'importe où sur l'écran allume aussi la pièce (on ne vise pas forcément la lampe)
     e.addEventListener('click', (ev) => { if (!lampe.contains(ev.target as Node) && !e.classList.contains('allumee')) lampe.click(); });
-    // Échap = entrer directement : simple fondu
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
     e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); if (ev.key === 'Tab') e.classList.add('clavier'); });
   });
@@ -76,41 +93,63 @@ const style = [
   .entree {
     position: fixed; inset: 0; z-index: 100; overflow: hidden; cursor: pointer; background: var(--brun-950);
     transition: opacity var(--duree-rapide) var(--courbe-standard);
+    /* abat-jour centré sur l'écran (centre du verre : y = 284 dans le dessin) ; échelle ordi 1, mobile 0,75 */
+    --k: 1; --haut: calc(50dvh - 284px * var(--k));
   }
-  /* les deux photos de la même pièce, l'une sur l'autre : éteinte, puis allumée en fondu au clic */
   .piece { position: absolute; inset: 0; background: var(--eteinte) center / cover no-repeat; }
   .allumee-photo { background-image: var(--allumee); opacity: 0; transition: opacity 0.9s var(--courbe-douce); }
   .allumee .allumee-photo { opacity: 1; }
   @media (max-width: 63.99rem) {
+    .entree { --k: 0.75; }
     .eteinte { background-image: var(--eteinte-mobile); }
     .allumee-photo { background-image: var(--allumee-mobile); }
   }
-  /* au clic : l'écran d'entrée s'efface sur l'accueil */
   .entree.allumage { opacity: 0; transition: opacity 1s var(--courbe-entree-sortie); }
   .entree.fondu { opacity: 0; }
 
-  /* zone cliquable sur l'abat-jour de la photo (invisible) ; au survol, le verre préchauffe à peine */
-  .lampe { position: absolute; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50% 50% 12% 12%; }
-  .prechauffe {
-    position: absolute; left: 12%; right: 12%; top: 30%; bottom: 12%; border-radius: 50% 50% 20% 20%;
-    background: radial-gradient(ellipse at 50% 85%, rgb(255 170 90 / 0.55), rgb(240 122 34 / 0.18) 55%, transparent 75%);
-    opacity: 0; transition: opacity 0.5s var(--courbe-douce); pointer-events: none; mix-blend-mode: screen;
+  /* la lampe = le bouton ; zone cliquable : de la douille au bas de l'abat-jour (y 170 → 370 dans le dessin) */
+  .lampe {
+    position: absolute; left: 50%; top: calc(var(--haut) + 170px * var(--k)); translate: -50% 0;
+    width: calc(320px * var(--k)); height: calc(200px * var(--k));
+    border: 0; background: none; padding: 0; cursor: pointer;
   }
-  @media (hover: hover) {
-    .entree:not(.allumee) .lampe:hover .prechauffe { opacity: 1; }
-  }
-  .clavier:not(.allumee) .lampe:focus-visible .prechauffe { opacity: 1; }
-  .lampe:focus-visible { outline: none; }
-  .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 6px; }
+  .lampe svg { position: absolute; left: 0; top: calc(-170px * var(--k)); width: 100%; height: auto; aspect-ratio: 320 / 430; overflow: visible; pointer-events: none; transform-origin: 50% calc(-1 * var(--haut)); }
+  .on { opacity: 0; transition: opacity 0.35s var(--courbe-standard); }
+  .allumee .on { opacity: 1; }
+  .dome-allume { filter: drop-shadow(0 0 22px rgb(240 122 34 / 0.6)); }
+  .ouverture-allumee { filter: drop-shadow(0 4px 8px rgb(255 217 160 / 0.9)); }
+  .reflets { opacity: 0.6; transition: opacity 0.35s var(--courbe-standard); }
+  .allumee .reflets { opacity: 1; }
 
-  /* invitation en bas, centrée (le clic marche partout, pas besoin de la coller à la lampe) */
+  /* survol (souris) ou focus clavier : la lampe se balance et le verre préchauffe */
+  @keyframes balancier { 18% { rotate: 1.1deg; } 42% { rotate: -0.8deg; } 64% { rotate: 0.45deg; } 84% { rotate: -0.15deg; } }
+  @media (hover: hover) {
+    .entree:not(.allumee) .lampe:hover svg { animation: balancier 1.8s var(--courbe-standard); }
+    .entree:not(.allumee) .lampe:hover .dome-allume { opacity: 0.28; }
+    .entree:not(.allumee) .lampe:hover .ouverture-allumee { opacity: 0.25; }
+  }
+  .clavier:not(.allumee) .lampe:focus-visible svg { animation: balancier 1.8s var(--courbe-standard); }
+  .clavier:not(.allumee) .lampe:focus-visible .dome-allume { opacity: 0.28; }
+
+  /* Apparition « filament qui s'amorce » : la lampe sort du noir en grésillant (éclats dans le verre), puis se stabilise ;
+     l'invitation arrive une fois la lampe stable */
+  .entree:not(.allumee) .lampe svg { animation: lp-amorce 1.6s linear 0.3s backwards; }
+  .entree:not(.allumee) .dome-allume { animation: lp-filament 1.6s linear 0.3s backwards; }
+  .entree:not(.allumee) :global(.invitation) { animation: lp-invitation 0.6s var(--courbe-douce) 1.7s backwards; }
+  @keyframes lp-amorce { 0% { opacity: 0; } 16% { opacity: 0.45; } 21% { opacity: 0.08; } 33% { opacity: 0.7; } 37% { opacity: 0.2; } 52% { opacity: 0.9; } 58% { opacity: 0.6; } 72%, 100% { opacity: 1; } }
+  @keyframes lp-filament { 0% { opacity: 0; } 16% { opacity: 0.35; } 21% { opacity: 0; } 33% { opacity: 0.45; } 37% { opacity: 0.05; } 52% { opacity: 0.5; } 62% { opacity: 0.12; } 100% { opacity: 0; } }
+  @keyframes lp-invitation { from { opacity: 0; } }
+
+  .lampe:focus-visible { outline: none; }
+  .clavier .lampe:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 8px; border-radius: var(--rayon-bloc); }
+
+  /* invitation en bas, centrée ; ivoire 40 % au repos, 100 % au survol */
   .invitation { position: absolute; left: 50%; bottom: max(12vh, 5rem); translate: -50% 0; white-space: nowrap; transition: opacity 0.35s var(--courbe-standard); }
   .allumee .invitation { opacity: 0; }
-  /* Figma : ivoire à 40 % au repos (texte + flèche), ivoire 100 % (couleur principale) au survol */
   .entree :global(.invitation), .entree :global(.invitation .icone) { color: rgb(240 227 204 / 0.4); transition: color var(--duree-rapide) var(--courbe-standard), opacity 0.35s var(--courbe-standard); }
   @media (hover: hover) {
     .entree :global(.invitation:hover), .entree :global(.invitation:hover .icone) { color: var(--ivoire-100); }
   }
 
-  @media (prefers-reduced-motion: reduce) { .entree, .allumee-photo, .prechauffe, .invitation { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .lampe svg, .dome-allume, :global(.invitation) { animation: none !important; } .entree, .on, .reflets, .allumee-photo { transition: none; } }
 </style>
