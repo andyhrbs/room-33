@@ -15,13 +15,13 @@ import Entree from '../components/Entree.astro';
 import LivesAccueil from '../components/LivesAccueil.astro';
 import { accueil } from '../data/textes';
 import { bacs, top, morceauDuJour, ecoutesMois, genres, detailBac, deezerDe } from '../data/disques';
-import { images } from '../data/images';
+import { images, fonds } from '../data/images';
 
 const m = morceauDuJour;
 const [premier, ...reste] = top;
 const suivants = reste.slice(0, 4);
 ---
-<Base imagePrioritaire={images.pieceMobile ?? images.pieceOrdi ?? undefined}>
+<Base imagePrioritaire={[{ href: images.pieceOrdi!, media: '(min-width: 64rem)' }, { href: '/images/piece-mobile-1440.webp', media: '(max-width: 63.99rem)' }]}>
   <Entree />
   <Nav />
 
@@ -29,8 +29,8 @@ const suivants = reste.slice(0, 4);
     <!-- Hero : la pièce en plein écran, le titre géant et une phrase (les points sur les objets ont été retirés) -->
     <section class="hero hero-accueil" aria-labelledby="titre-accueil" data-sans-apparition
       style={[
-        images.pieceOrdi && `--image-ordi: url('${images.pieceOrdi}')`,
-        images.pieceMobile && `--image-mobile: url('${images.pieceMobile}')`,
+        `--image-ordi: ${fonds.pieceOrdi}`,
+        `--image-mobile: ${fonds.pieceMobile}`,
       ].filter(Boolean).join('; ') || undefined}>
       <div class="conteneur contenu">
         <div class="accroche">

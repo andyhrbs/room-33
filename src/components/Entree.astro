@@ -7,12 +7,13 @@
 // Maquette Figma « 00 · L'entrée » + composant « Lampe d'entrée — lampe à arc » (Éteinte / Allumée).
 // abat-jour : dôme bombé à flancs presque droits, lèvre arrondie (même tracé que Figma, centré sur x = 160)
 import Bouton from './Bouton.astro';
-import { images } from '../data/images';
-const fondPiece = images.pieceEteinteOrdi ?? images.pieceOrdi;
-const fondPieceMobile = images.pieceEteinteMobile ?? images.pieceMobile ?? fondPiece;
+import { fonds } from '../data/images';
+// la pièce éteinte (vraies photos de nuit, déjà sombres : voile léger seulement)
+const fondPiece = fonds.pieceEteinteOrdi;
+const fondPieceMobile = fonds.pieceEteinteMobile;
 const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 356 302 360 292 360 L 28 360 C 18 360 10 356 10 344 Z';
 ---
-<div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={[fondPiece && `--fond-piece: url('${fondPiece}')`, fondPieceMobile && `--fond-piece-mobile: url('${fondPieceMobile}')`].filter(Boolean).join('; ') || undefined}>
+<div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={`--fond-piece: ${fondPiece}; --fond-piece-mobile: ${fondPieceMobile}`}>
   <div class="halo" aria-hidden="true"></div>
   <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer">
     <svg viewBox="0 0 320 430" overflow="visible" aria-hidden="true" focusable="false">
@@ -119,7 +120,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       background:
         radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.22), transparent 100%),
         radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
-        linear-gradient(rgb(7 4 3 / 0.9), rgb(7 4 3 / 0.9)),
+        linear-gradient(rgb(7 4 3 / 0.3), rgb(7 4 3 / 0.3)), /* la photo est déjà de nuit : voile léger */
         var(--fond-piece, none) center / cover no-repeat,
         var(--brun-950);
     }
@@ -130,7 +131,7 @@ const dome = 'M 10 344 C 10 246 70 196 160 196 C 250 196 310 246 310 344 C 310 3
       background:
         radial-gradient(45% 35% at 50% 50%, rgb(240 122 34 / 0.3), transparent 100%),
         radial-gradient(circle, transparent 55%, rgb(18 10 8 / 0.45) 100%),
-        linear-gradient(rgb(18 11 7 / 0.9), rgb(18 11 7 / 0.9)),
+        linear-gradient(rgb(18 11 7 / 0.3), rgb(18 11 7 / 0.3)),
         var(--fond-piece-mobile, none) center / cover no-repeat,
         var(--brun-950);
     }

@@ -4,7 +4,6 @@ import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import PiedDePage from './PiedDePage.astro';
 import HeroPage from './HeroPage.astro';
-import { recadrages } from '../data/images';
 import Bouton from './Bouton.astro';
 import PileDePochettes from './PileDePochettes.astro';
 import LigneTracklist from './LigneTracklist.astro';
@@ -22,7 +21,7 @@ const nb = bac.disques.length;
   <main class="ambiance">
     <!-- Hero général, le même pour tous les bacs : le genre se choisit dans la section suivante -->
     <HeroPage
-      recadrage={recadrages.bac}
+      grosPlan="bacs" positionMobile="42% center"
       filAriane={[{ texte: 'La pièce', href: '/' }, 'Les bacs']}
       surtitreMobile="Les bacs"
       titre="Tous mes disques."

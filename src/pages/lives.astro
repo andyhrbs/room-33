@@ -7,7 +7,6 @@ import HeroPage from '../components/HeroPage.astro';
 import Bouton from '../components/Bouton.astro';
 import VideoLive from '../components/VideoLive.astro';
 import AppelReco from '../components/AppelReco.astro';
-import { recadrages } from '../data/images';
 import { livesTextes as t } from '../data/textes';
 import { lives } from '../data/lives';
 import { infosVideo, dateFr, photoChaine } from '../lib/youtube';
@@ -24,7 +23,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
 <Base title="Les lives" description={t.intro}>
   <Nav />
   <main class="ambiance">
-    <HeroPage filAriane={t.filAriane} recadrage={recadrages.lives} surtitreMobile={t.surtitreMobile} titre={t.titre}>
+    <HeroPage filAriane={t.filAriane} grosPlan="lives" positionMobile="52% center" surtitreMobile={t.surtitreMobile} titre={t.titre}>
       <p class="texte-corps-l intro"><span class="seulement-ordi">{t.intro}</span><span class="seulement-mobile">{t.introCourte}</span></p>
       <p class="texte-petit texte-secondaire seulement-ordi">{lives.length} lives</p>
     </HeroPage>
