@@ -530,18 +530,18 @@ const donnees = await Promise.all(lives.map(async (l) => {
     .pv.grand .pv-corps {
       display: grid; height: 100%; overflow: hidden;
       width: min(100%, 110rem); margin-inline: auto; padding: 0 var(--espace-lg) var(--espace-lg);
-      grid-template-columns: min(100% - 25.125rem - var(--espace-lg), max(36rem, (100dvh - 124px - var(--pv-infos-h, 180px)) * 966 / 551)) 25.125rem; justify-content: space-between; grid-template-rows: auto minmax(0, 1fr); align-content: start; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-lg);
+      grid-template-columns: min(100% - 25.125rem - var(--espace-lg), max(36rem, (100dvh - 124px - var(--pv-infos-h, 180px)) * 966 / 551)) minmax(25.125rem, 1fr); justify-content: start; grid-template-rows: auto minmax(0, 1fr); align-content: start; grid-template-areas: 'ecran suite' 'infos suite'; column-gap: var(--espace-lg); row-gap: var(--espace-lg);
     }
     .pv.grand .pv-ecran { grid-area: ecran; height: auto; padding: 0; background: none; border-radius: 0; overflow: visible; }
     /* Comme la maquette : la vidéo occupe toute la colonne de gauche, les infos (et le J'aime) s'alignent sur ses bords, « À suivre » juste à côté.
        Largeur de la colonne = la plus petite entre la place dispo et ce que permet la hauteur : fenêtre − haut de la vidéo (76) − écart (24)
-       − infos (mesurées) − marge du bas (24). Si l’écran est bas, la vidéo rétrécit en restant calée à gauche, « À suivre » reste calé à droite (maquette : Frame 30 en space-between). */
+       − infos (mesurées) − marge du bas (24). Si l’écran est bas, la vidéo rétrécit en restant calée à gauche ; « À suivre » (24 px plus loin) prend toute la largeur qui reste. */
     .pv.grand .pv-ecran :global(iframe) { position: relative; inset: auto; display: block; width: 100%; height: auto; aspect-ratio: 966 / 551; border-radius: var(--rayon-bloc); background: #000; } /* proportions de la maquette (966 × 551) */
     .pv.grand .pv-infos { grid-area: infos; align-self: start; }
     .pv.grand .pv-mot { font-size: var(--taille-corps); } /* titre en H3 et mot en 16 px : les infos prennent moins de place, la vidéo plus */
     .pv.grand .pv-like { display: inline-flex; }
     .pv.grand .pv-suite { grid-area: suite; align-self: stretch; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; }
-    .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: 10.5rem minmax(0, 1fr); } /* vignettes de 168 px, comme YouTube */
+    .pv.grand .pv-liste :global(.pv-suivant) { grid-template-columns: minmax(10.5rem, 45%) minmax(0, 1fr); } /* vignettes : 168 px mini, elles grandissent avec la colonne « À suivre » */
   }
 
   /* ---------- Mobile : feuille qui monte du bas, réductible en barre ---------- */
