@@ -206,6 +206,7 @@ html:not(.entree-vue):not(.entree-ouverte) .hero-accueil *, html:not(.entree-vue
 :root { --h-lecteur: 84px; }
 @media (max-width: 63.99rem) { :root { --h-lecteur: 69px; } }
 body.avec-lecteur .hero-accueil, body.avec-lecteur .hero-page { height: calc(100vh - var(--h-lecteur)); height: calc(100svh - var(--h-lecteur)); }
+.hero-accueil.recouvert, .hero-page.recouvert { pointer-events: none; }
 .hero-accueil::after, .hero-page::after {
   content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: var(--brun-950); opacity: calc(var(--couvert, 0) * 0.75);

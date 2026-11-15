@@ -99,6 +99,9 @@ function rideau() {
   const r = suite.getBoundingClientRect().top;
   const couvert = Math.min(1, Math.max(0, 1 - r / innerHeight));
   hero.style.setProperty('--couvert', couvert.toFixed(3));
+  // Safari / Chrome sur iPhone : le hero collé (sticky) peut « voler » les touchers destinés au contenu qui le
+  // recouvre (ex. la bascule Albums / Titres du Top). Dès qu'il est un peu recouvert, il ne reçoit plus les touchers.
+  hero.classList.toggle('recouvert', couvert > 0.2);
 }
 let rideauEnAttente = false;
 const rideauPlanifie = () => {
