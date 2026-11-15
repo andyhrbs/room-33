@@ -84,10 +84,22 @@ const style = [
         const v = 0.5 + 0.22 * Math.sin(s * 0.17 + 2.1) + 0.12 * Math.sin(s * 0.41 + 0.4);
         return [u * innerWidth, v * innerHeight];
       };
+      // la balade avance par petits pas (le trajet de la dérive) À PARTIR de la position actuelle :
+      // quand on lâche le doigt, elle repart de là où on s'est arrêté ; elle rebondit sur les bords de l'écran
+      let prec = 0, sx = 1, sy = 1;
+      const pas = (t: number) => {
+        if (!prec) { prec = t; return; }
+        const [a, b] = derive(prec), [c, d] = derive(t); prec = t;
+        const mx = innerWidth * 0.08, my = innerHeight * 0.1;
+        // près d'un bord, on repart vers l'intérieur (sans téléporter le halo : il reste là où on l'a laissé)
+        if ((x < mx && (c - a) * sx < 0) || (x > innerWidth - mx && (c - a) * sx > 0)) sx = -sx;
+        if ((y < my && (d - b) * sy < 0) || (y > innerHeight - my && (d - b) * sy > 0)) sy = -sy;
+        x += (c - a) * sx; y += (d - b) * sy;
+      };
       const boucle = (t: number) => {
         const balade = tactile && !doigt;
-        if (balade) [x, y] = derive(t);
-        const k = balade ? 0.05 : 0.16; // en balade : rattrapage plus lent (reprise en douceur après le doigt)
+        if (balade) pas(t); else prec = 0;
+        const k = 0.16;
         cx += (x - cx) * k; cy += (y - cy) * k;
         lueur.style.setProperty('--x', `${cx.toFixed(1)}px`); lueur.style.setProperty('--y', `${cy.toFixed(1)}px`);
         const continuer = !e.classList.contains('allumee') && e.isConnected && (balade || Math.abs(x - cx) + Math.abs(y - cy) > 0.3);
@@ -106,7 +118,7 @@ const style = [
       const lacher = () => { doigt = false; if (!tactile) lueur.classList.remove('active'); relancer(); };
       e.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') lacher(); });
       e.addEventListener('pointercancel', lacher);
-      if (tactile) { [cx, cy] = derive(t0); lueur.classList.add('active'); relancer(); } // la balade démarre tout de suite
+      if (tactile) { [x, y] = derive(t0); cx = x; cy = y; lueur.classList.add('active'); relancer(); } // la balade démarre tout de suite
     }
   });
 </script>
@@ -135,7 +147,7 @@ const style = [
   @media (max-width: 63.99rem) {
     .eteinte { background-image: var(--eteinte-mobile); }
     .allumee-photo { background-image: var(--allumee-mobile); }
-    .lueur { background-image: var(--allumee-mobile); --r: 22vw; }
+    .lueur { background-image: var(--allumee-mobile); --r: 36vw; } /* mobile : halo plus grand */
   }
   /* au clic : l'écran d'entrée s'efface sur l'accueil */
   .entree.allumage { opacity: 0; transition: opacity 1s var(--courbe-entree-sortie); }
