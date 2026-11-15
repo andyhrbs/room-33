@@ -288,7 +288,10 @@ const donnees = await Promise.all(lives.map(async (l) => {
   document.addEventListener('keydown', (e) => {
     if (e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey || !courant) return;
     const t = e.target as HTMLElement;
-    if (t.closest?.('input, textarea, select, button, a, [contenteditable], [role="slider"], summary') || t.isContentEditable) return;
+    if (t.closest?.('input, textarea, select, [contenteditable], [role="slider"]') || t.isContentEditable) return;
+    // un bouton ou lien a le focus : on le laisse faire, SAUF le bouton ▶ qui a lancé la vidéo et ceux du panneau
+    // (sinon Espace « reclique » dessus et la vidéo repart du début, ou le panneau se rétracte)
+    if (t.closest?.('button, a, summary') && !t.closest('[data-lire-video], [data-pv]')) return;
     e.preventDefault();
     commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture();
   });
