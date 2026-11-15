@@ -283,6 +283,16 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (p.classList.contains('reduit') && c.closest('[data-pv]') && !c.closest('button, a, iframe')) deplier(p);
   }, true);
 
+  // Espace : pause / lecture de la vidéo ouverte (sauf quand on écrit ou qu'un bouton / lien a le focus ;
+  // si le focus est dans le lecteur YouTube, c'est YouTube qui gère l'espace)
+  document.addEventListener('keydown', (e) => {
+    if (e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey || !courant) return;
+    const t = e.target as HTMLElement;
+    if (t.closest?.('input, textarea, select, button, a, [contenteditable], [role="slider"], summary') || t.isContentEditable) return;
+    e.preventDefault();
+    commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture();
+  });
+
   // Échap : grande vue → panneau ; feuille mobile → barre
   document.addEventListener('keydown', (e) => {
     const p = pv(); if (e.key !== 'Escape' || !p || p.hidden) return;
@@ -359,8 +369,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
     const s = d?.info?.playerState;
     if (s === 1) { enLecture = true; majLecture(); } else if (s === 2 || s === 0) { enLecture = false; majLecture(); }
   });
-  // un extrait démarre : la vidéo se met en pause
-  document.addEventListener('room33:extrait', () => { if (courant) { commande('pauseVideo'); enLecture = false; majLecture(); } });
+  // un extrait démarre (la mini-platine s'active) : la fenêtre vidéo se ferme
+  document.addEventListener('room33:extrait', () => { if (courant) fermer(); });
 
   // changement de page : le nouveau <html> arrive sans nos classes → on les remet tout de suite
   document.addEventListener('astro:before-swap', (e) => {
