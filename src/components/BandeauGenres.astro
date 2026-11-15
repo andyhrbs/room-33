@@ -1,7 +1,7 @@
 ---
 // Bandeau qui fait défiler les genres en très grand.
 // Règle d'accessibilité WCAG 2.2.2 (tout ce qui bouge plus de 5 s doit pouvoir s'arrêter) :
-// bouton pause / lecture toujours visible, et pause au survol de la souris.
+// bouton pause / lecture toujours visible (le défilement continue au survol, choix d'Andyh).
 import Icone from './Icone.astro';
 import { accueil } from '../data/textes';
 interface Props { genres: string[] }
@@ -36,7 +36,6 @@ const ligne = genres.join('  ·  ') + '  ·  ';
   .piste { display: flex; width: max-content; animation: defile 35s linear infinite; }
   .piste span { white-space: pre; padding-right: 0; }
   .en-pause .piste { animation-play-state: paused; }
-  @media (hover: hover) { .bandeau:hover .piste { animation-play-state: paused; } }
   @keyframes defile { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .piste { animation: none; } }
   .pause {
