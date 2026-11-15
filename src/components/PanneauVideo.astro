@@ -496,15 +496,15 @@ const donnees = await Promise.all(lives.map(async (l) => {
   .pv-liste :global(.pv-suivant:hover .pv-suivant-nom) { text-decoration: underline; text-underline-offset: 3px; }
   .pv-lecture { display: none; }
 
-  /* Ordi, panneau (maquette) : 436 px de large, fond de page, 20 px de marge de chaque côté ; vidéo aux coins de 4 px, textes
-     (et « Vidéo en cours ») alignés sur ses bords ; tête sans fond ni trait, sans bouton Fermer ; mot en 16 px */
+  /* Ordi, panneau (maquette) : 436 px de large, fond ombre, 20 px de marge de chaque côté ; vidéo aux coins de 4 px, textes
+     (et « Vidéo en cours ») alignés sur ses bords ; tête sans fond ni trait, Agrandir + Fermer ; mot en 16 px */
   @media (min-width: 64rem) {
     .pv:not(.grand) { padding-inline: 20px; }
     .pv:not(.grand) .pv-corps { padding: 0 0 var(--espace-lg); }
     .pv:not(.grand) .pv-ecran { border-radius: var(--rayon-pochette); }
-    .pv:not(.grand) { background: var(--couleur-fond-page); }
+    .pv:not(.grand) { background: var(--couleur-fond-ombre); }
     .pv:not(.grand) .pv-tete { padding: 14px 0; border-bottom: 0; background: none; } /* « Vidéo en cours » aligné sur la vidéo */
-    .pv:not(.grand) .pv-bouton[data-pv-fermer] { display: none; } /* panneau : seulement Agrandir ; on ferme depuis la grande vue */
+    .pv.grand .pv-bouton[data-pv-fermer] { display: none; } /* grande vue : seulement Réduire ; on ferme depuis le panneau */
     .pv:not(.grand) .pv-mot { font-size: var(--taille-corps); }
   }
 
