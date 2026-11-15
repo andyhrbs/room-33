@@ -69,24 +69,44 @@ const style = [
     // Échap = entrer directement : simple fondu
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
     e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); if (ev.key === 'Tab') e.classList.add('clavier'); });
-    // Lampe torche : le halo suit la souris (ou le doigt qui glisse) avec un léger retard, pour un mouvement souple
+    // Lampe torche : le halo suit la souris (ou le doigt qui glisse) avec un léger retard, pour un mouvement souple.
+    // Sur mobile (pas de souris), il se promène tout seul dans la pièce (dérive libre et lente) ; si on glisse le doigt,
+    // il le suit, puis reprend sa balade quand on lâche.
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const lueur = e.querySelector<HTMLElement>('.lueur')!;
-      let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, anim = 0;
-      const boucle = () => {
-        cx += (x - cx) * 0.16; cy += (y - cy) * 0.16;
-        lueur.style.setProperty('--x', `${cx.toFixed(1)}px`); lueur.style.setProperty('--y', `${cy.toFixed(1)}px`);
-        anim = Math.abs(x - cx) + Math.abs(y - cy) > 0.3 ? requestAnimationFrame(boucle) : 0;
+      const tactile = matchMedia('(hover: none)').matches;
+      let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, anim = 0, doigt = false;
+      // dérive : somme de sinus aux fréquences « incompatibles » → un trajet qui ne se répète pas et passe partout
+      const t0 = performance.now(), graine = Math.random() * 100;
+      const derive = (t: number) => {
+        const s = (t - t0) / 1000 + graine;
+        const u = 0.5 + 0.28 * Math.sin(s * 0.23) + 0.14 * Math.sin(s * 0.57 + 1.3);
+        const v = 0.5 + 0.22 * Math.sin(s * 0.17 + 2.1) + 0.12 * Math.sin(s * 0.41 + 0.4);
+        return [u * innerWidth, v * innerHeight];
       };
+      const boucle = (t: number) => {
+        const balade = tactile && !doigt;
+        if (balade) [x, y] = derive(t);
+        const k = balade ? 0.05 : 0.16; // en balade : rattrapage plus lent (reprise en douceur après le doigt)
+        cx += (x - cx) * k; cy += (y - cy) * k;
+        lueur.style.setProperty('--x', `${cx.toFixed(1)}px`); lueur.style.setProperty('--y', `${cy.toFixed(1)}px`);
+        const continuer = !e.classList.contains('allumee') && e.isConnected && (balade || Math.abs(x - cx) + Math.abs(y - cy) > 0.3);
+        anim = continuer ? requestAnimationFrame(boucle) : 0;
+      };
+      const relancer = () => { if (!anim) anim = requestAnimationFrame(boucle); };
       const suivre = (ev: PointerEvent) => {
         if (e.classList.contains('allumee')) return;
+        if (ev.pointerType !== 'mouse') doigt = ev.type !== 'pointerup';
         if (!lueur.classList.contains('active')) { cx = x = ev.clientX; cy = y = ev.clientY; lueur.classList.add('active'); }
-        x = ev.clientX; y = ev.clientY; if (!anim) anim = requestAnimationFrame(boucle);
+        x = ev.clientX; y = ev.clientY; relancer();
       };
-      e.addEventListener('pointermove', suivre);
+      e.addEventListener('pointermove', (ev) => { if (ev.pointerType === 'mouse' || doigt) suivre(ev); });
       e.addEventListener('pointerdown', suivre);
-      e.addEventListener('pointerleave', () => lueur.classList.remove('active'));
-      e.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') lueur.classList.remove('active'); }); // au doigt : la lueur s'éteint quand on lâche
+      e.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse') lueur.classList.remove('active'); });
+      const lacher = () => { doigt = false; if (!tactile) lueur.classList.remove('active'); relancer(); };
+      e.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') lacher(); });
+      e.addEventListener('pointercancel', lacher);
+      if (tactile) { [cx, cy] = derive(t0); lueur.classList.add('active'); relancer(); } // la balade démarre tout de suite
     }
   });
 </script>
