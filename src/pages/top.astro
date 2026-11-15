@@ -104,13 +104,13 @@ const rang = (i: number) => String(i).padStart(2, '0');
 </Base>
 
 <script>
-  // Relancé à chaque arrivée sur la page (navigation fluide du ClientRouter)
-  document.addEventListener('astro:page-load', () => {
-    const boutons = document.querySelectorAll<HTMLButtonElement>('[data-vue]');
-    boutons.forEach((b) => b.addEventListener('click', () => {
-      boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      document.querySelectorAll<HTMLElement>('[data-panneau]').forEach((p) => (p.hidden = p.dataset.panneau !== b.dataset.vue));
-    }));
+  // Bascule Albums / Titres. Écoute posée une seule fois sur le document (délégation) : elle marche quelle que soit
+  // la façon d'arriver sur la page (lien, menu, retour arrière, page remise en cache par Safari iOS).
+  document.addEventListener('click', (ev) => {
+    const b = (ev.target as Element).closest?.<HTMLButtonElement>('[data-vue]');
+    if (!b) return;
+    document.querySelectorAll<HTMLButtonElement>('[data-vue]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll<HTMLElement>('[data-panneau]').forEach((p) => (p.hidden = p.dataset.panneau !== b.dataset.vue));
   });
 </script>
 
@@ -125,7 +125,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
   .bascule { display: flex; gap: var(--espace-lg); }
   .zone-bascule { padding-top: clamp(2.5rem, 1.6rem + 3.8vw, 4.5rem); }
   .zone-bascule ~ [data-panneau] > .section:first-child { padding-top: clamp(1rem, 0.4rem + 2.6vw, 2.5rem); }
-  .bascule button { background: none; border: 0; padding: var(--espace-xs) 0; color: var(--couleur-texte-secondaire); text-underline-offset: 6px; min-height: 44px; }
+  .bascule button { background: none; border: 0; padding: var(--espace-xs) 0; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; color: var(--couleur-texte-secondaire); text-underline-offset: 6px; min-height: 44px; }
   .bascule button:hover { color: var(--couleur-texte-principal); }
   .bascule button[aria-pressed='true'] { color: var(--couleur-texte-principal); text-decoration: underline; text-decoration-thickness: var(--trait-filet); }
 
