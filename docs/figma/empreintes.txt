@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 15 nov. 2026, 00:35 : palette « acajou tamisé » (primitives + couleurs brutes) ; entrée sans lampe dessinée ; 15:74 encore à l’ancienne empreinte
+# Empreintes Figma de référence — 15 nov. 2026, 00:35 : palette « acajou tamisé » (primitives + couleurs brutes) ; entrée sans lampe dessinée 
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -20,7 +20,7 @@
 16:131:cadre 2gjifd
 23:720 410qo8
 16:132 t30js3
-16:198 1661gs8
+16:198 lm4ehb
 349:2916 l1z603
 349:2918 1g7ol5r
 349:2940 1mjsh3y
@@ -31,7 +31,7 @@
 15:19:cadre 1b2fqnt
 23:681 1q9dhuo
 15:20 1uk6ms4
-15:74 1xbrkgj
+15:74 kq57ss
 15:89 1t67no8
 15:93 gds4hs
 15:133 je3v7l
@@ -177,19 +177,19 @@
 69:1912 qlpyeu
 69:1938 16canc
 182:2328 tu08b2
-217:2581:cadre 1xv42cw
-217:2582 8grosy
-217:2583 1q46in2
-218:2848 qtwjcu
-217:2615 1hf1bh5
-217:2619 1kxlckq
+217:2581:cadre 8qdwgj
+217:2582 1q5af3z
+217:2583 yvykio
+218:2848 1kt8adb
+217:2615 1g7dtco
+217:2619 2333rk
 217:2620 p4phlg
-217:2532:cadre 1xcvejs
-217:2533 kq3cu5
-217:2534 79esgv
-218:2740 9wcs10
-217:2572 19eotkc
-217:2579 1qpan4w
+217:2532:cadre 1ucve8v
+217:2533 dx39xs
+217:2534 1xjhujb
+218:2740 1ihr58i
+217:2572 g0vv0c
+217:2579 10oj39d
 217:2580 tu08b2
 440:3191:cadre wzi84w
 440:3192 1wwxpzi
