@@ -14,6 +14,8 @@ const style = [
 ---
 <div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={style}>
   <div class="piece eteinte" aria-hidden="true"></div>
+  <!-- lampe torche : la pièce allumée apparaît autour de la souris (ou du doigt), bords flous -->
+  <div class="piece lueur" aria-hidden="true"></div>
   <div class="piece allumee-photo" aria-hidden="true"></div>
   <!-- zone cliquable sur l'abat-jour de la lampe à arc de la photo (placée par le script) -->
   <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer"><span class="prechauffe" aria-hidden="true"></span></button>
@@ -67,6 +69,25 @@ const style = [
     // Échap = entrer directement : simple fondu
     const direct = () => { e.classList.add('fondu'); setTimeout(finir, 300); };
     e.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') direct(); if (ev.key === 'Tab') e.classList.add('clavier'); });
+    // Lampe torche : le halo suit la souris (ou le doigt qui glisse) avec un léger retard, pour un mouvement souple
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lueur = e.querySelector<HTMLElement>('.lueur')!;
+      let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, anim = 0;
+      const boucle = () => {
+        cx += (x - cx) * 0.16; cy += (y - cy) * 0.16;
+        lueur.style.setProperty('--x', `${cx.toFixed(1)}px`); lueur.style.setProperty('--y', `${cy.toFixed(1)}px`);
+        anim = Math.abs(x - cx) + Math.abs(y - cy) > 0.3 ? requestAnimationFrame(boucle) : 0;
+      };
+      const suivre = (ev: PointerEvent) => {
+        if (e.classList.contains('allumee')) return;
+        if (!lueur.classList.contains('active')) { cx = x = ev.clientX; cy = y = ev.clientY; lueur.classList.add('active'); }
+        x = ev.clientX; y = ev.clientY; if (!anim) anim = requestAnimationFrame(boucle);
+      };
+      e.addEventListener('pointermove', suivre);
+      e.addEventListener('pointerdown', suivre);
+      e.addEventListener('pointerleave', () => lueur.classList.remove('active'));
+      e.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') lueur.classList.remove('active'); }); // au doigt : la lueur s'éteint quand on lâche
+    }
   });
 </script>
 
@@ -74,16 +95,27 @@ const style = [
   :global(html.entree-vue) .entree { display: none; }
   :global(html.entree-active) { overflow: hidden; }
   .entree {
-    position: fixed; inset: 0; z-index: 100; overflow: hidden; cursor: pointer; background: var(--brun-950);
+    position: fixed; inset: 0; z-index: 100; overflow: hidden; cursor: pointer; touch-action: none; background: var(--brun-950);
     transition: opacity var(--duree-rapide) var(--courbe-standard);
   }
   /* les deux photos de la même pièce, l'une sur l'autre : éteinte, puis allumée en fondu au clic */
   .piece { position: absolute; inset: 0; background: var(--eteinte) center / cover no-repeat; }
   .allumee-photo { background-image: var(--allumee); opacity: 0; transition: opacity 0.9s var(--courbe-douce); }
   .allumee .allumee-photo { opacity: 1; }
+  /* lampe torche : même photo allumée, visible seulement dans un cercle flou autour du curseur (1/4 de la largeur de l'écran) */
+  .lueur {
+    background-image: var(--allumee); opacity: 0; transition: opacity 0.6s var(--courbe-standard);
+    --x: 50%; --y: 50%; --r: 12.5vw;
+    -webkit-mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, rgb(0 0 0 / 0.85) 30%, rgb(0 0 0 / 0.35) 65%, transparent 100%);
+    mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, rgb(0 0 0 / 0.85) 30%, rgb(0 0 0 / 0.35) 65%, transparent 100%);
+    will-change: opacity;
+  }
+  .lueur.active { opacity: 1; }
+  .allumee .lueur { opacity: 0; transition-duration: 0.9s; }
   @media (max-width: 63.99rem) {
     .eteinte { background-image: var(--eteinte-mobile); }
     .allumee-photo { background-image: var(--allumee-mobile); }
+    .lueur { background-image: var(--allumee-mobile); --r: 22vw; }
   }
   /* au clic : l'écran d'entrée s'efface sur l'accueil */
   .entree.allumage { opacity: 0; transition: opacity 1s var(--courbe-entree-sortie); }
