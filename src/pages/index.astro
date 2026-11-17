@@ -34,11 +34,11 @@ const suivants = reste.slice(0, 4);
       ].filter(Boolean).join('; ') || undefined}>
       <div class="conteneur contenu">
         <div class="accroche">
-          <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
-          <!-- maquette Figma : un seul lien, « Fouiller les bacs » -->
+          <!-- maquette Figma : « Fouiller les bacs » en bouton primaire, au-dessus de l'accroche -->
           <div class="actions-hero">
-            <Bouton style="lien" href="/bacs">{accueil.entrer}</Bouton>
+            <Bouton style="primaire" href="/bacs">{accueil.entrer}</Bouton>
           </div>
+          <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
         </div>
         <h1 id="titre-accueil" class="titre-hero">{accueil.titre.split(' ').map((mot, i) => <><span class="masque-mot"><span class="h-masque" style={`--d: ${250 + i * 140}ms`}>{mot}</span></span>{' '}</>)}</h1>
       </div>
