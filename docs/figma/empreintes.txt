@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : libellés du tiroir de reco (Me l’envoyer, Voir vos sons, page Vos sons)
+# Empreintes Figma de référence — 17 nov. 2026 : intro du tiroir de reco
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -81,19 +81,19 @@
 182:2264 tu08b2
 24:791:cadre eqi4z
 24:792 jt2pj9
-24:793 gl6h6
+24:793 2txyje
 24:845:cadre 1xq17fe
 24:846 jt2pj9
 24:847 1c6o03t
 79:2151:cadre utstq5
 79:2152 jt2pj9
-79:2153 eysqvs
+79:2153 eyjok1
 79:2248:cadre zg6f6x
 79:2249 jt2pj9
-79:2250 lqg1ef
+79:2250 1qtu6un
 24:738:cadre bnsub7
 24:739 96k20e
-24:740 1p8ghoj
+24:740 wrqjan
 281:2834:cadre kolan2
 281:2835 1e3nh3j
 281:2839 1hotv21
