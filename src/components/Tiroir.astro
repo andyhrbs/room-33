@@ -343,13 +343,13 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .tiroir {
     --largeur: min(35rem, 100vw);
     position: fixed; inset: 0 0 0 auto; margin: 0; width: var(--largeur); max-width: 100vw; height: 100dvh; max-height: 100dvh;
-    padding: var(--espace-3xl) var(--espace-2xl) var(--espace-2xl);
+    padding: var(--espace-2xl); /* Figma ordi : 48 px partout */
     border: 0; border-left: var(--trait-filet) solid var(--couleur-bordure-discrete);
-    background: var(--couleur-fond-bloc); color: var(--couleur-texte-principal);
+    background: var(--couleur-fond-page); /* Figma ordi : fond page (mobile : fond bloc) */ color: var(--couleur-texte-principal);
     overflow-y: auto; overscroll-behavior: contain;
   }
   .tiroir:focus, .tiroir:focus-visible { outline: none; }
-  .tiroir[open] { display: grid; align-content: start; gap: var(--espace-lg); animation: entrer-droite 0.4s var(--courbe-sortie); }
+  .tiroir[open] { display: grid; align-content: safe center; gap: var(--espace-md); /* Figma ordi : contenu centré en hauteur, 16 px entre les blocs */ animation: entrer-droite 0.4s var(--courbe-sortie); }
   .tiroir.ferme { animation: sortir-droite 0.26s var(--courbe-entree-sortie) forwards; }
   .tiroir::backdrop { background: rgb(15 7 4 / calc(0.7 * var(--voile, 1))); animation: fondu 0.4s var(--courbe-standard); } /* --voile : s'éclaircit quand on fait glisser la feuille */
   .tiroir.ferme::backdrop { animation: fondu 0.26s reverse forwards; }
@@ -365,11 +365,11 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
   .fermer:hover { background: var(--couleur-fond-tonal); }
   .fermer:focus-visible { outline: 2px solid var(--couleur-focus); outline-offset: 2px; }
 
-  .vue { display: grid; gap: var(--espace-lg); }
+  .vue { display: grid; gap: var(--espace-md); }
   .vue[hidden] { display: none; }
   form, fieldset { display: grid; gap: var(--espace-md); }
   fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-  legend { padding: 0; margin-bottom: var(--espace-xs); }
+  legend { padding: 0; margin-bottom: var(--espace-sm); } /* Figma ordi : 12 px entre « 1 · Votre son » et le champ */
 
   /* champ de recherche souligné (trait ambre au focus, rouge en erreur) */
   .champ-recherche { display: flex; align-items: center; gap: var(--espace-sm); padding: var(--espace-md) 0; border-bottom: 1.5px solid var(--couleur-bordure-defaut); transition: border-color var(--duree-rapide) var(--courbe-standard); }
@@ -433,10 +433,12 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
       padding: var(--espace-sm) var(--grille-marge) var(--espace-xl);
       border-left: 0; border-top: var(--trait-filet) solid var(--couleur-bordure-discrete);
       border-radius: 16px 16px 0 0;
+      background: var(--couleur-fond-bloc);
     }
-    .tiroir[open] { animation: entrer-bas 0.8s var(--courbe-douce); gap: var(--espace-md); } /* mobile : la feuille monte plus lentement (0,4 s → 0,8 s) */
+    .tiroir[open] { animation: entrer-bas 0.8s var(--courbe-douce); gap: var(--espace-md); align-content: start; } /* mobile : la feuille monte plus lentement (0,4 s → 0,8 s) */
     .tiroir[open]::backdrop { animation-duration: 0.8s; }
     .tiroir.ferme { animation-name: sortir-bas; }
+    legend { margin-bottom: var(--espace-xs); }
     .poignee { justify-self: center; width: 2.5rem; height: 4px; border-radius: var(--rayon-pilule); background: var(--couleur-bordure-defaut); margin-bottom: var(--espace-sm); }
     .vue { gap: var(--espace-md); }
   }

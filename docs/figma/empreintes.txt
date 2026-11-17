@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : intro du tiroir de reco
+# Empreintes Figma de référence — 17 nov. 2026 : maj figma tiroir de reco ordi (fond page, 48 px, centré, 16 px)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -93,7 +93,7 @@
 79:2250 1qtu6un
 24:738:cadre bnsub7
 24:739 96k20e
-24:740 wrqjan
+24:740 12yjpfm
 281:2834:cadre kolan2
 281:2835 1e3nh3j
 281:2839 1hotv21
