@@ -58,7 +58,7 @@ export const accueil = {
   accrocheMobile: 'Installez-vous, faites comme chez vous.',
   entrer: 'Voir mes disques',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
-  bacs: { surtitre: 'Mes disques', titre: 'Servez-vous, prenez le temps de fouiller.', lien: 'Voir tous mes disques' },
+  bacs: { surtitre: 'Mes disques', titre: 'Servez-vous, prenez le temps de fouiller.', lien: 'Voir tous les bacs' },
   platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Mon artiste du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'La platine fait une pause : mes écoutes reviennent dans un instant.' },
   top: { surtitre: 'Mon Top', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top en entier' },
   lives: { surtitre: 'En vidéo', titre: 'À regarder, le son à fond.', lien: 'Voir toutes les vidéos', chaine: 'Andyh · Room 33', chaineSous: 'Mes performances préférées', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
