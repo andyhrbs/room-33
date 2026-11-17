@@ -106,7 +106,7 @@ collections:
         fields:
           - name: lives
             label: Vidéos
-            label_singular: live
+            label_singular: vidéo
             widget: list
             add_to_top: true
             summary: '{{fields.artiste}} — {{fields.titre}}'
