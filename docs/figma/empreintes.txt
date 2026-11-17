@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : textes de la page Vos sons
+# Empreintes Figma de référence — 17 nov. 2026 : titres mobiles des heros sur une ligne (Installez-vous., Vos trouvailles.)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -42,7 +42,7 @@
 422:4883 jhtl5q
 17:395:cadre qxh8x9
 23:799 16seshx
-110:2096 1u9ltct
+110:2096 1ic37bg
 17:414 lst38x
 17:426 a4nvua
 17:476 mvj6my
@@ -148,7 +148,7 @@
 268:2771 kv5zcg
 68:1820:cadre 1iizh0r
 68:1969 198ji4r
-110:2156 1h4c5vx
+110:2156 a961g5
 68:1835 j8n3bq
 68:1920 a0d7jp
 68:1931 19ybte7
