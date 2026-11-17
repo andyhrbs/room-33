@@ -35,10 +35,9 @@ const suivants = reste.slice(0, 4);
       <div class="conteneur contenu">
         <div class="accroche">
           <p class="texte-corps-l"><span class="seulement-ordi">{accueil.accroche}</span><span class="seulement-mobile">{accueil.accrocheMobile}</span></p>
-          <!-- parcours principal : fouiller les bacs (action n° 1, bouton ambre) ; recommander un son en second (lien) -->
+          <!-- maquette Figma : un seul lien, « Fouiller les bacs » -->
           <div class="actions-hero">
-            <Bouton style="primaire" href="/bacs">{accueil.entrer}</Bouton>
-            <Bouton style="lien" href="/#recommander" data-ouvrir-reco>{accueil.recommander}</Bouton>
+            <Bouton style="lien" href="/bacs">{accueil.entrer}</Bouton>
           </div>
         </div>
         <h1 id="titre-accueil" class="titre-hero">{accueil.titre.split(' ').map((mot, i) => <><span class="masque-mot"><span class="h-masque" style={`--d: ${250 + i * 140}ms`}>{mot}</span></span>{' '}</>)}</h1>
