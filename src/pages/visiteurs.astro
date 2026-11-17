@@ -14,7 +14,7 @@ const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day:
 <Base title="Le bac des visiteurs" description="Les sons que vous m’avez recommandés et qui m’ont plu.">
   <Nav />
   <main class="ambiance">
-    <HeroPage filAriane={['La pièce', 'Le bac des visiteurs']} grosPlan="visiteurs" positionMobile="38% center" surtitreMobile="Le bac des visiteurs" titre="Les sons qu’on m’a fait aimer." titreMobile="On m’a fait aimer.">
+    <HeroPage filAriane={['Accueil', 'Vos sons']} grosPlan="visiteurs" positionMobile="38% center" surtitreMobile="Vos sons" titre="Les sons qu’on m’a fait aimer." titreMobile="On m’a fait aimer.">
       <div class="infos">
         <p class="texte-corps-l"><span class="seulement-ordi">Les sons que vous m’avez recommandés et qui m’ont plu. Chaque disque garde le prénom de celui qui me l’a fait découvrir.</span><span class="seulement-mobile">Vos recos qui m’ont plu, avec votre prénom.</span></p>
         {recos.length > 0 && <p class="texte-petit texte-secondaire seulement-ordi">{t.compte(recos.length, dateFr(recos[0].ajoute))}</p>}

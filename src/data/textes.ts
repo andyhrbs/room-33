@@ -18,18 +18,18 @@ export const site = {
 
 // Les pages, dans l'ordre du menu mobile
 export const pages = [
-  { numero: '01', court: 'La pièce', long: 'La pièce', explication: 'L’accueil, la vue d’ensemble.', href: '/' },
-  { numero: '02', court: 'Les bacs', long: 'Les bacs', explication: 'Mes disques, rangés par genre.', href: '/bacs' },
-  { numero: '03', court: 'Le Top', long: 'Le Top de la Room', explication: 'Mes disques préférés, classés.', href: '/top' },
-  { numero: '04', court: 'La platine', long: 'La platine', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
-  { numero: '05', court: 'Les lives', long: 'Les lives', explication: 'Les concerts que je repasse en boucle.', href: '/lives' },
-  { numero: '06', court: 'Le comptoir', long: 'Le comptoir', explication: 'Qui je suis.', href: '/comptoir' },
-  { numero: '07', court: 'Le bac des visiteurs', long: 'Le bac des visiteurs', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
+  { numero: '01', court: 'Accueil', long: 'Accueil', explication: 'La vue d’ensemble.', href: '/' },
+  { numero: '02', court: 'Mes disques', long: 'Mes disques', explication: 'Mes disques, rangés par genre.', href: '/bacs' },
+  { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Mes disques préférés, classés.', href: '/top' },
+  { numero: '04', court: 'Mes écoutes', long: 'Mes écoutes', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
+  { numero: '05', court: 'En vidéo', long: 'En vidéo', explication: 'Les sessions que je repasse en boucle.', href: '/lives' },
+  { numero: '06', court: 'Qui je suis', long: 'Qui je suis', explication: 'Moi, et pourquoi Room 33.', href: '/comptoir' },
+  { numero: '07', court: 'Vos sons', long: 'Vos sons', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
 ] as const;
 
 export const nav = {
   // Liens visibles dans la barre du haut (ordi)
-  liens: ['Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le comptoir', 'Le bac des visiteurs'],
+  liens: ['Mes disques', 'Mon Top', 'Mes écoutes', 'En vidéo', 'Qui je suis', 'Vos sons'],
   cta: 'Recommandez-moi un son',
   ouvrirMenu: 'Ouvrir le menu',
   fermerMenu: 'Fermer le menu',
@@ -39,7 +39,7 @@ export const piedDePage = {
   question: 'Un son à me faire écouter ?',
   champ: 'Titre, artiste ou lien',
   envoyer: 'Envoyer',
-  liens: ['La pièce', 'Les bacs', 'Le Top', 'La platine', 'Les lives', 'Le bac des visiteurs', 'Le comptoir'],
+  liens: ['Accueil', 'Mes disques', 'Mon Top', 'Mes écoutes', 'En vidéo', 'Vos sons', 'Qui je suis'],
   cta: 'Recommandez-moi un son',
   reseaux: { instagram: 'Instagram', spotify: 'Spotify', dm: 'Écrivez-moi en DM' },
   copyright: '© 2026 Room 33 · Mentions légales',
@@ -59,10 +59,10 @@ export const accueil = {
   accrocheMobile: 'Installez-vous, faites comme chez vous.',
   entrer: 'Fouiller les bacs',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
-  bacs: { surtitre: 'Les bacs', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
-  platine: { surtitre: 'La platine', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Le plus écouté du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.' },
-  top: { surtitre: 'Le Top de la Room', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top complet' },
-  lives: { surtitre: 'Les lives', titre: 'Ce soir, sur scène.', lien: 'Voir tous les lives', chaine: 'Andyh · Room 33', chaineSous: 'Les lives que je repasse en boucle', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
+  bacs: { surtitre: 'Mes disques', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
+  platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Le plus écouté du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.' },
+  top: { surtitre: 'Mon Top', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top complet' },
+  lives: { surtitre: 'En vidéo', titre: 'Ce soir, sur scène.', lien: 'Voir tous les lives', chaine: 'Andyh · Room 33', chaineSous: 'Les lives que je repasse en boucle', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
   bandeauPause: 'Mettre en pause le défilement',
   bandeauLecture: 'Relancer le défilement',
 };
@@ -116,8 +116,8 @@ export const tiroir = {
 // ---------- Page : Le comptoir ----------
 export const comptoir = {
   retour: 'Retour dans la pièce',
-  filAriane: ['La pièce', 'Le comptoir'],
-  surtitreMobile: 'Le comptoir',
+  filAriane: ['Accueil', 'Qui je suis'],
+  surtitreMobile: 'Qui je suis',
   titre: 'Venez, on parle musique.',
   titreMobile: 'On parle musique.',
   presentation: 'Moi, c’est Andyh. Pianiste, passionné avant tout, et un peu trop bavard dès qu’on parle musique.',
@@ -150,8 +150,8 @@ export const visiteursTextes = {
 
 // ---------- Page : Les lives ----------
 export const livesTextes = {
-  filAriane: ['La pièce', 'Les lives'],
-  surtitreMobile: 'Les lives',
+  filAriane: ['Accueil', 'En vidéo'],
+  surtitreMobile: 'En vidéo',
   titre: 'Sur scène.',
   intro: 'Les concerts et les sessions que je ne me lasse pas de revoir, et ceux qui m’ont donné envie de jouer.',
   introCourte: 'Les concerts que je ne me lasse pas de revoir.',
