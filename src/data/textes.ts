@@ -22,7 +22,7 @@ export const pages = [
   { numero: '02', court: 'Mes disques', long: 'Mes disques', explication: 'Mes disques, rangés par genre.', href: '/bacs' },
   { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Mes disques préférés, classés.', href: '/top' },
   { numero: '04', court: 'Mes écoutes', long: 'Mes écoutes', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
-  { numero: '05', court: 'En vidéo', long: 'En vidéo', explication: 'Les sessions que je repasse en boucle.', href: '/lives' },
+  { numero: '05', court: 'En vidéo', long: 'En vidéo', explication: 'Mes performances préférées.', href: '/lives' },
   { numero: '06', court: 'Qui je suis', long: 'Qui je suis', explication: 'Moi, et pourquoi Room 33.', href: '/comptoir' },
   { numero: '07', court: 'Vos sons', long: 'Vos sons', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
 ] as const;
@@ -44,7 +44,6 @@ export const piedDePage = {
   reseaux: { instagram: 'Instagram', spotify: 'Spotify', dm: 'Écrivez-moi en DM' },
   copyright: '© 2026 Room 33 · Mentions légales',
   donnees: 'Données : Spotify · Extraits : Deezer',
-  signature: 'Fait par Andyh',
 };
 
 export const accueilProvisoire = {
@@ -59,10 +58,10 @@ export const accueil = {
   accrocheMobile: 'Installez-vous, faites comme chez vous.',
   entrer: 'Fouiller les bacs',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
-  bacs: { surtitre: 'Mes disques', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
-  platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Le plus écouté du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.' },
-  top: { surtitre: 'Mon Top', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top complet' },
-  lives: { surtitre: 'En vidéo', titre: 'Ce soir, sur scène.', lien: 'Voir tous les lives', chaine: 'Andyh · Room 33', chaineSous: 'Les lives que je repasse en boucle', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
+  bacs: { surtitre: 'Mes disques', titre: 'Servez-vous, prenez le temps de fouiller.', lien: 'Voir tous mes disques' },
+  platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Mon artiste du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'La platine fait une pause : mes écoutes reviennent dans un instant.' },
+  top: { surtitre: 'Mon Top', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top en entier' },
+  lives: { surtitre: 'En vidéo', titre: 'À regarder, le son à fond.', lien: 'Voir toutes les vidéos', chaine: 'Andyh · Room 33', chaineSous: 'Mes performances préférées', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
   bandeauPause: 'Mettre en pause le défilement',
   bandeauLecture: 'Relancer le défilement',
 };
