@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : bouton J’aime retiré (grande vue vidéo)
+# Empreintes Figma de référence — 17 nov. 2026 : phrases du menu mobile
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -238,7 +238,7 @@
 12:24 lhk47v
 12:48 1e3voaa
 12:81 tagkyl
-77:92 yocht7
+77:92 cjlvtw
 205:285 iwftil
 205:314 v4jlns
 298:142 mdqfsz

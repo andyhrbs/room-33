@@ -18,13 +18,13 @@ export const site = {
 
 // Les pages, dans l'ordre du menu mobile
 export const pages = [
-  { numero: '01', court: 'Accueil', long: 'Accueil', explication: 'La vue d’ensemble.', href: '/' },
-  { numero: '02', court: 'Mes disques', long: 'Mes disques', explication: 'Mes disques, rangés par genre.', href: '/bacs' },
-  { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Mes disques préférés, classés.', href: '/top' },
+  { numero: '01', court: 'Accueil', long: 'Accueil', explication: 'Tout, en un coup d’œil.', href: '/' },
+  { numero: '02', court: 'Mes disques', long: 'Mes disques', explication: 'Rangés par genre : servez-vous.', href: '/bacs' },
+  { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Ceux qui ne quittent jamais la platine.', href: '/top' },
   { numero: '04', court: 'Mes écoutes', long: 'Mes écoutes', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
   { numero: '05', court: 'En vidéo', long: 'En vidéo', explication: 'Mes performances préférées.', href: '/lives' },
   { numero: '06', court: 'Qui je suis', long: 'Qui je suis', explication: 'Moi, et pourquoi Room 33.', href: '/comptoir' },
-  { numero: '07', court: 'Vos sons', long: 'Vos sons', explication: 'Les sons que vous m’avez recommandés.', href: '/visiteurs' },
+  { numero: '07', court: 'Vos sons', long: 'Vos sons', explication: 'Vos recos qui m’ont plu.', href: '/visiteurs' },
 ] as const;
 
 export const nav = {
