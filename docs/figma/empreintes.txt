@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : maj figma tiroir de reco ordi (fond page, 48 px, centré, 16 px)
+# Empreintes Figma de référence — 17 nov. 2026 : bouton J’aime retiré (grande vue vidéo)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -210,7 +210,7 @@
 456:3448 vbi9kq
 456:3506:cadre 1rc9j0v
 456:3507 17kaue6
-525:3685 6ba8k
+525:3685 1cuzwdx
 458:3450:cadre 1a9sjp0
 458:3451 vw0kjv
 458:3461 1fzxmmw

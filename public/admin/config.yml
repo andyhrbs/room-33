@@ -97,7 +97,7 @@ collections:
               - { name: slug, label: Adresse, widget: hidden, required: false }
   - name: lives
     label: Les lives
-    description: "Les prestations live de la page Les lives. Le premier de la liste est « à la une » — glisse un live en haut pour le mettre à la une. Pour voir combien de j'aime a chaque vidéo : ouvre /admin/jaime"
+    description: "Les prestations live de la page Les lives. Le premier de la liste est « à la une » — glisse un live en haut pour le mettre à la une."
     files:
       - name: liste
         label: Mes lives
