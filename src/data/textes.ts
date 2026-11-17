@@ -56,7 +56,7 @@ export const accueil = {
   titre: 'Bienvenue chez moi.',
   accroche: 'Installez-vous, faites comme chez vous : les bacs sont ouverts, la platine tourne.',
   accrocheMobile: 'Installez-vous, faites comme chez vous.',
-  entrer: 'Fouiller les bacs',
+  entrer: 'Voir mes disques',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
   bacs: { surtitre: 'Mes disques', titre: 'Servez-vous, prenez le temps de fouiller.', lien: 'Voir tous mes disques' },
   platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Mon artiste du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'La platine fait une pause : mes écoutes reviennent dans un instant.' },
