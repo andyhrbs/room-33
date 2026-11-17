@@ -20,6 +20,11 @@ import { images } from '../data/images';
       <div class="texte">
         <p class="titre-h3">{t.presentation}</p>
         <p class="texte-corps-l texte-secondaire">{t.intro}</p>
+        <!-- rappel des deux portes dès l'intro (celui qui vient pour écrire n'a pas à tout faire défiler) -->
+        <div class="rappel">
+          <Bouton style="lien" href="/#recommander" data-ouvrir-reco>{t.contact.cta}</Bouton>
+          <Bouton style="lien" href={`https://ig.me/m/${site.instagram.replace('@', '')}`} target="_blank" rel="noopener">{t.contact.insta}</Bouton>
+        </div>
       </div>
       <figure class="photo">
         {images.andyhPiano
@@ -62,6 +67,7 @@ import { images } from '../data/images';
   /* Présentation + photo */
   .intro { display: grid; grid-template-columns: minmax(0, 34rem) minmax(0, 35rem); justify-content: space-between; align-items: center; gap: var(--espace-4xl); }
   .texte { display: grid; gap: var(--espace-md); }
+  .rappel { display: flex; flex-wrap: wrap; gap: 0 var(--espace-lg); margin-top: var(--espace-xs); }
   .signature { font-family: var(--police-lettrine); font-size: clamp(2.25rem, 1.8rem + 1.9vw, 3.25rem); line-height: 1.15; letter-spacing: 0; margin-top: var(--espace-xs); }
   .photo { display: grid; gap: var(--espace-sm); margin: 0; }
   .photo img, .attente { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--rayon-bloc); }
