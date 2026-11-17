@@ -1,28 +1,156 @@
 {
   "lives": [
     {
-      "video": "https://www.youtube.com/watch?v=2eXGtT7E5aU",
-      "artiste": "Tom Misch & Yussef Dayes",
-      "titre": "Tiny Desk (Home) Concert",
-      "lieu": "NPR Music · Londres",
-      "annee": 2020,
-      "mot": "« Mon mot sur ce live, en deux ou trois phrases : pourquoi je le repasse en boucle, la minute où tout bascule. »"
+      "video": "https://www.youtube.com/watch?v=6uCTlIZcWiE",
+      "artiste": "Venna",
+      "titre": "Live From Topanga Dome",
+      "lieu": "Topanga Dome",
+      "annee": 2026,
+      "mot": ""
     },
     {
-      "video": "https://www.youtube.com/watch?v=PBKa-AAy_vo",
+      "video": "https://www.youtube.com/watch?v=vTx1ITE67g4",
+      "artiste": "Odeal",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=88BngX2rSfY",
+      "artiste": "Khalid",
+      "titre": "Please Don't Fall In Love With Me (Live Performance)",
+      "lieu": "",
+      "annee": 2024,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=vR6_ZVKEhJ4",
+      "artiste": "Ne-Yo",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2024,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=FEkOYs6aWIg",
+      "artiste": "Dijon",
+      "titre": "Absolutely (Film)",
+      "lieu": "",
+      "annee": 2021,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=WOQYGWMEtGk",
+      "artiste": "Jamilah Barry",
+      "titre": "Full Circle (Live Session)",
+      "lieu": "",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=rMWjbb2l5BE",
       "artiste": "Daniel Caesar",
       "titre": "Tiny Desk Concert",
-      "lieu": "NPR Music · Washington",
+      "lieu": "NPR Music",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=NXkn1Ee7Q5o",
+      "artiste": "RAYE",
+      "titre": "I Know You’re Hurting (Live at Abbey Road Studios)",
+      "lieu": "Abbey Road Studios",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=IUMTaAQ43lY",
+      "artiste": "Tom Misch",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
       "annee": 2018,
-      "mot": "« Une phrase sur ce live : le moment qui me retourne. »"
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=qgneMEs2i-w",
+      "artiste": "Louis Cato & Jon Batiste",
+      "titre": "Africa (D’Angelo Tribute)",
+      "lieu": "",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=B_ymY0xG0LI",
+      "artiste": "Moonchild",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2019,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=IupinNthqx4",
+      "artiste": "JP Cooper",
+      "titre": "everything i wanted",
+      "lieu": "",
+      "annee": 2020,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=Qll7IHN0I4Q",
+      "artiste": "Snoh Aalegra",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2020,
+      "mot": ""
     },
     {
       "video": "https://www.youtube.com/watch?v=BnEgnrUCXPY",
       "artiste": "The Yussef Dayes Experience",
-      "titre": "Live from Malibu",
+      "titre": "Live From Malibu",
       "lieu": "Malibu",
       "annee": 2023,
-      "mot": "« Une phrase sur ce live : le moment qui me retourne. »"
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=fOAIrUZbOwo",
+      "artiste": "Billie Eilish",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2024,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=nt83OwzJbUA",
+      "artiste": "Snoh Aalegra",
+      "titre": "Find Someone Like You (Live on the Honda Stage)",
+      "lieu": "Billboard",
+      "annee": 2020,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=pUK6HlzNWEg",
+      "artiste": "Sam Smith",
+      "titre": "Latch (Acoustic)",
+      "lieu": "",
+      "annee": 2013,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=X-hu_uiK-n8",
+      "artiste": "RAYE",
+      "titre": "Ice Cream Man (Live at The Royal Albert Hall)",
+      "lieu": "Royal Albert Hall",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=tA2teFEJLFw",
+      "artiste": "Sasha Keable",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2025,
+      "mot": ""
     },
     {
       "video": "https://www.youtube.com/watch?v=Yy4pcKn0Y_k",
@@ -30,7 +158,215 @@
       "titre": "Live at Joshua Tree",
       "lieu": "Soulection · Joshua Tree",
       "annee": 2022,
-      "mot": "« Une phrase sur ce live : le moment qui me retourne. »"
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=NwVtIPeYIeQ",
+      "artiste": "Yussef Dayes x Alfa Mist",
+      "titre": "Love Is The Message (Live @ Abbey Road) ft. Mansur Brown & Rocco Palladino",
+      "lieu": "Abbey Road Studios",
+      "annee": 2018,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=DqgdNk9DCck",
+      "artiste": "Alex Isley",
+      "titre": "Tiny Desk Concert",
+      "lieu": "NPR Music",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=48k36eenISw",
+      "artiste": "Kubla",
+      "titre": "Michael Jackson but it's all jazz musicians",
+      "lieu": "",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=3xT2eWQYaUM",
+      "artiste": "Lucky Daye",
+      "titre": "How Much Can A Heart Take ft. Yebba (Live Performance)",
+      "lieu": "",
+      "annee": 2021,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=Qa1IaUywiO8",
+      "artiste": "Tems",
+      "titre": "Higher (Live Performance)",
+      "lieu": "Genius · Open Mic",
+      "annee": 2021,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=vvG4YLoH5Sc",
+      "artiste": "amaka.",
+      "titre": "want you more (Live in Toronto)",
+      "lieu": "Toronto",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=85YXjCU0pmc",
+      "artiste": "Kehlani",
+      "titre": "Folded (Live)",
+      "lieu": "Spotify Live Room",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=2kdPIxZD6NQ",
+      "artiste": "Sabrina Claudio",
+      "titre": "I Just Melt (Live)",
+      "lieu": "",
+      "annee": 2020,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=VGAh3IGDCeA",
+      "artiste": "Sabrina Claudio",
+      "titre": "Problem With You (Acoustic)",
+      "lieu": "",
+      "annee": 2019,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=0rC8dwKkSW4",
+      "artiste": "Daniel Caesar",
+      "titre": "Best Part (Live at Java Jazz Festival 2018)",
+      "lieu": "Java Jazz Festival",
+      "annee": 2018,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=LsjaLJMAbnk",
+      "artiste": "Robert Glasper",
+      "titre": "Everything in Its Right Place (Radiohead)",
+      "lieu": "medici.tv · Fondation Louis Vuitton",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=bW1hZ1ix-70",
+      "artiste": "Jacob Collier",
+      "titre": "Can't Help Falling In Love (Live in Lisbon)",
+      "lieu": "Lisbonne",
+      "annee": 2022,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=QGtPHnCBH3w",
+      "artiste": "Marshmello ft. Bastille",
+      "titre": "Happier (Stripped)",
+      "lieu": "",
+      "annee": 2018,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=GS2Y_CkaXP0",
+      "artiste": "Robert Glasper",
+      "titre": "So Beautiful (Live At Capitol Studios)",
+      "lieu": "Capitol Studios",
+      "annee": 2015,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=dcAHJ8LFAzY",
+      "artiste": "NAO",
+      "titre": "Antidote ft. Adekunle Gold (Stripped Back Live)",
+      "lieu": "",
+      "annee": 2021,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=Ndf-eMyEVG8",
+      "artiste": "Mac Miller",
+      "titre": "My Favorite Part ft. Ariana Grande (Live)",
+      "lieu": "",
+      "annee": 2016,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=WnSrPwTi_7A",
+      "artiste": "Billie Eilish",
+      "titre": "SKINNY (Live from Amazon Music’s Songline)",
+      "lieu": "Amazon Music · Songline",
+      "annee": 2024,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=2g6MsY8vD1A",
+      "artiste": "Robert Glasper",
+      "titre": "The Worst (Live At Capitol Studios)",
+      "lieu": "Capitol Studios",
+      "annee": 2015,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=zig6qByF9bg",
+      "artiste": "Tory Lanez",
+      "titre": "PLAYBOY Live (Livestream)",
+      "lieu": "",
+      "annee": 2021,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=QJ4KzSLKDRE",
+      "artiste": "TEEKS",
+      "titre": "Into You & First Time (Live Session)",
+      "lieu": "",
+      "annee": 2022,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=1rKySkuvJyQ",
+      "artiste": "Ferdi",
+      "titre": "Surya feat. Disiz",
+      "lieu": "",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=fptYx9YBY3w",
+      "artiste": "Sabrina Claudio",
+      "titre": "Tell Me (Acoustic)",
+      "lieu": "",
+      "annee": 2016,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=qs16YCtzJJI",
+      "artiste": "TEEKS",
+      "titre": "Just For Tonight (Official Audio)",
+      "lieu": "",
+      "annee": 2020,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=FKGm4CSlblo",
+      "artiste": "Matt McGuire",
+      "titre": "Daisies (Justin Bieber) – Drum Cover",
+      "lieu": "",
+      "annee": 2026,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=SEusDcVyL4o",
+      "artiste": "Butcher Brown",
+      "titre": "Hold You (Select Cuts, Live Performance)",
+      "lieu": "",
+      "annee": 2025,
+      "mot": ""
+    },
+    {
+      "video": "https://www.youtube.com/watch?v=LDY_XyxBu8A",
+      "artiste": "SZA",
+      "titre": "Snooze (Official Video)",
+      "lieu": "",
+      "annee": 2023,
+      "mot": ""
     }
   ]
 }

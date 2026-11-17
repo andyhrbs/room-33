@@ -528,4 +528,5 @@ const donnees = await Promise.all(lives.map(async (l) => {
   @keyframes pv-monte { from { transform: translateY(100%); } }
   @keyframes pv-descend { to { transform: translateY(100%); } }
   @media (prefers-reduced-motion: reduce) { .pv { transition: none; animation: none !important; } }
+  .pv-mot:empty { display: none; }
 </style>
