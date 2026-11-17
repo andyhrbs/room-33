@@ -48,6 +48,8 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
         <legend class="texte-label">{t.etape2}</legend>
         <label for="tiroir-prenom" class="visuellement-cache">{t.prenom}</label>
         <input id="tiroir-prenom" name="prenom" class="ligne texte-corps" placeholder={t.prenom} autocomplete="given-name" maxlength="40" />
+        <label for="tiroir-insta" class="visuellement-cache">{t.instaVisiteur}</label>
+        <input id="tiroir-insta" name="instagram" class="ligne texte-corps" placeholder={t.instaVisiteur} autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" />
         <label for="tiroir-mot" class="visuellement-cache">{t.mot}</label>
         <textarea id="tiroir-mot" name="mot" class="ligne texte-corps" rows="2" placeholder={t.mot} maxlength="500"></textarea>
       </fieldset>
@@ -65,7 +67,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     <p class="titre-h1" tabindex="-1" data-titre-merci>{t.merciTitre}</p>
     <p class="texte-corps texte-secondaire">{t.merci}</p>
     <Bouton style="secondaire" pleineLargeur data-autre-reco>{t.autre}</Bouton>
-    <Bouton style="lien" href="/" data-retour-piece>{t.retour}</Bouton>
+    <Bouton style="lien" href="/visiteurs" data-retour-piece>{t.voirBac}</Bouton>
   </div>
 </dialog>
 
@@ -310,7 +312,8 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     const r = c.closest<HTMLButtonElement>('[data-tiroir] .resultat');
     if (r) { choisir(resultats[Number(r.dataset.index)]); dessiner(); return; }
     if (c.closest('[data-autre-reco]')) return reinitialiser();
-    if (c.closest('[data-retour-piece]')) { fermer(); if (location.pathname === '/') e.preventDefault(); }
+    // « Voir le bac des visiteurs » : si on y est déjà, on ferme simplement le tiroir
+    if (c.closest('[data-retour-piece]')) { fermer(); if (location.pathname === '/visiteurs') e.preventDefault(); }
   });
   document.addEventListener('input', (e) => {
     const el = e.target as HTMLInputElement;
