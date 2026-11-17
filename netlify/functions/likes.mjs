@@ -3,6 +3,7 @@
 // Anti-triche : un j'aime par navigateur. Le navigateur envoie un identifiant au hasard (gardé chez lui) ;
 // on n'en garde qu'une empreinte (hachage), jamais l'identifiant lui-même.
 //   GET  /api/likes?ids=a,b,c            → { totaux: { a: 3, b: 0, c: 12 }, aimes: [] }   (+ &visiteur=… : lesquels il aime)
+//   GET  /api/likes?tous=1               → { totaux: { a: 3, … } }   (toutes les vidéos aimées, pour /admin/jaime)
 //   POST /api/likes { id, visiteur, aime } → { id, total, aime }
 import { getStore } from '@netlify/blobs';
 import { createHash } from 'node:crypto';
@@ -18,6 +19,12 @@ export default async (req) => {
 
   if (req.method === 'GET') {
     const url = new URL(req.url);
+    if (url.searchParams.get('tous') === '1') {
+      const { blobs } = await store.list();
+      const totaux = {};
+      await Promise.all(blobs.filter((b) => ID.test(b.key)).map(async (b) => { totaux[b.key] = (await lire(b.key)).visiteurs.length; }));
+      return json({ totaux });
+    }
     const ids = (url.searchParams.get('ids') ?? '').split(',').filter((x) => ID.test(x)).slice(0, 50);
     const v = url.searchParams.get('visiteur');
     const h = v && VISITEUR.test(v) ? empreinte(v) : null;

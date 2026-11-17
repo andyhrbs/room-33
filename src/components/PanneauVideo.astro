@@ -48,7 +48,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
         <span class="pv-avatar" aria-hidden="true">R<img data-pv-photo alt="" width="40" height="40" /></span>
         <span class="pv-qui"><span class="texte-label" data-pv-nom-chaine></span><span class="texte-legende texte-secondaire" data-pv-date></span></span>
         <!-- « J'aime » des visiteurs (grande vue seulement), comme le bouton J'aime de YouTube sous la vidéo -->
-        <button type="button" class="pv-like" data-pv-like aria-pressed="false" aria-label="J'aime ce live">
+        <button type="button" class="pv-like" data-pv-like aria-pressed="false" aria-label="J'aime cette vidéo">
           <span class="pv-like-icone" aria-hidden="true"><Icone nom="coeur-vide" taille={20} class="i-vide" /><Icone nom="coeur" taille={20} class="i-plein" /></span>
           <span class="texte-label pv-like-total" data-pv-like-total></span>
         </button>
@@ -136,7 +136,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     const b = $<HTMLButtonElement>('[data-pv-like]'); if (!b || !courant) return;
     const aime = aimes.has(courant.id); const n = likes.get(courant.id) ?? 0;
     b.setAttribute('aria-pressed', String(aime));
-    b.setAttribute('aria-label', aime ? `Retirer votre j'aime (${n})` : `J'aime ce live${n ? ` (${n})` : ''}`);
+    b.setAttribute('aria-label', aime ? `Retirer votre j'aime (${n})` : `J'aime cette vidéo${n ? ` (${n})` : ''}`);
     b.querySelector('[data-pv-like-total]')!.textContent = n ? n.toLocaleString('fr-FR') : '';
   }
   async function basculerLike() {

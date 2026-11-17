@@ -1,0 +1,61 @@
+---
+// /admin/jaime : les j'aime des vidéos (page « En vidéo »), pour Andyh. Lien depuis /admin › Les vidéos.
+// Les totaux sont déjà visibles par tous sur le site (à côté du cœur) : rien de secret ici, juste un récap.
+import '../../styles/global.css';
+import { lives } from '../../data/lives';
+const liste = lives.map((l) => ({ id: l.youtube, nom: `${l.artiste} — ${l.titre}` }));
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>J'aime des vidéos · Room 33 · Admin</title>
+  </head>
+  <body>
+    <main class="jaime">
+      <p class="texte-label"><a href="/admin/">← Retour à l'admin</a></p>
+      <h1 class="titre-h1">J'aime des vidéos</h1>
+      <p class="texte-corps texte-secondaire">Un j'aime par navigateur. Du plus aimé au moins aimé. <span data-total></span></p>
+      <ol class="liste" data-liste>
+        {liste.map((l) => (
+          <li data-id={l.id}>
+            <img src={`/lives/vignettes/${l.id}.jpg`} alt="" width="112" height="63" loading="lazy" />
+            <span class="nom texte-corps">{l.nom}</span>
+            <span class="n titre-h3" data-n>…</span>
+          </li>
+        ))}
+      </ol>
+      <p class="texte-petit texte-secondaire" data-etat hidden></p>
+    </main>
+    <script>
+      const liste = document.querySelector<HTMLOListElement>('[data-liste]')!;
+      const etat = document.querySelector<HTMLParagraphElement>('[data-etat]')!;
+      try {
+        const r = await fetch('/api/likes?tous=1', { cache: 'no-store' });
+        if (!r.ok) throw new Error(String(r.status));
+        const { totaux } = (await r.json()) as { totaux: Record<string, number> };
+        const lignes = [...liste.children] as HTMLLIElement[];
+        let somme = 0;
+        for (const li of lignes) { const n = totaux[li.dataset.id!] ?? 0; somme += n; li.dataset.valeur = String(n); li.querySelector('[data-n]')!.textContent = n.toLocaleString('fr-FR'); }
+        lignes.sort((a, b) => Number(b.dataset.valeur) - Number(a.dataset.valeur)).forEach((li) => liste.append(li));
+        document.querySelector('[data-total]')!.textContent = `Total : ${somme.toLocaleString('fr-FR')}.`;
+      } catch {
+        etat.hidden = false;
+        etat.textContent = 'Les j’aime ne répondent pas pour l’instant (ça ne marche que sur le site en ligne). Réessaie dans un instant.';
+        liste.querySelectorAll('[data-n]').forEach((n) => (n.textContent = '–'));
+      }
+    </script>
+  </body>
+</html>
+<style>
+  body { background: var(--couleur-fond-page); color: var(--couleur-texte-principal); }
+  .jaime { max-width: 48rem; margin: 0 auto; padding: var(--espace-3xl) var(--grille-marge); display: grid; gap: var(--espace-md); }
+  .jaime a { color: inherit; }
+  .liste { list-style: none; margin: var(--espace-lg) 0 0; padding: 0; display: grid; gap: var(--espace-sm); }
+  .liste li { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; align-items: center; gap: var(--espace-md); padding: var(--espace-sm); border-radius: var(--rayon-bloc); background: var(--couleur-fond-bloc); }
+  .liste img { width: 112px; height: 63px; object-fit: cover; border-radius: calc(var(--rayon-bloc) / 2); background: var(--couleur-fond-image); }
+  .n { min-width: 3ch; text-align: right; color: var(--couleur-accent-defaut); }
+  @media (max-width: 40rem) { .liste li { grid-template-columns: 72px minmax(0, 1fr) auto; } .liste img { width: 72px; height: 40px; } }
+</style>
