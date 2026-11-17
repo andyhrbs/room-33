@@ -368,10 +368,11 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   .ecoutes { background: none; } /* Figma : sans fond (ordi et mobile) */
   .grille-ecoutes { display: grid; gap: var(--espace-xl); }
   .entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espace-lg); }
-  .periode { display: inline-flex; gap: var(--espace-2xs); padding: var(--espace-2xs); border: var(--trait-filet) solid var(--couleur-bordure-defaut); border-radius: var(--rayon-pilule); }
-  .periode button { border: 0; background: none; padding: var(--espace-xs) var(--espace-md); border-radius: var(--rayon-pilule); min-height: 38px; transition: background-color var(--duree-rapide) var(--courbe-standard); }
-  .periode button:hover { background: var(--couleur-fond-tonal); }
-  .periode button[aria-pressed='true'] { background: var(--couleur-accent-defaut); color: var(--couleur-texte-principal); }
+  /* Figma : filet ivoire 20 %, sans fond ; période choisie sur fond tonal (ivoire 20 %), les autres en texte secondaire */
+  .periode { display: inline-flex; gap: var(--espace-2xs); padding: var(--espace-2xs); border: var(--trait-filet) solid var(--ivoire-100-20); border-radius: var(--rayon-pilule); }
+  .periode button { border: 0; background: none; color: var(--couleur-texte-secondaire); cursor: pointer; padding: var(--espace-xs) var(--espace-md); border-radius: var(--rayon-pilule); min-height: 38px; transition: background-color var(--duree-rapide) var(--courbe-standard); }
+  .periode button:hover { background: var(--couleur-fond-tonal); color: var(--couleur-texte-principal); }
+  .periode button[aria-pressed='true'] { background: var(--couleur-fond-tonal-presse); color: var(--couleur-texte-principal); }
   .afficheurs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-lg); margin: 0; }
   .afficheur { display: grid; gap: var(--espace-xs); align-content: start; padding-top: var(--espace-lg); border-top: var(--trait-filet) solid var(--couleur-bordure-discrete); }
   .afficheur dd { margin: 0; }
