@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : phrases du menu mobile
+# Empreintes Figma de référence — 17 nov. 2026 : vrais textes de Qui je suis
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -161,21 +161,21 @@
 68:1770 17tkp5l
 182:2312 tu08b2
 422:4918 jhtl5q
-69:1988:cadre pxxl70
-69:2124 n84odb
+69:1988:cadre 1bihtbj
+69:2124 1uzn3iu
 112:2141 hdtqal
-69:1989 11onxfc
-69:1999 1otzzjr
-69:2060 1xjuj6w
-69:2086 1s1o4vm
+69:1989 i7fsbo
+69:1999 6v6412
+69:2060 13q9ymr
+69:2086 1ml1xs5
 69:2118 p4phlg
-69:1838:cadre 19x1vah
-69:1987 168q8q4
+69:1838:cadre 1aamm6
+69:1987 15a96ih
 106:2158 614r3j
-69:1839 z2jfii
-69:1849 socg3u
-69:1912 qlpyeu
-69:1938 16canc
+69:1839 jxg1pf
+69:1849 j5knr0
+69:1912 1snp0wl
+69:1938 16p2cpg
 182:2328 tu08b2
 217:2581:cadre 1cfi059
 217:2582 tq33w1
