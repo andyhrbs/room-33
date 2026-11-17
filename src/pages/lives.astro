@@ -20,7 +20,7 @@ const chaine = (l: (typeof avecYt)[number]) => ({ nom: l.yt.chaine ?? l.lieu, so
 const [une, ...autres] = avecYt;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
 ---
-<Base title="Les lives" description={t.intro}>
+<Base title="En vidéo" description={t.intro}>
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={t.filAriane} grosPlan="lives" positionMobile="52% center" surtitreMobile={t.surtitreMobile} titre={t.titre}>

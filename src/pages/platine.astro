@@ -15,7 +15,7 @@ const copie = await copieEcoutes();
 const enCours = p.enCours;
 const rang = (i: number) => String(i + 1).padStart(2, '0');
 ---
-<Base title="La platine" description="Ce que j’écoute vraiment, en direct de Spotify.">
+<Base title="Mes écoutes" description="Ce que j’écoute vraiment, en direct de Spotify.">
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={['Accueil', 'Mes écoutes']} grosPlan="platine" positionMobile="30% center" surtitreMobile="Mes écoutes" titre="Ce qui tourne en ce moment." titreMobile="Ce qui tourne.">
@@ -56,12 +56,12 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
           </div>
         </div>
 
-        <p class="texte-corps texte-secondaire indispo" data-indispo hidden>Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.</p>
+        <p class="texte-corps texte-secondaire indispo" data-indispo hidden>La platine fait une pause : mes écoutes reviennent dans un instant.</p>
         {copie && <script type="application/json" id="copie-ecoutes" set:html={JSON.stringify(copie)} />}
 
         <dl class="afficheurs" data-zone aria-live="polite" aria-busy="true">
-          <div class="afficheur"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><span data-titre-pochette><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /></span><span class="titre-h1" data-titre-un>{p.titreUn.titre}</span></dd></div>
-          <div class="afficheur"><dt class="texte-label">Artiste n° 1</dt><dd class="avec-pochette"><span class="photo" data-artiste-photo aria-hidden="true"></span><span class="titre-h1" data-artiste-un>{p.artisteUn}</span></dd></div>
+          <div class="afficheur"><dt class="texte-label">En boucle</dt><dd class="avec-pochette"><span data-titre-pochette><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /></span><span class="titre-h1" data-titre-un>{p.titreUn.titre}</span></dd></div>
+          <div class="afficheur"><dt class="texte-label">Mon artiste n° 1</dt><dd class="avec-pochette"><span class="photo" data-artiste-photo aria-hidden="true"></span><span class="titre-h1" data-artiste-un>{p.artisteUn}</span></dd></div>
         </dl>
 
         <div class="classements" data-zone aria-busy="true">

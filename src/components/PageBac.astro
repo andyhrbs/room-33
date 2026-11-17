@@ -16,7 +16,7 @@ const bacsRemplis = bacs.filter((b) => b.disques.length > 0).length;
 const autres = bacs.filter((b) => b !== bac && b.disques.length > 0).slice(0, 4);
 const nb = bac.disques.length;
 ---
-<Base title={`${bac.nom} · Les bacs`} description={bac.description}>
+<Base title={`${bac.nom} · Mes disques`} description={bac.description}>
   <Nav />
   <main class="ambiance">
     <!-- Hero général, le même pour tous les bacs : le genre se choisit dans la section suivante -->
