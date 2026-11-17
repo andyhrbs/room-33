@@ -8,7 +8,7 @@ import HeroPage from '../components/HeroPage.astro';
 import { comptoir as t, site } from '../data/textes';
 import { images } from '../data/images';
 ---
-<Base title="Qui je suis" description={`${t.presentation.titre} ${t.presentation.texte}`}>
+<Base title="Qui je suis" description={`${t.presentation.titre} ${t.presentation.texte[0]}`}>
   <Nav />
 
   <main class="ambiance">
@@ -22,7 +22,7 @@ import { images } from '../data/images';
           <p class="texte-label">{t.presentation.surtitre}</p>
           <h2 id="titre-presentation" class="titre-h2">{t.presentation.titre}</h2>
         </div>
-        <p class="texte-corps-l texte-secondaire">{t.presentation.texte}</p>
+        <div class="bio">{t.presentation.texte.map((p) => <p class="texte-corps-l texte-secondaire">{p}</p>)}</div>
         <!-- rappel des deux portes dès l'intro (celui qui vient pour écrire n'a pas à tout faire défiler) -->
         <div class="rappel">
           <Bouton style="lien" href="/#recommander" data-ouvrir-reco>{t.contact.cta}</Bouton>
@@ -45,7 +45,6 @@ import { images } from '../data/images';
         <div class="texte-pourquoi">
           <p class="texte-corps-l">{t.pourquoi.p1}</p>
           <p class="texte-corps-l">{t.pourquoi.p2}</p>
-          <blockquote class="titre-h2">{t.pourquoi.citation}</blockquote>
         </div>
       </div>
     </section>
@@ -70,6 +69,7 @@ import { images } from '../data/images';
   /* Présentation + photo */
   .intro { display: grid; grid-template-columns: minmax(0, 34rem) minmax(0, 35rem); justify-content: space-between; align-items: center; gap: var(--espace-4xl); }
   .texte { display: grid; gap: var(--espace-md); }
+  .bio { display: grid; gap: var(--espace-sm); }
   .entete-intro { display: grid; gap: var(--espace-sm); } /* surtitre collé au titre, comme « Pourquoi Room 33 » */
   .rappel { display: flex; flex-wrap: wrap; gap: 0 var(--espace-lg); margin-top: var(--espace-xs); }
   .signature { font-family: var(--police-lettrine); font-size: clamp(2.25rem, 1.8rem + 1.9vw, 3.25rem); line-height: 1.15; letter-spacing: 0; margin-top: var(--espace-xs); }
@@ -82,7 +82,6 @@ import { images } from '../data/images';
   .grille-pourquoi { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 47rem); justify-content: space-between; gap: var(--espace-lg) var(--espace-3xl); }
   .titre-pourquoi { display: grid; gap: var(--espace-sm); align-content: start; }
   .texte-pourquoi { display: grid; gap: var(--espace-xl); }
-  blockquote { margin: 0; }
 
   /* On se retrouve ? */
   .contact { background: var(--couleur-fond-ombre); }

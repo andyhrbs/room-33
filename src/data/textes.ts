@@ -122,16 +122,19 @@ export const comptoir = {
   presentation: {
     surtitre: 'Derrière le comptoir',
     titre: 'Moi, c’est Andyh.',
-    texte: 'Je joue un peu de piano, mais ma vraie passion, c’est d’écouter. Chez moi, le jazz et le classique tournaient en fond ; aujourd’hui, la soul, le R&B, le rap, l’indie et l’afro ont pris le relais. Et dès qu’un morceau me plaît, je deviens vite bavard : vous voilà prévenus.',
+    texte: [
+      'La musique, je suis tombé dedans tout petit. À Madagascar, mon père, pianiste à l’église, passait du jazz et du classique en boucle à la maison : Oscar Peterson, Ray Charles, Maggie Blanchard. C’est lui qui m’a transmis cette passion, et le goût des belles harmonies.',
+      'Arrivé en France pour mes études, j’ai continué à jouer du piano à l’église, et j’essaie aujourd’hui d’écrire mes propres chansons. Je vais aussi souvent en concert, surtout quand l’artiste est entouré de vrais musiciens, comme Venna en 2024. Mes inspirations ? Sade, Luidji, Odeal, Venna…',
+      'Et dès qu’un morceau me plaît, je deviens vite bavard : vous voilà prévenus.',
+    ],
   },
   photoAlt: 'Andyh au piano, chez lui, le soir.',
   photoAttente: 'Photo — Andyh au piano, le soir (vraie photo · 4:5)',
   pourquoi: {
     surtitre: 'Pourquoi Room 33',
     titre: 'Une pièce, des 33 tours.',
-    p1: 'Le 33 tours, c’est le disque qu’on écoute du début à la fin. J’ai voulu une pièce qui lui ressemble.',
-    p2: 'Room 33, c’est ma manière à moi de partager la musique et l’univers dans lequel je baigne. Pas une playlist de plus : une pièce où l’on entre, où l’on fouille, où l’on écoute. Pour vous faire découvrir des sons, et qu’on se retrouve autour.',
-    citation: '« Mes goûts, pas tous les goûts. »',
+    p1: 'Je suis designer UX/UI. Alors pour partager ce que j’écoute, plutôt qu’une playlist de plus, j’ai construit une pièce.',
+    p2: 'Le nom vient du 33 tours, le disque qu’on écoute du début à la fin. Ici, c’est pareil : on entre, on fouille dans les bacs, on écoute. C’est ma manière à moi de vous faire découvrir mon univers, et qu’on se retrouve autour des sons qu’on aime.',
   },
   contact: {
     titre: 'On se retrouve ?',
