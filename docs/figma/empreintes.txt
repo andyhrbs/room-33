@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : Top du moment
+# Empreintes Figma de référence — 17 nov. 2026 : intro de Qui je suis (surtitre + titre + texte)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -161,18 +161,18 @@
 68:1770 17tkp5l
 182:2312 tu08b2
 422:4918 jhtl5q
-69:1988:cadre 1bihtbj
-69:2124 1uzn3iu
+69:1988:cadre wmkkxz
+69:2124 1wglkf6
 112:2141 hdtqal
-69:1989 i7fsbo
-69:1999 6v6412
-69:2060 13q9ymr
-69:2086 1ml1xs5
+69:1989 1t3qo49
+69:1999 yzztja
+69:2060 1gooxmj
+69:2086 pt8vyl
 69:2118 p4phlg
 69:1838:cadre 1aamm6
 69:1987 15a96ih
 106:2158 614r3j
-69:1839 jxg1pf
+69:1839 n2417y
 69:1849 j5knr0
 69:1912 1snp0wl
 69:1938 16p2cpg

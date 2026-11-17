@@ -8,7 +8,7 @@ import HeroPage from '../components/HeroPage.astro';
 import { comptoir as t, site } from '../data/textes';
 import { images } from '../data/images';
 ---
-<Base title="Qui je suis" description={t.presentation}>
+<Base title="Qui je suis" description={`${t.presentation.titre} ${t.presentation.texte}`}>
   <Nav />
 
   <main class="ambiance">
@@ -16,10 +16,13 @@ import { images } from '../data/images';
     <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
     <div class="rideau">
 
-    <section class="intro section conteneur" aria-label="Présentation">
+    <section class="intro section conteneur" aria-labelledby="titre-presentation">
       <div class="texte">
-        <p class="titre-h3">{t.presentation}</p>
-        <p class="texte-corps-l texte-secondaire">{t.intro}</p>
+        <div class="entete-intro">
+          <p class="texte-label">{t.presentation.surtitre}</p>
+          <h2 id="titre-presentation" class="titre-h2">{t.presentation.titre}</h2>
+        </div>
+        <p class="texte-corps-l texte-secondaire">{t.presentation.texte}</p>
         <!-- rappel des deux portes dès l'intro (celui qui vient pour écrire n'a pas à tout faire défiler) -->
         <div class="rappel">
           <Bouton style="lien" href="/#recommander" data-ouvrir-reco>{t.contact.cta}</Bouton>
@@ -67,6 +70,7 @@ import { images } from '../data/images';
   /* Présentation + photo */
   .intro { display: grid; grid-template-columns: minmax(0, 34rem) minmax(0, 35rem); justify-content: space-between; align-items: center; gap: var(--espace-4xl); }
   .texte { display: grid; gap: var(--espace-md); }
+  .entete-intro { display: grid; gap: var(--espace-sm); } /* surtitre collé au titre, comme « Pourquoi Room 33 » */
   .rappel { display: flex; flex-wrap: wrap; gap: 0 var(--espace-lg); margin-top: var(--espace-xs); }
   .signature { font-family: var(--police-lettrine); font-size: clamp(2.25rem, 1.8rem + 1.9vw, 3.25rem); line-height: 1.15; letter-spacing: 0; margin-top: var(--espace-xs); }
   .photo { display: grid; gap: var(--espace-sm); margin: 0; }

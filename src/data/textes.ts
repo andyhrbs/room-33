@@ -119,8 +119,11 @@ export const comptoir = {
   surtitreMobile: 'Qui je suis',
   titre: 'Venez, on parle musique.',
   titreMobile: 'On parle musique.',
-  presentation: 'Moi, c’est Andyh. Je joue un peu de piano, mais surtout, j’\u200aécoute : beaucoup, tout le temps, et je deviens vite bavard quand un morceau me plaît.',
-  intro: 'À la maison, on écoutait du jazz et du classique. Depuis, j’ai ajouté de la soul, du R&B, du rap, de l’indie, de l’afro… mais j’ai gardé l’habitude d’écouter un disque en entier.',
+  presentation: {
+    surtitre: 'Derrière le comptoir',
+    titre: 'Moi, c’est Andyh.',
+    texte: 'Je joue un peu de piano, mais ma vraie passion, c’est d’écouter. Chez moi, le jazz et le classique tournaient en fond ; aujourd’hui, la soul, le R&B, le rap, l’indie et l’afro ont pris le relais. Et dès qu’un morceau me plaît, je deviens vite bavard : vous voilà prévenus.',
+  },
   photoAlt: 'Andyh au piano, chez lui, le soir.',
   photoAttente: 'Photo — Andyh au piano, le soir (vraie photo · 4:5)',
   pourquoi: {
