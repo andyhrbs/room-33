@@ -20,7 +20,7 @@ export const site = {
 export const pages = [
   { numero: '01', court: 'Accueil', long: 'Accueil', explication: 'Tout, en un coup d’œil.', href: '/' },
   { numero: '02', court: 'Mes disques', long: 'Mes disques', explication: 'Rangés par genre : servez-vous.', href: '/bacs' },
-  { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Ceux qui ne quittent jamais la platine.', href: '/top' },
+  { numero: '03', court: 'Mon Top', long: 'Mon Top', explication: 'Mes disques du moment, classés.', href: '/top' },
   { numero: '04', court: 'Mes écoutes', long: 'Mes écoutes', explication: 'Ce que j’écoute en ce moment.', href: '/platine' },
   { numero: '05', court: 'En vidéo', long: 'En vidéo', explication: 'Mes performances préférées.', href: '/lives' },
   { numero: '06', court: 'Qui je suis', long: 'Qui je suis', explication: 'Moi, et pourquoi Room 33.', href: '/comptoir' },
@@ -60,7 +60,7 @@ export const accueil = {
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
   bacs: { surtitre: 'Mes disques', titre: 'Servez-vous, prenez le temps de fouiller.', lien: 'Voir tous les bacs' },
   platine: { surtitre: 'Mes écoutes', titre: 'Ce qui tourne chez moi en ce moment.', lien: 'Voir toutes mes écoutes', voirArtiste: 'Voir l’artiste', legendeArtiste: 'Mon artiste du mois', legendeTitre: 'En boucle ce mois-ci', indispo: 'La platine fait une pause : mes écoutes reviennent dans un instant.' },
-  top: { surtitre: 'Mon Top', titre: 'Les disques qui ne quittent jamais la platine.', lien: 'Voir le Top en entier' },
+  top: { surtitre: 'Mon Top', titre: 'Les disques qui tournent le plus en ce moment.', lien: 'Voir le Top en entier' },
   lives: { surtitre: 'En vidéo', titre: 'À regarder, le son à fond.', lien: 'Voir toutes les vidéos', chaine: 'Andyh · Room 33', chaineSous: 'Mes performances préférées', aSuivre: 'À suivre', voirYoutube: 'Voir sur YouTube' },
   bandeauPause: 'Mettre en pause le défilement',
   bandeauLecture: 'Relancer le défilement',

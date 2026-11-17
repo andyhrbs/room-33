@@ -13,19 +13,19 @@ const [un, ...autres] = top;
 const [titreUn, ...autresTitres] = topTitres;
 const rang = (i: number) => String(i).padStart(2, '0');
 ---
-<Base title="Mon Top" description="Mon classement à moi : les disques qui ne quittent jamais la platine.">
+<Base title="Mon Top" description="Mon Top du moment : les disques qui tournent le plus chez moi en ce moment.">
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={['Accueil', 'Mon Top']} grosPlan="top" surtitreMobile="Mon Top" titre="Mes disques de chevet." titreMobile="Sur le chevet.">
       <div class="infos">
-        <p class="texte-corps-l"><span class="seulement-ordi">Mon classement à moi. Il bouge quand un disque me retourne la tête.</span><span class="seulement-mobile">Mon classement à moi.</span></p>
+        <p class="texte-corps-l"><span class="seulement-ordi">Mon Top du moment, pas un classement définitif : il bouge dès qu’un disque me retourne la tête.</span><span class="seulement-mobile">Mon Top du moment.</span></p>
       </div>
     </HeroPage>
     <!-- le reste de la page glisse par-dessus le hero, comme un rideau -->
     <div class="rideau">
     <!-- bascule Albums / Titres : sortie du hero, en tête du contenu (maquette Figma) -->
     <div class="conteneur zone-bascule">
-      <p class="titre-h1 titre-bascule" id="titre-bascule">Mon classement</p>
+      <p class="titre-h1 titre-bascule" id="titre-bascule">En ce moment</p>
       <div class="bascule" role="group" aria-labelledby="titre-bascule">
         <button type="button" class="texte-corps" aria-pressed="true" data-vue="albums">Albums</button>
         <button type="button" class="texte-corps" aria-pressed="false" data-vue="titres">Titres</button>
@@ -117,7 +117,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
 <style>
   .infos { display: grid; gap: var(--espace-md); }
   .titre-bascule { margin: 0 0 var(--espace-2xs); }
-  /* Figma : « Mon classement » en titre H1 (ordi et mobile), la bascule juste en dessous */
+  /* Figma : « En ce moment » en titre H1 (ordi et mobile), la bascule juste en dessous */
   /* changement de classement : le panneau arrive en fondu + légère montée */
   [data-panneau]:not([hidden]) { animation: panneau-entre var(--duree-apparition) var(--courbe-douce); }
   @keyframes panneau-entre { from { opacity: 0; transform: translateY(var(--distance-apparition)); } }
