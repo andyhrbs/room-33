@@ -14,6 +14,13 @@ Claude = mentor + développeur. Lire ce fichier en entier avant d'agir.
 - **Frictions** : traitées une par une quand Andyh dit « next ». Après chaque friction réglée → mettre à jour le canva « Objectifs des pages » (statut « Réglé » + date).
 - **Historique** : dans GitHub (messages de commit clairs, en français). Plus de journal ; le doc « Room 33 — Textes » a été supprimé (12 nov.). Les textes du site vivent dans le code (`src/data/textes.ts`) et dans /admin.
 
+## Voix et ton (décidé le 17 nov.)
+- **Posture partout : on reçoit quelqu'un chez soi** (« Installez-vous », « Faites comme chez vous », « Servez-vous dans les bacs ») : les textes accueillent, guident dans la pièce, mettent à l'aise.
+- 1re personne (Andyh reçoit chez lui), **vous** pour le visiteur, vocabulaire disquaire (bacs, platine, caisse, comptoir, sortir un disque). Guillemets « », pas d'emoji.
+- **Récit** (titres de sections, avis, bios, mots sur les lives, Top) : le **disquaire passionné**, vivant, un peu bavard, avec des détails concrets (un morceau, un moment, une minute précise).
+- **Interface** (boutons, formulaires, erreurs, états vides) : l'**hôte chaleureux**, clair, court, sans jeu de mots.
+- Relecture des textes page par page, section par section (en cours depuis le 17 nov., en commençant par l'accueil).
+
 ## Pile technique
 - Astro 5 (ClientRouter, styles scopés), Lenis (défilement doux), Netlify (Functions + Forms), Decap CMS sur `/admin` (`public/admin/config.yml`).
 - Dépôt `andyhrbs/room-33`, branche de travail `dev` → `dev--room-33.netlify.app`. `main` = production.

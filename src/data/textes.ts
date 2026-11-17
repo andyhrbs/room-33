@@ -55,8 +55,8 @@ export const accueilProvisoire = {
 // ---------- Page : La pièce (accueil) ----------
 export const accueil = {
   titre: 'Bienvenue chez moi.',
-  accroche: 'Installez-vous, fouillez dans mes bacs, écoutez un extrait et recommandez-moi un son.',
-  accrocheMobile: 'Installez-vous, fouillez dans mes bacs.',
+  accroche: 'Installez-vous, faites comme chez vous : les bacs sont ouverts, la platine tourne.',
+  accrocheMobile: 'Installez-vous, faites comme chez vous.',
   entrer: 'Fouiller les bacs',
   morceau: { surtitre: 'Le morceau du moment', voirFiche: 'Voir le disque' },
   bacs: { surtitre: 'Les bacs', titre: 'Piochez ceux qui vous parlent.', lien: 'Tous les bacs' },
