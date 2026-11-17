@@ -40,3 +40,21 @@ export async function ecoutesDuMois(): Promise<EcoutesDuMois | null> {
     return null;
   }
 }
+
+// Copie des dernières vraies écoutes (les 3 périodes), lue AU BUILD : la page Platine l'affiche tout de suite,
+// et la garde si Spotify ne répond pas en direct. Jamais de valeurs de démo. Sans clés ou si Spotify échoue : null.
+export type CopieEcoutes = { majLe: string; periodes: Record<string, unknown> };
+export async function copieEcoutes(): Promise<CopieEcoutes | null> {
+  if (!process.env.SPOTIFY_REFRESH_TOKEN) return null;
+  try {
+    // @ts-ignore — module serveur partagé avec la Function Netlify
+    const { jeton, lireEcoutes, PERIODES } = await import('../../netlify/lib/ecoute.mjs');
+    const t = await jeton();
+    const cles = Object.keys(PERIODES);
+    const res = await Promise.all(cles.map((p: string) => lireEcoutes(p, t)));
+    return { majLe: new Date().toISOString(), periodes: Object.fromEntries(cles.map((p: string, i: number) => [p, res[i]])) };
+  } catch (e) {
+    console.warn(`[Platine] copie des écoutes indisponible au build : ${(e as Error).message}`);
+    return null;
+  }
+}

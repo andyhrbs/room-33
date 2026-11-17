@@ -9,6 +9,9 @@ import Ecoute from '../components/Ecoute.astro';
 import LigneTracklist from '../components/LigneTracklist.astro';
 import Bouton from '../components/Bouton.astro';
 import { platineDetail as p, topTitres, deezerDe } from '../data/disques';
+import { copieEcoutes } from '../lib/ecoutes';
+// dernières vraies écoutes (lues au build) : affichées tout de suite, et gardées si Spotify ne répond pas
+const copie = await copieEcoutes();
 const enCours = p.enCours;
 const rang = (i: number) => String(i + 1).padStart(2, '0');
 ---
@@ -54,6 +57,7 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
         </div>
 
         <p class="texte-corps texte-secondaire indispo" data-indispo hidden>Mes écoutes ne sont pas disponibles pour le moment. Revenez un peu plus tard.</p>
+        {copie && <script type="application/json" id="copie-ecoutes" set:html={JSON.stringify(copie)} />}
 
         <dl class="afficheurs" data-zone aria-live="polite" aria-busy="true">
           <div class="afficheur"><dt class="texte-label">Titre n° 1</dt><dd class="avec-pochette"><span data-titre-pochette><Pochette motif={p.titreUn.disque.motif} src={p.titreUn.disque.pochette} taille="48px" /></span><span class="titre-h1" data-titre-un>{p.titreUn.titre}</span></dd></div>
@@ -102,7 +106,8 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   // ==========================================================================
   // Données en direct : la Function Netlify /api/spotify/ecoute lit le compte
   // Spotify d'Andyh côté serveur et ne renvoie que ce qui s'affiche ici.
-  // Tant que la réponse n'est pas arrivée, la page montre les valeurs de démo, atténuées.
+  // En attendant la réponse, et si Spotify ne répond pas, la page montre les dernières vraies écoutes
+  // (copie lue au build). Les valeurs de démo ne servent plus qu'en tout dernier recours (aucune copie).
   // ==========================================================================
   type Morceau = { titre: string; artiste: string; isrc?: string; album?: string; annee?: number | null; pochette?: string | null; duree?: string; lien?: string; le?: string };
   type Reponse = { enCours: Morceau | null; derniere: Morceau | null; topTitres: Morceau[]; topArtistes: { nom: string; image?: string | null; genres: string[]; lien?: string }[]; erreur?: string };
@@ -202,6 +207,9 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
   }
 
   let demande = 0;
+  // copie des dernières vraies écoutes (build)
+  let copie: { majLe: string; periodes: Record<string, Reponse> } | null = null;
+  const dateCopie = () => copie ? new Date(copie.majLe).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '';
   async function charger(periode: string, premiere = false) {
     const n = ++demande;
     zones.forEach((z) => z.setAttribute('aria-busy', 'true'));
@@ -216,9 +224,18 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       zones.forEach((z) => z.classList.remove('demo'));
     } catch {
       if (n !== demande) return;
-      $('[data-indispo]').hidden = false;
-      zones.forEach((z) => z.classList.add('demo'));
-      if (premiere) poserBras(false);
+      // Spotify ne répond pas : on garde les dernières vraies écoutes (copie du build), jamais de valeurs de démo
+      const c = copie?.periodes[periode];
+      if (c) {
+        if (premiere) afficherEnCours(c);
+        afficherClassements(c);
+        zones.forEach((z) => z.classList.remove('demo'));
+        const msg = $('[data-indispo]'); msg.textContent = `Mes écoutes en direct ne répondent pas : voici celles du ${dateCopie()}.`; msg.hidden = false;
+      } else {
+        $('[data-indispo]').hidden = false;
+        zones.forEach((z) => z.classList.add('demo'));
+        if (premiere) poserBras(false);
+      }
     } finally {
       if (n === demande) zones.forEach((z) => z.setAttribute('aria-busy', 'false'));
     }
@@ -234,7 +251,9 @@ const rang = (i: number) => String(i + 1).padStart(2, '0');
       charger(b.dataset.periode!);
     }));
     // Réponse récente déjà en mémoire (retour sur la page) : tout est en place dès l'affichage, sans animation
-    const recente = relire();
+    try { copie = JSON.parse(document.getElementById('copie-ecoutes')?.textContent || 'null'); } catch { copie = null; }
+    // Réponse récente en mémoire, sinon la copie du build : de vraies écoutes s'affichent dès l'arrivée
+    const recente = relire() ?? copie?.periodes['4-semaines'] ?? null;
     if (recente) { afficherEnCours(recente, false); afficherClassements(recente); zones.forEach((z) => { z.classList.remove('demo'); z.setAttribute('aria-busy', 'false'); }); }
     charger('4-semaines', true);
   });
