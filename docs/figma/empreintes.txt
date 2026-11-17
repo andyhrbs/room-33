@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : nouveaux noms de pages (Mes disques, Mon Top, Mes écoutes, En vidéo, Qui je suis, Vos sons, Accueil)
+# Empreintes Figma de référence — 17 nov. 2026 : textes de la page Vos sons
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -146,16 +146,16 @@
 268:2769:cadre unp310
 268:2770 icoigk
 268:2771 kv5zcg
-68:1820:cadre 1maie1v
-68:1969 180t8cv
-110:2156 olww0n
+68:1820:cadre 1iizh0r
+68:1969 198ji4r
+110:2156 1h4c5vx
 68:1835 j8n3bq
 68:1920 a0d7jp
-68:1931 1b1h3o1
+68:1931 19ybte7
 68:1963 p4phlg
 68:1623:cadre b982lq
 68:1819 7f593h
-110:2166 jgwwwp
+110:2166 a1btod
 68:1641 gcxtjo
 68:1749 jfwid
 68:1770 17tkp5l
