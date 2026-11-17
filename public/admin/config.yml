@@ -24,7 +24,7 @@ public_folder: /images/cms
 
 collections:
   - name: disques
-    label: Les disques
+    label: Mes disques
     label_singular: disque
     description: "Un fichier par disque. Deezer ajoute tout seul la pochette, l'année, le label, les titres, la photo de l'artiste et les extraits ; le lien Spotify (conseillé) garantit que c'est le bon album. Après avoir publié (2–3 min de construction), ouvre /rapport-extraits.json : « sansExtrait »: 0 = tous les titres s'écoutent. Sinon, la liste des titres concernés est dedans."
     folder: src/data/cms/disques
@@ -55,9 +55,9 @@ collections:
         pattern: ['^$|open\.spotify\.com/(intl-[a-z]{2}/)?album/', 'Colle un lien d’album Spotify (open.spotify.com/album/…)']
         hint: Dans Spotify, sur l'album → ⋯ → Partager → Copier le lien. Sans lien, Spotify cherche l'album par titre et artiste.
       - { name: annee, label: Année (si Spotify ne la trouve pas), widget: number, value_type: int, required: false, min: 1900, max: 2100 }
-      - { name: avis, label: Mon avis, widget: text, required: false, hint: "3 à 5 phrases, comme une note de pochette. Garde les guillemets « »." }
+      - { name: avis, label: Mon avis, widget: text, required: false, hint: "3 à 5 phrases, comme si tu sortais le disque du bac pour quelqu'un : un morceau, un moment, une minute précise. Garde les guillemets « »." }
       - { name: avisCourt, label: Mon avis (version courte, mobile), widget: string, required: false, hint: Une phrase. Vide = le début de l'avis complet. }
-      - { name: coupDeCoeur, label: Mon coup de cœur (titre du morceau), widget: string, required: false, hint: "Écris le titre comme sur Spotify (ex. Many Times). Il est signalé par un cœur dans la liste des titres de la fiche." }
+      - { name: coupDeCoeur, label: Mon coup de cœur (titre du morceau), widget: string, required: false, hint: "Écris le titre comme dans « Les titres » de la fiche (ex. Many Times). Il y est signalé par un cœur." }
       - name: credits
         label: Crédits (notes de pochette)
         label_singular: crédit
@@ -96,16 +96,16 @@ collections:
                 default: points
               - { name: slug, label: Adresse, widget: hidden, required: false }
   - name: lives
-    label: Les lives
-    description: "Les prestations live de la page Les lives. Le premier de la liste est « à la une » — glisse un live en haut pour le mettre à la une."
+    label: En vidéo
+    description: "Les vidéos de la page En vidéo (et de l'accueil). La première de la liste est « à la une » : glisse une vidéo en haut pour la mettre à la une."
     files:
       - name: liste
-        label: Mes lives
+        label: Mes vidéos
         file: src/data/cms/lives.json
         format: json
         fields:
           - name: lives
-            label: Lives
+            label: Vidéos
             label_singular: live
             widget: list
             add_to_top: true
@@ -120,7 +120,7 @@ collections:
                 label: Artiste
                 widget: string
               - name: titre
-                label: Titre du live
+                label: Titre de la vidéo
                 widget: string
                 hint: Par exemple « Tiny Desk Concert » ou « Live at Joshua Tree ».
               - name: lieu
@@ -137,10 +137,10 @@ collections:
               - name: mot
                 label: Mon mot
                 widget: text
-                hint: Une à trois phrases. Garde les guillemets « ».
+                hint: "Une à trois phrases : pourquoi tu la repasses, le moment à ne pas rater (ex. « à 12:40, … »). Garde les guillemets « »."
   - name: top
-    label: Le Top
-    description: Le Top de la Room, page Le Top et accueil. Glisse les lignes pour changer le classement (la première = n° 1).
+    label: Mon Top
+    description: Ton classement, sur la page Mon Top et l'accueil. Glisse les lignes pour changer l'ordre (la première = n° 1).
     files:
       - name: classement
         label: Mon classement
@@ -162,7 +162,7 @@ collections:
                 value_field: '{{slug}}'
                 search_fields: [titre, artiste]
                 display_fields: [artiste, titre]
-                hint: Le disque doit d'abord exister dans « Les disques ».
+                hint: Le disque doit d'abord exister dans « Mes disques ».
           - { name: pourquoiAlbum, label: Pourquoi l'album n° 1 est tout en haut, widget: text, required: false, hint: "Deux ou trois phrases, et le morceau à écouter en premier. Garde les guillemets « »." }
           - { name: pourquoiAlbumCourt, label: La même chose en une phrase (mobile), widget: string, required: false }
           - name: titres
@@ -173,7 +173,7 @@ collections:
             max: 10
             summary: '{{fields.titre}}'
             fields:
-              - { name: titre, label: Titre du morceau, widget: string, hint: "Écrit comme sur Spotify : la durée se retrouve toute seule." }
+              - { name: titre, label: Titre du morceau, widget: string, hint: "Écrit comme dans « Les titres » de la fiche du disque : la durée se retrouve toute seule." }
               - name: disque
                 label: Disque où il se trouve
                 widget: relation
@@ -181,7 +181,7 @@ collections:
                 value_field: '{{slug}}'
                 search_fields: [titre, artiste]
                 display_fields: [artiste, titre]
-                hint: Le disque doit d'abord exister dans « Les disques ».
+                hint: Le disque doit d'abord exister dans « Mes disques ».
           - { name: pourquoiTitre, label: Pourquoi le titre n° 1 est tout en haut, widget: text, required: false, hint: Deux ou trois phrases. }
           - { name: pourquoiTitreCourt, label: La même chose en une phrase (mobile), widget: string, required: false }
 
@@ -194,7 +194,7 @@ collections:
         file: src/data/cms/morceau.json
         format: json
         fields:
-          - { name: titre, label: Titre du morceau, widget: string, hint: Écrit comme sur Spotify (c'est lui qui joue dans l'extrait). }
+          - { name: titre, label: Titre du morceau, widget: string, hint: Écrit comme dans « Les titres » de la fiche du disque (c'est lui qui joue dans l'extrait). }
           - name: disque
             label: Disque où il se trouve
             widget: relation
@@ -202,13 +202,13 @@ collections:
             value_field: '{{slug}}'
             search_fields: [titre, artiste]
             display_fields: [artiste, titre]
-            hint: Sert pour la pochette et le lien « Voir la fiche ». Le disque doit d'abord exister dans « Les disques ».
+            hint: Sert pour la pochette et le lien « Voir le disque ». Le disque doit d'abord exister dans « Mes disques ».
           - { name: avis, label: Mon avis, widget: text, required: false, hint: "Deux phrases : pourquoi ce son en ce moment. Garde les guillemets « »." }
           - { name: avisCourt, label: Mon avis en une phrase (mobile), widget: string, required: false }
 
   - name: visiteurs
-    label: Le bac des visiteurs
-    description: Les recos (morceaux ou albums) reçues par e-mail (formulaire « Recommandez-moi un son ») que tu as validées. Spotify ajoute la pochette et l'année.
+    label: Vos sons
+    description: "Les recos (morceaux ou albums) reçues par e-mail (formulaire « Recommandez-moi un son ») que tu as validées : elles s'affichent sur la page Vos sons. Spotify ajoute la pochette et l'année. Si le visiteur a laissé son Insta (champ « instagram » de l'e-mail), pense à le prévenir."
     files:
       - name: recos
         label: Les recos validées
@@ -222,7 +222,7 @@ collections:
             add_to_top: true
             summary: '{{fields.prenom}} — {{fields.artiste}}, {{fields.titre}} ({{fields.type}})'
             fields:
-              - { name: prenom, label: Prénom du visiteur, widget: string, hint: Tel qu'il l'a écrit dans le formulaire. }
+              - { name: prenom, label: Prénom, widget: string, hint: Tel qu'il ou elle l'a écrit dans le formulaire. }
               - name: type
                 label: Morceau ou album
                 widget: select
@@ -253,7 +253,7 @@ collections:
           - name: instagram
             label: Pseudo Instagram
             widget: string
-            hint: Avec le @ devant, par exemple @andyh.robinson. Sert pour tous les liens « Écrivez-moi en DM ».
+            hint: Avec le @ devant, par exemple @andyh.robinson. Sert pour tous les liens vers ton Insta (« Écrivez-moi sur Insta », « Écrivez-moi en DM »…).
             pattern: ['^@[A-Za-z0-9._]+$', 'Le pseudo commence par @ et ne contient que des lettres, chiffres, points ou _']
           - name: instagramUrl
             label: Lien du profil
