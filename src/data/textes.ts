@@ -128,8 +128,6 @@ export const comptoir = {
       'Et dès qu’un morceau me plaît, je deviens vite bavard : vous voilà prévenus.',
     ],
   },
-  photoAlt: 'Andyh au piano, chez lui, le soir.',
-  photoAttente: 'Photo — Andyh au piano, le soir (vraie photo · 4:5)',
   pourquoi: {
     surtitre: 'Pourquoi Room 33',
     titre: 'Une pièce, des 33 tours.',

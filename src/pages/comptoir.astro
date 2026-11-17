@@ -31,8 +31,8 @@ import { images } from '../data/images';
       </div>
       <figure class="photo">
         {images.andyhPiano
-          ? <img src={images.andyhPiano} alt={t.photoAlt} width="560" height="700" loading="lazy" decoding="async" />
-          : <div class="attente texte-petit texte-secondaire" role="img" aria-label={t.photoAlt}><span>{t.photoAttente}</span></div>}
+          ? <img src={images.andyhPiano} alt="" width="560" height="700" loading="lazy" decoding="async" />
+          : <div class="attente" aria-hidden="true"></div>}
       </figure>
     </section>
 
