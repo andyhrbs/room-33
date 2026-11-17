@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : titres mobiles des heros sur une ligne (Installez-vous., Vos trouvailles.)
+# Empreintes Figma de référence — 17 nov. 2026 : libellés du tiroir de reco (Me l’envoyer, Voir vos sons, page Vos sons)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -81,19 +81,19 @@
 182:2264 tu08b2
 24:791:cadre eqi4z
 24:792 jt2pj9
-24:793 1pv9lvq
+24:793 gl6h6
 24:845:cadre 1xq17fe
 24:846 jt2pj9
-24:847 1xt9tka
+24:847 1c6o03t
 79:2151:cadre utstq5
 79:2152 jt2pj9
-79:2153 zzaeto
+79:2153 eysqvs
 79:2248:cadre zg6f6x
 79:2249 jt2pj9
-79:2250 q2q94n
+79:2250 lqg1ef
 24:738:cadre bnsub7
 24:739 96k20e
-24:740 1j313kj
+24:740 1p8ghoj
 281:2834:cadre kolan2
 281:2835 1e3nh3j
 281:2839 1hotv21

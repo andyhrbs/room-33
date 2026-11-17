@@ -312,7 +312,7 @@ const dm = `https://ig.me/m/${site.instagram.replace('@', '')}`;
     const r = c.closest<HTMLButtonElement>('[data-tiroir] .resultat');
     if (r) { choisir(resultats[Number(r.dataset.index)]); dessiner(); return; }
     if (c.closest('[data-autre-reco]')) return reinitialiser();
-    // « Voir le bac des visiteurs » : si on y est déjà, on ferme simplement le tiroir
+    // « Voir vos sons » : si on y est déjà, on ferme simplement le tiroir
     if (c.closest('[data-retour-piece]')) { fermer(); if (location.pathname === '/visiteurs') e.preventDefault(); }
   });
   document.addEventListener('input', (e) => {

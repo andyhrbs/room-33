@@ -1,6 +1,6 @@
 // ==========================================================================
 // Room 33 — Boutons « ← Retour » : ils ramènent d'où l'on vient (comme le retour du navigateur, au même
-// endroit de la page) et disent où ils mènent : « Retour au Top », « Retour au bac Soul & R&B »…
+// endroit de la page) et disent où ils mènent : « Retour à mon Top », « Retour au bac Soul & R&B »…
 // - Une petite pile garde les pages traversées dans le site (sessionStorage, pour l'onglet).
 // - Arrivée de l'extérieur (Google, un lien) : pile vide → le retour par défaut de la page
 //   (« Retour dans la pièce » vers l'accueil, ou le bac du disque sur une fiche).
@@ -17,13 +17,13 @@ const propre = (c: string) => c.replace(/\.html$/, '').replace(/\/$/, '') || '/'
 function libelle({ chemin, titre }: Etape) {
   const nom = titre.split(' · ')[0];
   if (chemin === '/') return 'Retour dans la pièce';
-  if (chemin === '/bacs') return 'Retour aux bacs';
+  if (chemin === '/bacs') return 'Retour à mes disques';
   if (chemin.startsWith('/bacs/')) return `Retour au bac ${nom}`;
-  if (chemin === '/top') return 'Retour au Top';
-  if (chemin === '/platine') return 'Retour à la platine';
-  if (chemin === '/lives') return 'Retour aux lives';
-  if (chemin === '/comptoir') return 'Retour au comptoir';
-  if (chemin === '/visiteurs') return 'Retour au bac des visiteurs';
+  if (chemin === '/top') return 'Retour à mon Top';
+  if (chemin === '/platine') return 'Retour à mes écoutes';
+  if (chemin === '/lives') return 'Retour aux vidéos';
+  if (chemin === '/comptoir') return 'Retour à « Qui je suis »';
+  if (chemin === '/visiteurs') return 'Retour à vos sons';
   if (chemin.startsWith('/disques/')) return `Retour à ${nom.split(' — ')[0]}`;
   return `Retour à ${nom}`;
 }
