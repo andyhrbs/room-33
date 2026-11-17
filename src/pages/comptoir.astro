@@ -31,7 +31,7 @@ import { images } from '../data/images';
       </div>
       <figure class="photo">
         {images.andyhPiano
-          ? <img src={images.andyhPiano} alt="" width="560" height="700" loading="lazy" decoding="async" />
+          ? <img src={images.andyhPiano} srcset="/images/andyh-piano-560.webp 560w, /images/andyh-piano-1120.webp 1120w, /images/andyh-piano-1680.webp 1680w" sizes="(max-width: 63.99rem) calc(100vw - 2.5rem), 35rem" alt="" width="560" height="700" loading="lazy" decoding="async" />
           : <div class="attente" aria-hidden="true"></div>}
       </figure>
     </section>

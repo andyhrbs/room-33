@@ -15,7 +15,7 @@ export const images: Record<string, string | null> = {
   pieceMobile: url('piece-mobile', 1080),        // la pièce, vraie photo verticale 9:16 (hero de l'accueil mobile)
   pieceEteinteOrdi: url('piece-eteinte-ordi', 1920),     // la pièce éteinte (fond de l'entrée, ordi)
   pieceEteinteMobile: url('piece-eteinte-mobile', 1080), // idem mobile
-  andyhPiano: null,     // vraie photo d'Andyh au piano, 4:5 (comptoir)
+  andyhPiano: url('andyh-piano', 1120), // vraie photo du piano d'Andyh, 4:5 (Qui je suis) — aussi en 560 et 1680
 };
 
 // Fonds CSS (image-set) des photos de la pièce
