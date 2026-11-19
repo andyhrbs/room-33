@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 19 nov. 2026 : bouton « Voir plus de vidéos » + icône Chevron bas
+# Empreintes Figma de référence — 19 nov. 2026 : compteur « vidéos » (page En vidéo)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -186,7 +186,7 @@
 217:2620 p4phlg
 217:2532:cadre 1jcydif
 217:2533 17ct59k
-217:2534 1yjf6jq
+217:2534 9ssaep
 218:2740 1fzh78n
 217:2572 12lyxj4
 217:2579 p85kru
