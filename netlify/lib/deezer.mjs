@@ -22,6 +22,29 @@ async function pistesAlbum(upc) {
 // titre « propre » pour la recherche : sans (feat. …), [Remastered], « - Live »…
 const nu = (s = '') => s.replace(/\([^)]*\)|\[[^\]]*\]/g, '').replace(/\s[-–]\s.*$/, '').replace(/\s(feat|ft)\.?\s.*$/i, '').trim();
 
+// Certains extraits Deezer sont cassés (fichier d'une seconde, souvent sur les sorties récentes) : on vérifie
+// la taille du fichier (un extrait de 30 s pèse ~480 Ko ; sous 120 Ko, il est tronqué).
+async function taille(url) {
+  try {
+    const r = await fetch(url, { headers: { Range: 'bytes=0-0' }, signal: AbortSignal.timeout(4000) });
+    const total = Number((r.headers.get('content-range') || '').split('/')[1]) || Number(r.headers.get('content-length')) || 0;
+    r.body?.cancel?.();
+    return total;
+  } catch { return 0; } // on ne sait pas : on garde l'extrait
+}
+const extraitOk = async (url) => { const n = await taille(url); return n === 0 || n > 120000; };
+// Secours : l'extrait de 30 s d'Apple Music (API de recherche iTunes, publique)
+async function extraitApple(titre, artiste) {
+  try {
+    const q = new URLSearchParams({ term: `${artiste.split(/,|&/)[0].trim()} ${nu(titre)}`, entity: 'song', limit: '15', country: 'FR' });
+    const r = await fetch(`https://itunes.apple.com/search?${q}`, { signal: AbortSignal.timeout(6000) });
+    const res = (await r.json()).results || [];
+    const a = normal(artiste.split(/,|&| et | x /i)[0]);
+    const bon = res.find((x) => x.previewUrl && normal(nu(x.trackName)) === normal(nu(titre)) && (normal(x.artistName).includes(a) || a.includes(normal(x.artistName))));
+    return bon?.previewUrl || null;
+  } catch { return null; }
+}
+
 // type « titre » : le morceau lui-même ; type « album » : le morceau le plus écouté de l'album.
 // Ordre : id Deezer (trouvé au build) → code ISRC → album par UPC → recherche par nom.
 export async function trouverMorceau({ titre, artiste, type = 'titre', deezer, isrc, upc }) {
@@ -48,7 +71,16 @@ export async function trouverMorceau({ titre, artiste, type = 'titre', deezer, i
     t = resultats[0];
   }
   if (!t) return null;
-  return { titre: t.title_short || t.title, artiste: t.artist.name, extrait: t.preview, lien: t.link, pochette: t.album?.cover_medium || null, pochetteGrande: t.album?.cover_xl || t.album?.cover_big || null };
+  let extrait = t.preview;
+  if (!(await extraitOk(extrait))) {
+    // extrait tronqué : une autre version du même morceau sur Deezer (single, album…), sinon Apple Music
+    const autres = type === 'album' ? [] : (await chercher(`${artiste.split(/,|&/)[0].trim()} ${nu(titre).replace(/"/g, '')}`))
+      .filter((x) => x.id !== t.id && memeArtiste(x) && normal(nu(x.title)) === normal(nu(t.title_short || t.title))).slice(0, 3);
+    let trouve = null;
+    for (const x of autres) if (await extraitOk(x.preview)) { trouve = x.preview; break; }
+    extrait = trouve || (await extraitApple(t.title_short || t.title, t.artist?.name || artiste)) || extrait;
+  }
+  return { titre: t.title_short || t.title, artiste: t.artist.name, extrait, lien: t.link, pochette: t.album?.cover_medium || null, pochetteGrande: t.album?.cover_xl || t.album?.cover_big || null };
 }
 
 export const reponse = (donnees, statut = 200, cache = 600) =>
