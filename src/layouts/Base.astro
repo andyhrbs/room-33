@@ -32,6 +32,20 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     <ClientRouter />
     <!-- Actualisation : on repart toujours du haut de la page (le navigateur ne remet plus l'ancienne position).
          Les retours en arrière dans le site gardent leur position (gérés par la navigation fluide). -->
+    <!-- Cadres de focus : seulement au clavier. Après un clic à la souris, le bouton cliqué lâche le focus dès qu'on
+         appuie sur une touche (Espace, raccourcis…) : sinon le navigateur l'entoure d'un cadre ivoire. Tab rend la main au clavier. -->
+    <script is:inline>
+      (function () {
+        var souris = false;
+        document.addEventListener('pointerdown', function () { souris = true; }, true);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Tab') { souris = false; return; }
+          if (!souris || e.key === 'Shift' || e.key === 'Meta' || e.key === 'Control' || e.key === 'Alt') return;
+          var a = document.activeElement;
+          if (a && a !== document.body && a.matches('button, a, summary, [role="button"], [tabindex]:not([role="slider"])') && !a.matches('input, textarea, select, [contenteditable]')) a.blur();
+        }, true);
+      })();
+    </script>
     <script is:inline>
       (function () {
         var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];

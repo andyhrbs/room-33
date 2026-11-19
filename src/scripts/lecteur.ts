@@ -203,7 +203,7 @@ document.addEventListener('keydown', (e) => {
   // Espace = lecture / pause (comme Spotify), sauf quand on écrit ou qu'un bouton / lien a le focus
   if (e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey || !courant) return;
   if (document.querySelector('[data-pv]:not([hidden])')) return; // une vidéo est ouverte : l'espace la met en pause (PanneauVideo)
-  const t = e.target as HTMLElement;
+  const t = (document.activeElement ?? e.target) as HTMLElement; // le focus réel (un bouton cliqué à la souris l'a lâché, voir Base)
   if (t.closest('input, textarea, select, button, a, [contenteditable], [role="slider"], summary') || t.isContentEditable) return;
   e.preventDefault();
   if (etat === 'erreur' || !audio.getAttribute('src')) { etat = 'erreur'; basculer({ ...courant }); } else if (audio.paused) jouer(); else audio.pause();

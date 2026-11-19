@@ -274,7 +274,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
   const aller = (s: number) => { const t = Math.max(0, duree ? Math.min(duree - 0.5, s) : s); instant = t; commande('seekTo', [t, true]); };
   document.addEventListener('keydown', (e) => {
     const p = pv(); if (!courant || !p || p.hidden || e.metaKey || e.ctrlKey || e.altKey) return;
-    const t = e.target as HTMLElement;
+    const t = (document.activeElement ?? e.target) as HTMLElement; // le focus réel (un bouton cliqué à la souris l'a lâché, voir Base)
     if (t.closest?.('input, textarea, select, [contenteditable], [role="slider"], dialog[open]') || t.isContentEditable) return;
     // un bouton ou lien de la page a le focus : Espace / Entrée restent à lui (sauf le ▶ qui a lancé la vidéo et ceux du panneau)
     const surBouton = !!t.closest?.('button, a, summary') && !t.closest('[data-lire-video], [data-pv]');
