@@ -1,32 +1,38 @@
 {
   "albums": [
     {
-      "disque": "dijon-absolutely"
+      "disque": "luidji-saison-00"
     },
     {
-      "disque": "daniel-caesar-freudian"
+      "disque": "jack-harlow-monica"
     },
     {
-      "disque": "tom-misch-geography"
+      "disque": "venna-malik"
     },
     {
-      "disque": "yussef-dayes-black-classical-music"
+      "disque": "bigflo-oli-karma"
     },
     {
-      "disque": "mk-gee-two-star"
-    },
-    {
-      "disque": "jordan-ward-forward"
-    },
-    {
-      "disque": "khamari-a-brief-nirvana"
+      "disque": "tom-misch-full-circle"
     },
     {
       "disque": "luidji-tristesse-business"
+    },
+    {
+      "disque": "dijon-absolutely"
+    },
+    {
+      "disque": "oscar-emch-ma-voix"
+    },
+    {
+      "disque": "destin-conrad-whimsy"
+    },
+    {
+      "disque": "jordan-ward-backward"
     }
   ],
-  "pourquoiAlbum": "",
-  "pourquoiAlbumCourt": "",
+  "pourquoiAlbum": "« Saison 00, je l'ai écouté d'une traite, puis une deuxième fois dans la foulée. Luidji y prend son temps, les morceaux s'enchaînent comme les pages d'un journal. Écoutez-le en entier, dans l'ordre : c'est comme ça qu'il raconte quelque chose. »",
+  "pourquoiAlbumCourt": "« Écouté d'une traite, puis une deuxième fois dans la foulée. »",
   "titres": [
     {
       "titre": "Prague",
