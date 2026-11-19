@@ -72,7 +72,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
 
   const pv = () => $<HTMLElement>('[data-pv]');
   const iframe = () => pv()?.querySelector<HTMLIFrameElement>('iframe') ?? null;
-  const commande = (func: string) => iframe()?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*');
+  const commande = (func: string, args: unknown[] = []) => iframe()?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+  let duree = 0, volume = 100, muet = false; // donnés par YouTube : servent aux raccourcis clavier
 
   // état de la page : la page laisse la place au panneau (ordi), ou se bloque (grande vue / feuille mobile)
   function etatPage() {
@@ -111,7 +112,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (!lives.length) { try { lives = JSON.parse(p.querySelector('[data-pv-lives]')!.textContent || '[]'); } catch { lives = []; } }
     const l = lives.find((x) => x.id === id);
     if (!l) return;
-    courant = l;
+    courant = l; instant = 0; duree = 0;
     const ecran = p.querySelector<HTMLElement>('[data-pv-ecran]')!;
     const f = document.createElement('iframe');
     // enablejsapi : on peut mettre en pause / relancer, et savoir quand la vidéo joue
@@ -226,6 +227,13 @@ const donnees = await Promise.all(lives.map(async (l) => {
     b.setAttribute('aria-label', enLecture ? 'Mettre en pause' : 'Reprendre la vidéo');
   }
 
+  // dernier geste à la souris ou au clavier : après un clic souris, nos boutons lâchent le focus (pas de cadre ivoire)
+  let derniereSouris = false;
+  document.addEventListener('pointerdown', () => { derniereSouris = true; }, true);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Tab') derniereSouris = false; }, true);
+  document.addEventListener('click', (e) => {
+    if (e.detail > 0) { const b = (e.target as Element).closest?.('[data-pv] button, [data-pv] a, [data-lire-video], [data-pv-suivant]') as HTMLElement | null; if (b) queueMicrotask(() => b.blur()); }
+  });
   document.addEventListener('click', (e) => {
     const c = e.target as Element;
     const facade = c.closest<HTMLElement>('[data-lire-video]');
@@ -259,20 +267,38 @@ const donnees = await Promise.all(lives.map(async (l) => {
     etatPage();
   });
 
-  // Espace : pause / lecture de la vidéo ouverte (sauf quand on écrit ou qu'un bouton / lien a le focus ;
-  // si le focus est dans le lecteur YouTube, c'est YouTube qui gère l'espace)
+  // Raccourcis clavier façon YouTube, quand une vidéo est ouverte (sauf quand on écrit ; si le focus est dans le
+  // lecteur YouTube, c'est YouTube qui les gère) :
+  //   Espace / K lecture-pause · J / L −10 s / +10 s · ← / → −5 s / +5 s · 0 à 9 aller à 0 %…90 % · M couper le son
+  //   ↑ / ↓ volume (grande vue) · F plein écran · T grande vue ⇄ panneau · I ranger / rouvrir le panneau · Maj + N vidéo suivante
+  const aller = (s: number) => { const t = Math.max(0, duree ? Math.min(duree - 0.5, s) : s); instant = t; commande('seekTo', [t, true]); };
   document.addEventListener('keydown', (e) => {
-    if (e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey || !courant) return;
+    const p = pv(); if (!courant || !p || p.hidden || e.metaKey || e.ctrlKey || e.altKey) return;
     const t = e.target as HTMLElement;
-    if (t.closest?.('input, textarea, select, [contenteditable], [role="slider"]') || t.isContentEditable) return;
-    // un bouton ou lien a le focus : on le laisse faire, SAUF le bouton ▶ qui a lancé la vidéo et ceux du panneau
-    // (sinon Espace « reclique » dessus et la vidéo repart du début, ou le panneau se rétracte)
-    if (t.closest?.('button, a, summary') && !t.closest('[data-lire-video], [data-pv]')) return;
+    if (t.closest?.('input, textarea, select, [contenteditable], [role="slider"], dialog[open]') || t.isContentEditable) return;
+    // un bouton ou lien de la page a le focus : Espace / Entrée restent à lui (sauf le ▶ qui a lancé la vidéo et ceux du panneau)
+    const surBouton = !!t.closest?.('button, a, summary') && !t.closest('[data-lire-video], [data-pv]');
+    const grand = p.classList.contains('grand'), range = p.classList.contains('retracte');
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    let fait = true;
+    if ((e.code === 'Space' && !surBouton) || k === 'k') { commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture(); }
+    else if (k === 'j') aller(instant - 10);
+    else if (k === 'l') aller(instant + 10);
+    else if (k === 'ArrowLeft' && !range && !surBouton) aller(instant - 5);
+    else if (k === 'ArrowRight' && !range && !surBouton) aller(instant + 5);
+    else if (/^[0-9]$/.test(k) && !e.shiftKey && duree) aller(duree * Number(k) / 10);
+    else if (k === 'm') { muet = !muet; commande(muet ? 'mute' : 'unMute'); }
+    else if ((k === 'ArrowUp' || k === 'ArrowDown') && grand) { volume = Math.max(0, Math.min(100, volume + (k === 'ArrowUp' ? 5 : -5))); if (muet && k === 'ArrowUp') { muet = false; commande('unMute'); } commande('setVolume', [volume]); }
+    else if (k === 'f' && !e.repeat) { const f = iframe(); if (document.fullscreenElement) document.exitFullscreen(); else f?.requestFullscreen?.().catch(() => {}); }
+    else if (k === 't' && !e.repeat && ORDI.matches) { if (range) { p.classList.remove('retracte'); etatPage(); } basculerGrand(p, !grand); }
+    else if (k === 'i' && !e.repeat && ORDI.matches && !grand) { const r = p.classList.toggle('retracte'); p.querySelector('.pv-bord')?.setAttribute('aria-label', r ? 'Afficher la vidéo' : 'Masquer la vidéo'); etatPage(); }
+    else if (k === 'n' && e.shiftKey && !e.repeat) { const i = lives.findIndex((x) => x.id === courant!.id); const suiv = lives[(i + 1) % lives.length]; if (suiv) lire(suiv.id); }
+    else fait = false;
+    if (!fait) return;
     e.preventDefault();
-    // la bande du panneau ouvert ne garde pas le focus : pas de cadre blanc quand on met en pause avec Espace
+    // pas de cadre de focus (ivoire) sur un bouton cliqué à la souris quand on utilise ensuite un raccourci
     const actif = document.activeElement as HTMLElement | null;
-    if (actif?.matches('.pv-bord')) actif.blur();
-    commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture();
+    if (derniereSouris && actif?.closest('[data-pv], [data-lire-video]')) actif.blur();
   });
 
   // Échap : grande vue → panneau ; feuille mobile → barre
@@ -345,9 +371,12 @@ const donnees = await Promise.all(lives.map(async (l) => {
   addEventListener('message', (e) => {
     let h = ''; try { h = new URL(e.origin).hostname; } catch { return; }
     if (!/youtube(-nocookie)?\.com$/.test(h)) return;
-    let d: { info?: { playerState?: number; currentTime?: number } } = {};
+    let d: { info?: { playerState?: number; currentTime?: number; duration?: number; volume?: number; muted?: boolean } } = {};
     try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
     if (typeof d?.info?.currentTime === 'number') instant = d.info.currentTime;
+    if (typeof d?.info?.duration === 'number' && d.info.duration > 0) duree = d.info.duration;
+    if (typeof d?.info?.volume === 'number') volume = d.info.volume;
+    if (typeof d?.info?.muted === 'boolean') muet = d.info.muted;
     const s = d?.info?.playerState;
     if (s === 1) { enLecture = true; majLecture(); } else if (s === 2 || s === 0) { enLecture = false; majLecture(); }
   });
