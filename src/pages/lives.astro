@@ -90,6 +90,15 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   .texte-carte { display: flex; flex-direction: column; gap: var(--espace-2xs); }
   .texte-carte .lien-youtube { margin-top: auto; align-self: flex-start; } /* « Voir sur YouTube » calé en bas : alignés sur toute la rangée */
   .texte-carte h3 { margin: 0; }
+  /* ordi : chaque carte s'aligne sur la grille de sa rangée (sous-grille) — titres, chaînes, mots et
+     « Voir sur YouTube » démarrent à la même hauteur dans les 3 cartes, quelle que soit la longueur des textes */
+  @media (min-width: 64rem) {
+    .carte { grid-row: span 5; grid-template-rows: subgrid; row-gap: var(--espace-2xs); }
+    .texte-carte { display: contents; }
+    .texte-carte h3 { margin-top: var(--espace-xs); align-self: start; }
+    .texte-carte .chaine, .texte-carte p { align-self: start; }
+    .texte-carte .lien-youtube { margin-top: 0; align-self: start; }
+  }
   /* ligne « chaîne » (comme l'accueil) : photo de la chaîne YouTube, nom, date de publication */
   .chaine { display: flex; align-items: center; gap: var(--espace-sm); padding-block: var(--espace-2xs); }
   .avatar {
