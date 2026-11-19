@@ -85,8 +85,9 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   .tous { display: grid; gap: var(--espace-xl); }
   .entete { display: grid; gap: var(--espace-xs); }
   .grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-2xl) var(--espace-lg); margin: 0; padding: 0; }
-  .carte { display: grid; gap: var(--espace-sm); align-content: start; }
-  .texte-carte { display: grid; gap: var(--espace-2xs); }
+  .carte { display: grid; grid-template-rows: auto 1fr; gap: var(--espace-sm); } /* le texte remplit la hauteur de la rangée */
+  .texte-carte { display: flex; flex-direction: column; gap: var(--espace-2xs); }
+  .texte-carte .lien-youtube { margin-top: auto; align-self: flex-start; } /* « Voir sur YouTube » calé en bas : alignés sur toute la rangée */
   .texte-carte h3 { margin: 0; }
   /* ligne « chaîne » (comme l'accueil) : photo de la chaîne YouTube, nom, date de publication */
   .chaine { display: flex; align-items: center; gap: var(--espace-sm); padding-block: var(--espace-2xs); }
