@@ -36,6 +36,15 @@ collections:
     slug: '{{artiste}}-{{titre}}'
     summary: '{{artiste}} — {{titre}}'
     sortable_fields: [artiste, titre, ajoute]
+    view_groups:
+      default: bac
+      groups:
+        - name: bac
+          label: Par bac
+          field: genre
+        - name: artiste
+          label: Par artiste
+          field: artiste
     fields:
       - { name: titre, label: Titre de l'album, widget: string }
       - { name: artiste, label: Artiste, widget: string, hint: "Classique : le compositeur, puis l'interprète (ex. Chopin · Martha Argerich)." }
