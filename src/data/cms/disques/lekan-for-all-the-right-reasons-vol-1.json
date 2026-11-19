@@ -1,18 +1,20 @@
 {
   "titre": "For All The Right Reasons Vol. 1",
   "artiste": "Lekan",
-  "genre": "Afro",
+  "genre": "Soul & R&B",
   "spotify": "https://open.spotify.com/album/36KvnNSPeyCHUrAQVpgwwN",
-  "ajoute": "2026-11-19T21:00:00.000Z",
+  "annee": null,
   "avis": "« Lekan mélange R&B et chaleur afro avec une facilité déconcertante. Always est une chanson d'amour simple, portée par une guitare qui ondule et une voix sans effort. Le genre de son qu'on découvre par hasard et qu'on ne lâche plus. »",
   "avisCourt": "« R&B et chaleur afro, tout en douceur. »",
+  "coupDeCoeur": "",
+  "credits": [],
+  "bio": "Chanteur entre R&B et afro, à la voix chaude et posée. Pour commencer : Always.",
+  "bioCourte": "Chanteur R&B aux couleurs afro.",
+  "ajoute": "2026-11-19T21:00:00.000Z",
+  "motif": "points",
   "moment": {
     "temps": "",
     "texte": "",
     "texteCourt": ""
-  },
-  "credits": [],
-  "bio": "Chanteur entre R&B et afro, à la voix chaude et posée. Pour commencer : Always.",
-  "bioCourte": "Chanteur R&B aux couleurs afro.",
-  "motif": "points"
+  }
 }
