@@ -190,26 +190,29 @@ const donnees = await Promise.all(lives.map(async (l) => {
       mesurer(p).forEach(({ el, r }, i) => el.animate([{ transformOrigin: '0 0', transform: ecart(avant[i].r, r, el.matches('.pv-ecran')) }, { transformOrigin: '0 0', transform: 'none' }], opts));
       p.animate([{ clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondPanneau }, { clipPath: 'inset(0 0 0 0)', backgroundColor: fondGrand }], opts).finished.finally(fin);
     } else {
-      // on mesure la mise en page du panneau sans l'afficher (le navigateur ne peint pas entre ces deux lignes)
+      // Retour au panneau : on passe TOUT DE SUITE en mise en page panneau (textes déjà à leur largeur finale),
+      // puis chaque élément glisse depuis sa place en grande vue jusqu'à sa place dans le panneau (FLIP inversé).
+      // Pendant le mouvement, le panneau laisse dépasser son contenu, et un « voile » plein écran fait le fond :
+      // il se referme vers la droite jusqu'au bord du panneau. Rien n'est coupé, rien ne s'efface.
       const avant = mesurer(p);
-      p.classList.remove('grand');
-      const cible = mesurer(p); const fondCible = getComputedStyle(p).backgroundColor; let gauche = p.getBoundingClientRect().left;
-      p.classList.add('grand');
-      // en grande vue la page ne défile pas : sa barre de défilement est cachée. Elle revient en panneau et pousse
-      // tout ce qui est calé à droite de sa largeur (15 px sur Mac avec une souris) : on en tient compte d'avance
-      const barre = largeurBarre - (window.innerWidth - document.documentElement.clientWidth);
-      if (barre > 0) { cible.forEach((c) => { c.r = new DOMRect(c.r.left - barre, c.r.top, c.r.width, c.r.height); }); gauche -= barre; }
-      // Les textes (infos, « À suivre ») ne peuvent pas suivre : en grande vue ils sont mis en page en large et
-      // seraient coupés ou décalés pendant le rétrécissement. Ils s'effacent vite, puis réapparaissent une fois
-      // le panneau en place. La vidéo, l'étiquette et les boutons, eux, glissent jusqu'à leur place.
-      const TEXTES = new Set(['.pv-infos', '.pv-suite']);
-      const anims = avant.map(({ el, r }, i) => TEXTES.has(ANIMES[i])
-        ? el.animate([{ opacity: 1 }, { opacity: 0, offset: 0.25 }, { opacity: 0 }], { ...opts, fill: 'forwards' })
-        : el.animate([{ transformOrigin: '0 0', transform: 'none' }, { transformOrigin: '0 0', transform: ecart(cible[i].r, r, el.matches('.pv-ecran')) }], { ...opts, fill: 'forwards' }));
-      const a = p.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondPanneau }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
-      a.finished.finally(() => {
-        appliquer(); anims.forEach((x) => x.cancel()); a.cancel(); fin();
-        avant.forEach(({ el }, i) => { if (TEXTES.has(ANIMES[i])) el.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: courbe }); });
+      const fondGrand = getComputedStyle(p).backgroundColor;
+      appliquer();
+      const cible = mesurer(p); const fondCible = getComputedStyle(p).backgroundColor; const gauche = p.getBoundingClientRect().left;
+      const corps = p.querySelector<HTMLElement>('.pv-corps')!;
+      const voile = document.createElement('div');
+      voile.setAttribute('aria-hidden', 'true');
+      voile.style.cssText = `position:fixed;inset:0;z-index:54;pointer-events:none;background:${fondGrand}`;
+      document.body.appendChild(voile);
+      p.style.overflow = 'visible'; corps.style.overflow = 'visible'; p.style.background = 'transparent'; p.style.boxShadow = 'none';
+      const anims = cible.map(({ el, r }, i) => el.animate([
+        { transformOrigin: '0 0', transform: ecart(avant[i].r, r, el.matches('.pv-ecran')) },
+        { transformOrigin: '0 0', transform: 'none' },
+      // « À suivre » descend plus vite : il passe sous les infos avant qu'elles n'arrivent (sinon ils se croisent)
+      ], el.matches('.pv-suite') ? { ...opts, duration: Math.round(D * 0.55) } : opts));
+      const a = voile.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondGrand }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
+      Promise.allSettled([a.finished, ...anims.map((x) => x.finished)]).finally(() => {
+        p.style.overflow = ''; corps.style.overflow = ''; p.style.background = ''; p.style.boxShadow = '';
+        voile.remove(); fin();
       });
     }
   }
