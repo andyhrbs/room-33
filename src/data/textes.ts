@@ -161,6 +161,7 @@ export const livesTextes = {
   une: 'À la une',
   tous: { surtitre: 'Toutes les vidéos', titre: 'Sur scène, en studio, dans un salon.' },
   voirYoutube: 'Voir sur YouTube',
+  voirPlus: 'Voir plus de vidéos',
   lire: 'Lire la vidéo',
   consentement: 'La vidéo se charge depuis YouTube quand vous la lancez.',
 };

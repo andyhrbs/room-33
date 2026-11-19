@@ -51,7 +51,7 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
           <p class="texte-label">{t.tous.surtitre}</p>
           <h2 class="titre-h2">{t.tous.titre}</h2>
         </div>
-        <ul role="list" class="grille">
+        <ul role="list" class="grille" data-grille-videos>
           {autres.map((l) => (
             <li class="carte">
               <VideoLive youtube={l.youtube} titre={nom(l)} />
@@ -67,6 +67,10 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
             </li>
           ))}
         </ul>
+        <!-- « Voir plus » : 9 vidéos d'abord, puis 9 de plus à chaque clic (sans JavaScript, tout reste affiché) -->
+        <div class="voir-plus" data-voir-plus hidden>
+          <Bouton style="secondaire" iconeDroite="chevron-bas">{t.voirPlus}</Bouton>
+        </div>
         <p class="texte-legende texte-secondaire">{t.consentement}</p>
       </div>
     </section>
@@ -77,6 +81,32 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   <PiedDePage />
 </Base>
 
+<script>
+  // « Voir plus de vidéos » : on montre les vidéos par paquets de 9 (3 rangées sur ordi)
+  const PAQUET = 9;
+  function initVoirPlus() {
+    const grille = document.querySelector<HTMLElement>('[data-grille-videos]');
+    const zone = document.querySelector<HTMLElement>('[data-voir-plus]');
+    if (!grille || !zone || zone.dataset.pret) return;
+    zone.dataset.pret = '1';
+    const cartes = [...grille.children] as HTMLElement[];
+    if (cartes.length <= PAQUET) return;
+    let montrees = PAQUET;
+    cartes.slice(PAQUET).forEach((c) => (c.hidden = true));
+    zone.hidden = false;
+    zone.querySelector('button')!.addEventListener('click', () => {
+      const suivantes = cartes.slice(montrees, montrees + PAQUET);
+      suivantes.forEach((c) => (c.hidden = false));
+      montrees += suivantes.length;
+      // le focus passe à la 1re nouvelle vidéo (clavier et lecteurs d'écran ne repartent pas du début)
+      suivantes[0]?.querySelector<HTMLElement>('button, a')?.focus({ preventScroll: true });
+      if (montrees >= cartes.length) zone.hidden = true;
+    });
+  }
+  initVoirPlus();
+  document.addEventListener('astro:page-load', initVoirPlus);
+</script>
+
 <style>
   .intro { max-width: none; } /* sous-titre du hero sur une ligne (ordi) */
   .lives { display: grid; gap: var(--espace-3xl); }
@@ -84,6 +114,8 @@ const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
   .une { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: var(--espace-2xl); align-items: center; }
   .texte-une { display: grid; gap: var(--espace-sm); justify-items: start; }
   .tous { display: grid; gap: var(--espace-xl); }
+  .voir-plus { display: flex; justify-content: center; }
+  .voir-plus[hidden], .carte[hidden] { display: none; }
   .entete { display: grid; gap: var(--espace-xs); }
   .grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espace-2xl) var(--espace-lg); margin: 0; padding: 0; }
   .carte { display: grid; grid-template-rows: auto 1fr; gap: var(--espace-sm); } /* le texte remplit la hauteur de la rangée */

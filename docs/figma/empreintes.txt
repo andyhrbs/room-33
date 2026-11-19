@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 17 nov. 2026 : bio et Pourquoi Room 33 (Qui je suis)
+# Empreintes Figma de référence — 19 nov. 2026 : bouton « Voir plus de vidéos » + icône Chevron bas
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -177,19 +177,19 @@
 69:1912 1snp0wl
 69:1938 16p2cpg
 182:2328 tu08b2
-217:2581:cadre 1cfi059
-217:2582 tq33w1
+217:2581:cadre 1as0zi9
+217:2582 q7w04l
 217:2583 e4mv0l
-218:2848 1b6h5or
-217:2615 1g7dtco
-217:2619 i9tvpu
+218:2848 18s78cr
+217:2615 bc3gw1
+217:2619 1dvrm1h
 217:2620 p4phlg
-217:2532:cadre 1ucve8v
-217:2533 dx39xs
+217:2532:cadre 1jcydif
+217:2533 17ct59k
 217:2534 1yjf6jq
-218:2740 3df6zy
-217:2572 g0vv0c
-217:2579 10oj39d
+218:2740 1fzh78n
+217:2572 12lyxj4
+217:2579 p85kru
 217:2580 tu08b2
 440:3191:cadre wzi84w
 440:3192 1wwxpzi
@@ -224,7 +224,7 @@
 475:3799 ms1o2s
 70:2026 6twmga
 80:2406 1798mfy
-41:20 o5erre
+41:20 q7lxoa
 9:11 uczi5b
 9:14 172zdtb
 9:16 txuot8
