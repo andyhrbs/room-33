@@ -1,5 +1,6 @@
 ---
 // 09 · Les lives : les prestations live qu'Andyh aime (vidéos YouTube)
+import { prechargeGrosPlan } from '../data/images';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
@@ -20,7 +21,7 @@ const chaine = (l: (typeof avecYt)[number]) => ({ nom: l.yt.chaine ?? l.lieu, so
 const [une, ...autres] = avecYt;
 const nom = (l: typeof une) => `${l.artiste} — ${l.titre}`;
 ---
-<Base title="En vidéo" description={t.intro}>
+<Base imagePrioritaire={prechargeGrosPlan('lives')} title="En vidéo" description={t.intro}>
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={t.filAriane} grosPlan="lives" positionMobile="52% center" surtitreMobile={t.surtitreMobile} titre={t.titre}>

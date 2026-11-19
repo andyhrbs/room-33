@@ -1,5 +1,6 @@
 ---
 // Modèle « Un bac » (sert pour /bacs et /bacs/[bac])
+import { prechargeGrosPlan } from '../data/images';
 import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import PiedDePage from './PiedDePage.astro';
@@ -16,7 +17,7 @@ const bacsRemplis = bacs.filter((b) => b.disques.length > 0).length;
 const autres = bacs.filter((b) => b !== bac && b.disques.length > 0).slice(0, 4);
 const nb = bac.disques.length;
 ---
-<Base title={`${bac.nom} · Mes disques`} description={bac.description}>
+<Base imagePrioritaire={prechargeGrosPlan('bacs')} title={`${bac.nom} · Mes disques`} description={bac.description}>
   <Nav />
   <main class="ambiance">
     <!-- Hero général, le même pour tous les bacs : le genre se choisit dans la section suivante -->

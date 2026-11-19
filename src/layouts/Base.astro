@@ -8,7 +8,7 @@ import PanneauVideo from '../components/PanneauVideo.astro';
 
 interface Props {
   title?: string;
-  imagePrioritaire?: string | { href: string; media: string }[]; // image(s) du hero à télécharger en premier (accueil) ; avec media : une par taille d'écran
+  imagePrioritaire?: string | ({ href: string; media: string } | { srcset: string; media: string })[]; // image(s) du hero à télécharger en premier (accueil) ; avec media : une par taille d'écran
   description?: string;
   noindex?: boolean;
 }
@@ -25,7 +25,9 @@ const fullTitle = title ? `${title} · ${site.nom}` : site.nom;
     {noindex && <meta name="robots" content="noindex" />}
     <title>{fullTitle}</title>
     {typeof imagePrioritaire === 'string' && <link rel="preload" as="image" href={imagePrioritaire} fetchpriority="high" />}
-    {Array.isArray(imagePrioritaire) && imagePrioritaire.map((i) => <link rel="preload" as="image" href={i.href} media={i.media} fetchpriority="high" />)}
+    {Array.isArray(imagePrioritaire) && imagePrioritaire.map((i) => 'srcset' in i
+      ? <link rel="preload" as="image" imagesrcset={i.srcset} media={i.media} fetchpriority="high" />
+      : <link rel="preload" as="image" href={i.href} media={i.media} fetchpriority="high" />)}
     <!-- Navigation fluide entre les pages : la mini-platine (et le son) continue pendant qu'on change de page -->
     <ClientRouter />
     <!-- Actualisation : on repart toujours du haut de la page (le navigateur ne remet plus l'ancienne position).

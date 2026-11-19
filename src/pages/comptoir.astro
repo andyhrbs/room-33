@@ -1,5 +1,6 @@
 ---
 // 08 · Le comptoir : qui je suis
+import { prechargeGrosPlan } from '../data/images';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
@@ -8,7 +9,7 @@ import HeroPage from '../components/HeroPage.astro';
 import { comptoir as t, site } from '../data/textes';
 import { images } from '../data/images';
 ---
-<Base title="Qui je suis" description={`${t.presentation.titre} ${t.presentation.texte[0]}`}>
+<Base imagePrioritaire={prechargeGrosPlan('comptoir')} title="Qui je suis" description={`${t.presentation.titre} ${t.presentation.texte[0]}`}>
   <Nav />
 
   <main class="ambiance">

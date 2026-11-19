@@ -1,5 +1,6 @@
 ---
 // 05 · La platine
+import { prechargeGrosPlan } from '../data/images';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
@@ -15,7 +16,7 @@ const copie = await copieEcoutes();
 const enCours = p.enCours;
 const rang = (i: number) => String(i + 1).padStart(2, '0');
 ---
-<Base title="Mes écoutes" description="Ce que j’écoute vraiment, en direct de Spotify.">
+<Base imagePrioritaire={prechargeGrosPlan('platine')} title="Mes écoutes" description="Ce que j’écoute vraiment, en direct de Spotify.">
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={['Accueil', 'Mes écoutes']} grosPlan="platine" positionMobile="30% center" surtitreMobile="Mes écoutes" titre="Ce qui tourne en ce moment." titreMobile="Ce qui tourne.">

@@ -40,6 +40,12 @@ export type GrosPlan = keyof typeof grosPlans;
 /** fonds d'un gros plan : ordi (1920 / 2560) et mobile (1280 / 1920, l'image est recadrée en hauteur) */
 export const fondGrosPlan = (cle: GrosPlan) => ({ ordi: set(grosPlans[cle], 1920, 2560), mobile: set(grosPlans[cle], 1280, 1920) });
 
+/** préchargement du hero d'une page intérieure : la photo part dès le début du chargement (ordi et mobile, 1x/2x) */
+export const prechargeGrosPlan = (cle: GrosPlan) => [
+  { srcset: `${url(grosPlans[cle], 1920)} 1x, ${url(grosPlans[cle], 2560)} 2x`, media: '(min-width: 64rem)' },
+  { srcset: `${url(grosPlans[cle], 1280)} 1x, ${url(grosPlans[cle], 1920)} 2x`, media: '(max-width: 63.99rem)' },
+];
+
 // Ancien système (recadrages de la photo de la pièce, repris de Figma) : gardé pour mémoire, plus utilisé
 export type Recadrage = [number, number, number, number];
 export const recadrages: Record<string, Recadrage> = {};

@@ -1,5 +1,6 @@
 ---
 // 07 · Le bac des visiteurs
+import { prechargeGrosPlan } from '../data/images';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PiedDePage from '../components/PiedDePage.astro';
@@ -11,7 +12,7 @@ import { recos } from '../data/disques';
 import { visiteursTextes as t } from '../data/textes';
 const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
 ---
-<Base title="Vos sons" description="Les sons que vous m’avez recommandés et qui m’ont plu.">
+<Base imagePrioritaire={prechargeGrosPlan('visiteurs')} title="Vos sons" description="Les sons que vous m’avez recommandés et qui m’ont plu.">
   <Nav />
   <main class="ambiance">
     <HeroPage filAriane={['Accueil', 'Vos sons']} grosPlan="visiteurs" positionMobile="38% center" surtitreMobile="Vos sons" titre="Ce que vous m’avez fait découvrir." titreMobile="Vos trouvailles.">
