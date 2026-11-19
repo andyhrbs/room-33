@@ -1,25 +1,74 @@
 {
   "albums": [
-    { "disque": "dijon-absolutely" },
-    { "disque": "daniel-caesar-freudian" },
-    { "disque": "tom-misch-geography" },
-    { "disque": "yussef-dayes-black-classical-music" },
-    { "disque": "mk-gee-two-star" },
-    { "disque": "jordan-ward-forward" },
-    { "disque": "khamari-a-brief-nirvana" },
-    { "disque": "luidji-tristesse-business" }
+    {
+      "disque": "dijon-absolutely"
+    },
+    {
+      "disque": "daniel-caesar-freudian"
+    },
+    {
+      "disque": "tom-misch-geography"
+    },
+    {
+      "disque": "yussef-dayes-black-classical-music"
+    },
+    {
+      "disque": "mk-gee-two-star"
+    },
+    {
+      "disque": "jordan-ward-forward"
+    },
+    {
+      "disque": "khamari-a-brief-nirvana"
+    },
+    {
+      "disque": "luidji-tristesse-business"
+    }
   ],
   "pourquoiAlbum": "",
   "pourquoiAlbumCourt": "",
   "titres": [
-    { "titre": "Best Part", "disque": "daniel-caesar-freudian" },
-    { "titre": "Many Times", "disque": "dijon-absolutely" },
-    { "titre": "It Runs Through Me", "disque": "tom-misch-geography" },
-    { "titre": "Are You Looking Up", "disque": "mk-gee-two-star" },
-    { "titre": "FAMJAM4000", "disque": "jordan-ward-forward" },
-    { "titre": "Get You", "disque": "daniel-caesar-freudian" },
-    { "titre": "Disco Yes", "disque": "tom-misch-geography" }
+    {
+      "titre": "Prague",
+      "disque": "jack-harlow-monica"
+    },
+    {
+      "titre": "Maggie",
+      "disque": "isaia-huron-maggie"
+    },
+    {
+      "titre": "pablo honey song #2",
+      "disque": "isaia-huron-mr-lovebomb-deluxe"
+    },
+    {
+      "titre": "My Winter",
+      "disque": "jack-harlow-monica"
+    },
+    {
+      "titre": "Trade Places",
+      "disque": "jack-harlow-monica"
+    },
+    {
+      "titre": "Catch Me If You Can",
+      "disque": "joyce-wrice-machiko"
+    },
+    {
+      "titre": "Mermaid",
+      "disque": "sade-love-deluxe"
+    },
+    {
+      "titre": "Prophet",
+      "disque": "venna-malik"
+    },
+    {
+      "titre": "Butterflies",
+      "disque": "michael-jackson-invincible"
+    },
+    {
+      "titre": "Always",
+      "disque": "lekan-for-all-the-right-reasons-vol-1"
+    }
   ],
-  "pourquoiTitre": "",
-  "pourquoiTitreCourt": ""
+  "pourquoiTitre": "« Prague, c'est la boucle qui m'a accroché tout l'automne. Jack Harlow y rappe presque à voix basse, sur une guitare qui tourne comme un vieux souvenir. Écoutez la fin : la prod s'ouvre d'un coup, et c'est là que je l'ai remis pour la première fois. »",
+  "pourquoiTitreCourt": "« La boucle qui m'a accroché tout l'automne. »"
 }
