@@ -238,8 +238,8 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (c.closest('[data-pv-retracter]')) {
       const r = p.classList.toggle('retracte'); p.classList.remove('grand');
       p.querySelector('.pv-bord')?.setAttribute('aria-label', r ? 'Afficher la vidéo' : 'Masquer la vidéo');
-      // rouvert à la souris : la bande lâche le focus (sinon Espace, qui met la vidéo en pause, l'entoure d'un cadre blanc)
-      if (!r && e.detail > 0) p.querySelector<HTMLElement>('.pv-bord')?.blur();
+      // sinon Espace, qui met la vidéo en pause, entoure la bande d'un cadre blanc
+      if (e.detail > 0) p.querySelector<HTMLElement>('.pv-bord')?.blur(); // clic souris (rangé ou rouvert) : la bande lâche le focus
       etatPage(); return;
     }
     if (c.closest('[data-pv-reduire]')) { reduire(p); return; }
@@ -271,7 +271,7 @@ const donnees = await Promise.all(lives.map(async (l) => {
     e.preventDefault();
     // la bande du panneau ouvert ne garde pas le focus : pas de cadre blanc quand on met en pause avec Espace
     const actif = document.activeElement as HTMLElement | null;
-    if (actif?.matches('.pv-bord') && !pv()?.classList.contains('retracte')) actif.blur();
+    if (actif?.matches('.pv-bord')) actif.blur();
     commande(enLecture ? 'pauseVideo' : 'playVideo'); enLecture = !enLecture; majLecture();
   });
 
