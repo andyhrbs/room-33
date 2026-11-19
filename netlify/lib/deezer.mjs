@@ -47,7 +47,7 @@ async function extraitApple(titre, artiste) {
 
 // type « titre » : le morceau lui-même ; type « album » : le morceau le plus écouté de l'album.
 // Ordre : id Deezer (trouvé au build) → code ISRC → album par UPC → recherche par nom.
-export async function trouverMorceau({ titre, artiste, type = 'titre', deezer, isrc, upc }) {
+export async function trouverMorceau({ titre, artiste, type = 'titre', deezer, isrc, upc, secours = false }) {
   const a = normal(artiste.split(/,|&| et | x /i)[0]);
   const memeArtiste = (t) => normal(t.artist?.name).includes(a) || a.includes(normal(t.artist?.name)) || (t.contributors || []).some((c) => normal(c.name).includes(a));
   let t = (deezer && (await exact(`/track/${deezer}`))) || (isrc && (await exact(`/track/isrc:${isrc}`))) || null;
@@ -72,7 +72,7 @@ export async function trouverMorceau({ titre, artiste, type = 'titre', deezer, i
   }
   if (!t) return null;
   let extrait = t.preview;
-  if (!(await extraitOk(extrait))) {
+  if (secours || !(await extraitOk(extrait))) { // secours : le lecteur a constaté que l'extrait était tronqué
     // extrait tronqué : une autre version du même morceau sur Deezer (single, album…), sinon Apple Music
     const autres = type === 'album' ? [] : (await chercher(`${artiste.split(/,|&/)[0].trim()} ${nu(titre).replace(/"/g, '')}`))
       .filter((x) => x.id !== t.id && memeArtiste(x) && normal(nu(x.title)) === normal(nu(t.title_short || t.title))).slice(0, 3);
@@ -99,5 +99,6 @@ export const parametres = (req) => {
   // facultatifs (morceaux) : id Deezer trouvé au build, code ISRC donné par Spotify
   const deezer = /^\d{1,12}$/.test(u.get('deezer') || '') ? u.get('deezer') : undefined;
   const isrc = /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/i.test(u.get('isrc') || '') ? u.get('isrc').toUpperCase() : undefined;
-  return titre && artiste ? { titre, artiste, type, upc, spotify, deezer, isrc } : null;
+  const secours = u.get('secours') === '1';
+  return titre && artiste ? { titre, artiste, type, upc, spotify, deezer, isrc, secours } : null;
 };

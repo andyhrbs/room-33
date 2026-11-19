@@ -152,6 +152,16 @@ async function basculer(m: Morceau) {
     // grande pochette du lecteur plein écran (Deezer la donne aussi en grand : cover_xl)
     pochetteCourante = (d.pochetteGrande || d.pochette || '') as string;
     audio.src = d.extrait;
+    // filet de sécurité : un extrait de moins de 5 s est un fichier cassé → on redemande un extrait de secours
+    audio.addEventListener('loadedmetadata', async () => {
+      if (n !== demande || !(audio.duration > 0) || audio.duration >= 5) return;
+      try {
+        q.set('secours', '1');
+        const r2 = await fetch(`/api/extrait?${q}`); const d2 = await r2.json();
+        if (n !== demande || !r2.ok || !d2.extrait || d2.extrait === d.extrait) return;
+        audio.src = d2.extrait; await jouer(); memoriser(true);
+      } catch { /* on garde ce qu'on a */ }
+    }, { once: true });
     await jouer();
     memoriser(true);
     annoncer(`Lecture de l’extrait : ${m.titre}, ${m.artiste}`);
