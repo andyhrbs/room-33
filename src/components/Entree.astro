@@ -15,7 +15,9 @@ const style = [
 <div class="entree" data-entree role="dialog" aria-modal="true" aria-labelledby="titre-entree" style={style}>
   <div class="piece eteinte" aria-hidden="true"></div>
   <!-- lampe torche : la pièce allumée apparaît autour de la souris (ou du doigt), bords flous -->
-  <div class="piece lueur" aria-hidden="true"></div>
+  <!-- petites lumières qui vivent dans le noir (voyants de l'ampli, lumières de la ville, clair de lune) : placées par le script -->
+  <div class="lumieres" aria-hidden="true" data-lumieres></div>
+  <div class="piece lueur" aria-hidden="true"><canvas class="poussiere" data-poussiere></canvas></div>
   <div class="piece allumee-photo" aria-hidden="true"></div>
   <!-- zone cliquable sur l'abat-jour de la lampe à arc de la photo (placée par le script) -->
   <button type="button" class="lampe" data-allumer aria-label="Allumer la lampe et entrer"><span class="prechauffe" aria-hidden="true"></span></button>
@@ -45,6 +47,57 @@ const style = [
     Object.assign(lampe.style, { left: `${g}px`, top: `${oy + y1 * p.h * k}px`, width: `${Math.max(44, d - g)}px`, height: `${(y2 - y1) * p.h * k}px` });
   }
 
+  // Petites lumières de la pièce éteinte (fractions de la photo : x, y, taille en fraction de la largeur de la photo, type)
+  type Lumiere = [number, number, number, 'vu' | 'led' | 'ville' | 'lune'];
+  const LUMIERES: Record<'ordi' | 'mobile', Lumiere[]> = {
+    ordi: [
+      [0.497, 0.582, 0.012, 'vu'], [0.505, 0.582, 0.012, 'vu'], [0.493, 0.589, 0.0028, 'led'], // ampli : cadrans et voyant
+      [0.081, 0.392, 0.0022, 'ville'], [0.083, 0.418, 0.0018, 'ville'], [0.080, 0.441, 0.0024, 'ville'], [0.084, 0.462, 0.0016, 'ville'], [0.079, 0.478, 0.002, 'ville'], // la ville par la fenêtre
+      [0.105, 0.40, 0.09, 'lune'], // clair de lune sur le rideau
+    ],
+    mobile: [
+      [0.472, 0.52, 0.03, 'vu'], [0.49, 0.52, 0.03, 'vu'], [0.462, 0.525, 0.007, 'led'],
+    ],
+  };
+  function placerLumieres(zone: HTMLElement) {
+    const cle = ORDI.matches ? 'ordi' : 'mobile'; const p = PHOTOS[cle];
+    const W = innerWidth, H = innerHeight, k = Math.max(W / p.l, H / p.h);
+    const ox = (W - p.l * k) / 2, oy = (H - p.h * k) / 2, lp = p.l * k;
+    zone.replaceChildren(...LUMIERES[cle].map(([x, y, t, type], i) => {
+      const el = document.createElement('span'); el.className = `lumiere ${type}`;
+      const d = Math.max(type === 'led' || type === 'ville' ? 3 : 10, t * lp);
+      Object.assign(el.style, { left: `${ox + x * lp - d / 2}px`, top: `${oy + y * p.h * k - d / 2}px`, width: `${d}px`, height: `${type === 'lune' ? d * 3.2 : d}px`, animationDelay: `${(-(i * 1.37) % 5).toFixed(2)}s`, animationDuration: type === 'ville' ? `${(2.4 + ((i * 0.83) % 3)).toFixed(2)}s` : '' });
+      return el;
+    }));
+  }
+
+  // Poussière dans la lumière : de fines particules qui flottent ; elles sont dessinées sur toute la pièce,
+  // mais le masque du halo ne les laisse voir que dans la lumière, comme dans un rayon de lampe
+  function poussiere(canvas: HTMLCanvasElement, entree: HTMLElement) {
+    const ctx = canvas.getContext('2d'); if (!ctx) return;
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const taille = () => { W = innerWidth; H = innerHeight; canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = `${W}px`; canvas.style.height = `${H}px`; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    taille(); addEventListener('resize', taille);
+    const n = Math.round(Math.min(260, (innerWidth * innerHeight) / 5500));
+    const grains = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 0.6 + Math.random() * 2, vx: (Math.random() - 0.5) * 0.12, vy: -0.03 - Math.random() * 0.1, ph: Math.random() * 6.28, f: 0.4 + Math.random() * 1.2 }));
+    let prec = performance.now();
+    const boucle = (t: number) => {
+      if (!entree.isConnected || entree.classList.contains('allumee')) { removeEventListener('resize', taille); return; }
+      const dt = Math.min(50, t - prec) / 16.7; prec = t;
+      ctx.clearRect(0, 0, W, H);
+      for (const g of grains) {
+        g.ph += 0.01 * g.f * dt;
+        g.x += (g.vx + Math.sin(g.ph) * 0.08) * dt; g.y += (g.vy + Math.cos(g.ph * 0.7) * 0.05) * dt;
+        if (g.y < -5) { g.y = H + 5; g.x = Math.random() * W; } if (g.x < -5) g.x = W + 5; else if (g.x > W + 5) g.x = -5;
+        const a = 0.45 + 0.5 * (0.5 + 0.5 * Math.sin(g.ph * 2.3)); // scintille en tournant dans la lumière
+        ctx.beginPath(); ctx.arc(g.x, g.y, g.r, 0, 6.283); ctx.fillStyle = `rgba(255, 228, 190, ${a.toFixed(3)})`; ctx.fill();
+      }
+      requestAnimationFrame(boucle);
+    };
+    requestAnimationFrame(boucle);
+  }
+
   // une seule fois par visite : une fois la pièce allumée, l'entrée ne revient plus (même en actualisant l'accueil) jusqu'à la prochaine visite
   const vue = () => { try { sessionStorage.setItem('room33-entree', '1'); } catch { /* stockage indisponible */ } document.documentElement.classList.add('entree-vue'); document.documentElement.classList.remove('entree-active', 'entree-ouverte'); };
   document.addEventListener('astro:page-load', () => {
@@ -52,8 +105,10 @@ const style = [
     if (!e || document.documentElement.classList.contains('entree-vue')) { e?.remove(); return; }
     document.documentElement.classList.add('entree-active');
     const lampe = e.querySelector<HTMLButtonElement>('[data-allumer]')!;
-    const caler = () => placer(lampe);
+    const zoneLumieres = e.querySelector<HTMLElement>('[data-lumieres]')!;
+    const caler = () => { placer(lampe); placerLumieres(zoneLumieres); };
     caler(); addEventListener('resize', caler);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) poussiere(e.querySelector<HTMLCanvasElement>('[data-poussiere]')!, e);
     lampe.focus({ preventScroll: true });
     const finir = () => { removeEventListener('resize', caler); e.remove(); vue(); document.querySelector<HTMLElement>('#titre-accueil')?.setAttribute('tabindex', '-1'); document.querySelector<HTMLElement>('#titre-accueil')?.focus({ preventScroll: true }); };
     lampe.addEventListener('click', () => {
@@ -149,6 +204,21 @@ const style = [
     .allumee-photo { background-image: var(--allumee-mobile); }
     .lueur { background-image: var(--allumee-mobile); --r: 36vw; } /* mobile : halo plus grand */
   }
+  /* poussière : toile plein écran dans le halo (masquée avec lui) */
+  .poussiere { position: absolute; inset: 0; pointer-events: none; }
+  /* petites lumières : elles respirent doucement dans le noir, puis s'effacent quand la pièce s'allume */
+  .lumieres { position: absolute; inset: 0; pointer-events: none; transition: opacity 0.6s var(--courbe-standard); }
+  .allumee .lumieres { opacity: 0; }
+  .lumieres :global(.lumiere) { position: absolute; border-radius: 50%; mix-blend-mode: screen; animation: respire 3.6s ease-in-out infinite alternate; }
+  .lumieres :global(.vu) { background: radial-gradient(circle, rgb(255 176 92 / 0.55), rgb(240 122 34 / 0.18) 45%, transparent 70%); }
+  .lumieres :global(.led) { background: radial-gradient(circle, rgb(255 120 70 / 1) 0 35%, rgb(255 90 40 / 0.35) 60%, transparent 100%); box-shadow: 0 0 6px 2px rgb(255 100 50 / 0.35); animation-name: veille; animation-duration: 2.8s; }
+  .lumieres :global(.ville) { background: radial-gradient(circle, rgb(255 236 200 / 0.95) 0 40%, transparent 100%); box-shadow: 0 0 4px 1px rgb(255 220 170 / 0.4); animation-name: scintille; }
+  .lumieres :global(.lune) { border-radius: 40%; background: radial-gradient(ellipse, rgb(120 160 255 / 0.22), transparent 70%); animation-duration: 8s; }
+  @keyframes respire { from { opacity: 0.3; } to { opacity: 0.85; } }
+  @keyframes veille { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+  @keyframes scintille { 0%, 100% { opacity: 0.25; } 30% { opacity: 1; } 55% { opacity: 0.5; } 80% { opacity: 0.9; } }
+  @media (prefers-reduced-motion: reduce) { .lumieres :global(.lumiere) { animation: none; opacity: 0.6; } }
+
   /* au clic : l'écran d'entrée s'efface sur l'accueil */
   .entree.allumage { opacity: 0; transition: opacity 1s var(--courbe-entree-sortie); }
   .entree.fondu { opacity: 0; }
