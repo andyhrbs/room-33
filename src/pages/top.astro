@@ -86,7 +86,8 @@ const rang = (i: number) => String(i).padStart(2, '0');
           {autresTitres.map((t, i) => (
             <li class="rang rang-titre" data-ecoute data-titre={t.titre} data-artiste={t.disque.artiste} data-type="titre" data-deezer={deezerDe(t.titre, t.disque)}>
               <span class="numero titre-h1" aria-hidden="true">{rang(i + 2)}</span>
-              <Pochette motif={t.disque.motif} src={t.disque.pochette} alt="" class="mini" />
+              <!-- la pochette mène à l'album (sur mobile, c'est le seul lien de la ligne : « Voir le disque » est caché) -->
+              <a class="lien-pochette" href={`/disques/${t.disque.slug}`} aria-label={`Voir le disque ${t.disque.titre}, ${t.disque.artiste}`}><Pochette motif={t.disque.motif} src={t.disque.pochette} alt="" class="mini" /></a>
               <span class="titre">
                 <span class="visuellement-cache">N° {i + 2} : </span>
                 <span class="titre-h3 nom">{t.titre}</span>
@@ -94,6 +95,7 @@ const rang = (i: number) => String(i).padStart(2, '0');
               </span>
               <!-- le titre s'écoute directement (extrait de 30 s), sans passer par l'album -->
               <button type="button" class="lecture" data-ecouter aria-pressed="false" aria-label={`Écouter un extrait de ${t.titre}, ${t.disque.artiste}`}><span class="rond"><Icone nom="lecture" taille={20} class="i-lecture" /><Icone nom="pause" taille={18} class="i-pause" /></span></button>
+              <Bouton style="lien" href={`/disques/${t.disque.slug}`} class="seulement-ordi voir-disque" aria-hidden="true" tabindex="-1">Voir le disque</Bouton>
             </li>
           ))}
         </ol>
@@ -151,6 +153,8 @@ const rang = (i: number) => String(i).padStart(2, '0');
   .rang-titre[data-etat='lecture'] .lecture :global(.i-lecture) { display: none; }
   .rang-titre[data-etat='lecture'] .nom { color: var(--couleur-accent-defaut); }
   .rang-titre[data-etat='chargement'] .rond { border-color: var(--couleur-accent-defaut); }
+  .rang-titre { grid-template-columns: 6.875rem 6rem minmax(0, 1fr) auto auto; } /* ordi : ▶ puis « Voir le disque » */
+  .lien-pochette { display: block; border-radius: var(--rayon-pochette); }
   .titre { display: grid; gap: var(--espace-2xs); text-decoration: none; }
   .titre:hover .nom { text-decoration: underline; text-decoration-thickness: var(--trait-filet); text-underline-offset: 0.15em; }
 

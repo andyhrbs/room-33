@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 19 nov. 2026 : compteur « vidéos » (page En vidéo)
+# Empreintes Figma de référence — 19 nov. 2026 : « Voir le disque » sur les lignes du Top titres
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -195,7 +195,7 @@
 440:3192 1wwxpzi
 440:3193 mnlq8h
 440:3201 1ttqay2
-440:3217 287fhg
+440:3217 1x9k4xu
 440:3281 1iooutq
 440:3282 tu08b2
 440:3465:cadre lho7ug
