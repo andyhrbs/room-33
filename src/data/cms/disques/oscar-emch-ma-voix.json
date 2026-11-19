@@ -1,18 +1,20 @@
 {
   "titre": "Ma Voix",
   "artiste": "Oscar Emch",
-  "genre": "Soul & R&B",
+  "genre": "Indie",
   "spotify": "https://open.spotify.com/album/6zhiB9EssatKGYAdYruT0t",
-  "ajoute": "2026-11-19T22:00:00.000Z",
+  "annee": null,
   "avis": "« Ma Voix, le titre dit tout : on n'entend presque que ça, une voix douce, très proche, et quelques accords autour. Je l'écoute tard, casque sur les oreilles. C'est simple, et c'est pour ça que ça touche. »",
   "avisCourt": "« Une voix douce, très proche, et presque rien autour. »",
+  "coupDeCoeur": "",
+  "credits": [],
+  "bio": "Chanteur et compositeur, une voix douce sur des arrangements épurés.",
+  "bioCourte": "Chanteur à la voix douce.",
+  "ajoute": "2026-11-19T22:00:00.000Z",
+  "motif": "lune",
   "moment": {
     "temps": "",
     "texte": "",
     "texteCourt": ""
-  },
-  "credits": [],
-  "bio": "Chanteur et compositeur, une voix douce sur des arrangements épurés.",
-  "bioCourte": "Chanteur à la voix douce.",
-  "motif": "lune"
+  }
 }
