@@ -246,6 +246,17 @@ const donnees = await Promise.all(lives.map(async (l) => {
     if (p.classList.contains('reduit') && c.closest('[data-pv]') && !c.closest('button, a, iframe')) deplier(p);
   }, true);
 
+  // Ordi : un clic sur la page, en dehors du panneau, le range sur la droite (la vidéo continue) — comme l'icône « sortir »
+  document.addEventListener('click', (e) => {
+    const p = pv(); if (!p || p.hidden || !ORDI.matches || enBascule) return;
+    if (p.classList.contains('grand') || p.classList.contains('retracte')) return;
+    const c = e.target as Element;
+    if (!c.isConnected || c.closest('[data-pv], [data-lire-video], [data-pv-suivant], .mini-platine, dialog, [data-tiroir]')) return;
+    p.classList.add('retracte');
+    p.querySelector('.pv-bord')?.setAttribute('aria-label', 'Afficher la vidéo');
+    etatPage();
+  });
+
   // Espace : pause / lecture de la vidéo ouverte (sauf quand on écrit ou qu'un bouton / lien a le focus ;
   // si le focus est dans le lecteur YouTube, c'est YouTube qui gère l'espace)
   document.addEventListener('keydown', (e) => {
