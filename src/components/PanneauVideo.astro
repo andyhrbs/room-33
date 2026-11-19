@@ -211,7 +211,9 @@ const donnees = await Promise.all(lives.map(async (l) => {
       ], el.matches('.pv-suite') ? { ...opts, duration: Math.round(D * 0.55) } : opts));
       const a = voile.animate([{ clipPath: 'inset(0 0 0 0)', backgroundColor: fondGrand }, { clipPath: `inset(0 0 0 ${gauche}px)`, backgroundColor: fondCible }], { ...opts, fill: 'forwards' });
       Promise.allSettled([a.finished, ...anims.map((x) => x.finished)]).finally(() => {
+        // le fond du panneau revient SANS transition (sinon il met 0,6 s à réapparaître et la page transparaît)
         p.style.overflow = ''; corps.style.overflow = ''; p.style.background = ''; p.style.boxShadow = '';
+        void p.offsetWidth; // le navigateur applique le fond tout de suite (transition encore coupée)
         voile.remove(); fin();
       });
     }
