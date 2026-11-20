@@ -20,6 +20,7 @@ function libelle({ chemin, titre }: Etape) {
   const nom = titre.split(' · ')[0];
   if (chemin === '/') return 'Retour dans la pièce';
   if (chemin === '/bacs') return 'Retour à mes disques';
+  if (/^\/bacs\/[^/]+\/disques$/.test(chemin)) return `Retour à tout le bac ${nom}`;
   if (chemin.startsWith('/bacs/')) return `Retour au bac ${nom}`;
   if (chemin === '/top') return 'Retour à mon Top';
   if (chemin === '/platine') return 'Retour à mes écoutes';

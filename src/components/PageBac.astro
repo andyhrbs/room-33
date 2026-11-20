@@ -61,13 +61,13 @@ const nb = bac.disques.length;
         <PileDePochettes disques={bac.disques} />
         <div class="tracklist">
           <h2 class="titre-h3">Dans ce bac</h2>
-          <!-- tous les disques ; ordi : 4 visibles (la section tient dans l'écran), mobile : 6 ; « Voir les N disques » déroule le reste -->
+          <!-- aperçu : ordi 4 disques (la section tient dans l'écran), mobile 6 ; « Voir les N disques » ouvre la page du bac en entier -->
           <ol role="list" class="liste-bac" data-liste-bac>
-            {bac.disques.map((d, i) => (
+            {bac.disques.slice(0, 6).map((d, i) => (
               <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={String(d.annee)} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`}><Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi voir-disque" aria-hidden="true" tabindex="-1">Voir le disque</Bouton></LigneTracklist>
             ))}
           </ol>
-          {nb > 4 && <button type="button" class={`voir-tout texte-bouton${nb <= 6 ? ' seulement-ordi' : ''}`} aria-expanded="false" data-voir-tout>Voir les {nb} disques <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg></button>}
+          {nb > 4 && <a href={`/bacs/${bac.slug}/disques`} class={`voir-tout texte-bouton${nb <= 6 ? ' seulement-ordi' : ''}`}>Voir les {nb} disques <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12H20"/><path d="M14 6L20 12L14 18"/></svg></a>}
         </div>
       </section>
     ) : (
@@ -94,15 +94,6 @@ const nb = bac.disques.length;
 </Base>
 
 <script>
-  // « Voir les N disques » : déroule toute la liste sur place
-  document.addEventListener('click', (e) => {
-    const b = (e.target as Element).closest<HTMLButtonElement>('[data-voir-tout]'); if (!b) return;
-    const ouvert = b.getAttribute('aria-expanded') !== 'true';
-    b.setAttribute('aria-expanded', String(ouvert));
-    b.closest('.tracklist')?.querySelector('[data-liste-bac]')?.classList.toggle('deroulee', ouvert);
-    b.firstChild!.textContent = ouvert ? 'Réduire la liste ' : `Voir les ${b.closest('.tracklist')!.querySelectorAll('[data-liste-bac] > *').length} disques `;
-  });
-
   // Choisir un autre genre : on charge la page de ce bac et on remplace seulement la zone du bac,
   // sans remonter au hero. L'adresse change (/bacs/jazz) pour pouvoir partager le bac.
   const zone = () => document.querySelector<HTMLElement>('[data-zone-bac]');
@@ -160,10 +151,8 @@ const nb = bac.disques.length;
   .contenu-bac { display: grid; grid-template-columns: minmax(0, 43.75rem) minmax(0, 27.25rem); justify-content: space-between; gap: var(--espace-3xl); align-items: start; }
   .tracklist { display: grid; gap: var(--espace-xs); justify-items: start; }
   .tracklist ol { width: 100%; }
-  .voir-tout { display: inline-flex; align-items: center; gap: var(--espace-xs); min-height: 44px; padding: 0; border: 0; background: none; color: var(--couleur-texte-principal); cursor: pointer; }
+  .voir-tout { display: inline-flex; align-items: center; gap: var(--espace-xs); min-height: 44px; color: var(--couleur-texte-principal); text-decoration: none; }
   .voir-tout:hover { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: var(--trait-filet); }
-  .voir-tout[aria-expanded='true'] svg { transform: rotate(-90deg); }
-  .voir-tout svg { transition: transform var(--duree-normal) var(--courbe-sortie); }
 
   .vide { display: grid; gap: var(--espace-md); justify-items: start; max-width: 45rem; }
 
@@ -184,7 +173,7 @@ const nb = bac.disques.length;
     }
     .ecran-bac .contenu-bac { grid-template-columns: minmax(0, 37.5rem) minmax(0, 33.5rem); } /* Figma : pile 600, liste 536 */
     .ecran-bac .tracklist { gap: var(--espace-md); }
-    .liste-bac:not(.deroulee) > :nth-child(n+5) { display: none; } /* 4 morceaux visibles sur ordi */
+    .liste-bac > :nth-child(n+5) { display: none; } /* 4 morceaux visibles sur ordi */
     .ecran-bac .zone-filtres { padding-top: 0; }
     .ecran-bac .zone-filtres + .section { padding-block: var(--espace-lg) 0; }
   }
@@ -192,7 +181,7 @@ const nb = bac.disques.length;
     .filtres ul { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--grille-marge)); padding-inline: var(--grille-marge); scrollbar-width: none; }
     .filtres ul::-webkit-scrollbar { display: none; }
     .zone-filtres { gap: var(--espace-sm); }
-    .liste-bac:not(.deroulee) > :nth-child(n+7) { display: none; } /* 6 morceaux visibles sur mobile */
+    .liste-bac > :nth-child(n+7) { display: none; } /* 6 morceaux visibles sur mobile */
 
     .tracklist .titre-h3 { font-size: var(--taille-h1); line-height: normal; } /* Figma mobile : « Dans ce bac » en H1 comme les autres titres de section */
     .zone-filtres + .section { padding-top: var(--espace-sm); }

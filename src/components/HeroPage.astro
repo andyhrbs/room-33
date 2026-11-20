@@ -4,8 +4,8 @@ import Bouton from './Bouton.astro';
 import RetourFlottant from './RetourFlottant.astro';
 import { fondGrosPlan, type GrosPlan } from '../data/images';
 type Etape = string | { texte: string; href?: string };
-interface Props { grosPlan?: GrosPlan; position?: string; positionMobile?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string }
-const { grosPlan, position = 'center', positionMobile = position, filAriane, surtitreMobile, titre, titreMobile, retour = 'Retour dans la pièce' } = Astro.props;
+interface Props { grosPlan?: GrosPlan; position?: string; positionMobile?: string; filAriane: Etape[]; surtitreMobile: string; titre: string; titreMobile?: string; retour?: string; retourHref?: string }
+const { grosPlan, position = 'center', positionMobile = position, filAriane, surtitreMobile, titre, titreMobile, retour = 'Retour dans la pièce', retourHref = '/' } = Astro.props;
 // Titre court sur mobile (maquette Figma) ; un seul H1 lu par les lecteurs d'écran et Google : le titre complet
 const decoupe = (t: string) => [t.charAt(0), t.slice(1)];
 // Gros plan : une vraie photo de la pièce par page (ordi + version plus légère sur mobile, recadrée en hauteur)
@@ -14,7 +14,7 @@ const style = fond ? `--image: ${fond.ordi}; --image-mobile: ${fond.mobile}; --p
 ---
 <header class="hero-page hero-anime" style={style}>
   <div class="conteneur contenu">
-    <Bouton style="lien" href="/" iconeGauche="fleche-gauche" iconeDroite={null} class="retour" data-retour-origine><span data-retour-texte>{retour}</span></Bouton>
+    <Bouton style="lien" href={retourHref} iconeGauche="fleche-gauche" iconeDroite={null} class="retour" data-retour-origine><span data-retour-texte>{retour}</span></Bouton>
     <div class="titres">
       <nav aria-label="Fil d’Ariane" class="seulement-ordi">
         <ol role="list" class="ariane texte-petit">
@@ -42,7 +42,7 @@ const style = fond ? `--image: ${fond.ordi}; --image-mobile: ${fond.mobile}; --p
   </div>
 </header>
 <!-- hors du hero (qui bouge au défilement) : sinon la position fixe ne tiendrait pas -->
-<RetourFlottant href="/" texte={retour} />
+<RetourFlottant href={retourHref} texte={retour} />
 <style>
   .hero-page {
     position: relative; display: flex; align-items: flex-end;
