@@ -6,6 +6,8 @@
 //   (« Retour dans la pièce » vers l'accueil, ou le bac du disque sur une fiche).
 // - Éléments concernés : le lien du hero [data-retour-origine] (s'il est un lien) et la pastille [data-retour-flottant] ;
 //   le texte se met dans [data-retour-texte].
+// - Sur une fiche disque, le retour saute les autres fiches ouvertes à la suite (disque A → disque B)
+//   et ramène à la page « mère » : le Top, un bac, l'accueil… (plusieurs pas en arrière d'un coup).
 // ==========================================================================
 type Etape = { chemin: string; titre: string };
 const CLE = 'room33-pile';
@@ -34,7 +36,11 @@ document.addEventListener('astro:before-preparation', (e) => {
   const de = propre(ev.from.pathname), vers = propre(ev.to.pathname);
   if (de === vers) return;
   const pile = lire();
-  if (ev.direction === 'back') { if (pile.length && propre(pile[pile.length - 1].chemin) === vers) pile.pop(); }
+  if (ev.direction === 'back') {
+    // retour d'un ou plusieurs pas : on retire tout jusqu'à la page retrouvée (incluse)
+    const i = pile.map((p) => propre(p.chemin)).lastIndexOf(vers);
+    if (i >= 0) pile.length = i;
+  }
   else pile.push({ chemin: de, titre: document.title });
   ecrire(pile);
 });
@@ -42,7 +48,12 @@ document.addEventListener('astro:before-preparation', (e) => {
 function appliquer() {
   const pile = lire();
   const ici = propre(location.pathname);
-  const precedente = pile.length && propre(pile[pile.length - 1].chemin) !== ici ? pile[pile.length - 1] : null;
+  const fiche = (c: string) => propre(c).startsWith('/disques/');
+  // sur une fiche : la dernière page qui n'est pas une fiche ; ailleurs : simplement la page d'avant
+  let i = pile.length - 1;
+  if (fiche(ici)) while (i >= 0 && fiche(pile[i].chemin)) i--;
+  const precedente = i >= 0 && propre(pile[i].chemin) !== ici ? pile[i] : null;
+  const pas = pile.length - i;
   const liens = [...document.querySelectorAll<HTMLAnchorElement>('a[data-retour-origine], a[data-retour-flottant]')];
   for (const a of liens) {
     if (!a.dataset.defautHref) { a.dataset.defautHref = a.getAttribute('href') ?? '/'; a.dataset.defautTexte = a.querySelector('[data-retour-texte]')?.textContent ?? ''; }
@@ -52,6 +63,7 @@ function appliquer() {
     a.querySelectorAll('[data-retour-texte]').forEach((t) => (t.textContent = texte));
     if (a.hasAttribute('aria-label')) a.setAttribute('aria-label', texte);
     a.toggleAttribute('data-retour-pile', !!precedente);
+    if (precedente) a.dataset.retourPas = String(pas); else delete a.dataset.retourPas;
   }
 }
 document.addEventListener('astro:page-load', appliquer);
@@ -61,5 +73,5 @@ document.addEventListener('click', (e) => {
   const a = (e.target as Element).closest?.<HTMLAnchorElement>('a[data-retour-pile]');
   if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
   e.preventDefault(); e.stopPropagation(); // avant la navigation fluide (sinon elle ouvrirait la page comme une nouvelle)
-  history.back();
+  history.go(-(Number(a.dataset.retourPas) || 1));
 }, true);
