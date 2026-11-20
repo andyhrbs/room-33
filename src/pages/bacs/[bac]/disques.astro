@@ -1,82 +1,92 @@
 ---
-// « Tout le bac » : tous les disques d'un genre, par paquets de 10 (« Voir plus de disques »)
-import { prechargeGrosPlan } from '../../../data/images';
+// « Tout le bac » : tous les disques d'un genre, pochettes en grand, par paquets de 10 (« Voir plus de disques »).
+// Pas de hero : fil d'Ariane + titre, comme la fiche disque ; la pastille retour apparaît en défilant.
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import PiedDePage from '../../../components/PiedDePage.astro';
-import HeroPage from '../../../components/HeroPage.astro';
 import Bouton from '../../../components/Bouton.astro';
-import LigneTracklist from '../../../components/LigneTracklist.astro';
-import { bacs, face, type Bac } from '../../../data/disques';
+import CarteDisque from '../../../components/CarteDisque.astro';
+import RetourFlottant from '../../../components/RetourFlottant.astro';
+import { bacs, type Bac } from '../../../data/disques';
 export function getStaticPaths() {
   return bacs.filter((b) => b.disques.length > 0).map((bac) => ({ params: { bac: bac.slug }, props: { bac } }));
 }
 const { bac } = Astro.props as { bac: Bac };
 const nb = bac.disques.length;
 ---
-<Base imagePrioritaire={prechargeGrosPlan('bacs')} title={`${bac.nom} · Tout le bac`} description={`Les ${nb} disques du bac ${bac.nom}.`}>
+<Base title={`${bac.nom} · Tout le bac`} description={`Les ${nb} disques du bac ${bac.nom}.`}>
   <Nav />
   <main class="ambiance">
-    <HeroPage
-      grosPlan="bacs" positionMobile="42% center"
-      filAriane={[{ texte: 'Accueil', href: '/' }, { texte: 'Mes disques', href: '/bacs' }, { texte: bac.nom, href: `/bacs/${bac.slug}` }, 'Tout le bac']}
-      surtitreMobile="Tout le bac"
-      titre={`Tout le bac ${bac.nom}.`}
-      titreMobile={`${bac.nom}.`}
-      retour={`Retour au bac ${bac.nom}`}
-      retourHref={`/bacs/${bac.slug}`}
-    >
-      <div class="infos">
-        <p class="texte-corps-l">Les {nb} disques rangés ici. Sortez celui qui vous tente.</p>
+    <nav class="conteneur ariane-zone" aria-label="Fil d’Ariane" data-retour-origine>
+      <ol role="list" class="ariane texte-corps">
+        <li class="seulement-ordi"><a href="/bacs">Mes disques</a></li>
+        <li><a href={`/bacs/${bac.slug}`}>{bac.nom}</a></li>
+        <li><span aria-current="page">Tout le bac</span></li>
+      </ol>
+    </nav>
+    <RetourFlottant href={`/bacs/${bac.slug}`} texte={`Le bac ${bac.nom}`} />
+
+    <section class="conteneur tout-le-bac" aria-labelledby="titre-bac">
+      <div class="entete">
+        <h1 id="titre-bac" class="titre-h1">Tout le bac {bac.nom}</h1>
         <p class="texte-petit texte-secondaire">{nb} disques</p>
       </div>
-    </HeroPage>
-    <div class="rideau">
-      <section class="section conteneur liste-zone" aria-label={`Les disques du bac ${bac.nom}`}>
-        <ol role="list" class="liste" data-liste-tout>
-          {bac.disques.map((d, i) => (
-            <LigneTracklist face={face(i)} titre={d.titre} artiste={d.artiste} duree={d.annee ? String(d.annee) : undefined} motif={d.motif} src={d.pochette} href={`/disques/${d.slug}`}><Bouton style="lien" href={`/disques/${d.slug}`} class="seulement-ordi voir-disque" aria-hidden="true" tabindex="-1">Voir le disque</Bouton></LigneTracklist>
-          ))}
-        </ol>
-        <div class="voir-plus" data-voir-plus-disques hidden>
-          <Bouton style="secondaire" iconeDroite="chevron-bas">Voir plus de disques</Bouton>
-        </div>
-      </section>
-    </div>
+      <div class="grille" data-liste-tout>
+        {bac.disques.map((d) => (
+          <CarteDisque titre={d.titre} artiste={d.artiste} annee={d.annee || undefined} src={d.pochette} motif={d.motif} href={`/disques/${d.slug}`} />
+        ))}
+      </div>
+      <div class="voir-plus" data-voir-plus-disques hidden>
+        <Bouton style="secondaire" iconeDroite="chevron-bas">Voir plus de disques</Bouton>
+      </div>
+    </section>
   </main>
   <PiedDePage />
 </Base>
 
 <script>
-  // 10 disques, puis 10 de plus à chaque clic ; le focus passe au 1er disque ajouté
+  // 10 disques, puis 10 de plus à chaque clic ; au clavier, le focus passe au 1er disque ajouté
   const PAQUET = 10;
   function init() {
-    const liste = document.querySelector<HTMLElement>('[data-liste-tout]');
+    const grille = document.querySelector<HTMLElement>('[data-liste-tout]');
     const zone = document.querySelector<HTMLElement>('[data-voir-plus-disques]');
-    if (!liste || !zone || zone.dataset.pret) return;
+    if (!grille || !zone || zone.dataset.pret) return;
     zone.dataset.pret = '1';
-    const lignes = [...liste.children] as HTMLElement[];
-    if (lignes.length <= PAQUET) return;
+    const cartes = [...grille.children] as HTMLElement[];
+    if (cartes.length <= PAQUET) return;
     let montrees = PAQUET;
-    lignes.slice(PAQUET).forEach((l) => (l.hidden = true));
+    cartes.slice(PAQUET).forEach((c) => (c.hidden = true));
     zone.hidden = false;
     zone.querySelector('button')!.addEventListener('click', (e) => {
-      const suivantes = lignes.slice(montrees, montrees + PAQUET);
-      suivantes.forEach((l) => (l.hidden = false));
+      const suivantes = cartes.slice(montrees, montrees + PAQUET);
+      suivantes.forEach((c) => (c.hidden = false));
       montrees += suivantes.length;
       if ((e as MouseEvent).detail === 0) suivantes[0]?.querySelector<HTMLElement>('a')?.focus();
-      if (montrees >= lignes.length) zone.hidden = true;
+      if (montrees >= cartes.length) zone.hidden = true;
     });
   }
   document.addEventListener('astro:page-load', init);
 </script>
 
 <style>
-  .infos { display: grid; gap: var(--espace-2xs); }
-  .liste-zone { display: grid; gap: var(--espace-xl); }
-  .liste { width: 100%; max-width: 50rem; } /* aligné à gauche sur la grille, comme le reste du site */
-  .liste { margin: 0; padding: 0; }
-  .liste > :global([hidden]), .voir-plus[hidden] { display: none; }
-  .liste :global(.voir-disque) { flex: none; margin-left: var(--espace-sm); }
-  .voir-plus { display: flex; justify-content: center; max-width: 50rem; } /* centré comme sur « En vidéo » (et hors du retour flottant sur mobile) */
+  .ariane-zone { padding-top: calc(72px + var(--espace-xl)); padding-bottom: var(--espace-lg); }
+  .ariane { display: flex; gap: var(--espace-xs); flex-wrap: wrap; }
+  .ariane li + li::before { content: '/'; margin-right: var(--espace-xs); color: var(--couleur-texte-secondaire); }
+  .ariane a { padding-block: var(--espace-2xs); color: var(--couleur-texte-secondaire); text-decoration: none; }
+  .ariane a:hover { color: var(--couleur-texte-principal); }
+
+  .tout-le-bac { display: grid; gap: var(--espace-xl); padding-bottom: var(--espace-4xl); }
+  .entete { display: grid; gap: var(--espace-2xs); }
+  .entete h1 { margin: 0; }
+  /* 5 pochettes par rangée sur ordi : un paquet de 10 = 2 rangées pleines */
+  .grille { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--espace-2xl) var(--espace-lg); }
+  .grille > :global([hidden]), .voir-plus[hidden] { display: none; }
+  .voir-plus { display: flex; justify-content: center; }
+
+  @media (max-width: 63.99rem) {
+    .ariane-zone { padding-top: calc(60px + var(--espace-xl)); padding-bottom: var(--espace-md); }
+    .ariane li.seulement-ordi + li::before { content: none; }
+    .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-xl) var(--espace-md); }
+    .tout-le-bac { padding-bottom: var(--espace-3xl); }
+  }
 </style>
