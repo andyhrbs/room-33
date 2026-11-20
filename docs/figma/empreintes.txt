@@ -1,4 +1,4 @@
-# Empreintes Figma de référence — 20 nov. 2026 : écrans « 02b · Tout le bac » (ordi + mobile) ajoutés
+# Empreintes Figma de référence — 20 nov. 2026 : « Tout le bac » sans hero, pochettes en grille (ordi + mobile)
 14:6:cadre 5elfv1
 23:674 1ogdrx3
 14:7 12jaay8
@@ -351,17 +351,17 @@ style:Lettrine 1okqfuz
 style:Titre/Marque 1ew4ut0
 style:Logo 1kiw2f8
 style:Titre/Hero s6k2uf
-611:3636:cadre 1wl8sjw
-611:3637 1wbepem
-611:3638 w6nkk2
-611:3795 9tsogc
-611:3707 1ddy45
-611:3708 1vwcged
+611:3636:cadre evabjy
+611:3637 1wy6jo4
+613:4028 1e3h4vw
+611:3795 1frd3eu
+611:3707 1tbz4dp
+611:3708 1y4l2au
 611:3709 tu08b2
-611:3975:cadre 1d3e951
-611:3976 1yarjzz
-611:3977 1u7zs4e
-611:4081 11xiwks
-611:4025 is002r
+611:3975:cadre 1m6zaky
+611:3976 1einq9a
+613:4104 1lh77yh
+611:4081 6vic6e
+611:4025 1b1afbk
 611:4026 1st5bsy
 611:4027 p4phlg
